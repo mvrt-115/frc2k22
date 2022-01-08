@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Drivetrain.DrivetrainState;
 
 /**
  * A command that runs throughout the teleoperated period, and constantly
@@ -32,7 +33,9 @@ public class JoystickDrive extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    drivetrain.setState(DrivetrainState.JOYSTICK_DRIVE);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   /**
