@@ -15,6 +15,9 @@ import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+    //OVERALL ROBOT CONSTANTS
+    public static final boolean debugMode = true;
+    
     public static final int kPIDIdx = 0;
     public static final int kTimeoutMs = 10;
     public static final boolean kIsPracticeBot = false;
@@ -22,6 +25,7 @@ public final class Constants {
     public static final SupplyCurrentLimitConfiguration kCurrentLimit = new SupplyCurrentLimitConfiguration(true, 40, 50, 3.8);
 
     public static class Drivetrain {
+
         // physical constants get from mech once drivetrain is done
         public static final int kTrackScrubFactor = 0;
         public static final double kTrackWidthInches = 0;
@@ -42,5 +46,6 @@ public final class Constants {
         public static final double kThrottleDeadband = 0.02;
         public static final double kWheelGain = 0.05;
         public static final double kWheelNonlinearity = 0.05;
+
     }
 }
