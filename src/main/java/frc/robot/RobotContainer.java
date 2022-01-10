@@ -21,12 +21,15 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+  private final Limelight limelight = new Limelight();
   private final Drivetrain drivetrain = new Drivetrain();
+  private final Climber climber = new Climber();
+  private final Intake intake = new Intake();
+  private final Shooter shooter = new Shooter(limelight);
+  private final Turret turret = new Turret(limelight);
 
   private Joystick driverJoystick;
-  private Joystick operatorJoystick;
-
-  private final Limelight limelight = new Limelight();
+  private Joystick operatorJoystick;  
 
   private RollingAverage throttle = new RollingAverage(50);
   private RollingAverage wheel = new RollingAverage(15);

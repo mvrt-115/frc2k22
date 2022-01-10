@@ -83,7 +83,7 @@ public class Limelight extends SubsystemBase {
    * 
    * @return angle (degrees)
    */
-  public double getTY() {
+  public double getVerticalOffset() {
     return ty.getAverage();
   }
 
@@ -92,14 +92,14 @@ public class Limelight extends SubsystemBase {
    * 
    * @return angle (degrees)
    */
-  public double getTX() {
+  public double getHorizontalOffset() {
     return tx.getAverage();
   }
 
   /**
    * Whether limelight has found any valid targets
    * 
-   * @return boolean
+   * @return true if targets can be found false if there aren't any
    */
   public boolean targetsFound() {
     int tv = (int) limelight.getEntry("tv").getDouble(0);
