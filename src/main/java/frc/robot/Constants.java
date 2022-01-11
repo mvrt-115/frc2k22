@@ -48,4 +48,25 @@ public final class Constants {
         public static final double kWheelNonlinearity = 0.05;
 
     }
+    
+    public static class Intake {
+  
+        public static final double TICKS_TO_BOTTOM = 0;
+        // the # of ticks it takes to be at the bottom when pivoting
+        public static final double TICKS_TO_TOP = 0; // the # of ticks it takes to be at the top when pivoting
+      /*  public static final double PIVOT_DEPLOYED_TICKS = 900;*/
+
+        public static final int PIVOT_ID = 0; // change later
+        public static final int ROLLER_ID = 0; // change later
+
+        public static final double WHEELS_SPEED = 0.6;
+
+        public static final double PIVOT_SPEED = 0.4;
+        public static final double PIVOT_STOP_SPEED_WHEN_UP = 0.23;
+        public static final double PIVOT_STOP_SPEED_WHEN_DOWN = 0.0; // change if needed
+
+        public static final double MARGIN_OF_ERROR_TICKS = 0;
+        
+        public static final double FF = 0.31;
+    }
 }
