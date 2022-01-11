@@ -46,7 +46,7 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    feedForward = Constants.FF * Math.cos(Math.toRadians(getAngle()));
+    feedForward = Constants.Intake.FF * Math.cos(Math.toRadians(getAngle()));
     
     switch(state)
     {
@@ -87,9 +87,9 @@ public class Intake extends SubsystemBase {
   public void stopPivot()
   {
     if(state == IntakeState.DOWN)
-      pivotMotor.set(ControlMode.PercentOutput, Constants.PIVOT_STOP_SPEED_WHEN_DOWN);
+      pivotMotor.set(ControlMode.PercentOutput, Constants.Intake.PIVOT_STOP_SPEED_WHEN_DOWN);
     else if(state == IntakeState.UP)
-      pivotMotor.set(ControlMode.PercentOutput, Constants.PIVOT_STOP_SPEED_WHEN_UP);
+      pivotMotor.set(ControlMode.PercentOutput, Constants.Intake.PIVOT_STOP_SPEED_WHEN_UP);
     else 
       pivotMotor.set(ControlMode.PercentOutput, 0);
   }
@@ -111,7 +111,7 @@ public class Intake extends SubsystemBase {
     }
     else
     {
-      pivotMotor.set(ControlMode.Position, Constants.TICKS_TO_BOTTOM, DemandType.ArbitraryFeedForward, 
+      pivotMotor.set(ControlMode.Position, Constants.Intake.TICKS_TO_BOTTOM, DemandType.ArbitraryFeedForward, 
       feedForward);
     }
   }
@@ -134,7 +134,7 @@ public class Intake extends SubsystemBase {
    */
   public boolean isAtBottom()
   {
-    return Math.abs(Constants.TICKS_TO_BOTTOM - getCurrentPos()) <= Constants.MARGIN_OF_ERROR_TICKS;
+    return Math.abs(Constants.Intake.TICKS_TO_BOTTOM - getCurrentPos()) <= Constants.Intake.MARGIN_OF_ERROR_TICKS;
   }
 
   /**
@@ -145,7 +145,7 @@ public class Intake extends SubsystemBase {
    */
   public boolean isAtTop()
   {
-    return Math.abs(getCurrentPos() - Constants.TICKS_TO_TOP) <= Constants.MARGIN_OF_ERROR_TICKS;
+    return Math.abs(getCurrentPos() - Constants.Intake.TICKS_TO_TOP) <= Constants.Intake.MARGIN_OF_ERROR_TICKS;
   }
 
   /**
@@ -173,7 +173,7 @@ public class Intake extends SubsystemBase {
 
     else
     {
-      pivotMotor.set(ControlMode.Position, Constants.TICKS_TO_TOP, DemandType.ArbitraryFeedForward, 
+      pivotMotor.set(ControlMode.Position, Constants.Intake.TICKS_TO_TOP, DemandType.ArbitraryFeedForward, 
       feedForward);
     }
   }
@@ -183,7 +183,7 @@ public class Intake extends SubsystemBase {
    */
   public void startIntake()
   {
-    intakeMotor.set(ControlMode.PercentOutput, Constants.WHEELS_SPEED);
+    intakeMotor.set(ControlMode.PercentOutput, Constants.Intake.WHEELS_SPEED);
   }
 
   /**
