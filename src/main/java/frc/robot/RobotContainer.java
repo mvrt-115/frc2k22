@@ -30,6 +30,9 @@ public class RobotContainer {
 
   private Joystick driverJoystick;
   private Joystick operatorJoystick;  
+  
+  private JoystickButton pivot = new JoystickButton(operatorJoystick, 0);
+  private JoystickButton intakeBalls = new JoystickButton(operatorJoystick, 0);
 
   private RollingAverage throttle = new RollingAverage(50);
   private RollingAverage wheel = new RollingAverage(15);
@@ -53,6 +56,8 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // the :: syntax allows us to pass in methods of a class as variables so that the command can continuously access input values
     drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
+    pivot.whenPressed(new Pivot(intake));
+    intakeBalls.whenPressed(new IntakeBalls(intake)).whenReleased(new StopIntaking(intake));
   }
 
   /**
