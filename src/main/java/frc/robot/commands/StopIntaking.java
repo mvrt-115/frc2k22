@@ -14,7 +14,7 @@ public class StopIntaking extends CommandBase {
   public StopIntaking(Intake intakeIn) {
     // Use addRequirements() here to declare subsystem dependencies.
     intake = intakeIn;
-    addRequirements();
+    addRequirements(intake);
   }
 
   // Called when the command is initially scheduled.
@@ -24,7 +24,7 @@ public class StopIntaking extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    intake.setState(IntakeState.DOWN);
+    intake.setState(IntakeState.STOP_INTAKING);
   }
 
   // Called once the command ends or is interrupted.
