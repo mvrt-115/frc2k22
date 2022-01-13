@@ -16,7 +16,7 @@ import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
  */
 public final class Constants {
     //OVERALL ROBOT CONSTANTS
-    public static final boolean debugMode = true;
+    public static final boolean kDebugMode = true;
     
     public static final int kPIDIdx = 0;
     public static final int kTimeoutMs = 10;
@@ -31,14 +31,15 @@ public final class Constants {
         public static final double kTrackWidthInches = 0;
 
         // ids get from pheonix tuner once drivetrain is done
-        public static int kCompLeftMasterId = 1;
-        public static int kCompRightMasterId = 2;
-        public static int kCompLeftFollowerId = 3;
-        public static int kCompRightFollowerId = 4;
-        public static int kPracLeftMasterId = 5;
-        public static int kPracRightMasterId = 6;
-        public static int kPracLeftFollowerId = 7;
-        public static int kPracRightFollowerId = 8;
+        public static final int kCompLeftMasterId = 1;
+        public static final int kCompRightMasterId = 2;
+        public static final int kCompLeftFollowerId = 3;
+        public static final int kCompRightFollowerId = 4;
+
+        public static final int kPracLeftMasterId = 5;
+        public static final int kPracRightMasterId = 6;
+        public static final int kPracLeftFollowerId = 7;
+        public static final int kPracRightFollowerId = 8;
 
         // constants for joystick drive
         public static final double kSensitivity = 0.90;
@@ -51,22 +52,27 @@ public final class Constants {
     
     public static class Intake {
   
-        public static final double TICKS_TO_BOTTOM = 0;
+        public static final double kTicksToBottom = 0;
         // the # of ticks it takes to be at the bottom when pivoting
-        public static final double TICKS_TO_TOP = 0; // the # of ticks it takes to be at the top when pivoting
+        public static final double kTicksToTop = 0; // the # of ticks it takes to be at the top when pivoting
       /*  public static final double PIVOT_DEPLOYED_TICKS = 900;*/
 
-        public static final int PIVOT_ID = 0; // change later
-        public static final int ROLLER_ID = 0; // change later
+        public static final int kPivotId = 0; // change later
+        public static final int kRollerId = 0; // change later
 
-        public static final double WHEELS_SPEED = 0.6;
+        public static final double kRollerOutput = 0.6;
 
-        public static final double PIVOT_SPEED = 0.4;
-        public static final double PIVOT_STOP_SPEED_WHEN_UP = 0.23;
-        public static final double PIVOT_STOP_SPEED_WHEN_DOWN = 0.0; // change if needed
-
-        public static final double MARGIN_OF_ERROR_TICKS = 0;
+        public static final double kMarginOfErrorTicks = 0;
         
-        public static final double FF = 0.31;
+        public static final double kFF = 0.31;
+    }
+
+    public static class Turret {
+        public static final int kGearRatio = 4;
+        public static final int kEncoderTicks = 4096;
+
+        public static final double kP = 0.082;
+        public static final double kI = 0.00005;
+        public static final double kD = 0.0005;
     }
 }

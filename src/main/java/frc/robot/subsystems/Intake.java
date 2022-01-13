@@ -7,16 +7,10 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.RobotContainer;
+import frc.robot.util.TalonFactory;
 
 public class Intake extends SubsystemBase {
   /** Creates a new Intake. */
@@ -34,11 +28,8 @@ public class Intake extends SubsystemBase {
   public Intake() {
     state = IntakeState.UP;
 
-    intakeMotor = new TalonSRX(Constants.ROLLER_ID); // change motor IDs from Constants later
-    pivotMotor = new TalonSRX(Constants.PIVOT_ID); // change motor IDs from Constants later
-
-    intakeMotor.configFactoryDefault();
-    pivotMotor.configFactoryDefault();
+    intakeMotor = TalonFactory.createTalonSRX(Constants.Intake.kRollerId, false); // change motor IDs from Constants later
+    pivotMotor = TalonFactory.createTalonSRX(Constants.Intake.kPivotId, false); // change motor IDs from Constants later
 
     pivotMotor.setSelectedSensorPosition(0);
   }
@@ -46,7 +37,7 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    feedForward = Constants.Intake.FF * Math.cos(Math.toRadians(getAngle()));
+    feedForward = Constants.Intake.kFF * Math.cos(Math.toRadians(getAngle()));
     
     switch(state)
     {
@@ -85,12 +76,7 @@ public class Intake extends SubsystemBase {
    * stops the motor which pivots the intake.
    */
   public void stopPivot()
-  {
-    if(state == IntakeState.DOWN)
-      pivotMotor.set(ControlMode.PercentOutput, Constants.Intake.PIVOT_STOP_SPEED_WHEN_DOWN);
-    else if(state == IntakeState.UP)
-      pivotMotor.set(ControlMode.PercentOutput, Constants.Intake.PIVOT_STOP_SPEED_WHEN_UP);
-    else 
+  { 
       pivotMotor.set(ControlMode.PercentOutput, 0);
   }
 
@@ -111,7 +97,7 @@ public class Intake extends SubsystemBase {
     }
     else
     {
-      pivotMotor.set(ControlMode.Position, Constants.Intake.TICKS_TO_BOTTOM, DemandType.ArbitraryFeedForward, 
+      pivotMotor.set(ControlMode.Position, Constants.Intake.kTicksToBottom, DemandType.ArbitraryFeedForward, 
       feedForward);
     }
   }
@@ -134,7 +120,7 @@ public class Intake extends SubsystemBase {
    */
   public boolean isAtBottom()
   {
-    return Math.abs(Constants.Intake.TICKS_TO_BOTTOM - getCurrentPos()) <= Constants.Intake.MARGIN_OF_ERROR_TICKS;
+    return Math.abs(Constants.Intake.kTicksToBottom - getCurrentPos()) <= Constants.Intake.kMarginOfErrorTicks;
   }
 
   /**
@@ -145,7 +131,7 @@ public class Intake extends SubsystemBase {
    */
   public boolean isAtTop()
   {
-    return Math.abs(getCurrentPos() - Constants.Intake.TICKS_TO_TOP) <= Constants.Intake.MARGIN_OF_ERROR_TICKS;
+    return Math.abs(getCurrentPos() - Constants.Intake.kTicksToTop) <= Constants.Intake.kMarginOfErrorTicks;
   }
 
   /**
@@ -173,7 +159,7 @@ public class Intake extends SubsystemBase {
 
     else
     {
-      pivotMotor.set(ControlMode.Position, Constants.Intake.TICKS_TO_TOP, DemandType.ArbitraryFeedForward, 
+      pivotMotor.set(ControlMode.Position, Constants.Intake.kTicksToTop, DemandType.ArbitraryFeedForward, 
       feedForward);
     }
   }
@@ -183,7 +169,7 @@ public class Intake extends SubsystemBase {
    */
   public void startIntake()
   {
-    intakeMotor.set(ControlMode.PercentOutput, Constants.Intake.WHEELS_SPEED);
+    intakeMotor.set(ControlMode.PercentOutput, Constants.Intake.kRollerOutput);
   }
 
   /**
