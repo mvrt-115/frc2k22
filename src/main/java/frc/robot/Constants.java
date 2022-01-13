@@ -68,7 +68,7 @@ public final class Constants {
     }
 
     public static class Turret {
-        public static final int kGearRatio = 4;
+        public static final int kGearRatio = 150/24;
         public static final int kEncoderTicks = 4096;
 
         public static final double kP = 0.082;
