@@ -58,6 +58,11 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
     pivot.whenPressed(new Pivot(intake));
     intakeBalls.whenPressed(new IntakeBalls(intake)).whenReleased(new StopIntaking(intake));
+    /*
+      Shoot: 5(1 indexed)
+      Intake: 6(1 indexed)
+    */
+
   }
 
   /**
