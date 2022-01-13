@@ -13,7 +13,7 @@ public class RunIntake extends CommandBase {
   public RunIntake(Intake intakeIn) {
     // Use addRequirements() here to declare subsystem dependencies.
     intake = intakeIn;
-    addRequirements();
+    addRequirements(intake);
   }
 
   // Called when the command is initially scheduled.
