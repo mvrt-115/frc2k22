@@ -47,22 +47,22 @@ public class Intake extends SubsystemBase {
     
     switch(state)
     {
-      case INTAKING:
+      case INTAKING: // intake is deployed and starts running
         pivotDown();
         stopPivot();
         startIntake();
         break;
-      case STOP_INTAKING:
+      case STOP_INTAKING: // intake goes back up and stops intaking
         stopIntake();
         pivotUp();
         stopPivot();
         break;
       case UP:
-        stopPivot();
+        stopPivot(); // to keep the intake up
         stopIntake();
         break;
       case DOWN:
-        stopPivot();
+        stopPivot(); // to keep the intake down
         break;
     }
   }
