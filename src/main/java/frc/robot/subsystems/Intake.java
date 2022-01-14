@@ -17,29 +17,27 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.util.TalonFactory;
 
 public class Intake extends SubsystemBase {
   /** Creates a new Intake. */
   
-  public enum IntakeState {INTAKING, PIVOTING_UP, PIVOTING_DOWN, UP};
+  public static enum IntakeState {INTAKING, PIVOTING_DOWN, PIVOTING_UP, UP};
   private IntakeState state;
 
   // motors for the intake --> currently BaseTalon, may change 
   // (decide type of motor later)
-  private BaseTalon intakeMotor;
-  private BaseTalon pivotMotor; // change if using piston and not motor
+  private BaseTalon intakeMotor; 
+  private BaseTalon pivotMotor; 
 
-  private double feedForward;
+  private double feedForward; // feed forward double needed to pivot for a certain number of ticks
 
   public Intake() {
     state = IntakeState.UP;
 
-    intakeMotor = new TalonSRX(Constants.Intake.kROLLER_ID); // change motor IDs from Constants later
-    pivotMotor = new TalonSRX(Constants.Intake.kPIVOT_ID); // change motor IDs from Constants later
-
-    intakeMotor.configFactoryDefault();
-    pivotMotor.configFactoryDefault();
-
+    intakeMotor = TalonFactory.createTalonSRX(Constants.Intake.kRollerID, true); // change motor IDs from Constants later
+    pivotMotor = TalonFactory.createTalonSRX(Constants.Intake.kPivotID, true); // change motor IDs from Constants later
+   
     pivotMotor.setSelectedSensorPosition(0);
   }
 
@@ -47,22 +45,22 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     feedForward = Constants.Intake.kFF * Math.cos(Math.toRadians(getAngle()));
-    switch(state) {
-      case INTAKING:
+    
+    switch(state)
+    {
+      case INTAKING: // intake is deployed and starts running
         stopPivot();
         startIntake();
         break;
-      case PIVOTING_UP:
+      case PIVOTING_UP: // intake goes back up and stops intaking
         stopIntake();
         pivotUp();
         break;
       case PIVOTING_DOWN:
-        stopIntake(); //Contingency
         pivotDown();
         break;
       case UP:
-        stopPivot();
-        stopIntake(); // contingency
+        stopPivot(); // to keep the intake up
         break;
     }
   }
@@ -70,18 +68,20 @@ public class Intake extends SubsystemBase {
   /**
    * stops the motor which intakes the ball.
    */
-  public void stopIntake() {
+  public void stopIntake()
+  {
     intakeMotor.set(ControlMode.PercentOutput, 0);
   }
 
   /**
-   * stops the intake from pivoting further
-    */
-  public void stopPivot() {
+   * stops the motor which pivots the intake.
+   */
+  public void stopPivot()
+  {
     if(state == IntakeState.INTAKING)
-      pivotMotor.set(ControlMode.PercentOutput, Constants.Intake.PIVOT_SPEED_WHEN_DOWN);
+      pivotMotor.set(ControlMode.PercentOutput, Constants.Intake.kPivotStopSpeedWhenDown);
     else if(state == IntakeState.UP)
-      pivotMotor.set(ControlMode.PercentOutput, Constants.Intake.PIVOT_SPEED_WHEN_UP);
+      pivotMotor.set(ControlMode.PercentOutput, Constants.Intake.kPivotSpeedWhenUp);
     else 
       pivotMotor.set(ControlMode.PercentOutput, 0);
   }
@@ -94,21 +94,26 @@ public class Intake extends SubsystemBase {
    * if it is not at the bottom, then it runs the pivot motor at a constant 
    * speed.
    */
-  public void pivotDown(){
-    if(isAtBottom()) {
-      setState(IntakeState.INTAKING);
+  public void pivotDown()
+  {
+    if(isAtBottom())
+    {
+      state = IntakeState.INTAKING;
     }
-    else {
-      pivotMotor.set(ControlMode.Position, Constants.Intake.kTICKS_TO_BOTTOM, DemandType.ArbitraryFeedForward, 
+    else
+    {
+      pivotMotor.set(ControlMode.Position, Constants.Intake.kTicksToBottom, DemandType.ArbitraryFeedForward, 
       feedForward);
     }
   }
 
-  public IntakeState getState(){
+  public IntakeState getState()
+  {
     return state;
   }
-  
-  public void setState(IntakeState stateIn){
+
+  public void setState(IntakeState stateIn)
+  {
     state = stateIn;
   }
 
@@ -118,8 +123,9 @@ public class Intake extends SubsystemBase {
    * 
    * @return  true if the intake is at the bottom when pivoting
    */
-  public boolean isAtBottom(){
-    return Math.abs(Constants.Intake.kTICKS_TO_BOTTOM - getCurrentPos()) <= Constants.Intake.kMARGIN_OF_ERROR_TICKS;
+  public boolean isAtBottom()
+  {
+    return Math.abs(Constants.Intake.kTicksToBottom - getCurrentPos()) <= Constants.Intake.kMarginOfErrorTicks;
   }
 
   /**
@@ -128,14 +134,16 @@ public class Intake extends SubsystemBase {
    * 
    * @return  true if the intake is at the top when pivoting
    */
-  public boolean isAtTop(){
-    return Math.abs(getCurrentPos() - Constants.Intake.kTICKS_TO_TOP) <= Constants.Intake.kMARGIN_OF_ERROR_TICKS;
+  public boolean isAtTop()
+  {
+    return Math.abs(getCurrentPos() - Constants.Intake.kTicksToTop) <= Constants.Intake.kMarginOfErrorTicks;
   }
 
   /**
    * @return the current position of the intake in ticks.
    */
-  public double getCurrentPos() {
+  public double getCurrentPos()
+  {
     return pivotMotor.getSelectedSensorPosition();
   }
 
@@ -146,14 +154,16 @@ public class Intake extends SubsystemBase {
    * if the intake is at the top, then it sets the pivot motor to a smaller
    * speed so that it allows the pivot to stay up, but not go any further
    */
-  public void pivotUp() {
-    if(isAtTop()){
-      setState(IntakeState.UP);
-      stopPivot();
+  public void pivotUp()
+  {
+    if(isAtTop())
+    {
+      state = IntakeState.UP;
     }
 
-    else{
-      pivotMotor.set(ControlMode.Position, Constants.Intake.kTICKS_TO_TOP, DemandType.ArbitraryFeedForward, 
+    else
+    {
+      pivotMotor.set(ControlMode.Position, Constants.Intake.kTicksToTop, DemandType.ArbitraryFeedForward, 
       feedForward);
     }
   }
@@ -161,13 +171,13 @@ public class Intake extends SubsystemBase {
   /**
    * runs the intake so that the wheels move, intaking the ball in
    */
-  public void startIntake() {
-    intakeMotor.set(ControlMode.PercentOutput, Constants.Intake.kWHEELS_SPEED);
+  public void startIntake()
+  {
+    intakeMotor.set(ControlMode.PercentOutput, Constants.Intake.kWheelSpeed);
   }
 
   /**
-   * converts the current position in ticks to angle
-   * @return    the current angle of the intake
+   * @return The current angle of the pivot motor
    */
   public double getAngle() {
     return 90 + (getCurrentPos() / 1000 * 100);
