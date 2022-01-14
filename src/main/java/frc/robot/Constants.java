@@ -1,7 +1,6 @@
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
@@ -25,7 +24,6 @@ public final class Constants {
     public static final SupplyCurrentLimitConfiguration kCurrentLimit = new SupplyCurrentLimitConfiguration(true, 40, 50, 3.8);
 
     public static class Drivetrain {
-
         // physical constants get from mech once drivetrain is done
         public static final int kTrackScrubFactor = 0;
         public static final double kTrackWidthInches = 0;
@@ -46,7 +44,6 @@ public final class Constants {
         public static final double kThrottleDeadband = 0.02;
         public static final double kWheelGain = 0.05;
         public static final double kWheelNonlinearity = 0.05;
-
     }
     
     public static class Intake{
@@ -65,6 +62,8 @@ public final class Constants {
         public static final double kPIVOT_STOP_SPEED_WHEN_DOWN = 0.0; // speed of intake to keep it down
         //change later after testing
 
+        public static final double PIVOT_SPEED_WHEN_DOWN = 0;
+        public static final double PIVOT_SPEED_WHEN_UP = 0;
         public static final double kMARGIN_OF_ERROR_TICKS = 0;
 
         // change values later
