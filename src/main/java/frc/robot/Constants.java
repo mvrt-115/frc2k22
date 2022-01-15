@@ -44,6 +44,13 @@ public final class Constants {
         public static final double kThrottleDeadband = 0.02;
         public static final double kWheelGain = 0.05;
         public static final double kWheelNonlinearity = 0.05;
+
+        //constants for getting distance traveled by motors
+        public static final double kTicksPerRevolution = 1.0; //RANDOM VALUES
+        public static final double kgearRatio = 10.0;
+        public static final double kwheelCircumference = 5.0;
+
+
     }
     
     public static class Intake{

@@ -2,8 +2,14 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Twist2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -21,7 +27,14 @@ public class Drivetrain extends SubsystemBase {
     private TalonFX rightFollower;
     private TalonFX leftFollower;
 
-    public Drivetrain() {
+    private AHRS gyro;
+    
+    private Pose2d pose;
+    private DifferentialDriveOdometry odometry;
+    private Field2d field;
+
+    public Drivetrain() 
+    {
         if (Constants.kIsPracticeBot) {
             rightMaster = TalonFactory.createTalonFX(Constants.Drivetrain.kPracRightMasterId, true);
             leftMaster = TalonFactory.createTalonFX(Constants.Drivetrain.kPracLeftMasterId, false);
@@ -33,6 +46,11 @@ public class Drivetrain extends SubsystemBase {
             rightFollower = TalonFactory.createTalonFX(Constants.Drivetrain.kCompRightFollowerId, true);
             leftFollower = TalonFactory.createTalonFX(Constants.Drivetrain.kCompLeftFollowerId, false);
         }
+
+        pose = new Pose2d();
+        gyro = new AHRS(SPI.Port.kMXP);
+        odometry = new DifferentialDriveOdometry(getGyroAngle());
+        field = new Field2d();
     }
 
     /**
@@ -112,6 +130,7 @@ public class Drivetrain extends SubsystemBase {
 
     @Override
     public void periodic() {
+        pose = odometry.update(getGyroAngle(), getDistanceTravelled(leftMaster, leftFollower), getDistanceTravelled(rightMaster, rightFollower));
         log();
     }
 
@@ -119,8 +138,59 @@ public class Drivetrain extends SubsystemBase {
      * Logs data about the drivetrain subystem to SmartDashboard
      */
     public void log() {
+        SmartDashboard.putNumber("Left Encoder:", leftMaster.getSelectedSensorPosition());
+        SmartDashboard.putNumber("Right Encoder:", rightMaster.getSelectedSensorPosition());
         SmartDashboard.putNumber("Left Output", leftFollower.getMotorOutputPercent());
-        SmartDashboard.putNumber("right Output", rightFollower.getMotorOutputPercent());
+        SmartDashboard.putNumber("Right Output", rightFollower.getMotorOutputPercent());
         SmartDashboard.putString("Drivetrain State", state.toString());
+        SmartDashboard.putNumber("Gyro Angle:", gyro.getAngle());
+        SmartDashboard.putNumber("Left Distance Traveled", getDistanceTravelled(leftMaster, leftFollower));
+        SmartDashboard.putNumber("Right Distance Traveled", getDistanceTravelled(rightMaster, rightFollower));
+    }
+
+    /** Getters and Setters */
+
+    /** Resets the gyro */
+    public void resetGyro()
+    {
+        gyro.reset();
+    }
+
+    /** Reset the odometry */
+    public void resetOdometry()
+    {
+        odometry.update(new Rotation2d(), 0, 0);
+    }
+
+
+    /**
+     * Returns the rotation as a Rotation2d object
+     * 
+     * @return Rotation2d of current rotation
+     */
+    public Rotation2d getGyroAngle()
+    {
+        return Rotation2d.fromDegrees(-gyro.getAngle());
+    }
+
+    /**
+     * Returns the distance traveled by the two motor parameters.
+     * Precondition: motors are on the same side
+     * 
+     * @param m1 motor
+     * @param m2 other motor
+     * @return distance traveled in meters
+     */
+    public double getDistanceTravelled(TalonFX m1, TalonFX m2)
+    {
+        double ticks = (m1.getSelectedSensorPosition() + m2.getSelectedSensorPosition())/2.0;
+        
+        //returns the converted values
+        return MathUtils.convertTicksToMeters(
+            ticks, 
+            Constants.Drivetrain.kTicksPerRevolution, 
+            Constants.Drivetrain.kgearRatio, 
+            Constants.Drivetrain.kwheelCircumference
+        );
     }
 }
