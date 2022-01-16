@@ -121,6 +121,8 @@ public class Drivetrain extends SubsystemBase {
     public void log() {
         SmartDashboard.putNumber("Left Output", leftFollower.getMotorOutputPercent());
         SmartDashboard.putNumber("right Output", rightFollower.getMotorOutputPercent());
-        SmartDashboard.putString("Drivetrain State", state.toString());
+        
+        if(state != null)
+            SmartDashboard.putString("Drivetrain State", state.toString());
     }
 }

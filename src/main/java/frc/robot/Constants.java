@@ -69,13 +69,13 @@ public final class Constants {
 
     public static class Turret {
         public static final int kGearRatio = 150/24;
-        public static final int kEncoderTicks = 4096;
+        public static final int kEncoderTicks = 5525;
 
-        /**
-         *   public static final double kP = 0.19;
-             public static final double kI = 0.0;
-             public static final double kD = 0.0005;
-         */
+        // for large angles > 5-10
+        public static final double kPLarge = 0.19;
+        public static final double kILarge = 0.0;
+        public static final double kDLarge = 0.0005;
+
         public static final double kP = 0.20;
         public static final double kI = 0.0009;
         public static final double kD = 0.00007;

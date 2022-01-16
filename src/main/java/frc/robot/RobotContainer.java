@@ -12,6 +12,7 @@ import frc.robot.subsystems.*;
 import frc.robot.util.Limelight;
 import frc.robot.util.RollingAverage;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
@@ -22,10 +23,10 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  */
 public class RobotContainer {
   private final Limelight limelight = new Limelight();
-  private final Drivetrain drivetrain = new Drivetrain();
-  private final Climber climber = new Climber();
-  private final Intake intake = new Intake();
-  private final Shooter shooter = new Shooter(limelight);
+  // private final Drivetrain drivetrain = new Drivetrain();
+  // private final Climber climber = new Climber();
+  // private final Intake intake = new Intake();
+  // private final Shooter shooter = new Shooter(limelight);
   private final Turret turret = new Turret(limelight);
 
   private Joystick driverJoystick;
@@ -53,9 +54,9 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // the :: syntax allows us to pass in methods of a class as variables so that the command can continuously access input values
-    drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
+    // drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
 
-    quickturn = new JoystickButton(driverJoystick, 5);
+    // quickturn = new JoystickButton(driverJoystick, 5);
   }
 
   /**
