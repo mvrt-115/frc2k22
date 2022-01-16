@@ -4,13 +4,20 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.BaseTalon;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.sensors.WPI_PigeonIMU;
+
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class Climber extends SubsystemBase {
 
   public BaseTalon pivot; //motor for both pivoting arms
   public BaseTalon leftTelescopic, rightTelescopic; // motors for each telescopic arm, controlling extending and collapsing motions
-  public Adafruit_FXAS21002C gyro; //gyroscopic sensor for detecting angle moved through on the pivoting arms
+  public WPI_PigeonIMU gyro; //gyroscopic sensor for detecting angle moved through on the pivoting arms
   public DigitalInput pivotLimitSwitch, teleLimitSwitch; //limit switches for detecting whether robot is hooked on rungs or not for each type of arm
 
   /**
@@ -22,15 +29,16 @@ public class Climber extends SubsystemBase {
     leftTelescopic = new TalonFX(Constants.Climber.leftTelescopicID);
     rightTelescopic = new TalonFX(Constants.Climber.rightTelescopicID);
     
-    limitSwitch = new DigitalInput(Constants.Climber.pivotLimitSwitchID);
-    teleLimitSwitch = new DigialInput(Constants.Climber.teleLimitSwitchID);
+    pivotLimitSwitch = new DigitalInput(Constants.Climber.pivotLimitSwitchID);
+    teleLimitSwitch = new DigitalInput(Constants.Climber.teleLimitSwitchID);
 
-    gyro = Adafruit_FXAS21002C(Constants.Climber.gyroID);
+    gyro = new WPI_PigeonIMU(Constants.Climber.gyroID);
 
     //reconfiguring all motors
     pivot.configFactoryDefault();
     leftTelescopic.configFactoryDefault();
     rightTelescopic.configFactoryDefault();
+    gyro.configFactoryDefault();
   
 
     pivot.setInverted(false);
@@ -79,15 +87,18 @@ public class Climber extends SubsystemBase {
    * Resets gyroscopic sensor
    */
   public void resetGyro(){
-    gyro.reset();
+    gyro.setCompassAngle(0);
   } 
 
   /**
-   * Get the angle of the gyroscopic sensor
-   * @return angle in degrees
+   * Get the angle of the gyroscopic sensor on the IMU
+   * @return angle of the gyroscopic sensor
    */
   public double getGyroAngle(){
     return gyro.getAngle();
+    /*double[] angles = new double[3];
+    gyro.getAccelerometerAngles(angles);
+    return angles;*/
   }
 
   /**
@@ -104,4 +115,4 @@ public class Climber extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-}
+} 
