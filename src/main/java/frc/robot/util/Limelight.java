@@ -8,6 +8,8 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import frc.robot.Constants;
+
 public class Limelight extends SubsystemBase {
 
   private RollingAverage tx;
@@ -106,5 +108,14 @@ public class Limelight extends SubsystemBase {
     if (tv == 1)
       return true;
     return false;
+  }
+
+  public double getDistanceFromTarget()
+  {
+    double height = Constants.Limelight.TARGET_HEIGHT_IN - Constants.Limelight.TARGET_HEIGHT_IN;
+    double offsetAngle = Math.toRadians(Constants.Limelight.MOUNT_ANGLE + ty.getAverage());
+    double distance = height / Math.tan(offsetAngle);
+
+    return distance;
   }
 }

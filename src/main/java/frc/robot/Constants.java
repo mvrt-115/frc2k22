@@ -17,6 +17,8 @@ import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 public final class Constants {
     //OVERALL ROBOT CONSTANTS
     public static final boolean debugMode = true;
+
+    public static final double MAX_VOLTAGE = 10.0;
     
     public static final int kPIDIdx = 0;
     public static final int kTimeoutMs = 10;
@@ -72,5 +74,40 @@ public final class Constants {
         public static final double kI = 0;
         public static final double kD = 0;
         public static final double kFF = 0.31;
+    }
+
+    public static class Limelight
+    {
+        public static final double MOUNT_ANGLE = 15;
+        public static final double Height_IN = 36;
+        public static final double TARGET_HEIGHT_IN = 104;
+    }
+
+    public static class Hood
+    {
+        public static final double MIN_ANG = 60;
+        public static final double MAX_ANG = 80;
+        public static final double P = 0.21;
+        public static final double I = 0;
+        public static final double D = 6.9;
+        public static final double F = 0.058;
+        public static final double RADIUS = 8.5;
+        public static final double MAX_VOLTAGE_COMPENSATION = 5;
+        public static final double GEAR_RATIO = 150.0/24;
+        public static final int ENCODER_TICKS = 4096;
+    }
+
+    public static class Flywheel
+    {
+        public static final double P = 0.21;
+        public static final double I = 0;
+        public static final double D = 6.9;
+        public static final double F = 0.058;
+        public static final double RADIUS = 2;
+        public static final double ACCEPTABLE_ERROR = 50;
+        public static final double MAX_VOLTAGE_COMPENSATION = 10;
+        public static final double TICKS_PER_REVOLUTION = 2048;
+        public static final int NUM_AVG = 5;
+        public static final double GEAR_RATIO = 20.0/34.0; // Can change
     }
 }
