@@ -232,6 +232,15 @@ public class Shooter extends SubsystemBase {
     {
       angle_proj = 60;
     }
+    
+    if(angle_proj>80)
+    {
+      angle_proj = 80;
+    }
+    else if(angle_proj<60)
+    {
+      angle_proj = 60;
+    }
 
     return angle_proj;
   }
