@@ -73,4 +73,22 @@ public final class Constants {
         public static final double kD = 0;
         public static final double kFF = 0.31;
     }
+
+    public static class Storage{
+        public static final int kBreakBeamPort = 0; 
+        public static final int kMotorID = 0; // change value later
+        public static final int kMotorSpeed = 0; // change value later
+    }
+
+    public static class Climber{
+        //constants for the climber arms 
+        // change values later
+        public static final int pivotID = 0;
+        public static final int leftTelescopicID = 0;
+        public static final int rightTelescopicID = 0;
+        public static final int limitSwitchID = 0;
+        public static final int gyroID = 0;
+        public static final int pivotLimitSwitchID = 0;
+        public static final int teleLimitSwitchID = 0;
+    }
 }
