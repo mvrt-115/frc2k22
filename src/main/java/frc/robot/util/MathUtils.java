@@ -33,4 +33,26 @@ public class MathUtils {
         // * inputDeadband));
         return valAfterDeadband;
     }
+
+    /**
+     * Converts ticks to degrees
+     * @param ticks         motor ticks
+     * @param gearRatio     number of motor turns required to turn object once
+     * @param ticksPerRev   ticks per revolution (4096 for TalonSRX, 2048 for TalonFX)
+     * @return              degrees of rotation from the given ticks
+     */
+    public static double ticksToDegrees(double ticks, double gearRatio, double ticksPerRev) {
+        return ticks / (ticksPerRev * gearRatio) * 360.0;
+    }
+
+    /**
+     * Converts ticks to degrees
+     * @param angle         angle of the object
+     * @param gearRatio     number of motor turns required to turn object once
+     * @param ticksPerRev   ticks per revolution (4096 for TalonSRX, 2048 for TalonFX)
+     * @return              number of ticks equivalent to angle
+     */
+    public static double degreesToTicks(double angle, double gearRatio, double ticksPerRev) {
+        return angle * (ticksPerRev * gearRatio) / 360.0;
+    }
 }

@@ -12,7 +12,6 @@ import frc.robot.subsystems.*;
 import frc.robot.util.Limelight;
 import frc.robot.util.RollingAverage;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
@@ -57,6 +56,7 @@ public class RobotContainer {
     // drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
 
     // quickturn = new JoystickButton(driverJoystick, 5);
+    turret.setDefaultCommand(new FindTarget(turret));
   }
 
   /**
