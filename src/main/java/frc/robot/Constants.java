@@ -73,6 +73,9 @@ public final class Constants {
         public static final double kMinAngle = -135; // degrees
         public static final double kMaxAngle = 135; // degrees
 
+        public static final double kEThreshold = 60;
+        public static final double kLowETurnThreshold = 55; // degrees; limelight x fov = 59.6
+
         // for large angles > 5-10
         public static final double kPLarge = 0.1;//0.19;
         public static final double kILarge = 0;

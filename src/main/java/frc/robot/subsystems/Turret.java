@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.util.Derivitive;
 import frc.robot.util.Limelight;
 import frc.robot.util.MathUtils;
 import frc.robot.util.TalonFactory;
@@ -32,6 +33,8 @@ public class Turret extends SubsystemBase {
   // direction that the turret spins when randomly searching
   private int direction;
 
+  private Derivitive deltaE;
+
   /** Creates a new Turret. */
   public Turret(Limelight limelight) {
     this.limelight = limelight;
@@ -47,37 +50,8 @@ public class Turret extends SubsystemBase {
 
     direction = 1;
     state = TurretState.DISABLED;
-  }
 
-  /**
-   * Sets the state of the turret
-   * @param inState turret's new state
-   */
-  public void setState(TurretState inState) {
-    state = inState;
-  }
-
-  /**
-   * @return The current state of the turret
-   */
-  public TurretState getTurretState() {
-    return state;
-  }
-
-  /**
-   * If the turret is not being used or if it is within some margin of error, we can shoot
-   * @return  if we can shoot
-   */
-  public boolean canShoot() {
-    return state == TurretState.CAN_SHOOT || state == TurretState.DISABLED;
-  }
-
-  public void setMotorOutput(double output) {
-    turret.set(ControlMode.PercentOutput, output);
-  }
-
-  public void stop() {
-    setMotorOutput(0);
+    deltaE = new Derivitive();
   }
 
   @Override
@@ -92,7 +66,7 @@ public class Turret extends SubsystemBase {
     if(state != TurretState.DISABLED) 
       target();
     else 
-      stop();
+      setMotorOutput(0);
 
     log();
   }
@@ -102,13 +76,14 @@ public class Turret extends SubsystemBase {
       // find target position by using current position and data from limelight
       targetDegrees = getCurrentPositionDegrees() + limelight.getHorizontalOffset();
       changePIDSlot(limelight.getHorizontalOffset());
-      
-      // if the turret's target is outside of min/max angle go the other way
-      if(targetDegrees > Constants.Turret.kMaxAngle)
-        targetDegrees = Constants.Turret.kMinAngle + 5;
-      if(targetDegrees < Constants.Turret.kMinAngle)
-        targetDegrees = Constants.Turret.kMaxAngle - 5;
 
+      deltaE.update(targetDegrees - getCurrentPositionDegrees());
+      
+      if(targetDegrees > Constants.Turret.kMaxAngle + (deltaE.get() > Constants.Turret.kEThreshold ? 0 : Constants.Turret.kLowETurnThreshold))
+        targetDegrees = Constants.Turret.kMinAngle + 5;
+      else if (targetDegrees < Constants.Turret.kMinAngle - (deltaE.get() < -Constants.Turret.kEThreshold ? 0 : Constants.Turret.kLowETurnThreshold))
+        targetDegrees = Constants.Turret.kMaxAngle - 5;
+      
       // PID !!
       turret.set(ControlMode.Position, targetDegrees);
     } else if(!canShoot()) {
@@ -123,9 +98,9 @@ public class Turret extends SubsystemBase {
    */
   public void changeDirection() {
     if(getCurrentPositionDegrees() > Constants.Turret.kMaxAngle || 
-      getCurrentPositionDegrees() < Constants.Turret.kMinAngle
-    )
+      getCurrentPositionDegrees() < Constants.Turret.kMinAngle) {
       direction *= -1;
+    }
   }
 
   /**
@@ -134,9 +109,17 @@ public class Turret extends SubsystemBase {
    */
   private void changePIDSlot(double errorDegrees) {
     if(errorDegrees >= 10)
-      turret.selectProfileSlot(0, 1);
-    else
       turret.selectProfileSlot(0, 0);
+    else
+      turret.selectProfileSlot(1, 0);
+  }
+
+  /**
+   * If the turret is not being used or if it is within some margin of error, we can shoot
+   * @return  if we can shoot
+   */
+  public boolean canShoot() {
+    return state == TurretState.CAN_SHOOT || state == TurretState.DISABLED;
   }
 
   /** 
@@ -149,6 +132,25 @@ public class Turret extends SubsystemBase {
       Constants.Turret.kGearRatio, 
       Constants.Turret.kTicksPerRevolution
     );
+  }
+
+  public void setMotorOutput(double output) {
+    turret.set(ControlMode.PercentOutput, output);
+  }
+  
+  /**
+   * Sets the state of the turret
+   * @param inState turret's new state
+   */
+  public void setState(TurretState inState) {
+    state = inState;
+  }
+
+  /**
+   * @return The current state of the turret
+   */
+  public TurretState getTurretState() {
+    return state;
   }
 
   /**
