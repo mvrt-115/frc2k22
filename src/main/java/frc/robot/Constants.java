@@ -110,4 +110,11 @@ public final class Constants {
         public static final int NUM_AVG = 5;
         public static final double GEAR_RATIO = 20.0/34.0; // Can change
     }
+
+    public static class Storage
+    {
+        public static final int kBreakBeamPort = 0;
+        public static final int kMotorID = 0;
+        public static final int kMotorSpeed = 0;
+    }
 }
