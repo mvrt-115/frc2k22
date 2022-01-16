@@ -72,7 +72,21 @@ public final class Constants {
         public static final double kD = 0;
         public static final double kFF = 0.31;
     }
-
+    public static class Shooter
+    {
+        public static final double P = 0.21;
+        public static final double I = 0;
+        public static final double D = 6.9;
+        public static final double F = 0.058;
+        public static final double GEAR_RATIO = 20.0 / 34.0;
+        public static final double ACCEPTABLE_ERROR = 100;
+        public static final int RPM_STORED = 5;
+        public static final int MAX_VOLTAGE_COMPENSATION = 10;
+        public static final int TICKS_PER_REVOLUTION = 2048;
+        public static final double FLYWHEEL_VELOCITY_COMP_MPS2 = 0;
+        public static final double FLYWHEEL_RADIUS_IN = 2;
+        public static final double FLYWHEEL_ANGLE_DEG = 70;
+    }
     public static class Storage{
         public static final int kBreakBeamPort = 0;
         public static final int kMotorID = 0; // change value later
