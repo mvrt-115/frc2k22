@@ -19,6 +19,7 @@ import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 public class Shooter extends SubsystemBase {
 
   private double METERS_TO_IN = 39.3701;
+  private double METERS_TO_FT = 3.28084;
 
   public enum ShooterState
   {
@@ -210,7 +211,7 @@ public class Shooter extends SubsystemBase {
       vel_proj = 0.2546 * Math.pow(dx, 2) - 0.0295 * dx + 7.0226;
     }
     
-    return 60 * vel_proj / (Constants.Flywheel.RADIUS * 2 * Math.PI);
+    return 60 * METERS_TO_IN * vel_proj / (Constants.Flywheel.RADIUS * 2 * Math.PI);
   }
 
   public double getRequiredAng()
