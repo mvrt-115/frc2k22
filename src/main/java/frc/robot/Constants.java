@@ -45,12 +45,23 @@ public final class Constants {
         public static final double kWheelGain = 0.05;
         public static final double kWheelNonlinearity = 0.05;
 
+        //constants for aligning to ball from the camera
+        public static final double kThrottle  = 0.0; // change value later
+        public static final double kMaxPixelError = 1.0; // change value later
+        
         //constants for getting distance traveled by motors
         public static final double kTicksPerRevolution = 1.0; //RANDOM VALUES
         public static final double kgearRatio = 10.0;
         public static final double kwheelCircumference = 5.0;
 
+        public static final double kP = 0;
+        public static final double kI = 0;
+        public static final double kD = 0;
+        public static final double kFF = 0;
 
+        //change values later
+        public static final int kAcceptableError = 10;
+        public static final double kDrivetrainMotorSpeed = 0.5;
     }
     
     public static class Intake{

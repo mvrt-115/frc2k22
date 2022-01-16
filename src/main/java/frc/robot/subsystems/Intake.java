@@ -13,6 +13,7 @@ import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -31,6 +32,7 @@ public class Intake extends SubsystemBase {
   private BaseTalon pivotMotor; 
 
   private double feedForward; // feed forward double needed to pivot for a certain number of ticks
+
 
   public Intake() {
     state = IntakeState.UP;
@@ -64,7 +66,7 @@ public class Intake extends SubsystemBase {
         break;
     }
   }
-
+  
   /**
    * stops the motor which intakes the ball.
    */
@@ -160,7 +162,6 @@ public class Intake extends SubsystemBase {
     {
       state = IntakeState.UP;
     }
-
     else
     {
       pivotMotor.set(ControlMode.Position, Constants.Intake.kTicksToTop, DemandType.ArbitraryFeedForward, 
