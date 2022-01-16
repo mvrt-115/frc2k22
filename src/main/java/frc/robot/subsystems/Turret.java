@@ -88,15 +88,15 @@ public class Turret extends SubsystemBase {
       turret.set(ControlMode.Position, targetDegrees);
     } else if(!canShoot()) {
       // search by turning
-      changeDirection();      
-      setMotorOutput(direction * 0.3);
+      changeDirectionIfNeeded();      
+      setMotorOutput(direction * 0.4);
     }
   }
 
   /**
    * Changes direction of the turret if the turret goees outside of the min/max angle
    */
-  public void changeDirection() {
+  public void changeDirectionIfNeeded() {
     if(getCurrentPositionDegrees() > Constants.Turret.kMaxAngle || 
       getCurrentPositionDegrees() < Constants.Turret.kMinAngle) {
       direction *= -1;
