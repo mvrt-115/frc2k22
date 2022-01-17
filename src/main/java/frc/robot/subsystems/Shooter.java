@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.Limelight;
 import frc.robot.util.RollingAverage;
 import frc.robot.Constants;
+import frc.robot.util.MathUtils;
+import frc.robot.util.TalonFactory;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -16,17 +18,10 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 
-public class Shooter extends SubsystemBase {
+public class Shooter extends SubsystemBase
+{
 
-  private double METERS_TO_IN = 39.3701;
-  private double METERS_TO_FT = 3.28084;
-
-  public enum ShooterState
-  {
-    OFF, SPEEDING, ATSPEED;
-  }
-
-  private final double MIN_RPM = 8000;
+  private boolean shoot;
 
   private final int LEADER_ID = 0;
   private final int FOLLOWER_ID = 0;
@@ -37,7 +32,6 @@ public class Shooter extends SubsystemBase {
   private BaseTalon hoodMotor;
 
   // Attributes of flywheel
-  private ShooterState state;
   private double targetRPM = 0;
 
   // Target Angle in radians
@@ -47,30 +41,29 @@ public class Shooter extends SubsystemBase {
   private Limelight limelight;
 
   /** Creates a new Shooter. */
-  public Shooter(Limelight limelight) {
+  public Shooter(Limelight limelight)
+  {
+
+    shoot = false;
+
     // Mind Bending Test on the Reality of our Situation
     if (RobotBase.isReal())
     {
-      flywheelLeader = new TalonFX(LEADER_ID);
-      flywheelFollower = new TalonFX(FOLLOWER_ID);
-      hoodMotor = new TalonFX(HOOD_ID);
+      flywheelLeader = TalonFactory.createTalonFX(LEADER_ID, false);
+      flywheelFollower = TalonFactory.createTalonFX(FOLLOWER_ID, false);
+      hoodMotor = TalonFactory.createTalonFX(HOOD_ID, false);
 
       flywheelLeader.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
       flywheelFollower.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
       hoodMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
     }
-    
-    flywheelLeader.configFactoryDefault();
-    flywheelFollower.configFactoryDefault();
-    hoodMotor.configFactoryDefault();
+
+    // Hood Motor Zeroed at an angle 60 degrees to horizontal
+    hoodMotor.setSelectedSensorPosition(0);
 
     flywheelLeader.configVoltageCompSaturation(Constants.MAX_VOLTAGE);
     flywheelFollower.configVoltageCompSaturation(Constants.MAX_VOLTAGE);
     hoodMotor.configVoltageCompSaturation(Constants.MAX_VOLTAGE);
-
-    flywheelLeader.enableVoltageCompensation(true);
-    flywheelFollower.enableVoltageCompensation(true);
-    hoodMotor.enableVoltageCompensation(true);
 
     flywheelLeader.setInverted(false);
     flywheelFollower.setInverted(false);
@@ -92,18 +85,7 @@ public class Shooter extends SubsystemBase {
     this.limelight = limelight;
 
     targetRPM = 0;
-    state = ShooterState.OFF;
     rpm = new RollingAverage(Constants.Flywheel.NUM_AVG);
-  }
-
-  public void stopFly()
-  {
-    flywheelLeader.set(ControlMode.PercentOutput, 0);
-  }
-
-  public void stopHood()
-  {
-    hoodMotor.set(ControlMode.PercentOutput, 0);
   }
 
   public double getCurrentRPM()
@@ -111,90 +93,67 @@ public class Shooter extends SubsystemBase {
     return rpm.getAverage();
   }
 
-  public void setTargetRPM(double exit_velocity)
+  public void stopFlywheel()
   {
-    targetRPM = Math.min(MIN_RPM, exit_velocity);
-    
-    if(exit_velocity==0)
-    {
-      setState(ShooterState.OFF);
-    }
-    else
-    {
-      setState(ShooterState.SPEEDING);
-    }
-  }
-
-  public void setState(ShooterState _state) {
-      this.state = _state;
-
-      if(_state == ShooterState.OFF)
-      {
-        targetRPM = 0;
-      }
-      else if(_state == ShooterState.ATSPEED)
-      { 
-        targetRPM = getRequiredRPM();
-        targetAng = getRequiredAng();
-      }
-  }
-
-  public double rpmToTicks(double in_rpm)
-  {
-    return in_rpm / 600 * Constants.Flywheel.TICKS_PER_REVOLUTION * Constants.Flywheel.GEAR_RATIO;
-  }
-
-  public double ticksToRPM(double ticks)
-  {
-    return ticks * 600 / Constants.Flywheel.TICKS_PER_REVOLUTION / Constants.Flywheel.GEAR_RATIO;
-  }
-
-  public int degreesToTicks(double degrees)
-  {
-    return (int) ((Constants.Hood.ENCODER_TICKS * Constants.Hood.GEAR_RATIO) * degrees/360);
-  }
-
-  public void log()
-  {
-    SmartDashboard.putNumber("Flywheel RPM", getCurrentRPM());
-    SmartDashboard.putNumber("RPM Needed", getRequiredRPM());
-    SmartDashboard.putString("State", state.toString());
+    flywheelLeader.set(ControlMode.PercentOutput, 0);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
 
-    rpm.updateValue(ticksToRPM(flywheelLeader.getSelectedSensorVelocity()));
-    log();
+    rpm.updateValue(MathUtils.ticksToRPM(flywheelLeader.getSelectedSensorVelocity(),
+        Constants.Flywheel.TICKS_PER_REVOLUTION, Constants.Flywheel.GEAR_RATIO));
+    targetAng = getRequiredAng();
 
     // Sets state periodically
-    switch(this.state)
+    if(shoot)
     {
-      case OFF:
-        stopFly();
-        stopHood();
-        break;
-      case SPEEDING:
-        flywheelLeader.set(ControlMode.Velocity, rpmToTicks(targetRPM));
-        hoodMotor.set(ControlMode.Position, degreesToTicks(targetAng));
-        SmartDashboard.putNumber("target rpm", targetRPM);
-        SmartDashboard.putNumber("target angle", targetAng);
+      flywheelLeader.set(ControlMode.Velocity, MathUtils.rpmToTicks(targetRPM, 
+          Constants.Flywheel.GEAR_RATIO));
 
-        if(allWithinError(targetRPM, Constants.Flywheel.ACCEPTABLE_ERROR))
-        {
-          setState(ShooterState.ATSPEED);
-        }
-        break;
-      case ATSPEED:
-        break;
+      log("Current RPM", getCurrentRPM());
+      log("Desired RPM", targetRPM);
+      log("Shoot", String.valueOf(shoot));
     }
+    else
+    {
+      stopFlywheel();
+    }
+
+    // Adjust Hood continuously while not shooting 
+    if(!shoot)
+    {
+      hoodMotor.set(ControlMode.Position, MathUtils.degreesToTicks(targetAng, 
+            Constants.Hood.ENCODER_TICKS, Constants.Flywheel.GEAR_RATIO));
+    }
+  }
+
+  public void setShot(boolean _shoot)
+  {
+    if(_shoot)
+    {
+      shoot = true;
+      targetRPM = getRequiredRPM();
+
+      log("Target RPM", targetRPM);
+      log("Target Angle", targetAng);
+    }
+    else
+    {
+      shoot = false;
+    }
+  }
+
+  public boolean isReady()
+  {
+    return allWithinError(targetRPM, Constants.Flywheel.ACCEPTABLE_ERROR);
   }
 
   public double getRequiredRPM()
   {
     // metric values will be used until return
-    double distance = limelight.getDistanceFromTarget()/METERS_TO_IN;
+    double distance = limelight.getDistanceFromTarget()/Constants.Flywheel.METERS_TO_IN;
 
     // distance from center of hub
     double dx = distance + 24/39.3701;
@@ -211,13 +170,13 @@ public class Shooter extends SubsystemBase {
       vel_proj = 0.2546 * Math.pow(dx, 2) - 0.0295 * dx + 7.0226;
     }
     
-    return 60 * METERS_TO_IN * vel_proj / (Constants.Flywheel.RADIUS * 2 * Math.PI);
+    return 60 * vel_proj / (Constants.Flywheel.RADIUS * 2 * Math.PI);
   }
 
   public double getRequiredAng()
   {
     // metric values will be used until return
-    double distance = limelight.getDistanceFromTarget()/METERS_TO_IN;
+    double distance = limelight.getDistanceFromTarget()/Constants.Flywheel.METERS_TO_IN;
 
     // distance from center of hub
     double dx = distance + 24/39.3701;
@@ -225,22 +184,14 @@ public class Shooter extends SubsystemBase {
     // function to get theta value
     double angle_proj = 0;
 
+    // Set the angle from 0 to 20 (60 to 80) based on the distance
     if(dx<=2.78)
     {
-      angle_proj = 5.6845 * Math.pow(dx, 2) - 33.067 * dx + 109.07;
+      angle_proj = 5.6845 * Math.pow(dx, 2) - 33.067 * dx + 109.07 - 60;
     }
     else
     {
-      angle_proj = 60;
-    }
-    
-    if(angle_proj>80)
-    {
-      angle_proj = 80;
-    }
-    else if(angle_proj<60)
-    {
-      angle_proj = 60;
+      angle_proj = 0;
     }
 
     return angle_proj;
@@ -253,5 +204,15 @@ public class Shooter extends SubsystemBase {
      */
     private boolean allWithinError(double target, double acceptableError) {
       return Math.abs(rpm.getAverage() - target) <= acceptableError;
+  }
+
+  public void log(String name, double value)
+  {
+    SmartDashboard.putNumber(name, value);
+  }
+
+  public void log(String name, String text)
+  {
+    SmartDashboard.putString(name, text);
   }
 }
