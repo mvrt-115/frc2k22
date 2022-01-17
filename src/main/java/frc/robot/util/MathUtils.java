@@ -44,8 +44,7 @@ public class MathUtils
      * @param wheelCircumference also another Constants.java number
      * @return the meters the motor(s) have traveled
      */
-    public static double convertTicksToMeters(double ticks, double ticksPerRotation, double gearRatio, double wheelCircumference)
-    {
+    public static double convertTicksToMeters(double ticks, double ticksPerRotation, double gearRatio, double wheelCircumference) {
         // Conversion big braining:
         // You are given ticks
         // Divide ticks by ticksPerRotation in order to get rotations
@@ -68,8 +67,7 @@ public class MathUtils
      * @param wheelCircumference also another Constants.java number
      * @return metersPerSecond speed in m/s (metric system ftw)
      */
-    public static double RPMtoMetersPerSecond(double ticksPer100ms, double ticksPerRotation, double gearRatio, double wheelCircumference)
-    {
+    public static double RPMtoMetersPerSecond(double ticksPer100ms, double ticksPerRotation, double gearRatio, double wheelCircumference) {
         // Conversion big braining:
         // You are given ticks per 100 ms (or 0.1 s)
         // Multiply by 10 in order to get ticks per second
@@ -86,8 +84,7 @@ public class MathUtils
         return metersPerSecond;
     }
 
-    public static double inchesToMeters(double inches)
-    {
+    public static double inchesToMeters(double inches) {
         return inches * 0.0254; //no way it's Team 254 :O
     }
 }

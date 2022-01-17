@@ -59,10 +59,6 @@ public final class Constants {
         public static final double kD = 0;
         public static final double kFF = 0;
 
-        //for ramsete controller
-        public static final double kB = 0.0;
-        public static final double kZeta = 0.0;
-
         //values to be determined after the robot is characterized
         public static final double kS = 0.1; //units: Volts
         public static final double kV = 0.1; //units: Volts * Seconds / Meters

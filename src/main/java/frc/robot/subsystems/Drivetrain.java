@@ -30,6 +30,7 @@ import frc.robot.util.MathUtils;
 import frc.robot.util.TalonFactory;
 
 public class Drivetrain extends SubsystemBase {
+    
     public static enum DrivetrainState {
         AUTON_PATH, JOYSTICK_DRIVE
     }
@@ -59,14 +60,27 @@ public class Drivetrain extends SubsystemBase {
             leftMaster = TalonFactory.createTalonFX(Constants.Drivetrain.kPracLeftMasterId, false);
             rightFollower = TalonFactory.createTalonFX(Constants.Drivetrain.kPracRightFollowerId, true);
             leftFollower = TalonFactory.createTalonFX(Constants.Drivetrain.kPracLeftFollowerId, false);
-
-            //ask el vincent or sohan if we need to do the configFactoryDefaults and other such method stuff
         } else {
             rightMaster = TalonFactory.createTalonFX(Constants.Drivetrain.kCompRightMasterId, true);
             leftMaster = TalonFactory.createTalonFX(Constants.Drivetrain.kCompLeftMasterId, false);
             rightFollower = TalonFactory.createTalonFX(Constants.Drivetrain.kCompRightFollowerId, true);
             leftFollower = TalonFactory.createTalonFX(Constants.Drivetrain.kCompLeftFollowerId, false);
         }
+
+        rightMaster.configFactoryDefault();
+        rightFollower.configFactoryDefault();
+        leftMaster.configFactoryDefault();
+        leftFollower.configFactoryDefault();
+
+        rightMaster.setInverted(true); //I think we need these because we reset the motors
+        rightFollower.setInverted(true);
+        leftMaster.setInverted(false);
+        leftFollower.setInverted(false);
+
+        rightMaster.configSupplyCurrentLimit(Constants.kCurrentLimit, Constants.kTimeoutMs);
+        rightFollower.configSupplyCurrentLimit(Constants.kCurrentLimit, Constants.kTimeoutMs);
+        leftMaster.configSupplyCurrentLimit(Constants.kCurrentLimit, Constants.kTimeoutMs);
+        leftFollower.configSupplyCurrentLimit(Constants.kCurrentLimit, Constants.kTimeoutMs);
 
         rightFollower.follow(rightMaster);
         leftFollower.follow(leftMaster);
@@ -81,7 +95,6 @@ public class Drivetrain extends SubsystemBase {
        
         leftController = new PIDController(Constants.Drivetrain.kP, Constants.Drivetrain.kI, Constants.Drivetrain.kD);
         rightController = new PIDController(Constants.Drivetrain.kP, Constants.Drivetrain.kI, Constants.Drivetrain.kD);
-
     }
 
     /** 
@@ -187,10 +200,9 @@ public class Drivetrain extends SubsystemBase {
      * @param leftVoltage   voltage to the left motors
      * @param rightVoltage  voltage to the right motors
      */
-    public void setOutputVoltage(double leftVoltage, double rightVoltage)
-    {
+    public void setOutputVoltage(double leftVoltage, double rightVoltage) {
         SmartDashboard.putNumber("Left Voltage: ", leftVoltage);
-        setDrivetrainMotorSpeed(leftVoltage/10.0, rightVoltage/10.0);
+        setDrivetrainMotorSpeed(leftVoltage/Constants.kVoltageComp, rightVoltage/Constants.kVoltageComp);
     }
 
     /**
@@ -214,12 +226,11 @@ public class Drivetrain extends SubsystemBase {
      * @param trajectory the trajectory to follow
      * @return RamseteCommand, the ramsete command to run the auton stuff
      */
-    public Command getRamseteCommand(Trajectory trajectory)
-    {
+    public Command getRamseteCommand(Trajectory trajectory) {
         RamseteCommand command = new RamseteCommand(
             trajectory, 
             this::getPose, 
-            new RamseteController(Constants.Drivetrain.kB, Constants.Drivetrain.kZeta), 
+            new RamseteController(2.0, 7.0), //values used from 2k21 rewrite
             getFeedForward(), 
             getKinematics(), 
             this::getSpeeds, 
@@ -272,16 +283,14 @@ public class Drivetrain extends SubsystemBase {
     /** 
      * Returns the Right PID Controller
      */
-    public PIDController getRightPIDController()
-    {
+    public PIDController getRightPIDController() {
         return rightController;
     }
 
     /** 
      * Returns the Left PID Controller
      */
-    public PIDController getLeftPIDController()
-    {
+    public PIDController getLeftPIDController() {
         return leftController;
     }
 
@@ -289,8 +298,7 @@ public class Drivetrain extends SubsystemBase {
      * Returns the differential drive's speeds (for the ramsete command)
      * @return DifferentialDriveWheelSpeeds for the left and right wheels
      */
-    public DifferentialDriveWheelSpeeds getSpeeds()
-    {
+    public DifferentialDriveWheelSpeeds getSpeeds() {
         double leftSpeed = MathUtils.RPMtoMetersPerSecond(
             leftMaster.getSelectedSensorVelocity(), 
             Constants.Drivetrain.kTicksPerRevolution, 
@@ -310,8 +318,7 @@ public class Drivetrain extends SubsystemBase {
      * Returns the DifferentialDriveKinematics
      * @return kinematics
      */
-    public DifferentialDriveKinematics getKinematics()
-    {
+    public DifferentialDriveKinematics getKinematics() {
         return kinematics;
     }
 
@@ -319,8 +326,7 @@ public class Drivetrain extends SubsystemBase {
      * Returns the feed forward
      * @return feedforward
      */
-    public SimpleMotorFeedforward getFeedForward()
-    {
+    public SimpleMotorFeedforward getFeedForward() {
         return feedforward;
     }
 
@@ -328,8 +334,7 @@ public class Drivetrain extends SubsystemBase {
      * Returns the current pose of the robot
      * @return pose, the Robot pose
      */
-    public Pose2d getPose()
-    {
+    public Pose2d getPose() {
         return pose;
     }
 
@@ -351,8 +356,7 @@ public class Drivetrain extends SubsystemBase {
     /** 
      * Resets the encoders 
      */
-    public void resetEncoders()
-    {
+    public void resetEncoders() {
         leftMaster.setSelectedSensorPosition(0);
         leftFollower.setSelectedSensorPosition(0);
         rightMaster.setSelectedSensorPosition(0);
