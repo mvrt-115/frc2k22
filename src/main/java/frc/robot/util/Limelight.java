@@ -5,7 +5,10 @@
 package frc.robot.util;
 
 import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.NetworkTableType;
+import edu.wpi.first.networktables.NetworkTableValue;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -25,10 +28,13 @@ public class Limelight extends SubsystemBase {
 
   /** Creates a new LimelightWrapper. */
   public Limelight() {
+    
     limelight = NetworkTableInstance.getDefault().getTable("limelight");
     ty = new RollingAverage(20);
     tx = new RollingAverage(20);
 
+    setLED(LED_STATE.DEFAULT);
+    setPipeline(CAM_MODE.VISION_WIDE);
   }
 
   @Override
@@ -41,8 +47,10 @@ public class Limelight extends SubsystemBase {
   }
 
   public void log() {
-    SmartDashboard.putNumber("tx", tx.getAverage());
-    SmartDashboard.putNumber("ty", ty.getAverage());
+    SmartDashboard.putNumber("tx", limelight.getEntry("tx").getDouble(0));
+    SmartDashboard.putNumber("ty", limelight.getEntry("ty").getDouble(0));
+    
+    // System.out.println(NetworkTableInstance.getDefault().getEntry("limelight").getNumber(0));
   }
 
   public void setLED(LED_STATE newState) {
@@ -68,10 +76,10 @@ public class Limelight extends SubsystemBase {
         limelight.getEntry("pipeline").setNumber(0);
         break;
       case VISION_ZOOM:
-        limelight.getEntry("pipeline").setNumber(1);
+        limelight.getEntry("pipeline").setNumber(0);
         break;
       case DRIVER:
-        limelight.getEntry("pipeline").setNumber(2);
+        limelight.getEntry("pipeline").setNumber(0);
         break;
     }
   }
@@ -82,8 +90,12 @@ public class Limelight extends SubsystemBase {
    * @param rollingAvg  The rolling average to update (ty or tx)
    */
   private void updateEntry(String key, RollingAverage rollingAvg) {
-    if (targetsFound())
-      rollingAvg.updateValue(limelight.getEntry(key).getDouble(0.0));
+    // if (targetsFound()) {
+      // System.out.println("got value: " + key + " " +limelight.);
+      rollingAvg.updateValue(limelight.getEntry(key).getDouble(0));
+     System.out.println(limelight.getEntry(key).getDouble(0));
+    // }
+      
   }
 
   /**
@@ -101,7 +113,7 @@ public class Limelight extends SubsystemBase {
    * @return angle (degrees)
    */
   public double getHorizontalOffset() {
-    return tx.getAverage();
+    return limelight.getEntry("tx").getDouble(0);//tx.getAverage();
   }
 
   /**

@@ -72,25 +72,25 @@ public class Turret extends SubsystemBase {
   }
 
   public void target() {
-    if(limelight.targetsFound()) {
+    // if(limelight.targetsFound()) {
       // find target position by using current position and data from limelight
       targetDegrees = getCurrentPositionDegrees() + limelight.getHorizontalOffset();
-      changePIDSlot(limelight.getHorizontalOffset());
+      // changePIDSlot(limelight.getHorizontalOffset());
 
       deltaE.update(targetDegrees - getCurrentPositionDegrees());
       
-      if(targetDegrees > Constants.Turret.kMaxAngle + (deltaE.get() > Constants.Turret.kEThreshold ? 0 : Constants.Turret.kLowETurnThreshold))
-        targetDegrees = Constants.Turret.kMinAngle + 5;
-      else if (targetDegrees < Constants.Turret.kMinAngle - (deltaE.get() < -Constants.Turret.kEThreshold ? 0 : Constants.Turret.kLowETurnThreshold))
-        targetDegrees = Constants.Turret.kMaxAngle - 5;
+      // if(targetDegrees > Constants.Turret.kMaxAngle + (deltaE.get() > Constants.Turret.kEThreshold ? 0 : Constants.Turret.kLowETurnThreshold))
+      //   targetDegrees = Constants.Turret.kMinAngle + 5;
+      // else if (targetDegrees < Constants.Turret.kMinAngle - (deltaE.get() < -Constants.Turret.kEThreshold ? 0 : Constants.Turret.kLowETurnThreshold))
+      //   targetDegrees = Constants.Turret.kMaxAngle - 5;
       
       // PID !!
-      turret.set(ControlMode.Position, targetDegrees);
-    } else if(!canShoot()) {
-      // search by turning
-      changeDirectionIfNeeded();      
-      setMotorOutput(direction * 0.4);
-    }
+      turret.set(ControlMode.Position, MathUtils.degreesToTicks(targetDegrees, Constants.Turret.kGearRatio, Constants.Turret.kTicksPerRevolution));
+    // } else if(!canShoot()) {
+    //   // search by turning
+    //   changeDirectionIfNeeded();      
+    //   // setMotorOutput(direction * 0.3499);
+    // }
   }
 
   /**
@@ -160,5 +160,6 @@ public class Turret extends SubsystemBase {
     SmartDashboard.putNumber("Turret Position (Degrees)", getCurrentPositionDegrees());
     SmartDashboard.putNumber("Horizontal Error", limelight.getHorizontalOffset());
     SmartDashboard.putString("Turret State", state.toString());
+    SmartDashboard.putNumber("Turret Output", turret.getMotorOutputPercent());
   }
 }

@@ -32,7 +32,7 @@ public final class Constants {
 
         // ids get from pheonix tuner once drivetrain is done
         public static final int kCompLeftMasterId = 1;
-        public static final int kCompRightMasterId = 2;
+        public static final int kCompRightMasterId = 38;
         public static final int kCompLeftFollowerId = 3;
         public static final int kCompRightFollowerId = 4;
 
@@ -77,11 +77,11 @@ public final class Constants {
         public static final double kLowETurnThreshold = 55; // degrees; limelight x fov = 59.6
 
         // for large angles > 5-10
-        public static final double kPLarge = 0.1;//0.19;
+        public static final double kPLarge = 0.05;//0.19;
         public static final double kILarge = 0;
         public static final double kDLarge = 0;//0.0005;
 
-        public static final double kP = 0.1;//0.20;
+        public static final double kP = 0.05;//0.20;
         public static final double kI = 0;//0.0009;
         public static final double kD = 0;//0.00007;
     }
