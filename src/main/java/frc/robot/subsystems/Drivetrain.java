@@ -1,18 +1,29 @@
+/**
+ * Drivetrain.java
+ * Literally what the name says - the code for the Drivetrain Subsystem
+ */
+
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motion.SetValueMotionProfile;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Twist2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.MathUtils;
@@ -32,9 +43,15 @@ public class Drivetrain extends SubsystemBase {
 
     private AHRS gyro;
 
+    //Auton Stuff
     private Pose2d pose;
     private DifferentialDriveOdometry odometry;
     private Field2d field;
+    private SimpleMotorFeedforward feedforward;
+    private DifferentialDriveKinematics kinematics;
+
+    private PIDController leftController;
+    private PIDController rightController;
 
     public Drivetrain() {
         if (Constants.kIsPracticeBot) {
@@ -42,6 +59,8 @@ public class Drivetrain extends SubsystemBase {
             leftMaster = TalonFactory.createTalonFX(Constants.Drivetrain.kPracLeftMasterId, false);
             rightFollower = TalonFactory.createTalonFX(Constants.Drivetrain.kPracRightFollowerId, true);
             leftFollower = TalonFactory.createTalonFX(Constants.Drivetrain.kPracLeftFollowerId, false);
+
+            //ask el vincent or sohan if we need to do the configFactoryDefaults and other such method stuff
         } else {
             rightMaster = TalonFactory.createTalonFX(Constants.Drivetrain.kCompRightMasterId, true);
             leftMaster = TalonFactory.createTalonFX(Constants.Drivetrain.kCompLeftMasterId, false);
@@ -56,26 +75,19 @@ public class Drivetrain extends SubsystemBase {
         gyro = new AHRS(SPI.Port.kMXP);
         odometry = new DifferentialDriveOdometry(getGyroAngle());
         field = new Field2d();
+
+        feedforward = new SimpleMotorFeedforward(Constants.Drivetrain.kS, Constants.Drivetrain.kV, Constants.Drivetrain.kA);
+        kinematics = new DifferentialDriveKinematics(MathUtils.inchesToMeters(Constants.Drivetrain.kTrackWidthInches)); //because kTrackWidthInches is in, well, inches (duh) lol
+       
+        leftController = new PIDController(Constants.Drivetrain.kP, Constants.Drivetrain.kI, Constants.Drivetrain.kD);
+        rightController = new PIDController(Constants.Drivetrain.kP, Constants.Drivetrain.kI, Constants.Drivetrain.kD);
+
     }
 
-    /**
-     * Changes the state of the drivetrain
-     * 
-     * @param newState the value of the new state
+    /** 
+     * Method for the drivetrain to align to the ball detected using a camera
+     * (Basically turns the robot towards the ball as the corresponding button is held down)
      */
-    public void setState(DrivetrainState newState) {
-        state = newState;
-    }
-
-    /**
-     * Returns the current state of the drivetrain
-     * 
-     * @return the current state
-     */
-    public DrivetrainState getState() {
-        return state;
-    }
-
     public void alignToBall() {
         int error = getErrorInPixels();
         if (Math.abs(error) > 0 && Math.abs(error) < Constants.Drivetrain.kAcceptableError) {
@@ -86,7 +98,7 @@ public class Drivetrain extends SubsystemBase {
 
     /**
      * Method to be implemented by Sohan
-     * 
+     * Works with alignToBall() 
      * @return Distance from where the robot is pointing to the ball in pixels
      */
     public int getErrorInPixels() {
@@ -132,31 +144,11 @@ public class Drivetrain extends SubsystemBase {
         setDrivetrainMotorSpeed(left / scaling_factor, right / scaling_factor);
     }
 
-    /**
-     * Sets a voltage percentage output to each motor given values for left and
-     * right motors
-     * 
-     * @param left  the percentage [-1, 1] for the left motors
-     * @param right the percentage [-1, 1] from the right motors
-     */
-    public void setDrivetrainMotorSpeed(double left, double right) {
-        leftMaster.set(ControlMode.PercentOutput, left);
-        leftFollower.set(ControlMode.PercentOutput, left);
-        rightFollower.set(ControlMode.PercentOutput, right);
-        rightMaster.set(ControlMode.PercentOutput, right);
-    }
-
-    /**
-     * Stops the drivetrain
-     */
-    public void stopDrivetrainMotors() {
-        setDrivetrainMotorSpeed(0, 0);
-    }
-
     @Override
     public void periodic() {
         pose = odometry.update(getGyroAngle(), getDistanceTravelled(leftMaster, leftFollower),
                 getDistanceTravelled(rightMaster, rightFollower));
+        field.setRobotPose(pose);
         log();
     }
 
@@ -174,16 +166,70 @@ public class Drivetrain extends SubsystemBase {
         SmartDashboard.putNumber("Right Distance Traveled", getDistanceTravelled(rightMaster, rightFollower));
     }
 
-    /** Getters and Setters */
+    /* GETTERS AND SETTERS (AND RESETTERS) */
 
-    /** Resets the gyro */
-    public void resetGyro() {
-        gyro.reset();
+    /**
+     * Sets a voltage percentage output to each motor given values for left and
+     * right motors
+     * 
+     * @param left  the percentage [-1, 1] for the left motors
+     * @param right the percentage [-1, 1] from the right motors
+     */
+    public void setDrivetrainMotorSpeed(double left, double right) {
+        leftMaster.set(ControlMode.PercentOutput, left);
+        leftFollower.set(ControlMode.PercentOutput, left);
+        rightFollower.set(ControlMode.PercentOutput, right);
+        rightMaster.set(ControlMode.PercentOutput, right);
     }
 
-    /** Reset the odometry */
-    public void resetOdometry() {
-        odometry.update(new Rotation2d(), 0, 0);
+    /**
+     * Sets the motor output as a percentage of the supplied voltage.
+     * @param leftVoltage   voltage to the left motors
+     * @param rightVoltage  voltage to the right motors
+     */
+    public void setOutputVoltage(double leftVoltage, double rightVoltage)
+    {
+        SmartDashboard.putNumber("Left Voltage: ", leftVoltage);
+        setDrivetrainMotorSpeed(leftVoltage/10.0, rightVoltage/10.0);
+    }
+
+    /**
+     * Stops the drivetrain.
+     */
+    public void stopDrivetrainMotors() {
+        setDrivetrainMotorSpeed(0, 0);
+    }
+
+    /**
+     * Changes the state of the drivetrain
+     * 
+     * @param newState the value of the new state
+     */
+    public void setState(DrivetrainState newState) {
+        state = newState;
+    }
+
+    /**
+     * The holy mother of all the Auton stuff
+     * @param trajectory the trajectory to follow
+     * @return RamseteCommand, the ramsete command to run the auton stuff
+     */
+    public Command getRamseteCommand(Trajectory trajectory)
+    {
+        RamseteCommand command = new RamseteCommand(
+            trajectory, 
+            this::getPose, 
+            new RamseteController(Constants.Drivetrain.kB, Constants.Drivetrain.kZeta), 
+            getFeedForward(), 
+            getKinematics(), 
+            this::getSpeeds, 
+            getLeftPIDController(), 
+            getRightPIDController(), 
+            this::setOutputVoltage, 
+            this
+        );
+
+        return command;
     }
 
     /**
@@ -210,7 +256,106 @@ public class Drivetrain extends SubsystemBase {
         return MathUtils.convertTicksToMeters(
                 ticks,
                 Constants.Drivetrain.kTicksPerRevolution,
-                Constants.Drivetrain.kgearRatio,
+                Constants.Drivetrain.kGearRatio,
                 Constants.Drivetrain.kwheelCircumference);
+    }
+
+    /**
+     * Returns the current state of the drivetrain
+     * 
+     * @return the current state
+     */
+    public DrivetrainState getState() {
+        return state;
+    }
+
+    /** 
+     * Returns the Right PID Controller
+     */
+    public PIDController getRightPIDController()
+    {
+        return rightController;
+    }
+
+    /** 
+     * Returns the Left PID Controller
+     */
+    public PIDController getLeftPIDController()
+    {
+        return leftController;
+    }
+
+    /**
+     * Returns the differential drive's speeds (for the ramsete command)
+     * @return DifferentialDriveWheelSpeeds for the left and right wheels
+     */
+    public DifferentialDriveWheelSpeeds getSpeeds()
+    {
+        double leftSpeed = MathUtils.RPMtoMetersPerSecond(
+            leftMaster.getSelectedSensorVelocity(), 
+            Constants.Drivetrain.kTicksPerRevolution, 
+            Constants.Drivetrain.kGearRatio,
+            Constants.Drivetrain.kwheelCircumference);
+        
+        double rightSpeed = MathUtils.RPMtoMetersPerSecond(
+            leftMaster.getSelectedSensorVelocity(), 
+            Constants.Drivetrain.kTicksPerRevolution, 
+            Constants.Drivetrain.kGearRatio,
+            Constants.Drivetrain.kwheelCircumference);
+
+        return new DifferentialDriveWheelSpeeds(leftSpeed, rightSpeed);
+    }
+
+    /** 
+     * Returns the DifferentialDriveKinematics
+     * @return kinematics
+     */
+    public DifferentialDriveKinematics getKinematics()
+    {
+        return kinematics;
+    }
+
+    /**
+     * Returns the feed forward
+     * @return feedforward
+     */
+    public SimpleMotorFeedforward getFeedForward()
+    {
+        return feedforward;
+    }
+
+    /**
+     * Returns the current pose of the robot
+     * @return pose, the Robot pose
+     */
+    public Pose2d getPose()
+    {
+        return pose;
+    }
+
+    /** 
+     * Resets the gyro 
+     */
+    public void resetGyro() {
+        gyro.reset();
+    }
+
+    /** 
+     * Reset the odometry and the encoders
+     */
+    public void resetOdometry() {
+        resetEncoders();
+        odometry.update(new Rotation2d(), 0, 0);
+    }
+
+    /** 
+     * Resets the encoders 
+     */
+    public void resetEncoders()
+    {
+        leftMaster.setSelectedSensorPosition(0);
+        leftFollower.setSelectedSensorPosition(0);
+        rightMaster.setSelectedSensorPosition(0);
+        rightFollower.setSelectedSensorPosition(0);
     }
 }

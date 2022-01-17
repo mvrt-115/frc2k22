@@ -24,7 +24,7 @@ public class RobotContainer {
   private final Limelight limelight = new Limelight();
   private final Drivetrain drivetrain = new Drivetrain();
   private final Climber climber = new Climber();
-  private final Intake intake = new Intake(drivetrain);
+  private final Intake intake = new Intake();
   private final Shooter shooter = new Shooter(limelight);
   private final Turret turret = new Turret(limelight);
   private final Storage storage = new Storage();
@@ -61,13 +61,14 @@ public class RobotContainer {
 
     intakeBalls.whenPressed(new IntakeBalls(intake)).whenReleased(new StopIntaking(intake));
     expelBalls.whenPressed(new ExpelBalls(storage));
-    alignDrivetrain.whenPressed(new AlignIntakeToBall(drivetrain));
+    alignDrivetrain.whenPressed(new AlignIntakeToBall(drivetrain, true)).whenReleased(new AlignIntakeToBall(drivetrain, false));
     /*
-      Shoot: 5(1 indexed)
-      Intake: 6(1 indexed)
+      Shoot: 4
+      Intake: 5
       Expell Balls: <find>
       Climb: <find for operator>
       Turret Manual: ????
+      Align To ball: 0
     */
 
   }

@@ -51,13 +51,22 @@ public final class Constants {
         
         //constants for getting distance traveled by motors
         public static final double kTicksPerRevolution = 1.0; //RANDOM VALUES
-        public static final double kgearRatio = 10.0;
+        public static final double kGearRatio = 10.0;
         public static final double kwheelCircumference = 5.0;
 
         public static final double kP = 0;
         public static final double kI = 0;
         public static final double kD = 0;
         public static final double kFF = 0;
+
+        //for ramsete controller
+        public static final double kB = 0.0;
+        public static final double kZeta = 0.0;
+
+        //values to be determined after the robot is characterized
+        public static final double kS = 0.1; //units: Volts
+        public static final double kV = 0.1; //units: Volts * Seconds / Meters
+        public static final double kA = 0.1; //units: Volts * Seconds^2 / Meters
 
         //change values later
         public static final int kAcceptableError = 10;
