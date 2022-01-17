@@ -187,11 +187,20 @@ public class Shooter extends SubsystemBase
     // Set the angle from 0 to 20 (60 to 80) based on the distance
     if(dx<=2.78)
     {
-      angle_proj = 5.6845 * Math.pow(dx, 2) - 33.067 * dx + 109.07 - 60;
+      angle_proj = 20 - (5.6845 * Math.pow(dx, 2) - 33.067 * dx + 109.07 - 60);
+      
+      if(angle_proj>20)
+      {
+        angle_proj = 20;
+      }
+      else if(angle_proj<0)
+      {
+        angle_proj = 0;
+      }
     }
     else
     {
-      angle_proj = 0;
+      angle_proj = 20;
     }
 
     return angle_proj;
