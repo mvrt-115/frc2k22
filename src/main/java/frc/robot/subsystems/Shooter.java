@@ -170,7 +170,7 @@ public class Shooter extends SubsystemBase
       vel_proj = 0.2546 * Math.pow(dx, 2) - 0.0295 * dx + 7.0226;
     }
     
-    return 60 * vel_proj / (Constants.Flywheel.RADIUS * 2 * Math.PI);
+    return 60 * vel_proj * Constants.Flywheel.METERS_TO_IN / (Constants.Flywheel.RADIUS * 2 * Math.PI);
   }
 
   public double getRequiredAng()
