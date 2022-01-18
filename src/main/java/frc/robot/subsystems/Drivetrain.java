@@ -67,21 +67,6 @@ public class Drivetrain extends SubsystemBase {
             leftFollower = TalonFactory.createTalonFX(Constants.Drivetrain.kCompLeftFollowerId, false);
         }
 
-        rightMaster.configFactoryDefault();
-        rightFollower.configFactoryDefault();
-        leftMaster.configFactoryDefault();
-        leftFollower.configFactoryDefault();
-
-        rightMaster.setInverted(true); //I think we need these because we reset the motors
-        rightFollower.setInverted(true);
-        leftMaster.setInverted(false);
-        leftFollower.setInverted(false);
-
-        rightMaster.configSupplyCurrentLimit(Constants.kCurrentLimit, Constants.kTimeoutMs);
-        rightFollower.configSupplyCurrentLimit(Constants.kCurrentLimit, Constants.kTimeoutMs);
-        leftMaster.configSupplyCurrentLimit(Constants.kCurrentLimit, Constants.kTimeoutMs);
-        leftFollower.configSupplyCurrentLimit(Constants.kCurrentLimit, Constants.kTimeoutMs);
-
         rightFollower.follow(rightMaster);
         leftFollower.follow(leftMaster);
 
@@ -114,6 +99,7 @@ public class Drivetrain extends SubsystemBase {
      * Works with alignToBall() 
      * @return Distance from where the robot is pointing to the ball in pixels
      */
+    // TODO SOHAN SHINGADE DO THIS
     public int getErrorInPixels() {
         return 0;
     }
