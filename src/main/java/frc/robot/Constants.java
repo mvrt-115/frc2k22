@@ -109,5 +109,6 @@ public final class Constants {
         public static final double TICKS_PER_REVOLUTION = 2048;
         public static final int NUM_AVG = 5;
         public static final double GEAR_RATIO = 20.0/34.0; // Can change
+        public static final double METERS_TO_IN = 39.3701;
     }
 }
