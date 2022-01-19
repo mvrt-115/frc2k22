@@ -70,11 +70,11 @@ public final class Constants {
     public static class Turret {
         public static final double kGearRatio = 156.25;
         public static final double kTicksPerRevolution = 4096;
-        public static final double kMinAngle = -135; // degrees
-        public static final double kMaxAngle = 135; // degrees
+        public static final double kMinAngle = -180; // degrees
+        public static final double kMaxAngle = 180; // degrees
 
         public static final double kEThreshold = 60;
-        public static final double kLowETurnThreshold = 55; // degrees; limelight x fov = 59.6
+        public static final double kLowETurnThreshold = 0; // degrees; limelight x fov = 59.6
 
         // for large angles > 5-10
         public static final double kPLarge = 0.05;//0.19;

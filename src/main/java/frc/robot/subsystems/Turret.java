@@ -42,7 +42,12 @@ public class Turret extends SubsystemBase {
     turret.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 1, Constants.kTimeoutMs);
 
     turret.config_kP(0, Constants.Turret.kP);
+    turret.config_kI(0, Constants.Turret.kI);
+    turret.config_kD(0, Constants.Turret.kD);
+
     turret.config_kP(1, Constants.Turret.kPLarge);
+    turret.config_kI(1, Constants.Turret.kILarge);
+    turret.config_kD(1, Constants.Turret.kDLarge);
 
     turret.setSelectedSensorPosition(0);
 
@@ -68,29 +73,35 @@ public class Turret extends SubsystemBase {
     else 
       setMotorOutput(0);
 
+    // int deg = 10;
+
+    // changePIDSlot(deg);
+
+    // turret.set(ControlMode.Position, MathUtils.degreesToTicks(getCurrentPositionDegrees() + deg, Constants.Turret.kGearRatio, Constants.Turret.kTicksPerRevolution));
+
     log();
   }
 
   public void target() {
-    // if(limelight.targetsFound()) {
+    if(limelight.targetsFound()) {
       // find target position by using current position and data from limelight
       targetDegrees = getCurrentPositionDegrees() + limelight.getHorizontalOffset();
-      // changePIDSlot(limelight.getHorizontalOffset());
+      changePIDSlot(limelight.getHorizontalOffset());
 
       deltaE.update(targetDegrees - getCurrentPositionDegrees());
       
-      // if(targetDegrees > Constants.Turret.kMaxAngle + (deltaE.get() > Constants.Turret.kEThreshold ? 0 : Constants.Turret.kLowETurnThreshold))
-      //   targetDegrees = Constants.Turret.kMinAngle + 5;
-      // else if (targetDegrees < Constants.Turret.kMinAngle - (deltaE.get() < -Constants.Turret.kEThreshold ? 0 : Constants.Turret.kLowETurnThreshold))
-      //   targetDegrees = Constants.Turret.kMaxAngle - 5;
+      if(targetDegrees > Constants.Turret.kMaxAngle + (deltaE.get() > Constants.Turret.kEThreshold ? 0 : Constants.Turret.kLowETurnThreshold))
+        targetDegrees = Constants.Turret.kMinAngle + 5;
+      else if (targetDegrees < Constants.Turret.kMinAngle - (deltaE.get() < -Constants.Turret.kEThreshold ? 0 : Constants.Turret.kLowETurnThreshold))
+        targetDegrees = Constants.Turret.kMaxAngle - 5;
       
       // PID !!
       turret.set(ControlMode.Position, MathUtils.degreesToTicks(targetDegrees, Constants.Turret.kGearRatio, Constants.Turret.kTicksPerRevolution));
-    // } else if(!canShoot()) {
-    //   // search by turning
-    //   changeDirectionIfNeeded();      
-    //   // setMotorOutput(direction * 0.3499);
-    // }
+    } else if(!canShoot()) {
+      // search by turning
+      // changeDirectionIfNeeded();      
+      // setMotorOutput(direction * 0.3499);
+    }
   }
 
   /**
