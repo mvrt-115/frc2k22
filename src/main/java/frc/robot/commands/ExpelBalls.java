@@ -25,7 +25,7 @@ public class ExpelBalls extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    storage.runMotor(false);
+    storage.runMotor(true);
   }
 
   // Called once the command ends or is interrupted.
