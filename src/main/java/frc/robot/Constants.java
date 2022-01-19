@@ -48,28 +48,49 @@ public final class Constants {
     
     public static class Intake{
 
-        public static final double kTICKS_TO_BOTTOM = 0;
+        public static final double kTicksToBottom = 0;
         // the # of ticks it takes to be at the bottom when pivoting
-        public static final double kTICKS_TO_TOP = 0; // the # of ticks it takes to be at the top when pivoting
+        public static final double kTicksToTop = 0; // the # of ticks it takes to be at the top when pivoting
 
-        public static final int kPIVOT_ID = 0; // change later
-        public static final int kROLLER_ID = 0; // change later
+        public static final int kPivotID = 0; // change later
+        public static final int kRollerID = 0; // change later
 
-        public static final double kWHEELS_SPEED = 0.6;
+        public static final double kWheelSpeed = 0.6;
 
-        public static final double kPIVOT_SPEED = 0.4; // speed of intake when going up or down
-        public static final double kPIVOT_STOP_SPEED_WHEN_UP = 0.23; // speed of intake to keep it up
-        public static final double kPIVOT_STOP_SPEED_WHEN_DOWN = 0.0; // speed of intake to keep it down
+        public static final double kPivotSpeed = 0.4; // speed of intake when going up or down
+        public static final double kPivotStopSpeedWhenUp = 0.23; // speed of intake to keep it up
+        public static final double kPivotStopSpeedWhenDown = 0.0; // speed of intake to keep it down
         //change later after testing
 
-        public static final double PIVOT_SPEED_WHEN_DOWN = 0;
-        public static final double PIVOT_SPEED_WHEN_UP = 0;
-        public static final double kMARGIN_OF_ERROR_TICKS = 0;
+        public static final double kPivotSpeedWhenDown = 0;
+        public static final double kPivotSpeedWhenUp = 0;
+        public static final double kMarginOfErrorTicks = 0;
 
         // change values later
         public static final double kP = 0.0;
         public static final double kI = 0;
         public static final double kD = 0;
         public static final double kFF = 0.31;
+    }
+    public static class Shooter
+    {
+        public static final double P = 0.21;
+        public static final double I = 0;
+        public static final double D = 6.9;
+        public static final double F = 0.058;
+        public static final double GEAR_RATIO = 20.0 / 34.0;
+        public static final double ACCEPTABLE_ERROR = 100;
+        public static final int RPM_STORED = 5;
+        public static final int MAX_VOLTAGE_COMPENSATION = 10;
+        public static final int TICKS_PER_REVOLUTION = 2048;
+        public static final double FLYWHEEL_VELOCITY_COMP_MPS2 = 0;
+        public static final double FLYWHEEL_RADIUS_IN = 2;
+        public static final double FLYWHEEL_ANGLE_DEG = 70;
+    }
+    public static class Storage{
+        public static final int kBreakBeamPort = 0;
+        public static final int kMotor1ID = 0; // change value leftMaster
+        public static final int kMotor2ID = 0; // change value later
+        public static final int kMotorSpeed = 0; // change value later
     }
 }
