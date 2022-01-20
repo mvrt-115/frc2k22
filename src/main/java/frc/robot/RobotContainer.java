@@ -29,9 +29,11 @@ public class RobotContainer {
   private final Turret turret = new Turret(limelight);
 
   private Joystick driverJoystick;
-  private Joystick operatorJoystick;  
+  private static Joystick operatorJoystick;  
   
   private JoystickButton intakeBalls = new JoystickButton(operatorJoystick, 0);
+  private static JoystickButton forwardarm = new JoystickButton(operatorJoystick, 3);
+  private static JoystickButton backarm = new JoystickButton(operatorJoystick, 4);
 
   private RollingAverage throttle = new RollingAverage(50);
   private RollingAverage wheel = new RollingAverage(15);
@@ -40,8 +42,8 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    driverJoystick = new Joystick(0);
-    operatorJoystick = new Joystick(1);
+    //driverJoystick = new Joystick(0);
+    operatorJoystick = new Joystick(0);
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -56,6 +58,9 @@ public class RobotContainer {
     // the :: syntax allows us to pass in methods of a class as variables so that the command can continuously access input values
     drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
     intakeBalls.whenPressed(new IntakeBalls(intake)).whenReleased(new StopIntaking(intake));
+
+    forwardarm.whenPressed(new PivotArmForward(climber));
+    backarm.whenPressed(new PivotArmBack(climber));
   }
 
   /**
@@ -78,6 +83,16 @@ public class RobotContainer {
   public double getWheel() {
     wheel.updateValue(driverJoystick.getRawAxis(0));
     return wheel.getAverage();
+  }
+
+  public static boolean getForwardArm()
+  {
+    return forwardarm.get();
+  }
+
+  public static boolean getBackArm()
+  {
+    return backarm.get();
   }
 
   /**

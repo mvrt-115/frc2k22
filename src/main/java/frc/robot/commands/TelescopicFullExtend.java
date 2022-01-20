@@ -1,19 +1,21 @@
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
+
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Intake.IntakeState;
+import frc.robot.Constants;
+import frc.robot.subsystems.Climber;
 
-public class IntakeBalls extends CommandBase {
-  /** Creates a new RunIntake. */
-  private Intake intake;
-  public IntakeBalls(Intake intakeIn) {
+public class TelescopicFullExtend extends CommandBase {
+  /** Creates a new TelescopicFullExtend. */
+  Climber climber;
+
+  public TelescopicFullExtend(Climber climberIn) {
     // Use addRequirements() here to declare subsystem dependencies.
-    intake = intakeIn;
-    addRequirements(intake);
+    climber = climberIn;
+    addRequirements(climber);
   }
 
   // Called when the command is initially scheduled.
@@ -23,8 +25,9 @@ public class IntakeBalls extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    intake.setState(IntakeState.INTAKING);
-  }
+   // climber.leftTelescopic.setPosition(Constants.Climber.telescopicFullExtend
+ 
+   }
 
   // Called once the command ends or is interrupted.
   @Override

@@ -5,20 +5,26 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.InvertType;
+import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
+import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Climber extends SubsystemBase {
 
-  public BaseTalon pivot; //motor for both pivoting arms
-  public BaseTalon leftTelescopic, rightTelescopic; // motors for each telescopic arm, controlling extending and collapsing motions
-  public WPI_PigeonIMU gyro; //gyroscopic sensor for detecting angle moved through on the pivoting arms
-  public DigitalInput pivotLimitSwitch, teleLimitSwitch; //limit switches for detecting whether robot is hooked on rungs or not for each type of arm
+  public TalonFX pivot; //motor for both pivoting arms
+  public TalonFX leftTelescopic, rightTelescopic; // motors for each telescopic arm, controlling extending and collapsing motions
+  public DigitalInput leftPivotProximity, rightPivotProximity, leftTelescopicProximity, rightTelescopicProximity; //limit switches 
+    //for detecting whether robot is hooked on rungs or not for each type of arm
+  public AnalogPotentiometer potentiometer; //potentiometer to measure the turn of the pivoting arm
 
   /**
    * Initializes all objects and reconfigures all motors to requirements
@@ -29,23 +35,45 @@ public class Climber extends SubsystemBase {
     leftTelescopic = new TalonFX(Constants.Climber.leftTelescopicID);
     rightTelescopic = new TalonFX(Constants.Climber.rightTelescopicID);
     
-    pivotLimitSwitch = new DigitalInput(Constants.Climber.pivotLimitSwitchID);
-    teleLimitSwitch = new DigitalInput(Constants.Climber.teleLimitSwitchID);
+    leftPivotProximity = new DigitalInput(Constants.Climber.leftPivotProximityChannel);
+    rightPivotProximity = new DigitalInput(Constants.Climber.rightPivotProximityChannel);
+    leftTelescopicProximity = new DigitalInput(Constants.Climber.leftTelescopicProximityChannel);
+    rightTelescopicProximity = new DigitalInput(Constants.Climber.rightTelescopicProximityChannel);
 
-    gyro = new WPI_PigeonIMU(Constants.Climber.gyroID);
+    potentiometer = new AnalogPotentiometer(Constants.Climber.potentiometerChannel);
 
     //reconfiguring all motors
     pivot.configFactoryDefault();
     leftTelescopic.configFactoryDefault();
     rightTelescopic.configFactoryDefault();
-    gyro.configFactoryDefault();
   
 
-    pivot.setInverted(false);
+    pivot.setInverted(TalonFXInvertType.Clockwise);
     leftTelescopic.setInverted(false);
     rightTelescopic.setInverted(false);
     
     rightTelescopic.follow(leftTelescopic);
+    pivot.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx, 
+      Constants.kTimeoutMs);
+    
+
+    leftTelescopic.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx,
+      Constants.kTimeoutMs);
+
+    pivot.config_kP(Constants.kPIDIdx, Constants.Climber.pivotkP);
+    pivot.config_kI(Constants.kPIDIdx, Constants.Climber.pivotkI);
+    pivot.config_kD(Constants.kPIDIdx, Constants.Climber.pivotkD);
+    pivot.config_kF(Constants.kPIDIdx, Constants.Climber.pivotkF);
+
+    leftTelescopic.config_kP(Constants.kPIDIdx, Constants.Climber.telekP);
+    leftTelescopic.config_kI(Constants.kPIDIdx, Constants.Climber.telekI);
+    leftTelescopic.config_kD(Constants.kPIDIdx, Constants.Climber.telekD);
+    leftTelescopic.config_kF(Constants.kPIDIdx, Constants.Climber.telekF);
+
+    rightTelescopic.config_kP(Constants.kPIDIdx, Constants.Climber.telekP);
+    rightTelescopic.config_kI(Constants.kPIDIdx, Constants.Climber.telekI);
+    rightTelescopic.config_kD(Constants.kPIDIdx, Constants.Climber.telekD);
+    rightTelescopic.config_kF(Constants.kPIDIdx, Constants.Climber.telekF);
   }
 
   /**
@@ -83,22 +111,14 @@ public class Climber extends SubsystemBase {
     return motor.getSelectedSensorPosition();
   }
 
-  /**
-   * Resets gyroscopic sensor
-   */
-  public void resetGyro(){
-    gyro.setCompassAngle(0);
-  } 
+  public double getTelescopicPosition()
+  {
+    return 0;
+  }
 
-  /**
-   * Get the angle of the gyroscopic sensor on the IMU
-   * @return angle of the gyroscopic sensor
-   */
-  public double getGyroAngle(){
-    return gyro.getAngle();
-    /*double[] angles = new double[3];
-    gyro.getAccelerometerAngles(angles);
-    return angles;*/
+  public double getPivotAngle()
+  {
+    return 0;
   }
 
   /**
@@ -106,8 +126,8 @@ public class Climber extends SubsystemBase {
    * @param limitSwitch limit switch to get the state of
    * @return the state of limit switch (true/false)
    */
-  public boolean getLimitSwtich(DigitalInput limitSwitch){
-    return limitSwitch.get();
+  public boolean getProximity(DigitalInput proximity){
+    return proximity.get();
   }
   
   @Override

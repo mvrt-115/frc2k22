@@ -83,12 +83,40 @@ public final class Constants {
     public static class Climber{
         //constants for the climber arms 
         // change values later
+
+        //IDs/channels for sensors and motors
         public static final int pivotID = 0;
         public static final int leftTelescopicID = 0;
         public static final int rightTelescopicID = 0;
-        public static final int limitSwitchID = 0;
-        public static final int gyroID = 0;
-        public static final int pivotLimitSwitchID = 0;
-        public static final int teleLimitSwitchID = 0;
+        public static final int potentiometerChannel = 0;
+        public static final int leftPivotProximityChannel = 0;
+        public static final int rightPivotProximityChannel = 0;
+        public static final int leftTelescopicProximityChannel = 0;
+        public static final int rightTelescopicProximityChannel = 0;
+
+        //Constants for potentiometer
+        public static final double potentiometerRange = 0;
+        public static final double potentiometerInitialOffset = 0;
+        
+        //PID constants for each motor
+        //telescopic arm extension/retraction PID constants
+        public static final double telekP = 0;
+        public static final double telekI = 0;
+        public static final double telekD = 0;
+        public static final double telekF = 0;
+        
+        //pivoting arm rotation PID constants
+        public static final double pivotkP = 0;
+        public static final double pivotkI = 0;
+        public static final double pivotkD = 0;
+        public static final double pivotkF = 0;
+
+        //positions that arms move to during the climb
+        public static final double telescopicFullExtend = 0;
+        public static final double telescopicFullRetract = 0;
+        public static final double pivotStowingPos = 0;
+        public static final double pivotLowestPos = 0;
+        public static final double pivotHighestPos = 0;
+
     }
 }
