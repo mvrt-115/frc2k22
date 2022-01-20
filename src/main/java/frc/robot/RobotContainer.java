@@ -5,14 +5,14 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.commands.*;
-import frc.robot.subsystems.*;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.SetRPM;
+import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.Shooter;
 import frc.robot.util.Limelight;
-import frc.robot.util.RollingAverage;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -21,32 +21,19 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+  // The robot's subsystems and commands are defined here...
+  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+
+  private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
+
   private final Limelight limelight = new Limelight();
-  private final Drivetrain drivetrain = new Drivetrain();
-  private final Climber climber = new Climber();
-  private final Intake intake = new Intake();
-  private final Shooter shooter = new Shooter(limelight);
-  private final Turret turret = new Turret(limelight);
-  private final Storage storage = new Storage();
-
-  private Joystick driverJoystick;
-  private Joystick operatorJoystick;  
-  
-  private JoystickButton intakeBalls = new JoystickButton(operatorJoystick, 0);
-
-  private JoystickButton expelBalls = new JoystickButton(operatorJoystick, 0);
-
-  private RollingAverage throttle = new RollingAverage(50);
-  private RollingAverage wheel = new RollingAverage(15);
-
-  private JoystickButton quickturn = new JoystickButton(driverJoystick, 5);
+  private Shooter shooter = new Shooter(limelight);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    driverJoystick = new Joystick(0);
-    operatorJoystick = new Joystick(1);
     // Configure the button bindings
     configureButtonBindings();
+    SmartDashboard.putData("Run Flywheel", new SetRPM(shooter));
   }
 
   /**
@@ -55,42 +42,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void configureButtonBindings() {
-    // the :: syntax allows us to pass in methods of a class as variables so that the command can continuously access input values
-    drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
-    intakeBalls.whenPressed(new IntakeBalls(intake)).whenReleased(new StopIntaking(intake));
-    expelBalls.whenPressed(new ExpelBalls(storage));
-    /*
-      Shoot: 5(1 indexed)
-      Intake: 6(1 indexed)
-      Expell Balls: <find>
-      Climb: <find for operator>
-      Turret Manual: ????
-    */
-
-  }
-
-  /**
-   * Gets the throttle input from the Driver Joystick throttle axis which is
-   * used to move the robot forward and backwards
-   * 
-   * @return value from [-1, 1] that is used for input for the the robot forward or backwards movement
-   */
-  public double getThrottle() {
-    throttle.updateValue(-driverJoystick.getRawAxis(5));
-    return throttle.getAverage();
-  }
-
-  /**
-   * Gets the wheel input from the Driver Joystick wheel axis which is used to turn the robot while
-   * either driving or quickturning
-   * 
-   * @return value from [-1, 1] that is used for input for the robots turning movement
-   */
-  public double getWheel() {
-    wheel.updateValue(driverJoystick.getRawAxis(0));
-    return wheel.getAverage();
-  }
+  private void configureButtonBindings() {}
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -99,6 +51,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return null;
+    return m_autoCommand;
   }
 }

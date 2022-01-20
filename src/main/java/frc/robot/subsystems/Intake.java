@@ -35,8 +35,8 @@ public class Intake extends SubsystemBase {
   public Intake() {
     state = IntakeState.UP;
 
-    intakeMotor = TalonFactory.createTalonSRX(Constants.Intake.kRollerID, true); // change motor IDs from Constants later
-    pivotMotor = TalonFactory.createTalonSRX(Constants.Intake.kPivotID, true); // change motor IDs from Constants later
+    intakeMotor = TalonFactory.createTalonSRX(Constants.Intake.kROLLER_ID, true); // change motor IDs from Constants later
+    pivotMotor = TalonFactory.createTalonSRX(Constants.Intake.kPIVOT_ID, true); // change motor IDs from Constants later
    
     pivotMotor.setSelectedSensorPosition(0);
   }
@@ -79,9 +79,9 @@ public class Intake extends SubsystemBase {
   public void stopPivot()
   {
     if(state == IntakeState.INTAKING)
-      pivotMotor.set(ControlMode.PercentOutput, Constants.Intake.kPivotStopSpeedWhenDown);
+      pivotMotor.set(ControlMode.PercentOutput, Constants.Intake.kPIVOT_STOP_SPEED_WHEN_DOWN);
     else if(state == IntakeState.UP)
-      pivotMotor.set(ControlMode.PercentOutput, Constants.Intake.kPivotSpeedWhenUp);
+      pivotMotor.set(ControlMode.PercentOutput, Constants.Intake.kPIVOT_STOP_SPEED_WHEN_UP);
     else 
       pivotMotor.set(ControlMode.PercentOutput, 0);
   }
@@ -102,7 +102,7 @@ public class Intake extends SubsystemBase {
     }
     else
     {
-      pivotMotor.set(ControlMode.Position, Constants.Intake.kTicksToBottom, DemandType.ArbitraryFeedForward, 
+      pivotMotor.set(ControlMode.Position, Constants.Intake.kTICKS_TO_BOTTOM, DemandType.ArbitraryFeedForward, 
       feedForward);
     }
   }
@@ -125,7 +125,7 @@ public class Intake extends SubsystemBase {
    */
   public boolean isAtBottom()
   {
-    return Math.abs(Constants.Intake.kTicksToBottom - getCurrentPos()) <= Constants.Intake.kMarginOfErrorTicks;
+    return Math.abs(Constants.Intake.kTICKS_TO_BOTTOM - getCurrentPos()) <= Constants.Intake.kMARGIN_OF_ERROR_TICKS;
   }
 
   /**
@@ -136,7 +136,7 @@ public class Intake extends SubsystemBase {
    */
   public boolean isAtTop()
   {
-    return Math.abs(getCurrentPos() - Constants.Intake.kTicksToTop) <= Constants.Intake.kMarginOfErrorTicks;
+    return Math.abs(getCurrentPos() - Constants.Intake.kTICKS_TO_TOP) <= Constants.Intake.kMARGIN_OF_ERROR_TICKS;
   }
 
   /**
@@ -163,7 +163,7 @@ public class Intake extends SubsystemBase {
 
     else
     {
-      pivotMotor.set(ControlMode.Position, Constants.Intake.kTicksToTop, DemandType.ArbitraryFeedForward, 
+      pivotMotor.set(ControlMode.Position, Constants.Intake.kTICKS_TO_TOP, DemandType.ArbitraryFeedForward, 
       feedForward);
     }
   }
@@ -173,7 +173,7 @@ public class Intake extends SubsystemBase {
    */
   public void startIntake()
   {
-    intakeMotor.set(ControlMode.PercentOutput, Constants.Intake.kWheelSpeed);
+    intakeMotor.set(ControlMode.PercentOutput, Constants.Intake.kWHEELS_SPEED);
   }
 
   /**

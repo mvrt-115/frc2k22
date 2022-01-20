@@ -7,19 +7,17 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.Limelight;
 import frc.robot.util.RollingAverage;
+import frc.robot.util.TalonFactory;
 import frc.robot.Constants;
-import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 
 public class Shooter extends SubsystemBase {
-
-  private double METERS_TO_IN = 39.3701;
-  private double METERS_TO_FT = 3.28084;
 
   public enum ShooterState
   {
@@ -28,9 +26,9 @@ public class Shooter extends SubsystemBase {
 
   private final double MIN_RPM = 8000;
 
-  private final int LEADER_ID = 0;
-  private final int FOLLOWER_ID = 0;
-  private final int HOOD_ID = 0;
+  private final int LEADER_ID = 40;
+  private final int FOLLOWER_ID = 32;
+  private final int HOOD_ID = 1;
 
   private BaseTalon flywheelLeader;
   private BaseTalon flywheelFollower;
@@ -49,34 +47,11 @@ public class Shooter extends SubsystemBase {
   /** Creates a new Shooter. */
   public Shooter(Limelight limelight) {
     // Mind Bending Test on the Reality of our Situation
-    if (RobotBase.isReal())
-    {
-      flywheelLeader = new TalonFX(LEADER_ID);
-      flywheelFollower = new TalonFX(FOLLOWER_ID);
-      hoodMotor = new TalonFX(HOOD_ID);
+    flywheelLeader = TalonFactory.createTalonSRX(LEADER_ID, false);
+    // flywheelFollower = TalonFactory.createTalonSRX(FOLLOWER_ID, true);
+    // hoodMotor = TalonFactory.createTalonSRX(HOOD_ID, false);
 
-      flywheelLeader.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
-      flywheelFollower.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
-      hoodMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
-    }
-    
-    flywheelLeader.configFactoryDefault();
-    flywheelFollower.configFactoryDefault();
-    hoodMotor.configFactoryDefault();
-
-    flywheelLeader.configVoltageCompSaturation(Constants.MAX_VOLTAGE);
-    flywheelFollower.configVoltageCompSaturation(Constants.MAX_VOLTAGE);
-    hoodMotor.configVoltageCompSaturation(Constants.MAX_VOLTAGE);
-
-    flywheelLeader.enableVoltageCompensation(true);
-    flywheelFollower.enableVoltageCompensation(true);
-    hoodMotor.enableVoltageCompensation(true);
-
-    flywheelLeader.setInverted(false);
-    flywheelFollower.setInverted(false);
-    hoodMotor.setInverted(false);
-
-    flywheelFollower.follow(flywheelLeader);
+    // flywheelFollower.follow(flywheelLeader);
 
     // Sets up PIDF
     flywheelLeader.config_kP(Constants.kPIDIdx, Constants.Flywheel.P);
@@ -84,19 +59,18 @@ public class Shooter extends SubsystemBase {
     flywheelLeader.config_kD(Constants.kPIDIdx, Constants.Flywheel.D);
     flywheelLeader.config_kF(Constants.kPIDIdx, Constants.Flywheel.F);
 
-    hoodMotor.config_kP(Constants.kPIDIdx, Constants.Hood.P);
-    hoodMotor.config_kI(Constants.kPIDIdx, Constants.Hood.I);
-    hoodMotor.config_kD(Constants.kPIDIdx, Constants.Hood.D);
-    hoodMotor.config_kF(Constants.kPIDIdx, Constants.Hood.F);
+    // hoodMotor.config_kP(Constants.kPIDIdx, Constants.Hood.PHood);
+    // hoodMotor.config_kI(Constants.kPIDIdx, Constants.Hood.IHood);
+    // hoodMotor.config_kD(Constants.kPIDIdx, Constants.Hood.DHood);
+    // hoodMotor.config_kF(Constants.kPIDIdx, Constants.Hood.FHood);
 
     this.limelight = limelight;
 
-    targetRPM = 0;
     state = ShooterState.OFF;
     rpm = new RollingAverage(Constants.Flywheel.NUM_AVG);
   }
 
-  public void stopFly()
+  public void stopFlywheel()
   {
     flywheelLeader.set(ControlMode.PercentOutput, 0);
   }
@@ -132,11 +106,6 @@ public class Shooter extends SubsystemBase {
       {
         targetRPM = 0;
       }
-      else if(_state == ShooterState.ATSPEED)
-      { 
-        targetRPM = getRequiredRPM();
-        targetAng = getRequiredAng();
-      }
   }
 
   public double rpmToTicks(double in_rpm)
@@ -159,6 +128,8 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Flywheel RPM", getCurrentRPM());
     SmartDashboard.putNumber("RPM Needed", getRequiredRPM());
     SmartDashboard.putString("State", state.toString());
+    SmartDashboard.putNumber("target rpm", targetRPM);
+    SmartDashboard.putNumber("target angle", targetAng);
   }
 
   @Override
@@ -167,26 +138,29 @@ public class Shooter extends SubsystemBase {
 
     rpm.updateValue(ticksToRPM(flywheelLeader.getSelectedSensorVelocity()));
     log();
+    SmartDashboard.putNumber("time", Timer.getFPGATimestamp()); // to debug periodic
 
     // Sets state periodically
     switch(this.state)
     {
       case OFF:
-        stopFly();
-        stopHood();
+        stopFlywheel();
+        // stopHood();
         break;
       case SPEEDING:
         flywheelLeader.set(ControlMode.Velocity, rpmToTicks(targetRPM));
-        hoodMotor.set(ControlMode.Position, degreesToTicks(targetAng));
-        SmartDashboard.putNumber("target rpm", targetRPM);
-        SmartDashboard.putNumber("target angle", targetAng);
-
+        if (hoodMotor != null)
+          hoodMotor.set(ControlMode.Position, degreesToTicks(targetAng));
         if(allWithinError(targetRPM, Constants.Flywheel.ACCEPTABLE_ERROR))
         {
           setState(ShooterState.ATSPEED);
         }
         break;
       case ATSPEED:
+        if(!allWithinError(targetRPM, Constants.Flywheel.ACCEPTABLE_ERROR))
+        {
+          setState(ShooterState.SPEEDING);
+        }
         break;
     }
   }
@@ -194,10 +168,10 @@ public class Shooter extends SubsystemBase {
   public double getRequiredRPM()
   {
     // metric values will be used until return
-    double distance = limelight.getDistanceFromTarget()/METERS_TO_IN;
+    double distance = Units.inchesToMeters(limelight.getHorizontalDistance());
 
     // distance from center of hub
-    double dx = distance + 24/39.3701;
+    double dx = distance + Units.inchesToMeters(24);
 
     // function to get velocity value given shooter height is 3ft. from the ground
     double vel_proj = 0;
@@ -211,16 +185,16 @@ public class Shooter extends SubsystemBase {
       vel_proj = 0.2546 * Math.pow(dx, 2) - 0.0295 * dx + 7.0226;
     }
     
-    return 60 * METERS_TO_IN * vel_proj / (Constants.Flywheel.RADIUS * 2 * Math.PI);
+    return Units.metersToInches(60) * vel_proj / (Constants.Flywheel.RADIUS * 2 * Math.PI);
   }
 
   public double getRequiredAng()
   {
     // metric values will be used until return
-    double distance = limelight.getDistanceFromTarget()/METERS_TO_IN;
+    double distance = Units.inchesToMeters(limelight.getHorizontalDistance());
 
     // distance from center of hub
-    double dx = distance + 24/39.3701;
+    double dx = distance + Units.inchesToMeters(24);
 
     // function to get theta value
     double angle_proj = 0;
