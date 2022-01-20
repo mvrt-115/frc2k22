@@ -191,7 +191,7 @@ public class Shooter extends SubsystemBase {
   public double getRequiredAng()
   {
     // metric values will be used until return
-    double distance = Units.inchesToMeters(limelight.getHorizontalDistance());
+    double distance = limelight.getHorizontalDistance();
 
     // distance from center of hub
     double dx = distance + Units.inchesToMeters(24);
@@ -199,22 +199,23 @@ public class Shooter extends SubsystemBase {
     // function to get theta value
     double angle_proj = 0;
 
+    // Set the angle from 0 to 20 (60 to 80) based on the distance
     if(dx<=2.78)
     {
-      angle_proj = 5.6845 * Math.pow(dx, 2) - 33.067 * dx + 109.07;
+      angle_proj = 20 - (5.6845 * Math.pow(dx, 2) - 33.067 * dx + 109.07 - 60);
+      
+      if(angle_proj>20)
+      {
+        angle_proj = 20;
+      }
+      else if(angle_proj<0)
+      {
+        angle_proj = 0;
+      }
     }
     else
     {
-      angle_proj = 60;
-    }
-    
-    if(angle_proj>80)
-    {
-      angle_proj = 80;
-    }
-    else if(angle_proj<60)
-    {
-      angle_proj = 60;
+      angle_proj = 20;
     }
 
     return angle_proj;
