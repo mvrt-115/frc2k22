@@ -93,7 +93,7 @@ public class Limelight extends SubsystemBase {
     // if (targetsFound()) {
       // System.out.println("got value: " + key + " " +limelight.);
       rollingAvg.updateValue(limelight.getEntry(key).getDouble(0));
-     System.out.println(limelight.getEntry(key).getDouble(0));
+    //  System.out.println(limelight.getEntry(key).getDouble(0));
     // }
       
   }

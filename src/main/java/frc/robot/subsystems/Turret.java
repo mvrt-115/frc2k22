@@ -24,7 +24,7 @@ public class Turret extends SubsystemBase {
     TARGETING, CAN_SHOOT, DISABLED, FLIPPING
   }
 
-  private TalonSRX turret;
+  private TalonSRX turret, left, right;
 
   private Limelight limelight;
 
@@ -43,6 +43,8 @@ public class Turret extends SubsystemBase {
   public Turret(Limelight limelight) {
     this.limelight = limelight;
     turret = TalonFactory.createTalonSRX(42, false);
+    left = TalonFactory.createTalonSRX(38, false);
+    right = TalonFactory.createTalonSRX(1, true);
     turret.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 1, Constants.kTimeoutMs);
 
     turret.config_kP(0, Constants.Turret.kP);
@@ -83,6 +85,9 @@ public class Turret extends SubsystemBase {
        target();
     else 
       setMotorOutput(0);
+
+    left.set(ControlMode.PercentOutput, 0.7);
+    right.set(ControlMode.PercentOutput, -0.7);
 
     log();
   }
