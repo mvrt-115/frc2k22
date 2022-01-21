@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 
 public class Shooter extends SubsystemBase {
@@ -135,7 +136,6 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-
     rpm.updateValue(ticksToRPM(flywheelLeader.getSelectedSensorVelocity()));
     log();
     SmartDashboard.putNumber("time", Timer.getFPGATimestamp()); // to debug periodic
@@ -228,5 +228,13 @@ public class Shooter extends SubsystemBase {
      */
     private boolean allWithinError(double target, double acceptableError) {
       return Math.abs(rpm.getAverage() - target) <= acceptableError;
+  }
+
+  /**
+   * @return BaseTalon flywheel leader
+   */
+  public BaseTalon getMotor()
+  {
+    return flywheelLeader;
   }
 }

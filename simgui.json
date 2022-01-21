@@ -1,0 +1,18 @@
+{
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/LiveWindow/ExampleSubsystem": "Subsystem",
+      "/LiveWindow/Limelight": "Subsystem",
+      "/LiveWindow/Shooter": "Subsystem",
+      "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
+      "/SmartDashboard/Config PIDF": "Command",
+      "/SmartDashboard/Run Flywheel": "Command"
+    }
+  },
+  "NetworkTables": {
+    "SmartDashboard": {
+      "open": true
+    }
+  }
+}

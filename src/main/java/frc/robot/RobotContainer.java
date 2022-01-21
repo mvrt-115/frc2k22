@@ -4,10 +4,12 @@
 
 package frc.robot;
 
+import edu.wpi.first.hal.simulation.AnalogInDataJNI;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.PIDTune;
 import frc.robot.commands.SetRPM;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Shooter;
@@ -22,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.Command;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
+  
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
   private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
@@ -34,6 +37,12 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
     SmartDashboard.putData("Run Flywheel", new SetRPM(shooter));
+    SmartDashboard.putData("Config PIDF", new PIDTune(shooter.getMotor(), 
+                                                      Constants.Flywheel.P, 
+                                                      Constants.Flywheel.I,
+                                                      Constants.Flywheel.D,
+                                                      Constants.Flywheel.F,
+                                                      "Flywheel"));
   }
 
   /**
