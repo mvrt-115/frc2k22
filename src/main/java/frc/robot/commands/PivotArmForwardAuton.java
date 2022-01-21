@@ -12,11 +12,14 @@ import frc.robot.subsystems.Climber;
 public class PivotArmForward extends CommandBase {
   /** Creates a new PivotArmForward. */
   public Climber climber;
-  public Supplier<Boolean> forwardArm;
+ // public Supplier<Boolean> forwardArm;
+  public double position;
 
-  public PivotArmForward(Climber climberIn, Supplier<Boolean> forwardArm) {
+  public PivotArmForward(Climber climberIn, double position) {
     // Use addRequirements() here to declare subsystem dependencies.
-    climber = climberIn;
+    //this.forwardArm = forwardArm;
+    this.position = position;
+    this.climber = climberIn;
     addRequirements(climber);
   }
 
@@ -27,18 +30,18 @@ public class PivotArmForward extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    climber.setSpeed(climber.pivot, 0.1);
+    climber.setPosition(climber.pivot, position);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    climber.stopMotor(climber.pivot);
+    //so the conditions for the isFinished should be plates activated OR button released OR potentiometer reached max angle/distance
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return !forwardArm.get();
+    return false;
   }
 }
