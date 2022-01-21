@@ -7,7 +7,9 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.TalonSRXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -19,7 +21,7 @@ import frc.robot.util.TalonFactory;
 public class Turret extends SubsystemBase {
 
   public static enum TurretState {
-    TARGETING, CAN_SHOOT, DISABLED
+    TARGETING, CAN_SHOOT, DISABLED, FLIPPING
   }
 
   private TalonSRX turret;
@@ -29,9 +31,11 @@ public class Turret extends SubsystemBase {
   private double targetDegrees;
 
   private TurretState state;
+  AHRS gyro = new AHRS(SPI.Port.kMXP);
 
   // direction that the turret spins when randomly searching
   private int direction;
+  double gyroInitial = 0;
 
   private Derivitive deltaE;
 
@@ -50,6 +54,7 @@ public class Turret extends SubsystemBase {
     turret.config_kD(1, Constants.Turret.kDLarge);
 
     turret.setSelectedSensorPosition(0);
+    turret.selectProfileSlot(0, 0);
 
     targetDegrees = 0;
 
@@ -68,39 +73,39 @@ public class Turret extends SubsystemBase {
       setState(TurretState.TARGETING);
 
     // continue looking for target
-    if(state != TurretState.DISABLED) 
-      target();
+    if(state == TurretState.FLIPPING) {
+      // targetDegrees += gyroInitial - gyro.getAngle();
+      // gyroInitial = gyro.getAngle();
+      turn();
+      if(Math.abs(getCurrentPositionDegrees()) <= 10)
+        setState(TurretState.TARGETING);
+    } else if(state != TurretState.DISABLED) 
+       target();
     else 
       setMotorOutput(0);
 
-    // int deg = 10;
-
-    // changePIDSlot(deg);
-
-    // turret.set(ControlMode.Position, MathUtils.degreesToTicks(getCurrentPositionDegrees() + deg, Constants.Turret.kGearRatio, Constants.Turret.kTicksPerRevolution));
-
     log();
+  }
+
+  public void turn() {
+    changePIDSlot(getCurrentPositionDegrees() - targetDegrees);
+    turret.set(ControlMode.Position, MathUtils.degreesToTicks(targetDegrees, Constants.Turret.kGearRatio, Constants.Turret.kTicksPerRevolution));
   }
 
   public void target() {
     if(limelight.targetsFound()) {
       // find target position by using current position and data from limelight
       targetDegrees = getCurrentPositionDegrees() + limelight.getHorizontalOffset();
-      changePIDSlot(limelight.getHorizontalOffset());
 
-      deltaE.update(targetDegrees - getCurrentPositionDegrees());
-      
-      if(targetDegrees > Constants.Turret.kMaxAngle + (deltaE.get() > Constants.Turret.kEThreshold ? 0 : Constants.Turret.kLowETurnThreshold))
-        targetDegrees = Constants.Turret.kMinAngle + 5;
-      else if (targetDegrees < Constants.Turret.kMinAngle - (deltaE.get() < -Constants.Turret.kEThreshold ? 0 : Constants.Turret.kLowETurnThreshold))
-        targetDegrees = Constants.Turret.kMaxAngle - 5;
-      
-      // PID !!
-      turret.set(ControlMode.Position, MathUtils.degreesToTicks(targetDegrees, Constants.Turret.kGearRatio, Constants.Turret.kTicksPerRevolution));
-    } else if(!canShoot()) {
-      // search by turning
-      // changeDirectionIfNeeded();      
-      // setMotorOutput(direction * 0.3499);
+      if(targetDegrees > Constants.Turret.kMaxAngle) {
+        setState(TurretState.FLIPPING);
+        targetDegrees = Constants.Turret.kMinAngle + targetDegrees - Constants.Turret.kMaxAngle;
+      } else if(targetDegrees < Constants.Turret.kMinAngle) {
+        setState(TurretState.FLIPPING);
+        targetDegrees = Constants.Turret.kMaxAngle + targetDegrees - Constants.Turret.kMinAngle;
+      }
+
+      turn();
     }
   }
 
@@ -119,10 +124,10 @@ public class Turret extends SubsystemBase {
    * @param errorDegrees  2 sets of PID constants, 1 for larger errors, 1 for smaller errors
    */
   private void changePIDSlot(double errorDegrees) {
-    if(errorDegrees >= 10)
-      turret.selectProfileSlot(0, 0);
-    else
+    if(Math.abs(errorDegrees) >= Constants.Turret.kEThreshold)
       turret.selectProfileSlot(1, 0);
+    else
+      turret.selectProfileSlot(0, 0);
   }
 
   /**
