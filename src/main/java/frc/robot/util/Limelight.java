@@ -8,13 +8,14 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import frc.robot.Constants;
-
 public class Limelight extends SubsystemBase {
 
   private RollingAverage tx;
   private RollingAverage ty;
   private NetworkTable limelight;
+  public final double height = 2.6416; // meters
+  public final double limelightMountHeight = 2 * 0.3048; // feet to meters
+  private double limelightMountAngle = 20;
 
   public static enum LED_STATE {
     DEFAULT, ON, OFF, BLINKING;
@@ -86,7 +87,7 @@ public class Limelight extends SubsystemBase {
    * @return angle (degrees)
    */
   public double getVerticalOffset() {
-    return ty.getAverage();
+    return ty.getAverage() + limelightMountAngle;
   }
 
   /**
@@ -99,6 +100,24 @@ public class Limelight extends SubsystemBase {
   }
 
   /**
+   * Get horizontal distance
+   * 
+   * @return distance (meters)
+   */
+  public double getHorizontalDistance() {
+    return height / Math.tan(Math.toRadians(getVerticalOffset() + limelightMountAngle));
+  }
+
+  /**
+   * Get vertical distance
+   * 
+   * @return height (meters)
+   */
+  public double getVerticalDistance() {
+    return height - limelightMountHeight;
+  }
+
+  /**
    * Whether limelight has found any valid targets
    * 
    * @return true if targets can be found false if there aren't any
@@ -108,14 +127,5 @@ public class Limelight extends SubsystemBase {
     if (tv == 1)
       return true;
     return false;
-  }
-
-  public double getDistanceFromTarget()
-  {
-    double height = Constants.Limelight.TARGET_HEIGHT_IN - Constants.Limelight.TARGET_HEIGHT_IN;
-    double offsetAngle = Math.toRadians(Constants.Limelight.MOUNT_ANGLE + ty.getAverage());
-    double distance = height / Math.tan(offsetAngle);
-
-    return distance;
   }
 }

@@ -22,15 +22,15 @@ import frc.robot.util.TalonFactory;
 public class Intake extends SubsystemBase {
   /** Creates a new Intake. */
   
-  public enum IntakeState {INTAKING, STOP_INTAKING, UP, DOWN};
+  public static enum IntakeState {INTAKING, PIVOTING_DOWN, PIVOTING_UP, UP};
   private IntakeState state;
 
   // motors for the intake --> currently BaseTalon, may change 
   // (decide type of motor later)
-  private BaseTalon intakeMotor;
-  private BaseTalon pivotMotor; // change if using piston and not motor
+  private BaseTalon intakeMotor; 
+  private BaseTalon pivotMotor; 
 
-  private double feedForward;
+  private double feedForward; // feed forward double needed to pivot for a certain number of ticks
 
   public Intake() {
     state = IntakeState.UP;
@@ -49,21 +49,18 @@ public class Intake extends SubsystemBase {
     switch(state)
     {
       case INTAKING: // intake is deployed and starts running
-        pivotDown();
         stopPivot();
         startIntake();
         break;
-      case STOP_INTAKING: // intake goes back up and stops intaking
+      case PIVOTING_UP: // intake goes back up and stops intaking
         stopIntake();
         pivotUp();
-        stopPivot();
+        break;
+      case PIVOTING_DOWN:
+        pivotDown();
         break;
       case UP:
         stopPivot(); // to keep the intake up
-        stopIntake();
-        break;
-      case DOWN:
-        stopPivot(); // to keep the intake down
         break;
     }
   }
@@ -81,7 +78,7 @@ public class Intake extends SubsystemBase {
    */
   public void stopPivot()
   {
-    if(state == IntakeState.DOWN)
+    if(state == IntakeState.INTAKING)
       pivotMotor.set(ControlMode.PercentOutput, Constants.Intake.kPIVOT_STOP_SPEED_WHEN_DOWN);
     else if(state == IntakeState.UP)
       pivotMotor.set(ControlMode.PercentOutput, Constants.Intake.kPIVOT_STOP_SPEED_WHEN_UP);
@@ -101,8 +98,7 @@ public class Intake extends SubsystemBase {
   {
     if(isAtBottom())
     {
-      state = IntakeState.DOWN;
-      stopPivot();
+      state = IntakeState.INTAKING;
     }
     else
     {
@@ -163,7 +159,6 @@ public class Intake extends SubsystemBase {
     if(isAtTop())
     {
       state = IntakeState.UP;
-      stopPivot();
     }
 
     else
@@ -181,8 +176,10 @@ public class Intake extends SubsystemBase {
     intakeMotor.set(ControlMode.PercentOutput, Constants.Intake.kWHEELS_SPEED);
   }
 
+  /**
+   * @return The current angle of the pivot motor
+   */
   public double getAngle() {
     return 90 + (getCurrentPos() / 1000 * 100);
   }
 }
-
