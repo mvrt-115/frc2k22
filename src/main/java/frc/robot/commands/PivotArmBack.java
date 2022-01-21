@@ -4,17 +4,20 @@
 
 package frc.robot.commands;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.RobotContainer;
 import frc.robot.subsystems.Climber;
 
 public class PivotArmBack extends CommandBase {
   /** Creates a new PivotArmBack. */
   public Climber climber;
+  public Supplier<Boolean> armBack;
   
-  public PivotArmBack(Climber climberIn) {
+  public PivotArmBack(Climber climberIn, Supplier<Boolean> armBack) {
     // Use addRequirements() here to declare subsystem dependencies.
     climber = climberIn;
+    this.armBack = armBack;
     addRequirements(climber);
   }
 
@@ -38,6 +41,6 @@ public class PivotArmBack extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return !RobotContainer.getBackArm();
+    return !armBack.get();
   }
 }

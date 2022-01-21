@@ -85,14 +85,13 @@ public final class Constants {
         // change values later
 
         //IDs/channels for sensors and motors
-        public static final int pivotID = 0;
+        public static final int pivotID = 22;
         public static final int leftTelescopicID = 0;
         public static final int rightTelescopicID = 0;
         public static final int potentiometerChannel = 0;
         public static final int leftPivotProximityChannel = 0;
         public static final int rightPivotProximityChannel = 0;
-        public static final int leftTelescopicProximityChannel = 0;
-        public static final int rightTelescopicProximityChannel = 0;
+        public static final int telescopicProximityChannel = 0;
 
         //Constants for potentiometer
         public static final double potentiometerRange = 0;

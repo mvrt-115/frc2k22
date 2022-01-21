@@ -29,21 +29,24 @@ public class RobotContainer {
   private final Turret turret = new Turret(limelight);
 
   private Joystick driverJoystick;
-  private static Joystick operatorJoystick;  
+  private Joystick operatorJoystick;  
   
-  private JoystickButton intakeBalls = new JoystickButton(operatorJoystick, 0);
-  private static JoystickButton forwardarm = new JoystickButton(operatorJoystick, 3);
-  private static JoystickButton backarm = new JoystickButton(operatorJoystick, 4);
+  //private JoystickButton intakeBalls = new JoystickButton(operatorJoystick, 0);
+  private JoystickButton forwardarm;
+  private JoystickButton backarm;
 
-  private RollingAverage throttle = new RollingAverage(50);
+  /*private RollingAverage throttle = new RollingAverage(50);
   private RollingAverage wheel = new RollingAverage(15);
 
   private JoystickButton quickturn = new JoystickButton(driverJoystick, 5);
-
+  */
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     //driverJoystick = new Joystick(0);
     operatorJoystick = new Joystick(0);
+
+    forwardarm = new JoystickButton(operatorJoystick, 3);
+    backarm =  new JoystickButton(operatorJoystick, 4);
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -56,11 +59,11 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // the :: syntax allows us to pass in methods of a class as variables so that the command can continuously access input values
-    drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
+    /*drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
     intakeBalls.whenPressed(new IntakeBalls(intake)).whenReleased(new StopIntaking(intake));
-
-    forwardarm.whenPressed(new PivotArmForward(climber));
-    backarm.whenPressed(new PivotArmBack(climber));
+    */
+    forwardarm.whenPressed(new PivotArmForward(climber, this::getForwardArm));
+    backarm.whenPressed(new PivotArmBack(climber, this::getBackArm));
   }
 
   /**
@@ -69,10 +72,10 @@ public class RobotContainer {
    * 
    * @return value from [-1, 1] that is used for input for the the robot forward or backwards movement
    */
-  public double getThrottle() {
+  /*public double getThrottle() {
     throttle.updateValue(-driverJoystick.getRawAxis(5));
     return throttle.getAverage();
-  }
+  }*/
 
   /**
    * Gets the wheel input from the Driver Joystick wheel axis which is used to turn the robot while
@@ -80,17 +83,17 @@ public class RobotContainer {
    * 
    * @return value from [-1, 1] that is used for input for the robots turning movement
    */
-  public double getWheel() {
+  /*public double getWheel() {
     wheel.updateValue(driverJoystick.getRawAxis(0));
     return wheel.getAverage();
-  }
+  }*/
 
-  public static boolean getForwardArm()
+  public boolean getForwardArm()
   {
     return forwardarm.get();
   }
 
-  public static boolean getBackArm()
+  public boolean getBackArm()
   {
     return backarm.get();
   }

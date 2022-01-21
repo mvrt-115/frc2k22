@@ -5,8 +5,6 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
@@ -22,7 +20,7 @@ public class Climber extends SubsystemBase {
 
   public TalonFX pivot; //motor for both pivoting arms
   public TalonFX leftTelescopic, rightTelescopic; // motors for each telescopic arm, controlling extending and collapsing motions
-  public DigitalInput leftPivotProximity, rightPivotProximity, leftTelescopicProximity, rightTelescopicProximity; //limit switches 
+  public DigitalInput leftPivotProximity, rightPivotProximity, telescopicProximity; //limit switches 
     //for detecting whether robot is hooked on rungs or not for each type of arm
   public AnalogPotentiometer potentiometer; //potentiometer to measure the turn of the pivoting arm
 
@@ -35,13 +33,12 @@ public class Climber extends SubsystemBase {
     leftTelescopic = new TalonFX(Constants.Climber.leftTelescopicID);
     rightTelescopic = new TalonFX(Constants.Climber.rightTelescopicID);
     
-    leftPivotProximity = new DigitalInput(Constants.Climber.leftPivotProximityChannel);
+    /*leftPivotProximity = new DigitalInput(Constants.Climber.leftPivotProximityChannel);
     rightPivotProximity = new DigitalInput(Constants.Climber.rightPivotProximityChannel);
-    leftTelescopicProximity = new DigitalInput(Constants.Climber.leftTelescopicProximityChannel);
-    rightTelescopicProximity = new DigitalInput(Constants.Climber.rightTelescopicProximityChannel);
+    telescopicProximity = new DigitalInput(Constants.Climber.telescopicProximityChannel);
 
     potentiometer = new AnalogPotentiometer(Constants.Climber.potentiometerChannel);
-
+    */
     //reconfiguring all motors
     pivot.configFactoryDefault();
     leftTelescopic.configFactoryDefault();
@@ -81,7 +78,7 @@ public class Climber extends SubsystemBase {
    * @param motor the motor that needs to be run
    * @param speed speed at which the motor needs to be run
   */
-  public void setSpeed(BaseTalon motor, double speed){
+  public void setSpeed(TalonFX motor, double speed){
     motor.set(ControlMode.PercentOutput, speed); 
   }
 
@@ -89,7 +86,7 @@ public class Climber extends SubsystemBase {
    * Stops motors
    * @param motor the motor that needs to be stopped
   */
-  public void stopMotor(BaseTalon motor){
+  public void stopMotor(TalonFX motor){
     setSpeed(motor, 0);
   }
 
@@ -98,7 +95,7 @@ public class Climber extends SubsystemBase {
     * @param motor the motor that needs to be set 
     * @param finalPosition final position of the motor
    */
-  public void setPosition(BaseTalon motor, double finalPosition){
+  public void setPosition(TalonFX motor, double finalPosition){
     motor.set(ControlMode.Position, finalPosition);
   }
 
@@ -116,9 +113,22 @@ public class Climber extends SubsystemBase {
     return 0;
   }
 
-  public double getPivotAngle()
+  /**
+   * Calculates the angle the pivot has moved through for the selected potentiometer
+   * @return angle travelled by pivot
+   */
+  public double getPivotAngle(AnalogPotentiometer potentiometer)
   {
     return 0;
+  }
+
+  /**
+   * Get the state of the inductive proximity sensor on hook
+   * @param limitSwitch proximity seonsor to get the state of
+   * @return the state of proximity sensor (true/false)
+   */
+  public boolean getProximity(DigitalInput proximity){
+    return proximity.get();
   }
 
   /**
@@ -126,8 +136,8 @@ public class Climber extends SubsystemBase {
    * @param limitSwitch limit switch to get the state of
    * @return the state of limit switch (true/false)
    */
-  public boolean getProximity(DigitalInput proximity){
-    return proximity.get();
+  public boolean getLimitSwitch(DigitalInput limitSwitch){
+    return limitSwitch.get();
   }
   
   @Override
