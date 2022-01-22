@@ -13,6 +13,7 @@ import frc.robot.commands.PIDTune;
 import frc.robot.commands.SetRPM;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Shooter.ShooterState;
 import frc.robot.util.Limelight;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -30,7 +31,7 @@ public class RobotContainer {
   private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
 
   private final Limelight limelight = new Limelight();
-  private Shooter shooter = new Shooter(limelight);
+  private final Shooter shooter = new Shooter(limelight);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -61,5 +62,10 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
     return m_autoCommand;
+  }
+
+  public void disabledPeriodic() {
+    shooter.setState(ShooterState.OFF);
+    shooter.log();
   }
 }
