@@ -67,6 +67,9 @@ public class RobotContainer {
     return m_autoCommand;
   }
 
+  /**
+   * Use this to declare subsystem disabled behavior
+   */
   public void disabledPeriodic() {
     shooter.setState(ShooterState.OFF);
     shooter.log();
