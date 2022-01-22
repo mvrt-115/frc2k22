@@ -6,14 +6,17 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Turret;
-import frc.robot.subsystems.Turret.TurretState;
 
-public class FindTarget extends CommandBase {
+public class TurnTurret extends CommandBase {
   private Turret turret;
 
-  /** Creates a new FindTarget. */
-  public FindTarget(Turret turret) {
+  private double percentOut;
+
+  /** Creates a new TurnTurret. */
+  public TurnTurret(Turret turret, double percentOut) {
     this.turret = turret;
+
+    this.percentOut = percentOut;
 
     addRequirements(turret);
   }
@@ -21,7 +24,7 @@ public class FindTarget extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    turret.setState(TurretState.TARGETING);
+    turret.turnPercentOut(percentOut);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

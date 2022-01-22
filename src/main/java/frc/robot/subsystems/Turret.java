@@ -21,8 +21,10 @@ import frc.robot.util.TalonFactory;
 public class Turret extends SubsystemBase {
 
   public static enum TurretState {
-    TARGETING, CAN_SHOOT, DISABLED, FLIPPING
+    TARGETING, FLIPPING, CAN_SHOOT, DISABLED
   }
+
+  private TurretState state;
 
   private TalonSRX turret, left, right;
 
@@ -30,22 +32,26 @@ public class Turret extends SubsystemBase {
 
   private double targetDegrees;
 
-  private TurretState state;
-  AHRS gyro = new AHRS(SPI.Port.kMXP);
+  // AHRS gyro = new AHRS(SPI.Port.kMXP);
 
-  // direction that the turret spins when randomly searching
-  private int direction;
-  double gyroInitial = 0;
+  // double gyroInitial = 0;
 
+  // rate of change of angle
   private Derivitive deltaE;
 
   /** Creates a new Turret. */
   public Turret(Limelight limelight) {
     this.limelight = limelight;
+
     turret = TalonFactory.createTalonSRX(42, false);
     left = TalonFactory.createTalonSRX(38, false);
     right = TalonFactory.createTalonSRX(1, true);
-    turret.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 1, Constants.kTimeoutMs);
+
+    targetDegrees = 0;
+
+    state = TurretState.DISABLED;
+
+    deltaE = new Derivitive();
 
     turret.config_kP(0, Constants.Turret.kP);
     turret.config_kI(0, Constants.Turret.kI);
@@ -57,75 +63,94 @@ public class Turret extends SubsystemBase {
 
     turret.setSelectedSensorPosition(0);
     turret.selectProfileSlot(0, 0);
-
-    targetDegrees = 0;
-
-    direction = 1;
-    state = TurretState.DISABLED;
-
-    deltaE = new Derivitive();
   }
 
   @Override
   public void periodic() {
+    if(state != TurretState.DISABLED)
+     return;
+
     // determine if we can shoot if we are within some margin of error
-    if(Math.abs(getCurrentPositionDegrees() - targetDegrees) <= 2 && state != TurretState.DISABLED)
+    if(Math.abs(getCurrentPositionDegrees() - targetDegrees) <= 5)
       setState(TurretState.CAN_SHOOT);
     else
       setState(TurretState.TARGETING);
 
     // continue looking for target
     if(state == TurretState.FLIPPING) {
-      // targetDegrees += gyroInitial - gyro.getAngle();
-      // gyroInitial = gyro.getAngle();
-      turn();
+      turnToTarget();
+
       if(Math.abs(getCurrentPositionDegrees()) <= 10)
         setState(TurretState.TARGETING);
-    } else if(state != TurretState.DISABLED) 
+    } else if(state != TurretState.DISABLED) {
        target();
-    else 
-      setMotorOutput(0);
+    } else {
+      turnPercentOut(0);
+    }
 
-    left.set(ControlMode.PercentOutput, 0.7);
-    right.set(ControlMode.PercentOutput, -0.7);
+    // left.set(ControlMode.PercentOutput, 0.7);
+    // right.set(ControlMode.PercentOutput, -0.7);
 
     log();
   }
 
-  public void turn() {
-    changePIDSlot(getCurrentPositionDegrees() - targetDegrees);
-    turret.set(ControlMode.Position, MathUtils.degreesToTicks(targetDegrees, Constants.Turret.kGearRatio, Constants.Turret.kTicksPerRevolution));
-  }
-
+  /**
+   * Moves the turret to lock onto the target. If a target has been found, the turret will move there. Otherwise,
+   * the turret will turn until it does see something.
+   */
   public void target() {
     if(limelight.targetsFound()) {
       // find target position by using current position and data from limelight
       targetDegrees = getCurrentPositionDegrees() + limelight.getHorizontalOffset();
 
+      deltaE.update(limelight.getHorizontalOffset());
+
       if(targetDegrees > Constants.Turret.kMaxAngle) {
         setState(TurretState.FLIPPING);
+
         targetDegrees = Constants.Turret.kMinAngle + targetDegrees - Constants.Turret.kMaxAngle;
       } else if(targetDegrees < Constants.Turret.kMinAngle) {
         setState(TurretState.FLIPPING);
+
         targetDegrees = Constants.Turret.kMaxAngle + targetDegrees - Constants.Turret.kMinAngle;
       }
 
-      turn();
+      turnToTarget();
+    } else {
+      turnPercentOut(0.4);
+
+      if(getCurrentPositionDegrees() > Constants.Turret.kMaxAngle || getCurrentPositionDegrees() < Constants.Turret.kMinAngle)
+        turnPercentOut(-turret.getMotorOutputPercent());
     }
   }
 
   /**
-   * Changes direction of the turret if the turret goees outside of the min/max angle
+   * Turns to the desired degrees
    */
-  public void changeDirectionIfNeeded() {
-    if(getCurrentPositionDegrees() > Constants.Turret.kMaxAngle || 
-      getCurrentPositionDegrees() < Constants.Turret.kMinAngle) {
-      direction *= -1;
-    }
+  private void turnToTarget() {
+    changePIDSlot(getCurrentPositionDegrees() - targetDegrees);
+
+    turnPos(MathUtils.degreesToTicks(targetDegrees, Constants.Turret.kGearRatio, Constants.Turret.kTicksPerRevolution));
   }
 
   /**
-   * Changes PID Slot based on error
+   * Turns the turret at the given output
+   * @param percentOutput The output to turn the turret at
+   */
+  public void turnPercentOut(double percentOutput) {
+    turret.set(ControlMode.PercentOutput, percentOutput);
+  }
+
+  /**
+   * Turns the turret to the given degrees
+   * @param ticks The ticks to turn the turret to (absolute)
+   */
+  public void turnPos(double ticks) {
+    turret.set(ControlMode.Position, ticks);
+  }
+
+  /**
+   * Changes PID constants based on error
    * @param errorDegrees  2 sets of PID constants, 1 for larger errors, 1 for smaller errors
    */
   private void changePIDSlot(double errorDegrees) {
@@ -137,10 +162,18 @@ public class Turret extends SubsystemBase {
 
   /**
    * If the turret is not being used or if it is within some margin of error, we can shoot
-   * @return  if we can shoot
+   * @return if we can shoot
    */
   public boolean canShoot() {
     return state == TurretState.CAN_SHOOT || state == TurretState.DISABLED;
+  }
+
+  /**
+   * Sets the state of the turret
+   * @param state turret's new state
+   */
+  public void setState(TurretState state) {
+    this.state = state;
   }
 
   /** 
@@ -153,18 +186,6 @@ public class Turret extends SubsystemBase {
       Constants.Turret.kGearRatio, 
       Constants.Turret.kTicksPerRevolution
     );
-  }
-
-  public void setMotorOutput(double output) {
-    turret.set(ControlMode.PercentOutput, output);
-  }
-  
-  /**
-   * Sets the state of the turret
-   * @param inState turret's new state
-   */
-  public void setState(TurretState inState) {
-    state = inState;
   }
 
   /**
@@ -182,5 +203,6 @@ public class Turret extends SubsystemBase {
     SmartDashboard.putNumber("Horizontal Error", limelight.getHorizontalOffset());
     SmartDashboard.putString("Turret State", state.toString());
     SmartDashboard.putNumber("Turret Output", turret.getMotorOutputPercent());
+    SmartDashboard.putNumber("Delta E", deltaE.get());
   }
 }
