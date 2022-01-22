@@ -9,6 +9,7 @@ import frc.robot.util.Limelight;
 import frc.robot.util.RollingAverage;
 import frc.robot.util.TalonFactory;
 import frc.robot.Constants;
+import frc.robot.util.MathUtils;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -86,6 +87,11 @@ public class Shooter extends SubsystemBase {
     return rpm.getAverage();
   }
 
+  public double getCurrentAngle()
+  {
+    return ticksToDegrees(flywheelLeader.getSelectedSensorPosition());
+  }
+
   public void setTargetRPM(double exit_velocity)
   {
     targetRPM = Math.min(MIN_RPM, exit_velocity);
@@ -124,6 +130,11 @@ public class Shooter extends SubsystemBase {
     return (int) ((Constants.Hood.ENCODER_TICKS * Constants.Hood.GEAR_RATIO) * degrees/360);
   }
 
+  public double ticksToDegrees(double ticks)
+  {
+    return ticks / (Constants.Hood.ENCODER_TICKS * Constants.Hood.GEAR_RATIO) * 360.0;
+  }
+
   public void log()
   {
     SmartDashboard.putNumber("Flywheel RPM", getCurrentRPM());
@@ -151,13 +162,13 @@ public class Shooter extends SubsystemBase {
         flywheelLeader.set(ControlMode.Velocity, rpmToTicks(targetRPM));
         if (hoodMotor != null)
           hoodMotor.set(ControlMode.Position, degreesToTicks(targetAng));
-        if(allWithinError(targetRPM, Constants.Flywheel.ACCEPTABLE_ERROR))
+        if(allWithinError(targetRPM, targetAng))
         {
           setState(ShooterState.ATSPEED);
         }
         break;
       case ATSPEED:
-        if(!allWithinError(targetRPM, Constants.Flywheel.ACCEPTABLE_ERROR))
+        if(!allWithinError(targetRPM, targetAng))
         {
           setState(ShooterState.SPEEDING);
         }
@@ -226,8 +237,9 @@ public class Shooter extends SubsystemBase {
      * @param acceptableError -- the acceptable +- error range
      * @return boolean whether the RPM is within the acceptable error or not
      */
-    private boolean allWithinError(double target, double acceptableError) {
-      return Math.abs(rpm.getAverage() - target) <= acceptableError;
+  private boolean allWithinError(double targetSpeed, double targetAngle) {
+    return Math.abs(rpm.getAverage() - targetSpeed) <= Constants.Flywheel.ACCEPTABLE_ERROR
+        && Math.abs(getCurrentAngle() - targetAngle) <= Constants.Hood.ACCEPTABLE_ERROR;
   }
 
   /**
