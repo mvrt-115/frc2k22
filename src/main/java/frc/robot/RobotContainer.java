@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.PIDTune;
 import frc.robot.commands.SetRPM;
+import frc.robot.commands.StopShooter;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Shooter.ShooterState;
@@ -32,6 +33,7 @@ public class RobotContainer {
 
   private final Limelight limelight = new Limelight();
   private final Shooter shooter = new Shooter(limelight);
+  private final StopShooter stopShooter = new StopShooter(shooter);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -43,7 +45,8 @@ public class RobotContainer {
                                                       Constants.Flywheel.I,
                                                       Constants.Flywheel.D,
                                                       Constants.Flywheel.F,
-                                                      "Flywheel"));
+                                                      "Flywheel",
+                                                      stopShooter));
   }
 
   /**

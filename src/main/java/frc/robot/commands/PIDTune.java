@@ -15,13 +15,14 @@ public class PIDTune extends CommandBase {
   /** Creates a new PIDTune. */
   BaseTalon talon;
   String name;
+  CommandBase stopCommand;
   double P;
   double I;
   double D;
   double F;
   double rpm;
 
-  public PIDTune(BaseTalon talon, double P, double I, double D, double F, String name) {
+  public PIDTune(BaseTalon talon, double P, double I, double D, double F, String name, CommandBase stopCommand) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.talon = talon;
     this.P = P;
@@ -29,6 +30,7 @@ public class PIDTune extends CommandBase {
     this.D = D;
     this.F = F;
     this.name = name;
+    this.stopCommand = stopCommand;
   }
 
   // Called when the command is initially scheduled.
@@ -41,6 +43,8 @@ public class PIDTune extends CommandBase {
     SmartDashboard.putBoolean("Changing " + name + " PID", true);
     rpm = talon.getSelectedSensorVelocity();
     talon.set(ControlMode.Velocity, 0);
+    stopCommand.execute();
+    stopCommand.end(false);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
