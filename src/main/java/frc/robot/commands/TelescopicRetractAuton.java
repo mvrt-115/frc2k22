@@ -7,12 +7,12 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Climber;
 
-public class TelescopicFullRetractAuton extends CommandBase {
+public class TelescopicRetractAuton extends CommandBase {
   /** Creates a new TelescopicFullRetract. */
   public Climber climber;
   public double positionFinal;
 
-  public TelescopicFullRetractAuton(Climber climber2, double position) {
+  public TelescopicRetractAuton(Climber climber2, double position) {
     // Use addRequirements() here to declare subsystem dependencies.
     climber = climber2;
     positionFinal = position;
