@@ -147,6 +147,7 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    System.out.println(ticksToRPM(flywheelLeader.getSelectedSensorVelocity()));
     rpm.updateValue(ticksToRPM(flywheelLeader.getSelectedSensorVelocity()));
     log();
     SmartDashboard.putNumber("time", Timer.getFPGATimestamp()); // to debug periodic

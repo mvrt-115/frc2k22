@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -18,6 +19,7 @@ public class PIDTune extends CommandBase {
   double I;
   double D;
   double F;
+  double rpm;
 
   public PIDTune(BaseTalon talon, double P, double I, double D, double F, String name) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -37,6 +39,8 @@ public class PIDTune extends CommandBase {
     SmartDashboard.putNumber(name + " D", D);
     SmartDashboard.putNumber(name + " F", F);
     SmartDashboard.putBoolean("Changing " + name + " PID", true);
+    rpm = talon.getSelectedSensorVelocity();
+    talon.set(ControlMode.Velocity, 0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -56,6 +60,7 @@ public class PIDTune extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     SmartDashboard.putBoolean("Changing " + name + " PID", false);
+    talon.set(ControlMode.Velocity, rpm);
   }
 
   // Returns true when the command should end.
