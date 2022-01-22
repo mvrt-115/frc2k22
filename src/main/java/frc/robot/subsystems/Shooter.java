@@ -238,8 +238,13 @@ public class Shooter extends SubsystemBase {
      * @return boolean whether the RPM is within the acceptable error or not
      */
   private boolean allWithinError(double targetSpeed, double targetAngle) {
-    return Math.abs(rpm.getAverage() - targetSpeed) <= Constants.Flywheel.ACCEPTABLE_ERROR
-        && Math.abs(getCurrentAngle() - targetAngle) <= Constants.Hood.ACCEPTABLE_ERROR;
+    if(hoodMotor!=null)
+    {
+      return Math.abs(rpm.getAverage() - targetSpeed) <= Constants.Flywheel.ACCEPTABLE_ERROR
+          && Math.abs(getCurrentAngle() - targetAngle) <= Constants.Hood.ACCEPTABLE_ERROR;
+    }
+
+    return Math.abs(rpm.getAverage() - targetSpeed) <= Constants.Hood.ACCEPTABLE_ERROR;
   }
 
   /**
