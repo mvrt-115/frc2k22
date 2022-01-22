@@ -42,9 +42,9 @@ public class Turret extends SubsystemBase {
   /** Creates a new Turret. */
   public Turret(Limelight limelight) {
     this.limelight = limelight;
-    turret = TalonFactory.createTalonSRX(42, false);
-    left = TalonFactory.createTalonSRX(38, false);
-    right = TalonFactory.createTalonSRX(1, true);
+    turret = TalonFactory.createTalonSRX(61, false);
+    left = TalonFactory.createTalonSRX(38, true);
+    right = TalonFactory.createTalonSRX(42, false);
     turret.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 1, Constants.kTimeoutMs);
 
     turret.config_kP(0, Constants.Turret.kP);
@@ -83,11 +83,12 @@ public class Turret extends SubsystemBase {
         setState(TurretState.TARGETING);
     } else if(state != TurretState.DISABLED) 
        target();
+      // turret.set(ControlMode.PercentOutput, 0.5);
     else 
       setMotorOutput(0);
 
-    left.set(ControlMode.PercentOutput, 0.7);
-    right.set(ControlMode.PercentOutput, -0.7);
+    left.set(ControlMode.PercentOutput, 0.5);
+    right.set(ControlMode.PercentOutput, -0.5);
 
     log();
   }
@@ -101,6 +102,9 @@ public class Turret extends SubsystemBase {
     if(limelight.targetsFound()) {
       // find target position by using current position and data from limelight
       targetDegrees = getCurrentPositionDegrees() + limelight.getHorizontalOffset();
+
+      deltaE.update(limelight.getHorizontalOffset());
+      SmartDashboard.putNumber("delta e", deltaE.get());
 
       if(targetDegrees > Constants.Turret.kMaxAngle) {
         setState(TurretState.FLIPPING);
