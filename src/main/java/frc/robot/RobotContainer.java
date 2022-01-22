@@ -27,12 +27,15 @@ public class RobotContainer {
   private final Intake intake = new Intake();
   private final Shooter shooter = new Shooter(limelight);
   private final Turret turret = new Turret(limelight);
+  private final Storage storage = new Storage();
 
   private Joystick driverJoystick;
   private Joystick operatorJoystick;  
   
-  private JoystickButton pivot = new JoystickButton(operatorJoystick, 0);
-  private JoystickButton intakeBalls = new JoystickButton(operatorJoystick, 0);
+  private JoystickButton pivot = new JoystickButton(driverJoystick, 0);
+  private JoystickButton intakeBalls = new JoystickButton(driverJoystick, 0);
+  
+  private JoystickButton expelBalls = new JoystickButton(operatorJoystick, 0);
 
   private RollingAverage throttle = new RollingAverage(50);
   private RollingAverage wheel = new RollingAverage(15);
@@ -58,6 +61,7 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
     pivot.whenPressed(new Pivot(intake));
     intakeBalls.whenPressed(new IntakeBalls(intake)).whenReleased(new StopIntaking(intake));
+    expelBalls.whenPressed(new ExpelBalls(storage));
     /*
       Shoot: 5(1 indexed)
       Intake: 6(1 indexed)

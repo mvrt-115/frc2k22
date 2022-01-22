@@ -88,7 +88,8 @@ public final class Constants {
         public static final double FLYWHEEL_ANGLE_DEG = 70;
     }
     public static class Storage{
-        public static final int kBreakBeamPort = 0;
+        public static final int kBreakBeamPort0 = 0; // change value later
+        public static final int kBreakBeamPort1 = 0; // change value later
         public static final int kMotor1ID = 0; // change value leftMaster
         public static final int kMotor2ID = 0; // change value later
         public static final int kMotorSpeed = 0; // change value later
