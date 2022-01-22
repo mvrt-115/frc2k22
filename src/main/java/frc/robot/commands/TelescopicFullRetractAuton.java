@@ -7,15 +7,15 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Climber;
 
-public class TelescopicFullRetract extends CommandBase {
+public class TelescopicFullRetractAuton extends CommandBase {
   /** Creates a new TelescopicFullRetract. */
   public Climber climber;
-  public double speed;
+  public double positionFinal;
 
-  public TelescopicFullRetract(Climber climberIn, double speed) {
+  public TelescopicFullRetractAuton(Climber climber2, double position) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.climber = climberIn;
-    this.speed = speed;
+    climber = climber2;
+    positionFinal = position;
     addRequirements(climber);
   }
 
@@ -26,13 +26,13 @@ public class TelescopicFullRetract extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    leftTelescopic.setSpeed(0);
+    climber.setPosition(climber.leftTelescopic, positionFinal);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    leftTelescopic.stopMotor(climber.leftTelescopic);
+    climber.stopMotor(climber.leftTelescopic);
   }
 
   // Returns true when the command should end.

@@ -5,18 +5,19 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.subsystems.Climber;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class PivotingArm extends SequentialCommandGroup {
+public class PivotingArmAuton extends SequentialCommandGroup {
   /** Creates a new PivotingArm. */
-  public PivotingArm(Climber climber) {
+  public PivotingArmAuton(Climber climber) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands( // have to finish this 
-        new PivotArmForwardAuton(climber, 0.0); // 0 is placement value for the one that we want to pivot to
-        new PivotArmBackAuton(climber, 0.0);
+        new PivotArmForwardAuton(climber, 0.0), // 0 is placement value for the one that we want to pivot to
+        new PivotArmBackAuton(climber, 0.0)
     );
   }
 }

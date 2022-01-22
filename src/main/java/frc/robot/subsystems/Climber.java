@@ -20,9 +20,11 @@ public class Climber extends SubsystemBase {
 
   public TalonFX pivot; //motor for both pivoting arms
   public TalonFX leftTelescopic, rightTelescopic; // motors for each telescopic arm, controlling extending and collapsing motions
-  public DigitalInput leftPivotProximity, rightPivotProximity, telescopicProximity; //limit switches 
+  public DigitalInput leftPivotProximity, rightPivotProximity, leftTelescopicProximity, rightTelescopicProximity; //inductive proximity sensors 
     //for detecting whether robot is hooked on rungs or not for each type of arm
-  public AnalogPotentiometer potentiometer; //potentiometer to measure the turn of the pivoting arm
+  public DigitalInput leftPivotLimit, rightPivotLimit, leftTelescopicLimit, rightTelescopicLimit; //inductive proximity sensors 
+    //for detecting whether robot is hooked on rungs or not for each type of arm
+  public AnalogPotentiometer potentiometerPivot, potentiometerTelescopic; //potentiometer to measure the turn of the pivoting arm
 
   /**
    * Initializes all objects and reconfigures all motors to requirements
@@ -33,12 +35,14 @@ public class Climber extends SubsystemBase {
     leftTelescopic = new TalonFX(Constants.Climber.leftTelescopicID);
     rightTelescopic = new TalonFX(Constants.Climber.rightTelescopicID);
     
-    /*leftPivotProximity = new DigitalInput(Constants.Climber.leftPivotProximityChannel);
+    leftPivotProximity = new DigitalInput(Constants.Climber.leftPivotProximityChannel);
     rightPivotProximity = new DigitalInput(Constants.Climber.rightPivotProximityChannel);
-    telescopicProximity = new DigitalInput(Constants.Climber.telescopicProximityChannel);
+    leftTelescopicProximity = new DigitalInput(Constants.Climber.leftTelescopicProximityChannel);
+    rightTelescopicProximity = new DigitalInput(Constants.Climber.rightTelescopicProximityChannel);
 
-    potentiometer = new AnalogPotentiometer(Constants.Climber.potentiometerChannel);
-    */
+    potentiometerPivot = new AnalogPotentiometer(Constants.Climber.potentiometerPivotChannel);
+    potentiometerTelescopic = new AnalogPotentiometer(Constants.Climber.potentiometerTelescopicChannel);
+    
     //reconfiguring all motors
     pivot.configFactoryDefault();
     leftTelescopic.configFactoryDefault();
@@ -108,7 +112,12 @@ public class Climber extends SubsystemBase {
     return motor.getSelectedSensorPosition();
   }
 
-  public double getTelescopicPosition()
+  public double getTelescopicPosition(AnalogPotentiometer potentiometer)
+  {
+    return 0;
+  }
+
+  public double getTelescopicPosition(double ticks)
   {
     return 0;
   }
@@ -118,6 +127,11 @@ public class Climber extends SubsystemBase {
    * @return angle travelled by pivot
    */
   public double getPivotAngle(AnalogPotentiometer potentiometer)
+  {
+    return 0;
+  }
+
+  public double getPivotAngle(double ticks)
   {
     return 0;
   }

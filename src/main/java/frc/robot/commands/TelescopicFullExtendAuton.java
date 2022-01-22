@@ -5,18 +5,17 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
 import frc.robot.subsystems.Climber;
 
-public class TelescopicFullExtend extends CommandBase {
+public class TelescopicFullExtendAuton extends CommandBase {
   /** Creates a new TelescopicFullExtend. */
   public Climber climber;
-  public double speed;
+  public double positionFinal;
 
-  public TelescopicFullExtend(Climber climberIn, double speed) {
+  public TelescopicFullExtendAuton(Climber climber, double position) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.climber = climberIn;
-    this.speed = speed;
+    this.climber = climber;
+    positionFinal = position;
     addRequirements(climber);
   }
 
@@ -28,7 +27,7 @@ public class TelescopicFullExtend extends CommandBase {
   @Override
   public void execute() {
   // climber.setPosition(climber.leftTelescopic, Constants.Climber.telescopicFullExtend);
-    clmber.setSpeed(climber.leftTelescopic, speed);
+    climber.setPosition(climber.leftTelescopic, positionFinal);
    }
 
   // Called once the command ends or is interrupted.

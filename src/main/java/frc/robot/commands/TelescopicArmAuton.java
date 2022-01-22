@@ -5,18 +5,19 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.subsystems.Climber;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class TelescopicArm extends SequentialCommandGroup {
+public class TelescopicArmAuton extends SequentialCommandGroup {
   /** Creates a new TelescopicArm. */
-  public TelescopicArm(Climber climber) {
+  public TelescopicArmAuton(Climber climber) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands( // finish this
-        new TelescopicFullExtend(climber, 0); // 0 is just a placement value for the actual distance that we would want our telescopic arm to
-        new TelescopicFullRetract(climber, 0); // extend/retract to
+        new TelescopicFullExtendAuton(climber, 0.0), // 0 is just a placement value for the actual distance that we would want our telescopic arm to
+        new TelescopicFullRetractAuton(climber, 0.0)// extend/retract to
     );
   }
 }

@@ -85,15 +85,27 @@ public final class Constants {
         // change values later
 
         //IDs/channels for sensors and motors
+        //NEED TO BE CHANGED WHEN FULLY WIRED OR TESTING
+        //motors
         public static final int pivotID = 22;
         public static final int leftTelescopicID = 0;
         public static final int rightTelescopicID = 0;
-        public static final int potentiometerChannel = 0;
+
+        //inductive proximity sensors
         public static final int leftPivotProximityChannel = 0;
-        public static final int rightPivotProximityChannel = 0;
-        public static final int telescopicProximityChannel = 0;
+        public static final int rightPivotProximityChannel = 1;
+        public static final int leftTelescopicProximityChannel = 2;
+        public static final int rightTelescopicProximityChannel = 3;
+        
+        //limit switch panels
+        public static final int leftPivotLimitSwitch = 4;
+        public static final int rightPivotLimitSwitch = 5;
+        public static final int leftTelescopicLimitSwitch = 6;
+        public static final int rightTelescopicLimitSwitch = 7;
 
         //Constants for potentiometer
+        public static final int potentiometerPivotChannel = 0;
+        public static final int potentiometerTelescopicChannel = 1;
         public static final double potentiometerRange = 0;
         public static final double potentiometerInitialOffset = 0;
         
@@ -117,5 +129,8 @@ public final class Constants {
         public static final double pivotLowestPos = 0;
         public static final double pivotHighestPos = 0;
 
+        //speeds for manual climbing
+        public static final double telescopicManualSpeed = 0.1;
+        public static final double pivotManualSpeed = 0.1;
     }
 }

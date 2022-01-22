@@ -4,16 +4,20 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import java.util.function.Supplier;
 
-public class PivotArmManuel extends CommandBase {
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
+import frc.robot.subsystems.Climber;
+
+public class PivotArmForwardManual extends CommandBase {
   public Climber climber;
   public Supplier<Boolean> forwardArm;
 
-  public PivotArmForwardManual(Climber climberIn, Supplier<Boolean> forwardArm) {
+  public PivotArmForwardManual(frc.robot.subsystems.Climber climber2, Supplier<Boolean> forwardArm) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.forwardArm = forwardArm;
-    this.climber = climberIn;
+    climber = climber2;
     addRequirements(climber);
   }
 
@@ -24,7 +28,7 @@ public class PivotArmManuel extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    climber.setPosition(climber.pivot, 0.0);
+    climber.setSpeed(climber.pivot, Constants.Climber.pivotManualSpeed);
   }
 
   // Called once the command ends or is interrupted.

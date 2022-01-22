@@ -32,8 +32,10 @@ public class RobotContainer {
   private Joystick operatorJoystick;  
   
   //private JoystickButton intakeBalls = new JoystickButton(operatorJoystick, 0);
-  private JoystickButton forwardarm;
-  private JoystickButton backarm;
+  private JoystickButton forwardarmManual;
+  private JoystickButton backarmManual;
+  private JoystickButton uparmManual;
+  private JoystickButton downarmManual;
 
   /*private RollingAverage throttle = new RollingAverage(50);
   private RollingAverage wheel = new RollingAverage(15);
@@ -45,8 +47,10 @@ public class RobotContainer {
     //driverJoystick = new Joystick(0);
     operatorJoystick = new Joystick(0);
 
-    forwardarm = new JoystickButton(operatorJoystick, 3);
-    backarm =  new JoystickButton(operatorJoystick, 4);
+    forwardarmManual = new JoystickButton(operatorJoystick, 3);
+    backarmManual =  new JoystickButton(operatorJoystick, 4);
+    uparmManual = new JoystickButton(operatorJoystick, 1);
+    downarmManual = new JoystickButton(operatorJoystick, 2);
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -62,8 +66,10 @@ public class RobotContainer {
     /*drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
     intakeBalls.whenPressed(new IntakeBalls(intake)).whenReleased(new StopIntaking(intake));
     */
-    forwardarm.whenPressed(new PivotArmForward(climber, this::getForwardArm));
-    backarm.whenPressed(new PivotArmBack(climber, this::getBackArm));
+    forwardarmManual.whenPressed(new PivotArmForwardManual(climber, this::getForwardArmManual));
+    backarmManual.whenPressed(new PivotArmBackManual(climber, this::getBackArmManual));
+    uparmManual.whenPressed(new TelescopicExtendManual(climber, this::getUpArmManual));
+    downarmManual.whenPressed(new TelescopicRetractManual(climber, this::getDownArmManual));
   }
 
   /**
@@ -88,14 +94,23 @@ public class RobotContainer {
     return wheel.getAverage();
   }*/
 
-  public boolean getForwardArm()
+  public boolean getForwardArmManual()
   {
-    return forwardarm.get();
+    return forwardarmManual.get();
   }
 
-  public boolean getBackArm()
+  public boolean getBackArmManual()
   {
-    return backarm.get();
+    return backarmManual.get();
+  }
+
+  public boolean getUpArmManual() {
+    return uparmManual.get();
+  }
+
+  public boolean getDownArmManual()
+  {
+    return downarmManual.get();
   }
 
   /**

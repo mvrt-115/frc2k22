@@ -4,10 +4,14 @@
 
 package frc.robot.commands;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
+import frc.robot.subsystems.Climber;
 
 public class TelescopicExtendManual extends CommandBase {
-  public Climber climer;
+  public Climber climber;
   public Supplier<Boolean> teleExtend;
   /** Creates a new TelescopicExtendManual. */
   public TelescopicExtendManual(Climber climberIn, Supplier<Boolean> teleExtend) {
@@ -26,7 +30,7 @@ public class TelescopicExtendManual extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    climber.setSpeed(0.1);
+    climber.setSpeed(climber.leftTelescopic, Constants.Climber.telescopicManualSpeed);
   }
 
   // Called once the command ends or is interrupted.
