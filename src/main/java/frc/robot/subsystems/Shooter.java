@@ -244,7 +244,7 @@ public class Shooter extends SubsystemBase {
           && Math.abs(getCurrentAngle() - targetAngle) <= Constants.Hood.ACCEPTABLE_ERROR;
     }
 
-    return Math.abs(rpm.getAverage() - targetSpeed) <= Constants.Hood.ACCEPTABLE_ERROR;
+    return Math.abs(rpm.getAverage() - targetSpeed) <= Constants.Flywheel.ACCEPTABLE_ERROR;
   }
 
   /**
