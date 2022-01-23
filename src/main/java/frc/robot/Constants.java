@@ -99,9 +99,9 @@ public final class Constants {
 
     public static class Flywheel
     {
-        public static final double P = 0.83;
-        public static final double I = 0;
-        public static final double D = 10.5;
+        public static final double P = 1.46;
+        public static final double I = -0.03;
+        public static final double D = 15.5;
         public static final double F = 0.058;
         public static final double PHood = 0.21;
         public static final double IHood = 0;
