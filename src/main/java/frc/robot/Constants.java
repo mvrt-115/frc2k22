@@ -95,6 +95,7 @@ public final class Constants {
         public static final double MAX_VOLTAGE_COMPENSATION = 5;
         public static final double GEAR_RATIO = 150.0/24;
         public static final int ENCODER_TICKS = 4096;
+        public static final int ACCEPTABLE_ERROR = 2;
     }
 
     public static class Flywheel

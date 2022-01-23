@@ -11,8 +11,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.PIDTune;
 import frc.robot.commands.SetRPM;
+import frc.robot.commands.StopShooter;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Shooter.ShooterState;
 import frc.robot.util.Limelight;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -30,7 +32,8 @@ public class RobotContainer {
   private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
 
   private final Limelight limelight = new Limelight();
-  private Shooter shooter = new Shooter(limelight);
+  private final Shooter shooter = new Shooter(limelight);
+  private final StopShooter stopShooter = new StopShooter(shooter);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -42,7 +45,8 @@ public class RobotContainer {
                                                       Constants.Flywheel.I,
                                                       Constants.Flywheel.D,
                                                       Constants.Flywheel.F,
-                                                      "Flywheel"));
+                                                      "Flywheel",
+                                                      stopShooter));
   }
 
   /**
@@ -61,5 +65,13 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
     return m_autoCommand;
+  }
+
+  /**
+   * Use this to declare subsystem disabled behavior
+   */
+  public void disabledPeriodic() {
+    shooter.setState(ShooterState.OFF);
+    shooter.log();
   }
 }

@@ -9,6 +9,7 @@ import frc.robot.util.Limelight;
 import frc.robot.util.RollingAverage;
 import frc.robot.util.TalonFactory;
 import frc.robot.Constants;
+import frc.robot.util.MathUtils;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -71,21 +72,44 @@ public class Shooter extends SubsystemBase {
     rpm = new RollingAverage(Constants.Flywheel.NUM_AVG);
   }
 
+  /**
+   * Stops Shooter
+   */
   public void stopFlywheel()
   {
     flywheelLeader.set(ControlMode.PercentOutput, 0);
   }
 
+  /**
+   * Stops Hood position change
+   */
   public void stopHood()
   {
     hoodMotor.set(ControlMode.PercentOutput, 0);
   }
 
+  /**
+   * Get the current flywheel rpm
+   * @return rpm
+   */
   public double getCurrentRPM()
   {
     return rpm.getAverage();
   }
 
+  /**
+   * Gets the current hood angle
+   * @return angle
+   */
+  public double getCurrentAngle()
+  {
+    return ticksToDegrees(flywheelLeader.getSelectedSensorPosition());
+  }
+
+  /**
+   * Sets the target rpm of the shooter
+   * @param exit_velocity (an rpm value)
+   */
   public void setTargetRPM(double exit_velocity)
   {
     targetRPM = Math.min(MIN_RPM, exit_velocity);
@@ -100,6 +124,11 @@ public class Shooter extends SubsystemBase {
     }
   }
 
+  /**
+   * Sets the state of the Flywheel
+   * Sets target rpm to 0 if state is OFF
+   * @param _state
+   */
   public void setState(ShooterState _state) {
       this.state = _state;
 
@@ -109,21 +138,49 @@ public class Shooter extends SubsystemBase {
       }
   }
 
+  /**
+   * Convets rpm to ticks per millisecond
+   * @param in_rpm
+   * @return ticks
+   */
   public double rpmToTicks(double in_rpm)
   {
     return in_rpm / 600 * Constants.Flywheel.TICKS_PER_REVOLUTION * Constants.Flywheel.GEAR_RATIO;
   }
 
+  /**
+   * Converts ticks per millisecond to rpm
+   * @param ticks
+   * @return rpm
+   */
   public double ticksToRPM(double ticks)
   {
     return ticks * 600 / Constants.Flywheel.TICKS_PER_REVOLUTION / Constants.Flywheel.GEAR_RATIO;
   }
 
+  /**
+   * Converts degrees to amount of ticks to rotate
+   * @param degrees
+   * @return ticks
+   */
   public int degreesToTicks(double degrees)
   {
     return (int) ((Constants.Hood.ENCODER_TICKS * Constants.Hood.GEAR_RATIO) * degrees/360);
   }
 
+  /**
+   * Converts the ticks rotated to degrees rotated
+   * @param ticks
+   * @return degrees
+   */
+  public double ticksToDegrees(double ticks)
+  {
+    return ticks / (Constants.Hood.ENCODER_TICKS * Constants.Hood.GEAR_RATIO) * 360.0;
+  }
+
+  /**
+   * Log Shooter values to SmartDashboard
+   */
   public void log()
   {
     SmartDashboard.putNumber("Flywheel RPM", getCurrentRPM());
@@ -151,13 +208,13 @@ public class Shooter extends SubsystemBase {
         flywheelLeader.set(ControlMode.Velocity, rpmToTicks(targetRPM));
         if (hoodMotor != null)
           hoodMotor.set(ControlMode.Position, degreesToTicks(targetAng));
-        if(allWithinError(targetRPM, Constants.Flywheel.ACCEPTABLE_ERROR))
+        if(allWithinError(targetRPM, targetAng))
         {
           setState(ShooterState.ATSPEED);
         }
         break;
       case ATSPEED:
-        if(!allWithinError(targetRPM, Constants.Flywheel.ACCEPTABLE_ERROR))
+        if(!allWithinError(targetRPM, targetAng))
         {
           setState(ShooterState.SPEEDING);
         }
@@ -165,6 +222,10 @@ public class Shooter extends SubsystemBase {
     }
   }
 
+  /**
+   * Get required RPM for shooter
+   * @return required rpm for shooter
+   */
   public double getRequiredRPM()
   {
     // metric values will be used until return
@@ -188,6 +249,10 @@ public class Shooter extends SubsystemBase {
     return Units.metersToInches(60) * vel_proj / (Constants.Flywheel.RADIUS * 2 * Math.PI);
   }
 
+  /**
+   * Get required hood angle from limelight distance
+   * @return Required Hood Angle
+   */
   public double getRequiredAng()
   {
     // metric values will be used until return
@@ -226,8 +291,14 @@ public class Shooter extends SubsystemBase {
      * @param acceptableError -- the acceptable +- error range
      * @return boolean whether the RPM is within the acceptable error or not
      */
-    private boolean allWithinError(double target, double acceptableError) {
-      return Math.abs(rpm.getAverage() - target) <= acceptableError;
+  private boolean allWithinError(double targetSpeed, double targetAngle) {
+    if(hoodMotor!=null)
+    {
+      return Math.abs(rpm.getAverage() - targetSpeed) <= Constants.Flywheel.ACCEPTABLE_ERROR
+          && Math.abs(getCurrentAngle() - targetAngle) <= Constants.Hood.ACCEPTABLE_ERROR;
+    }
+
+    return Math.abs(rpm.getAverage() - targetSpeed) <= Constants.Flywheel.ACCEPTABLE_ERROR;
   }
 
   /**
