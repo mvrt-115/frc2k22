@@ -68,22 +68,22 @@ public final class Constants {
     }
 
     public static class Turret {
-        public static final double kGearRatio = 625; // 150 * 10 * 10 / 24
+        public static final double kGearRatio = 156.25; // 150 * 5 * 5 / 24
         public static final double kTicksPerRevolution = 4096;
         public static final double kMinAngle = -180; // degrees
         public static final double kMaxAngle = 180; // degrees
         public static final double kLimelightOffset = 0; // degrees
 
-        public static final double kEThreshold = 30;
+        public static final double kEThreshold = 60;
         public static final double kLowETurnThreshold = 0; // degrees; limelight x fov = 59.6
 
         // for large angles > 60 degrees
-        public static final double kPLarge = 0.3;
+        public static final double kPLarge = 0.5;
         public static final double kILarge = 0;
         public static final double kDLarge = 0;
 
-        public static final double kP = 0.1;
+        public static final double kP = 0.03;
         public static final double kI = 0;
-        public static final double kD = 0.005;  // try with 0.007
+        public static final double kD = 0.01;  // try with 0.007
     }
 }

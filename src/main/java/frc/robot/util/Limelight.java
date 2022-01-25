@@ -17,6 +17,7 @@ public class Limelight extends SubsystemBase {
   private RollingAverage tx;
   private RollingAverage ty;
   private NetworkTable limelight;
+  double lastTx;
 
   public static enum LED_STATE {
     DEFAULT, ON, OFF, BLINKING;
@@ -30,9 +31,10 @@ public class Limelight extends SubsystemBase {
   public Limelight() {
     
     limelight = NetworkTableInstance.getDefault().getTable("limelight");
-    ty = new RollingAverage(20);
-    tx = new RollingAverage(20);
+    tx = new RollingAverage(5);
+    ty = new RollingAverage(5);
 
+    lastTx = 0;
     setLED(LED_STATE.DEFAULT);
     setPipeline(CAM_MODE.VISION_WIDE);
   }
@@ -90,7 +92,7 @@ public class Limelight extends SubsystemBase {
    * @param rollingAvg  The rolling average to update (ty or tx)
    */
   private void updateEntry(String key, RollingAverage rollingAvg) {
-    // if (targetsFound()) {
+    if (targetsFound()) 
       // System.out.println("got value: " + key + " " +limelight.);
       rollingAvg.updateValue(limelight.getEntry(key).getDouble(0));
     //  System.out.println(limelight.getEntry(key).getDouble(0));
@@ -113,8 +115,10 @@ public class Limelight extends SubsystemBase {
    * @return angle (degrees)
    */
   public double getHorizontalOffset() {
-    return limelight.getEntry("tx").getDouble(0);//tx.getAverage();
-  }
+    if(targetsFound())
+      lastTx = limelight.getEntry("tx").getDouble(0);
+    return lastTx;//tx.getAverage();
+  } 
 
   /**
    * Whether limelight has found any valid targets
