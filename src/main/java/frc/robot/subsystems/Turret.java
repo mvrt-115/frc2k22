@@ -29,6 +29,8 @@ public class Turret extends SubsystemBase {
 
   private double targetDegrees;
 
+  private int flipCount = 0;
+
   // AHRS gyro = new AHRS(SPI.Port.kMXP);
 
   // double gyroInitial = 0;
@@ -67,24 +69,27 @@ public class Turret extends SubsystemBase {
     // if(state != TurretState.DISABLED)
     //  return;
     log();
+
+    SmartDashboard.putBoolean("flipping", state == TurretState.FLIPPING);
+    SmartDashboard.putBoolean("<= 10", Math.abs(getCurrentPositionDegrees()) <= 10);
+
     if(state != TurretState.FLIPPING)
       updateTargetDegrees();
-
     
     // continue looking for target
     if(state == TurretState.FLIPPING) {
       turnToTarget();
       
-      if(Math.abs(getCurrentPositionDegrees()) <= 10) {
+      if(Math.abs(getCurrentPositionDegrees()) <= 10 || Math.abs(getCurrentPositionDegrees() - targetDegrees) <= 10) {
         setState(TurretState.TARGETING);
         updateTargetDegrees();
-      }
-        
+      }   
     }
+
     if(state == TurretState.TARGETING) {
       // System.out.println("Target");
       target();
-    } else if(state != TurretState.FLIPPING){ 
+    } else if(state != TurretState.FLIPPING) { 
       turnPercentOut(0);
     }
     
@@ -100,7 +105,7 @@ public class Turret extends SubsystemBase {
   }
 
   public void updateTargetDegrees() {
-    if (limelight.targetsFound()) {
+    if(limelight.targetsFound()) {
       // find target position by using current position and data from limelight
       targetDegrees = getCurrentPositionDegrees() + limelight.getHorizontalOffset();
 
@@ -109,11 +114,22 @@ public class Turret extends SubsystemBase {
       if(targetDegrees > Constants.Turret.kMaxAngle + 20) {
         setState(TurretState.FLIPPING);
 
+        System.out.println("entering flip max");
+
+        flipCount++;
+        SmartDashboard.putNumber("flip", flipCount);
+
+
         targetDegrees = Constants.Turret.kMinAngle + targetDegrees - Constants.Turret.kMaxAngle;
       } else if(targetDegrees < Constants.Turret.kMinAngle - 20) {
         setState(TurretState.FLIPPING);
 
         targetDegrees = Constants.Turret.kMaxAngle + targetDegrees - Constants.Turret.kMinAngle;
+
+        System.out.println("entering flip min");
+
+        flipCount--;
+        SmartDashboard.putNumber("flip", flipCount);
       }
     }
   }
