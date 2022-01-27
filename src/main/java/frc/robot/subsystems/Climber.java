@@ -7,7 +7,6 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
-import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.wpilibj.AnalogInput;
@@ -18,8 +17,8 @@ import frc.robot.Constants;
 
 public class Climber extends SubsystemBase {
 
-  public TalonFX pivot; //motor for both pivoting arms
-  public TalonFX leftTelescopic, rightTelescopic; // motors for each telescopic arm, controlling extending and collapsing motions
+  public TalonFX leftPivot, rightPivot; //motor for both pivoting arms
+  public TalonFX telescopic; // motors for each telescopic arm, controlling extending and collapsing motions
   public DigitalInput leftPivotProximity, rightPivotProximity, leftTelescopicProximity, rightTelescopicProximity; //inductive proximity sensors 
     //for detecting whether robot is hooked on rungs or not for each type of arm
   public DigitalInput leftPivotLimit, rightPivotLimit, leftTelescopicLimit, rightTelescopicLimit; //inductive proximity sensors 
@@ -31,9 +30,9 @@ public class Climber extends SubsystemBase {
    */
   public Climber() {
     //initializes all motors and sensors
-    pivot = new TalonFX(Constants.Climber.pivotID);
-    leftTelescopic = new TalonFX(Constants.Climber.leftTelescopicID);
-    rightTelescopic = new TalonFX(Constants.Climber.rightTelescopicID);
+    leftPivot = new TalonFX(Constants.Climber.leftPivotID);
+    rightPivot = new TalonFX(Constants.Climber.rightPivotID);
+    telescopic = new TalonFX(Constants.Climber.telescopicID);
     
     leftPivotProximity = new DigitalInput(Constants.Climber.leftPivotProximityChannel);
     rightPivotProximity = new DigitalInput(Constants.Climber.rightPivotProximityChannel);
@@ -44,37 +43,38 @@ public class Climber extends SubsystemBase {
     potentiometerTelescopic = new AnalogPotentiometer(Constants.Climber.potentiometerTelescopicChannel);
     
     //reconfiguring all motors
-    pivot.configFactoryDefault();
-    leftTelescopic.configFactoryDefault();
-    rightTelescopic.configFactoryDefault();
+    leftPivot.configFactoryDefault();
+    rightPivot.configFactoryDefault();
+    telescopic.configFactoryDefault();
   
 
-    pivot.setInverted(TalonFXInvertType.Clockwise);
-    leftTelescopic.setInverted(false);
-    rightTelescopic.setInverted(false);
+    leftPivot.setInverted(TalonFXInvertType.Clockwise);
+    rightPivot.setInverted(false);
+    telescopic.setInverted(false);
     
-    rightTelescopic.follow(leftTelescopic);
-    pivot.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx, 
-      Constants.kTimeoutMs);
+    rightPivot.follow(leftPivot);
     
-
-    leftTelescopic.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx,
+    telescopic.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx, 
+      Constants.kTimeoutMs);
+    leftPivot.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx,
+      Constants.kTimeoutMs);
+    rightPivot.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx,
       Constants.kTimeoutMs);
 
-    pivot.config_kP(Constants.kPIDIdx, Constants.Climber.pivotkP);
-    pivot.config_kI(Constants.kPIDIdx, Constants.Climber.pivotkI);
-    pivot.config_kD(Constants.kPIDIdx, Constants.Climber.pivotkD);
-    pivot.config_kF(Constants.kPIDIdx, Constants.Climber.pivotkF);
+    leftPivot.config_kP(Constants.kPIDIdx, Constants.Climber.pivotkP);
+    leftPivot.config_kI(Constants.kPIDIdx, Constants.Climber.pivotkI);
+    leftPivot.config_kD(Constants.kPIDIdx, Constants.Climber.pivotkD);
+    leftPivot.config_kF(Constants.kPIDIdx, Constants.Climber.pivotkF);
 
-    leftTelescopic.config_kP(Constants.kPIDIdx, Constants.Climber.telekP);
-    leftTelescopic.config_kI(Constants.kPIDIdx, Constants.Climber.telekI);
-    leftTelescopic.config_kD(Constants.kPIDIdx, Constants.Climber.telekD);
-    leftTelescopic.config_kF(Constants.kPIDIdx, Constants.Climber.telekF);
+    telescopic.config_kP(Constants.kPIDIdx, Constants.Climber.telekP);
+    telescopic.config_kI(Constants.kPIDIdx, Constants.Climber.telekI);
+    telescopic.config_kD(Constants.kPIDIdx, Constants.Climber.telekD);
+    telescopic.config_kF(Constants.kPIDIdx, Constants.Climber.telekF);
 
-    rightTelescopic.config_kP(Constants.kPIDIdx, Constants.Climber.telekP);
-    rightTelescopic.config_kI(Constants.kPIDIdx, Constants.Climber.telekI);
-    rightTelescopic.config_kD(Constants.kPIDIdx, Constants.Climber.telekD);
-    rightTelescopic.config_kF(Constants.kPIDIdx, Constants.Climber.telekF);
+    rightPivot.config_kP(Constants.kPIDIdx, Constants.Climber.telekP);
+    rightPivot.config_kI(Constants.kPIDIdx, Constants.Climber.telekI);
+    rightPivot.config_kD(Constants.kPIDIdx, Constants.Climber.telekD);
+    rightPivot.config_kF(Constants.kPIDIdx, Constants.Climber.telekF);
   }
 
   /**
@@ -108,16 +108,11 @@ public class Climber extends SubsystemBase {
    * @param motor the motor to get the value of
    * @return the number of ticks motor has rotated
    */
-  public double getEncoderValue(BaseTalon motor){
+  public double getEncoderValue(TalonFX motor){
     return motor.getSelectedSensorPosition();
   }
 
-  public double getTelescopicPosition(AnalogPotentiometer potentiometer)
-  {
-    return 0;
-  }
-
-  public double getTelescopicPosition(double ticks)
+  public double getTelescopicPosition()
   {
     return 0;
   }
@@ -126,12 +121,12 @@ public class Climber extends SubsystemBase {
    * Calculates the angle the pivot has moved through for the selected potentiometer
    * @return angle travelled by pivot
    */
-  public double getPivotAngle(AnalogPotentiometer potentiometer)
+  public double getPivotAnglePoten()
   {
     return 0;
   }
 
-  public double getPivotAngle(double ticks)
+  public double getPivotAngle()
   {
     return 0;
   }

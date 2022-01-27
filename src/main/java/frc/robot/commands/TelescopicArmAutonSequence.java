@@ -10,16 +10,14 @@ import frc.robot.subsystems.Climber;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class ClimberAuton extends SequentialCommandGroup {
-  /** Creates a new ClimberAuto. */
-
-  public ClimberAuton(Climber climber) {
+public class TelescopicArmAutonSequence extends SequentialCommandGroup {
+  /** Creates a new TelescopicArm. */
+  public TelescopicArmAutonSequence(Climber climber) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-
-    addCommands( // have to finish this and finalize movement stuff
-      new PivotArmAutonSequence(climber),
-      new TelescopicArmAutonSequence(climber)
+    addCommands( // finish this
+        new TelescopicArmAuton(climber, 0.0), // 0 is just a placement value for the actual distance that we would want our telescopic arm to
+        new TelescopicArmAuton(climber, 0.0)// extend/retract to
     );
   }
 }

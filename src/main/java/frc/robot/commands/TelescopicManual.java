@@ -10,37 +10,42 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Climber;
 
-public class PivotArmBackManual extends CommandBase {
-  /** Creates a new PivotArmBack. */
+public class TelescopicManual extends CommandBase {
   public Climber climber;
-  public Supplier<Boolean> armBack;
-  
-  public PivotArmBackManual(Climber climber, Supplier<Boolean> armBack) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    this.climber = climber;
-    this.armBack = armBack;
+  public Supplier<Boolean> teleButton;
+  public double speed;
+
+  /** Creates a new TelescopicExtendManual. */
+  public TelescopicManual(Climber climberIn, Supplier<Boolean> teleButton, double speedIn) {
+    this.climber = climberIn;
+    this.teleButton = teleButton;
+    speed = speedIn;
     addRequirements(climber);
+    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    climber.setPosition(climber.pivot, -Constants.Climber.pivotManualSpeed);
+    climber.setSpeed(climber.telescopic, speed);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    climber.stopMotor(climber.pivot);
+    climber.stopMotor(climber.telescopic);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return !armBack.get();
+    return !teleButton.get() || (speed < 0 && Constants.Climber.telescopicFullRetract >= climber.getTelescopicPosition()) || 
+    (speed > 0 && Constants.Climber.telescopicFullExtend <= climber.getTelescopicPosition());
   }
 }

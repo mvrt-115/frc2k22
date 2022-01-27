@@ -87,9 +87,9 @@ public final class Constants {
         //IDs/channels for sensors and motors
         //NEED TO BE CHANGED WHEN FULLY WIRED OR TESTING
         //motors
-        public static final int pivotID = 22;
-        public static final int leftTelescopicID = 0;
-        public static final int rightTelescopicID = 0;
+        public static final int leftPivotID = 0; // 22
+        public static final int rightPivotID = 0;
+        public static final int telescopicID = 0;
 
         //inductive proximity sensors
         public static final int leftPivotProximityChannel = 0;
@@ -122,12 +122,15 @@ public final class Constants {
         public static final double pivotkD = 0;
         public static final double pivotkF = 0;
 
-        //positions that arms move to during the climb
+        //positions that arms move to during the climb (all pivots are in degrees, 
+            //all telescopics are in meters)
         public static final double telescopicFullExtend = 0;
         public static final double telescopicFullRetract = 0;
         public static final double pivotStowingPos = 0;
         public static final double pivotLowestPos = 0;
         public static final double pivotHighestPos = 0;
+        public static final double maxPivotPos = 150;
+        public static final double minPivotPos = 30;
 
         //speeds for manual climbing
         public static final double telescopicManualSpeed = 0.1;

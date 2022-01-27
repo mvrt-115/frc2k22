@@ -4,20 +4,41 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Climber;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class TelescopicArmAuton extends SequentialCommandGroup {
-  /** Creates a new TelescopicArm. */
-  public TelescopicArmAuton(Climber climber) {
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
-    addCommands( // finish this
-        new TelescopicFullExtendAuton(climber, 0.0), // 0 is just a placement value for the actual distance that we would want our telescopic arm to
-        new TelescopicFullRetractAuton(climber, 0.0)// extend/retract to
-    );
+public class TelescopicArmAuton extends CommandBase {
+  /** Creates a new TelescopicFullExtend. */
+  public Climber climber;
+  public double positionFinal;
+
+  public TelescopicArmAuton(Climber climber, double position) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    this.climber = climber;
+    positionFinal = position;
+    addRequirements(climber);
+  }
+
+  // Called when the command is initially scheduled.
+  @Override
+  public void initialize() {}
+
+  // Called every time the scheduler runs while the command is scheduled.
+  @Override
+  public void execute() {
+  // climber.setPosition(climber.leftTelescopic, Constants.Climber.telescopicFullExtend);
+    climber.setPosition(climber.telescopic, positionFinal);
+   }
+
+  // Called once the command ends or is interrupted.
+  @Override
+  public void end(boolean interrupted) {
+    climber.stopMotor(climber.telescopic);
+  }
+
+  // Returns true when the command should end.
+  @Override
+  public boolean isFinished() {
+    return false;
   }
 }

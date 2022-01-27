@@ -66,10 +66,10 @@ public class RobotContainer {
     /*drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
     intakeBalls.whenPressed(new IntakeBalls(intake)).whenReleased(new StopIntaking(intake));
     */
-    forwardarmManual.whenPressed(new PivotArmForwardManual(climber, this::getForwardArmManual));
-    backarmManual.whenPressed(new PivotArmBackManual(climber, this::getBackArmManual));
-    uparmManual.whenPressed(new TelescopicExtendManual(climber, this::getUpArmManual));
-    downarmManual.whenPressed(new TelescopicRetractManual(climber, this::getDownArmManual));
+    forwardarmManual.whenPressed(new PivotArmManual(climber, this::getForwardArmManual, Constants.Climber.pivotManualSpeed));
+    backarmManual.whenPressed(new PivotArmManual(climber, this::getBackArmManual, -(Constants.Climber.pivotManualSpeed)));
+    uparmManual.whenPressed(new TelescopicManual(climber, this::getUpArmManual, Constants.Climber.telescopicManualSpeed));
+    downarmManual.whenPressed(new TelescopicManual(climber, this::getDownArmManual, -(Constants.Climber.telescopicManualSpeed)));
   }
 
   /**
