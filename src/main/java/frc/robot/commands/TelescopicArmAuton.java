@@ -27,13 +27,13 @@ public class TelescopicArmAuton extends CommandBase {
   @Override
   public void execute() {
   // climber.setPosition(climber.leftTelescopic, Constants.Climber.telescopicFullExtend);
-    climber.setPosition(climber.telescopic, positionFinal);
+    climber.setPosition(climber.leftTelescopic, positionFinal);
    }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    climber.stopMotor(climber.telescopic);
+    climber.stopMotor(climber.leftTelescopic);
   }
 
   // Returns true when the command should end.

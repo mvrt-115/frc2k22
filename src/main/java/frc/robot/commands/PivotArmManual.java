@@ -30,13 +30,13 @@ public class PivotArmManual extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    climber.setSpeed(climber.leftPivot, speed);
+    climber.setSpeed(climber.pivot, speed);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    climber.stopMotor(climber.leftPivot);
+    climber.stopMotor(climber.pivot);
   }
 
   // Returns true when the command should end.

@@ -9,7 +9,6 @@ import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
-import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -17,64 +16,60 @@ import frc.robot.Constants;
 
 public class Climber extends SubsystemBase {
 
-  public TalonFX leftPivot, rightPivot; //motor for both pivoting arms
-  public TalonFX telescopic; // motors for each telescopic arm, controlling extending and collapsing motions
-  public DigitalInput leftPivotProximity, rightPivotProximity, leftTelescopicProximity, rightTelescopicProximity; //inductive proximity sensors 
+  public TalonFX pivot; //motor for both pivoting arms
+  public TalonFX leftTelescopic, rightTelescopic; // motors for each telescopic arm, controlling extending and collapsing motions
+  public DigitalInput pivotProximity, leftTelescopicProximity, rightTelescopicProximity; //inductive proximity sensors 
     //for detecting whether robot is hooked on rungs or not for each type of arm
-  public DigitalInput leftPivotLimit, rightPivotLimit, leftTelescopicLimit, rightTelescopicLimit; //inductive proximity sensors 
+  public DigitalInput pivotLimit, leftTelescopicLimit, rightTelescopicLimit; //inductive proximity sensors 
     //for detecting whether robot is hooked on rungs or not for each type of arm
-  public AnalogPotentiometer potentiometerPivot, potentiometerTelescopic; //potentiometer to measure the turn of the pivoting arm
+  public AnalogPotentiometer potentiometerPivot; //potentiometer to measure the turn of the pivoting arm
 
   /**
    * Initializes all objects and reconfigures all motors to requirements
    */
   public Climber() {
     //initializes all motors and sensors
-    leftPivot = new TalonFX(Constants.Climber.leftPivotID);
-    rightPivot = new TalonFX(Constants.Climber.rightPivotID);
-    telescopic = new TalonFX(Constants.Climber.telescopicID);
+    pivot = new TalonFX(Constants.Climber.pivotID);
+    leftTelescopic = new TalonFX(Constants.Climber.leftTelescopicID);
+    rightTelescopic = new TalonFX(Constants.Climber.rightTelescopicID);
     
-    leftPivotProximity = new DigitalInput(Constants.Climber.leftPivotProximityChannel);
-    rightPivotProximity = new DigitalInput(Constants.Climber.rightPivotProximityChannel);
+    pivotProximity = new DigitalInput(Constants.Climber.pivotProximityChannel);
     leftTelescopicProximity = new DigitalInput(Constants.Climber.leftTelescopicProximityChannel);
     rightTelescopicProximity = new DigitalInput(Constants.Climber.rightTelescopicProximityChannel);
 
     potentiometerPivot = new AnalogPotentiometer(Constants.Climber.potentiometerPivotChannel);
-    potentiometerTelescopic = new AnalogPotentiometer(Constants.Climber.potentiometerTelescopicChannel);
     
     //reconfiguring all motors
-    leftPivot.configFactoryDefault();
-    rightPivot.configFactoryDefault();
-    telescopic.configFactoryDefault();
+    pivot.configFactoryDefault();
+    leftTelescopic.configFactoryDefault();
+    rightTelescopic.configFactoryDefault();
   
 
-    leftPivot.setInverted(TalonFXInvertType.Clockwise);
-    rightPivot.setInverted(false);
-    telescopic.setInverted(false);
+    pivot.setInverted(TalonFXInvertType.Clockwise);
+    leftTelescopic.setInverted(false);
+    rightTelescopic.setInverted(false);
     
-    rightPivot.follow(leftPivot);
-    
-    telescopic.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx, 
-      Constants.kTimeoutMs);
-    leftPivot.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx,
-      Constants.kTimeoutMs);
-    rightPivot.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx,
-      Constants.kTimeoutMs);
+    leftTelescopic.follow(rightTelescopic);
 
-    leftPivot.config_kP(Constants.kPIDIdx, Constants.Climber.pivotkP);
-    leftPivot.config_kI(Constants.kPIDIdx, Constants.Climber.pivotkI);
-    leftPivot.config_kD(Constants.kPIDIdx, Constants.Climber.pivotkD);
-    leftPivot.config_kF(Constants.kPIDIdx, Constants.Climber.pivotkF);
+    leftTelescopic.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx, Constants.kTimeoutMs);
+    rightTelescopic.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx, Constants.kTimeoutMs);
+    pivot.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx, Constants.kTimeoutMs);
 
-    telescopic.config_kP(Constants.kPIDIdx, Constants.Climber.telekP);
-    telescopic.config_kI(Constants.kPIDIdx, Constants.Climber.telekI);
-    telescopic.config_kD(Constants.kPIDIdx, Constants.Climber.telekD);
-    telescopic.config_kF(Constants.kPIDIdx, Constants.Climber.telekF);
+    pivot.config_kP(Constants.kPIDIdx, Constants.Climber.pivotkP);
+    pivot.config_kI(Constants.kPIDIdx, Constants.Climber.pivotkI);
+    pivot.config_kD(Constants.kPIDIdx, Constants.Climber.pivotkD);
+    pivot.config_kF(Constants.kPIDIdx, Constants.Climber.pivotkF);
 
-    rightPivot.config_kP(Constants.kPIDIdx, Constants.Climber.telekP);
-    rightPivot.config_kI(Constants.kPIDIdx, Constants.Climber.telekI);
-    rightPivot.config_kD(Constants.kPIDIdx, Constants.Climber.telekD);
-    rightPivot.config_kF(Constants.kPIDIdx, Constants.Climber.telekF);
+    leftTelescopic.config_kP(Constants.kPIDIdx, Constants.Climber.telekP);
+    leftTelescopic.config_kI(Constants.kPIDIdx, Constants.Climber.telekI);
+    leftTelescopic.config_kD(Constants.kPIDIdx, Constants.Climber.telekD);
+    leftTelescopic.config_kF(Constants.kPIDIdx, Constants.Climber.telekF);
+
+    rightTelescopic.config_kP(Constants.kPIDIdx, Constants.Climber.telekP);
+    rightTelescopic.config_kI(Constants.kPIDIdx, Constants.Climber.telekI);
+    rightTelescopic.config_kD(Constants.kPIDIdx, Constants.Climber.telekD);
+    rightTelescopic.config_kF(Constants.kPIDIdx, Constants.Climber.telekF);
+
   }
 
   /**

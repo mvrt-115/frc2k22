@@ -87,14 +87,13 @@ public final class Constants {
         //IDs/channels for sensors and motors
         //NEED TO BE CHANGED WHEN FULLY WIRED OR TESTING
         //motors
-        public static final int leftPivotID = 0; // 22
-        public static final int rightPivotID = 0;
-        public static final int telescopicID = 0;
+        public static final int pivotID = 0; // 22
+        public static final int rightTelescopicID = 0;
+        public static final int leftTelescopicID = 0;
 
         //inductive proximity sensors
-        public static final int leftPivotProximityChannel = 0;
-        public static final int rightPivotProximityChannel = 1;
-        public static final int leftTelescopicProximityChannel = 2;
+        public static final int pivotProximityChannel = 0;
+        public static final int leftTelescopicProximityChannel = 1;
         public static final int rightTelescopicProximityChannel = 3;
         
         //limit switch panels

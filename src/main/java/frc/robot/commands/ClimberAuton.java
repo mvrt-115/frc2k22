@@ -18,6 +18,7 @@ public class ClimberAuton extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
 
     addCommands( // have to finish this and finalize movement stuff
+      new TelescopicArmAuton(climber, 0.0), 
       new PivotArmAutonSequence(climber),
       new TelescopicArmAutonSequence(climber)
     );

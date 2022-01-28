@@ -33,13 +33,13 @@ public class TelescopicManual extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    climber.setSpeed(climber.telescopic, speed);
+    climber.setSpeed(climber.leftTelescopic, speed);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    climber.stopMotor(climber.telescopic);
+    climber.stopMotor(climber.leftTelescopic);
   }
 
   // Returns true when the command should end.

@@ -10,12 +10,12 @@ import frc.robot.subsystems.Climber;
 public class PivotArmAuton extends CommandBase {
   /** Creates a new PivotArmBack. */
   public Climber climber;
-  public double positionFinal;
+  public double finalPosition;
   
   public PivotArmAuton(Climber climber, double position) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.climber = climber;
-    positionFinal = position;
+    finalPosition = position;
     addRequirements(climber);
   }
 
@@ -26,7 +26,7 @@ public class PivotArmAuton extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    climber.setPosition(climber.leftPivot, positionFinal);
+    climber.setPosition(climber.pivot, finalPosition);
   }
 
   // Called once the command ends or is interrupted.
