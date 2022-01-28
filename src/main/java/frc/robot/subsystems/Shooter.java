@@ -51,7 +51,7 @@ public class Shooter extends SubsystemBase {
     // Mind Bending Test on the Reality of our Situation
     flywheelLeader = TalonFactory.createTalonSRX(LEADER_ID, false);
     // flywheelFollower = TalonFactory.createTalonSRX(FOLLOWER_ID, true);
-    // hoodMotor = TalonFactory.createTalonSRX(HOOD_ID, false);
+    hoodMotor = TalonFactory.createTalonSRX(HOOD_ID, false);
 
     // flywheelFollower.follow(flywheelLeader);
 
@@ -61,10 +61,10 @@ public class Shooter extends SubsystemBase {
     flywheelLeader.config_kD(Constants.kPIDIdx, Constants.Flywheel.D);
     flywheelLeader.config_kF(Constants.kPIDIdx, Constants.Flywheel.F);
 
-    // hoodMotor.config_kP(Constants.kPIDIdx, Constants.Hood.PHood);
-    // hoodMotor.config_kI(Constants.kPIDIdx, Constants.Hood.IHood);
-    // hoodMotor.config_kD(Constants.kPIDIdx, Constants.Hood.DHood);
-    // hoodMotor.config_kF(Constants.kPIDIdx, Constants.Hood.FHood);
+    hoodMotor.config_kP(Constants.kPIDIdx, Constants.Hood.P);
+    hoodMotor.config_kI(Constants.kPIDIdx, Constants.Hood.I);
+    hoodMotor.config_kD(Constants.kPIDIdx, Constants.Hood.D);
+    hoodMotor.config_kF(Constants.kPIDIdx, Constants.Hood.F);
 
     this.limelight = limelight;
 
@@ -122,6 +122,15 @@ public class Shooter extends SubsystemBase {
     {
       setState(ShooterState.SPEEDING);
     }
+  }
+
+  /**
+   * Set shooter hood angle
+   * @param angle (in degrees)
+   */
+  public void setTargetAngle(double angle)
+  {
+    targetAng = degreesToTicks(angle);
   }
 
   /**
@@ -188,6 +197,7 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putString("State", state.toString());
     SmartDashboard.putNumber("target rpm", targetRPM);
     SmartDashboard.putNumber("target angle", targetAng);
+    SmartDashboard.putNumber("Hood Angle", getCurrentAngle());
   }
 
   @Override

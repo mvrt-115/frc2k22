@@ -6,12 +6,16 @@
       "/LiveWindow/Limelight": "Subsystem",
       "/LiveWindow/Shooter": "Subsystem",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
+      "/SmartDashboard/Change Angle": "Command",
       "/SmartDashboard/Config PIDF": "Command",
       "/SmartDashboard/Run Flywheel": "Command"
     }
   },
   "NetworkTables": {
     "SmartDashboard": {
+      "Run Flywheel": {
+        "open": true
+      },
       "open": true
     }
   }

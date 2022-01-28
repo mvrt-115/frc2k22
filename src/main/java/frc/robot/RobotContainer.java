@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.PIDTune;
+import frc.robot.commands.SetHoodAngle;
 import frc.robot.commands.SetRPM;
 import frc.robot.commands.StopShooter;
 import frc.robot.subsystems.ExampleSubsystem;
@@ -40,6 +41,7 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
     SmartDashboard.putData("Run Flywheel", new SetRPM(shooter));
+    SmartDashboard.putData("Change Angle", new SetHoodAngle(shooter));
     SmartDashboard.putData("Config PIDF", new PIDTune(shooter.getMotor(), 
                                                       Constants.Flywheel.P, 
                                                       Constants.Flywheel.I,
