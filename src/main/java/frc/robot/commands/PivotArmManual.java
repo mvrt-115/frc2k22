@@ -15,11 +15,11 @@ public class PivotArmManual extends CommandBase {
   public Supplier<Boolean> pivotButton;
   public double speed;
 
-  public PivotArmManual(Climber climber2, Supplier<Boolean> pivotButton, double speedIn) {
+  public PivotArmManual(Climber climber, Supplier<Boolean> pivotButton, double speed) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.pivotButton = pivotButton;
-    climber = climber2;
-    speed = speedIn;
+    this.climber = climber;
+    this.speed = speed;
     addRequirements(climber);
   }
 

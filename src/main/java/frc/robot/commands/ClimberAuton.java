@@ -17,10 +17,26 @@ public class ClimberAuton extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
 
+    final double distToGrabNextHook = 0.0; // should be simple math
+
     addCommands( // have to finish this and finalize movement stuff
-      new TelescopicArmAuton(climber, 0.0), 
-      new PivotArmAutonSequence(climber),
-      new TelescopicArmAutonSequence(climber)
+
+      // initial extension already done as it is done via button presses
+
+      new PivotArmAuton(climber, 0.0), // initial rotation position - slightly back
+      new TelescopicArmAuton(climber, 0.0), // origianl retract to completely hook onto rung/bring robot off ground 
+      new PivotArmAuton(climber, 0.0), // limit switch and then check with proximity sensor
+      new TelescopicArmAuton(climber, 0.0),
+      new PivotArmAuton(climber, 0.0),
+      new TelescopicArmAuton(climber, 0.0),
+      new PivotArmAuton(climber, 0.0), // telescopic arm moves, limit switch to check if it has contacted the high rung
+      new TelescopicArmAuton(climber, 0,0), // retract arm and check proximity sensor and pivot should be off hook
+      new PivotArmAuton(climber, distToGrabNextHook), // rotate the pivoting arm back
+      new TelescopicArmAuton(climber, 0.0), // retract 
+      new PivotArmAuton(climber, 0.0), // will go forward until limit switch is pressed
+      new TelescopicArmAuton(climber, 0.0) // retract until proximity sensor of pivoting arm senses rung
+      
+      // redo the entire motion again
     );
   }
 }

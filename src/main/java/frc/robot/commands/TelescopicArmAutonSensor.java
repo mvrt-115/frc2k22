@@ -4,37 +4,33 @@
 
 package frc.robot.commands;
 
-import java.util.function.Supplier;
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Climber;
 
-public class TelescopicManual extends CommandBase {
+public class TelescopicArmAutonSensor extends CommandBase {
+  /** Creates a new TelescopicArmAutonSensor. */
   public Climber climber;
-  public Supplier<Boolean> teleButton;
-  public double speed;
+  public double position;
 
-  /** Creates a new TelescopicExtendManual. */
-  public TelescopicManual(Climber climber, Supplier<Boolean> teleButton, double speed) {
-    this.climber = climber;
-    this.teleButton = teleButton;
-    this.speed = speed;
-    addRequirements(climber);
+  public TelescopicArmAutonSensor(Climber climber, double position) {
     // Use addRequirements() here to declare subsystem dependencies.
+    this.climber = climber;
+    this.position = position;
+    addRequirements(climber);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
+    new TelescopicArmAuton(climber, position);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    climber.setSpeed(climber.leftTelescopic, speed);
-  }
+    climber.setSpeed(climber.leftTelescopic, Constants.Climber.approachRungSpeed);
+   }
 
   // Called once the command ends or is interrupted.
   @Override
@@ -45,7 +41,6 @@ public class TelescopicManual extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return !teleButton.get() || (speed < 0 && Constants.Climber.telescopicFullRetract >= climber.getTelescopicPosition()) || 
-    (speed > 0 && Constants.Climber.telescopicFullExtend <= climber.getTelescopicPosition());
+    return climber.getLimitSwitch(climber.leftTelescopicLimit) && climber.getLimitSwitch(climber.rightTelescopicLimit);
   }
 }

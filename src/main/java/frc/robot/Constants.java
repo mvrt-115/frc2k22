@@ -130,6 +130,7 @@ public final class Constants {
         public static final double pivotHighestPos = 0;
         public static final double maxPivotPos = 150;
         public static final double minPivotPos = 30;
+        public static final double approachRungSpeed = 0;
 
         //speeds for manual climbing
         public static final double telescopicManualSpeed = 0.1;
