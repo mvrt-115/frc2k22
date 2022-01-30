@@ -10,6 +10,13 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Climber;
 
+/**
+ * Runs the pivot arm motor at a sconstant speed until the manual button currently pressed is released, 
+ *  or if the pivot has reached a maximum turn.
+ * @param climber         climber subsystem object to access subsystem methods
+ * @param pivotButton     supplier that gets state of the manual pivot button passed in
+ * @param speed           speed at which the pivot arm should run at
+ */
 public class PivotArmManual extends CommandBase {
   public Climber climber;
   public Supplier<Boolean> pivotButton;
@@ -42,7 +49,7 @@ public class PivotArmManual extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return !pivotButton.get() || (speed < 0 && Constants.Climber.minPivotPos >= climber.getPivotAngle()) || 
-      (speed > 0 && Constants.Climber.maxPivotPos <= climber.getPivotAngle());
+    return !pivotButton.get() || (speed < 0 && Constants.Climber.kMinPivotPos >= climber.getPivotAngle()) || 
+      (speed > 0 && Constants.Climber.kMaxPivotPos <= climber.getPivotAngle());
   }
 }

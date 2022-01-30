@@ -10,6 +10,8 @@ import frc.robot.subsystems.Climber;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
+
+
 public class ClimberAuton extends SequentialCommandGroup {
   /** Creates a new ClimberAuto. */
 
@@ -30,7 +32,7 @@ public class ClimberAuton extends SequentialCommandGroup {
       new PivotArmAuton(climber, 0.0),
       new TelescopicArmAuton(climber, 0.0),
       new PivotArmAuton(climber, 0.0), // telescopic arm moves, limit switch to check if it has contacted the high rung
-      new TelescopicArmAuton(climber, 0,0), // retract arm and check proximity sensor and pivot should be off hook
+      new TelescopicArmAuton(climber, 0.0), // retract arm and check proximity sensor and pivot should be off hook
       new PivotArmAuton(climber, distToGrabNextHook), // rotate the pivoting arm back
       new TelescopicArmAuton(climber, 0.0), // retract 
       new PivotArmAuton(climber, 0.0), // will go forward until limit switch is pressed

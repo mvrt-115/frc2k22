@@ -29,15 +29,15 @@ public class Climber extends SubsystemBase {
    */
   public Climber() {
     //initializes all motors and sensors
-    pivot = new TalonFX(Constants.Climber.pivotID);
-    leftTelescopic = new TalonFX(Constants.Climber.leftTelescopicID);
-    rightTelescopic = new TalonFX(Constants.Climber.rightTelescopicID);
+    pivot = new TalonFX(Constants.Climber.kPivotID);
+    leftTelescopic = new TalonFX(Constants.Climber.kLeftTelescopicID);
+    rightTelescopic = new TalonFX(Constants.Climber.kRightTelescopicID);
     
-    pivotProximity = new DigitalInput(Constants.Climber.pivotProximityChannel);
-    leftTelescopicProximity = new DigitalInput(Constants.Climber.leftTelescopicProximityChannel);
-    rightTelescopicProximity = new DigitalInput(Constants.Climber.rightTelescopicProximityChannel);
+    pivotProximity = new DigitalInput(Constants.Climber.kPivotProximityChannel);
+    leftTelescopicProximity = new DigitalInput(Constants.Climber.kLeftTelescopicProximityChannel);
+    rightTelescopicProximity = new DigitalInput(Constants.Climber.kRightTelescopicProximityChannel);
 
-    potentiometerPivot = new AnalogPotentiometer(Constants.Climber.potentiometerPivotChannel);
+    potentiometerPivot = new AnalogPotentiometer(Constants.Climber.kPotentiometerPivotChannel);
     
     //reconfiguring all motors
     pivot.configFactoryDefault();
@@ -55,20 +55,20 @@ public class Climber extends SubsystemBase {
     rightTelescopic.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx, Constants.kTimeoutMs);
     pivot.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx, Constants.kTimeoutMs);
 
-    pivot.config_kP(Constants.kPIDIdx, Constants.Climber.pivotkP);
-    pivot.config_kI(Constants.kPIDIdx, Constants.Climber.pivotkI);
-    pivot.config_kD(Constants.kPIDIdx, Constants.Climber.pivotkD);
-    pivot.config_kF(Constants.kPIDIdx, Constants.Climber.pivotkF);
+    pivot.config_kP(Constants.kPIDIdx, Constants.Climber.kPivotkP);
+    pivot.config_kI(Constants.kPIDIdx, Constants.Climber.kPivotkI);
+    pivot.config_kD(Constants.kPIDIdx, Constants.Climber.kPivotkD);
+    pivot.config_kF(Constants.kPIDIdx, Constants.Climber.kPivotkF);
 
-    leftTelescopic.config_kP(Constants.kPIDIdx, Constants.Climber.telekP);
-    leftTelescopic.config_kI(Constants.kPIDIdx, Constants.Climber.telekI);
-    leftTelescopic.config_kD(Constants.kPIDIdx, Constants.Climber.telekD);
-    leftTelescopic.config_kF(Constants.kPIDIdx, Constants.Climber.telekF);
+    leftTelescopic.config_kP(Constants.kPIDIdx, Constants.Climber.kTelekP);
+    leftTelescopic.config_kI(Constants.kPIDIdx, Constants.Climber.kTelekI);
+    leftTelescopic.config_kD(Constants.kPIDIdx, Constants.Climber.kTelekD);
+    leftTelescopic.config_kF(Constants.kPIDIdx, Constants.Climber.kTelekF);
 
-    rightTelescopic.config_kP(Constants.kPIDIdx, Constants.Climber.telekP);
-    rightTelescopic.config_kI(Constants.kPIDIdx, Constants.Climber.telekI);
-    rightTelescopic.config_kD(Constants.kPIDIdx, Constants.Climber.telekD);
-    rightTelescopic.config_kF(Constants.kPIDIdx, Constants.Climber.telekF);
+    rightTelescopic.config_kP(Constants.kPIDIdx, Constants.Climber.kTelekP);
+    rightTelescopic.config_kI(Constants.kPIDIdx, Constants.Climber.kTelekI);
+    rightTelescopic.config_kD(Constants.kPIDIdx, Constants.Climber.kTelekD);
+    rightTelescopic.config_kF(Constants.kPIDIdx, Constants.Climber.kTelekF);
 
   }
 
@@ -77,7 +77,7 @@ public class Climber extends SubsystemBase {
    * @param motor the motor that needs to be run
    * @param speed speed at which the motor needs to be run
   */
-  public void setSpeed(TalonFX motor, double speed){
+  public void setSpeed(TalonFX motor, double speed) {
     motor.set(ControlMode.PercentOutput, speed); 
   }
 
@@ -85,7 +85,7 @@ public class Climber extends SubsystemBase {
    * Stops motors
    * @param motor the motor that needs to be stopped
   */
-  public void stopMotor(TalonFX motor){
+  public void stopMotor(TalonFX motor) {
     setSpeed(motor, 0);
   }
 
@@ -94,7 +94,7 @@ public class Climber extends SubsystemBase {
     * @param motor the motor that needs to be set 
     * @param finalPosition final position of the motor
    */
-  public void setPosition(TalonFX motor, double finalPosition){
+  public void setPosition(TalonFX motor, double finalPosition) {
     motor.set(ControlMode.Position, finalPosition);
   }
 
@@ -103,7 +103,7 @@ public class Climber extends SubsystemBase {
    * @param motor the motor to get the value of
    * @return the number of ticks motor has rotated
    */
-  public double getEncoderValue(TalonFX motor){
+  public double getEncoderValue(TalonFX motor) {
     return motor.getSelectedSensorPosition();
   }
 
@@ -116,13 +116,11 @@ public class Climber extends SubsystemBase {
    * Calculates the angle the pivot has moved through for the selected potentiometer
    * @return angle travelled by pivot
    */
-  public double getPivotAnglePoten()
-  {
+  public double getPivotAnglePoten() {
     return 0;
   }
 
-  public double getPivotAngle()
-  {
+  public double getPivotAngle() {
     return 0;
   }
 
@@ -131,7 +129,7 @@ public class Climber extends SubsystemBase {
    * @param limitSwitch proximity seonsor to get the state of
    * @return the state of proximity sensor (true/false)
    */
-  public boolean getProximity(DigitalInput proximity){
+  public boolean getProximity(DigitalInput proximity) {
     return proximity.get();
   }
 
@@ -140,7 +138,7 @@ public class Climber extends SubsystemBase {
    * @param limitSwitch limit switch to get the state of
    * @return the state of limit switch (true/false)
    */
-  public boolean getLimitSwitch(DigitalInput limitSwitch){
+  public boolean getLimitSwitch(DigitalInput limitSwitch) {
     return limitSwitch.get();
   }
   

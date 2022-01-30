@@ -10,6 +10,13 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Climber;
 
+/**
+ * Runs the telescopic arm motor a constant speed until the manual button currently pressed is released, 
+ *  or if the telescopic has reached a maximum turn.
+ * @param climber        climber subsystem object to access subsystem methods
+ * @param teleButton     supplier that gets state of the manual telescopic button passed in
+ * @param speed          speed at which the pivot arm should run at
+ */
 public class TelescopicManual extends CommandBase {
   public Climber climber;
   public Supplier<Boolean> teleButton;
@@ -45,7 +52,7 @@ public class TelescopicManual extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return !teleButton.get() || (speed < 0 && Constants.Climber.telescopicFullRetract >= climber.getTelescopicPosition()) || 
-    (speed > 0 && Constants.Climber.telescopicFullExtend <= climber.getTelescopicPosition());
+    return !teleButton.get() || (speed < 0 && Constants.Climber.kTelescopicFullRetract >= climber.getTelescopicPosition()) || 
+    (speed > 0 && Constants.Climber.kTelescopicFullExtend <= climber.getTelescopicPosition());
   }
 }

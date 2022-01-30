@@ -87,53 +87,52 @@ public final class Constants {
         //IDs/channels for sensors and motors
         //NEED TO BE CHANGED WHEN FULLY WIRED OR TESTING
         //motors
-        public static final int pivotID = 0; // 22
-        public static final int rightTelescopicID = 0;
-        public static final int leftTelescopicID = 0;
+        public static final int kPivotID = 0; // 22
+        public static final int kRightTelescopicID = 0;
+        public static final int kLeftTelescopicID = 0;
 
         //inductive proximity sensors
-        public static final int pivotProximityChannel = 0;
-        public static final int leftTelescopicProximityChannel = 1;
-        public static final int rightTelescopicProximityChannel = 3;
+        public static final int kPivotProximityChannel = 0;
+        public static final int kLeftTelescopicProximityChannel = 1;
+        public static final int kRightTelescopicProximityChannel = 3;
         
         //limit switch panels
-        public static final int leftPivotLimitSwitch = 4;
-        public static final int rightPivotLimitSwitch = 5;
-        public static final int leftTelescopicLimitSwitch = 6;
-        public static final int rightTelescopicLimitSwitch = 7;
+        public static final int kLeftPivotLimitSwitch = 4;
+        public static final int kRightPivotLimitSwitch = 5;
+        public static final int kLeftTelescopicLimitSwitch = 6;
+        public static final int kRightTelescopicLimitSwitch = 7;
 
         //Constants for potentiometer
-        public static final int potentiometerPivotChannel = 0;
-        public static final int potentiometerTelescopicChannel = 1;
-        public static final double potentiometerRange = 0;
-        public static final double potentiometerInitialOffset = 0;
+        public static final int kPotentiometerPivotChannel = 0;
+        public static final double kPotentiometerRange = 0;
+        public static final double kPotentiometerInitialOffset = 0;
         
         //PID constants for each motor
         //telescopic arm extension/retraction PID constants
-        public static final double telekP = 0;
-        public static final double telekI = 0;
-        public static final double telekD = 0;
-        public static final double telekF = 0;
+        public static final double kTelekP = 0;
+        public static final double kTelekI = 0;
+        public static final double kTelekD = 0;
+        public static final double kTelekF = 0;
         
         //pivoting arm rotation PID constants
-        public static final double pivotkP = 0;
-        public static final double pivotkI = 0;
-        public static final double pivotkD = 0;
-        public static final double pivotkF = 0;
+        public static final double kPivotkP = 0;
+        public static final double kPivotkI = 0;
+        public static final double kPivotkD = 0;
+        public static final double kPivotkF = 0;
 
         //positions that arms move to during the climb (all pivots are in degrees, 
             //all telescopics are in meters)
-        public static final double telescopicFullExtend = 0;
-        public static final double telescopicFullRetract = 0;
-        public static final double pivotStowingPos = 0;
-        public static final double pivotLowestPos = 0;
-        public static final double pivotHighestPos = 0;
-        public static final double maxPivotPos = 150;
-        public static final double minPivotPos = 30;
-        public static final double approachRungSpeed = 0;
+        public static final double kTelescopicFullExtend = 0;
+        public static final double kTelescopicFullRetract = 0;
+        public static final double kPivotStowingPos = 0;
+        public static final double kPivotLowestPos = 0;
+        public static final double kPivotHighestPos = 0;
+        public static final double kMaxPivotPos = 150;
+        public static final double kMinPivotPos = 30;
+        public static final double kApproachRungSpeed = 0;
 
         //speeds for manual climbing
-        public static final double telescopicManualSpeed = 0.1;
-        public static final double pivotManualSpeed = 0.1;
+        public static final double kTelescopicManualSpeed = 0.1;
+        public static final double kPivotManualSpeed = 0.1;
     }
 }

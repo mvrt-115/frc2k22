@@ -8,6 +8,12 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Climber;
 
+/**
+ * Runs the telescopic arm motor using positional PID until final position is reached, and
+ *  if rung hasn't been touched, motors are run at constant speed to activate limit switches
+ * @param climber      climber subsystem object to access subsystem methods
+ * @param position     position which telescopic arm needs to reach
+ */
 public class TelescopicArmAutonSensor extends CommandBase {
   /** Creates a new TelescopicArmAutonSensor. */
   public Climber climber;
@@ -29,7 +35,7 @@ public class TelescopicArmAutonSensor extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    climber.setSpeed(climber.leftTelescopic, Constants.Climber.approachRungSpeed);
+    climber.setSpeed(climber.leftTelescopic, Constants.Climber.kApproachRungSpeed);
    }
 
   // Called once the command ends or is interrupted.
