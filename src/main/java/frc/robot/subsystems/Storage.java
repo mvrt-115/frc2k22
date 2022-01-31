@@ -16,17 +16,16 @@ import frc.robot.util.TalonFactory;
 public class Storage extends SubsystemBase {
   /** Creates a new Storage. */
   private DigitalInput breakBeamFirst; // break beam 
+  public DigitalInput breakBeamLast;
   private BaseTalon storageMotor1, storageMotor2; // motor that runs the belt
   public static enum StorageState {EXPELLING, NOT_EXPELLING}; // states of the storage as to whether it will expel the balls or not
   public static StorageState currentState; // the current state of the storage
-  public int balls; // 
-  public DigitalInput breakBeamLast;
+  private int balls;
   public boolean firstBreakBeamBroken = false;
   public boolean secondBreakBeamBroken = false;
   
   public Storage() {
     storageMotor1 = TalonFactory.createTalonSRX(Constants.Storage.kMotor1ID, true);
-    storageMotor2 = TalonFactory.createTalonSRX(Constants.Storage.kMotor2ID, true);
     breakBeamFirst = new DigitalInput(Constants.Storage.kBreakBeamPort0);
     breakBeamLast = new DigitalInput(Constants.Storage.kBreakBeamPort1);
     currentState = StorageState.NOT_EXPELLING;
@@ -40,24 +39,33 @@ public class Storage extends SubsystemBase {
    */
   @Override
   public void periodic() {
-    if(getBalls() >= 3) {
-      currentState = StorageState.EXPELLING;
-      runMotor();
-    }
+    if(balls > 2) currentState = StorageState.EXPELLING;
 
+    if(balls == 0) currentState = StorageState.NOT_EXPELLING;
+    
     if(currentState == StorageState.NOT_EXPELLING)
     {
-      if(!breakBeamFirst.get()){ // when the break beam is broken
-        runMotor();
+      if(!breakBeamFirst.get())
+      {
         firstBreakBeamBroken = true;
+        runMotor();
       }
-      else{
-        if (firstBreakBeamBroken) {
-          incrementBalls();
-          firstBreakBeamBroken = !firstBreakBeamBroken;
-        }
+
+      else if(!breakBeamLast.get())
+      {
+        secondBreakBeamBroken = true;
+        runMotor();
+      }
+
+      else if(breakBeamFirst.get() && breakBeamLast.get())
+      {
         stopMotor();
       }
+    }
+
+    else if(currentState == StorageState.EXPELLING)
+    {
+      runMotor();
     }
   }
 
@@ -87,16 +95,19 @@ public class Storage extends SubsystemBase {
    */
   public void runMotor(){
     storageMotor1.set(ControlMode.PercentOutput, Constants.Storage.kMotorSpeed * (currentState == StorageState.EXPELLING ? -1 : 1)); //smol if statement
-    storageMotor2.set(ControlMode.PercentOutput, Constants.Storage.kMotorSpeed * (currentState == StorageState.EXPELLING ? -1 : 1)); //smol if statement
 
-    if(!breakBeamLast.get()){
-      secondBreakBeamBroken = true;
-    }
-    
-    if(breakBeamLast.get()){
-      if(secondBreakBeamBroken){
+    if(currentState == StorageState.NOT_EXPELLING)
+    {
+      if(firstBreakBeamBroken)
+      {
+        incrementBalls();
+        firstBreakBeamBroken = false;
+      }
+
+      if(secondBreakBeamBroken)
+      {
         decrementBalls();
-        secondBreakBeamBroken = !(1 > 0);
+        secondBreakBeamBroken = false;
       }
     }
   }
@@ -106,6 +117,5 @@ public class Storage extends SubsystemBase {
    */
   public void stopMotor(){
     storageMotor1.set(ControlMode.PercentOutput, 0);
-    storageMotor2.set(ControlMode.PercentOutput, 0);
   }
 }
