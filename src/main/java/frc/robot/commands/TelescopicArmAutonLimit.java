@@ -14,12 +14,12 @@ import frc.robot.subsystems.Climber;
  * @param climber      climber subsystem object to access subsystem methods
  * @param position     position which telescopic arm needs to reach
  */
-public class TelescopicArmAutonSensor extends CommandBase {
+public class TelescopicArmAutonLimit extends CommandBase {
   /** Creates a new TelescopicArmAutonSensor. */
   public Climber climber;
   public double position;
 
-  public TelescopicArmAutonSensor(Climber climber, double position) {
+  public TelescopicArmAutonLimit(Climber climber, double position) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.climber = climber;
     this.position = position;
@@ -29,7 +29,7 @@ public class TelescopicArmAutonSensor extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    new TelescopicArmAuton(climber, position);
+    new PivotArmAuton(climber, position);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

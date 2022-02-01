@@ -7,33 +7,25 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Climber;
 
-/**
- * Runs the pivot arm motor using positional PID until final angle is reached, and
- *  if rung hasn't been touched, motors are run at constant speed to activate limit switches
- * @param climber      climber subsystem object to access subsystem methods
- * @param angle     position which telescopic arm needs to reach
- */
-public class PivotArmAutonSensor extends CommandBase {
+public class TelescopicArmAutonProximity extends CommandBase {
   public Climber climber;
-  public double angle;
-
-  /** Creates a new PivotArmAutonSensor. */
-  public PivotArmAutonSensor(Climber climber, double angleIn) {
-    climber = new Climber();
-    angle =  angleIn;
+  public double position;
+  /** Creates a new TelescopicArmAutonProximity. */
+  public TelescopicArmAutonProximity(Climber climberIn, double positionIn) {
     // Use addRequirements() here to declare subsystem dependencies.
+    climber = climberIn;
+    position = positionIn;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    new PivotArmAuton(climber, angle);
+    new TelescopicArmAuton(climber, position);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
@@ -42,6 +34,6 @@ public class PivotArmAutonSensor extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return climber.getLimitSwitch(climber.pivotLimit);
+    return climber.getProximity(climber.leftTelescopicProximity) && climber.getProximity(climber.rightTelescopicProximity) && climber.getProximity(climber.pivotProximity);
   }
 }
