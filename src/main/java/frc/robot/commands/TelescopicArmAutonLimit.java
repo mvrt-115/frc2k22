@@ -5,7 +5,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
 import frc.robot.subsystems.Climber;
 
 /**
@@ -21,6 +20,8 @@ public class TelescopicArmAutonLimit extends CommandBase {
 
   public TelescopicArmAutonLimit(Climber climber, double position) {
     // Use addRequirements() here to declare subsystem dependencies.
+
+    // initializes the field variables to the given parameter values
     this.climber = climber;
     this.position = position;
     addRequirements(climber);
@@ -34,17 +35,14 @@ public class TelescopicArmAutonLimit extends CommandBase {
   }
 
   // Called every time the scheduler runs while the command is scheduled.
-  // sets the speed of the telescopic arms' motors to the given speed
   @Override
-  public void execute() {
-    climber.setSpeed(climber.leftTelescopic, Constants.Climber.kApproachRungSpeed);
-   }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
-  // when the position that the climber wants to be at is reached, the motors are stopped
+  // when the position that the climber wants to be at is reached, the pivot motors are stopped
   @Override
   public void end(boolean interrupted) {
-    climber.stopMotor(climber.leftTelescopic);
+    climber.stopMotor(climber.pivot);
   }
 
   // Returns true when the command should end.

@@ -14,17 +14,21 @@ import frc.robot.subsystems.Climber;
  * @param angle     position which telescopic arm needs to reach
  */
 public class PivotArmAutonLimit extends CommandBase {
+
   public Climber climber;
   public double angle;
 
   /** Creates a new PivotArmAutonSensor. */
   public PivotArmAutonLimit(Climber climber, double angleIn) {
+
+    // initializes the field variables to the given parameters
     climber = new Climber();
     angle =  angleIn;
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
+  // runs the pivot arm auton command to the angle given 
   @Override
   public void initialize() {
     new PivotArmAuton(climber, angle);
@@ -36,10 +40,14 @@ public class PivotArmAutonLimit extends CommandBase {
   }
 
   // Called once the command ends or is interrupted.
+  // stops the pivting motor once the command is finished 
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    climber.stopMotor(climber.pivot);
+  }
 
   // Returns true when the command should end.
+  // if the pivoting limit swtich is contacted before the pivot angle is reached, then the pivot stops
   @Override
   public boolean isFinished() {
     return climber.getLimitSwitch(climber.pivotLimit);
