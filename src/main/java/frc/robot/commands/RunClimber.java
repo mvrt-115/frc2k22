@@ -10,14 +10,18 @@ import frc.robot.subsystems.Climber;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class PivotArmAutonSequence extends SequentialCommandGroup {
-  /** Creates a new PivotingArm. */
-  public PivotArmAutonSequence(Climber climber) {
+public class RunClimber extends SequentialCommandGroup {
+  public Climber climber;
+  /** Creates a new RunClimber. */
+  public RunClimber(Climber climberIn) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands( // have to finish this 
-        new PivotArmAuton(climber, 0.0), // 0 is placement value for the one that we want to pivot to
-        new PivotArmAuton(climber, 0.0)
+
+    /** the climber auton which is designed for one complete climb is called
+     *  twice to account for two climbs in order to get to the high rung */ 
+    addCommands(
+      new ClimberAuton(climber),
+      new ClimberAuton(climber)
     );
   }
 }

@@ -5,16 +5,23 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.Climber;
 
 public class PivotArmAutonProximity extends CommandBase {
+  public Climber climber;
+  public double angle;
   /** Creates a new PivotArmAutonProximity. */
-  public PivotArmAutonProximity() {
+  public PivotArmAutonProximity(Climber climberIn, double angleIn) {
     // Use addRequirements() here to declare subsystem dependencies.
+    climber = climberIn;
+    angle = angleIn;
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    new PivotArmAuton(climber, angle);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -25,8 +32,10 @@ public class PivotArmAutonProximity extends CommandBase {
   public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
+  /** finishes the pivot auton command if the proximity sensor
+   *  senses the rung before the arm gets to the given angle */ 
   @Override
   public boolean isFinished() {
-    return false;
+    return climber.getProximity(climber.pivotProximity);
   }
 }

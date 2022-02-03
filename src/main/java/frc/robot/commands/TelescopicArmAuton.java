@@ -14,11 +14,14 @@ import frc.robot.subsystems.Climber;
  */
 public class TelescopicArmAuton extends CommandBase {
   /** Creates a new TelescopicFullExtend. */
-  public Climber climber;
-  public double positionFinal;
+
+  public Climber climber; // climber instance
+  public double positionFinal; // position the telescopic arms should go to
 
   public TelescopicArmAuton(Climber climber, double position) {
     // Use addRequirements() here to declare subsystem dependencies.
+    
+    // initializes field variables to the given parameter values
     this.climber = climber;
     positionFinal = position;
     addRequirements(climber);
@@ -29,13 +32,14 @@ public class TelescopicArmAuton extends CommandBase {
   public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
+  // sets the position of the telescopic arm to the given value
   @Override
   public void execute() {
-  // climber.setPosition(climber.leftTelescopic, Constants.Climber.telescopicFullExtend);
     climber.setPosition(climber.leftTelescopic, positionFinal);
    }
 
   // Called once the command ends or is interrupted.
+  // stops the telescopic motors once the button is released
   @Override
   public void end(boolean interrupted) {
     climber.stopMotor(climber.leftTelescopic);

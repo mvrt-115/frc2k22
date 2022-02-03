@@ -19,6 +19,8 @@ public class PivotArmAuton extends CommandBase {
   
   public PivotArmAuton(Climber climber, double angle) {
     // Use addRequirements() here to declare subsystem dependencies.
+
+    // initializing all of the field variables to the parameter values
     this.climber = climber;
     finalAngle = angle;
     addRequirements(climber);
@@ -29,6 +31,7 @@ public class PivotArmAuton extends CommandBase {
   public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
+  // sets the position of the pivoting arm to the given angle
   @Override
   public void execute() {
     climber.setPosition(climber.pivot, finalAngle);

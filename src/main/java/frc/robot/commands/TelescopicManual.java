@@ -24,6 +24,8 @@ public class TelescopicManual extends CommandBase {
 
   /** Creates a new TelescopicExtendManual. */
   public TelescopicManual(Climber climber, Supplier<Boolean> teleButton, double speed) {
+
+    // initializes the field variables to given parameters
     this.climber = climber;
     this.teleButton = teleButton;
     this.speed = speed;
@@ -38,18 +40,22 @@ public class TelescopicManual extends CommandBase {
   }
 
   // Called every time the scheduler runs while the command is scheduled.
+  // sets the speed of the left telescopic arm's motor to the speed given
   @Override
   public void execute() {
     climber.setSpeed(climber.leftTelescopic, speed);
   }
 
   // Called once the command ends or is interrupted.
+  // stops the motors of the telescopic arms
   @Override
   public void end(boolean interrupted) {
     climber.stopMotor(climber.leftTelescopic);
   }
 
   // Returns true when the command should end.
+  /** Ends the command when either the button is released, or the telescopic arms
+   *  are completely extended or retracted  */ 
   @Override
   public boolean isFinished() {
     return !teleButton.get() || (speed < 0 && Constants.Climber.kTelescopicFullRetract >= climber.getTelescopicPosition()) || 

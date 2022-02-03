@@ -18,35 +18,41 @@ import frc.robot.subsystems.Climber;
  * @param speed           speed at which the pivot arm should run at
  */
 public class PivotArmManual extends CommandBase {
-  public Climber climber;
-  public Supplier<Boolean> pivotButton;
+
+  public Climber climber; 
+  public Supplier<Boolean> pivotButton; 
   public double speed;
 
   public PivotArmManual(Climber climber, Supplier<Boolean> pivotButton, double speed) {
     // Use addRequirements() here to declare subsystem dependencies.
+
+    // field variables are all initialized to given parameter values
     this.pivotButton = pivotButton;
     this.climber = climber;
     this.speed = speed;
     addRequirements(climber);
   }
 
-  // Called when the command is initially scheduled.
+  // Called when the command is initially scheduled
   @Override
   public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
+  // sets the speed of the pivot arm's motor to the given speed
   @Override
   public void execute() {
     climber.setSpeed(climber.pivot, speed);
   }
 
   // Called once the command ends or is interrupted.
+  // stops the motor when the button is released
   @Override
   public void end(boolean interrupted) {
     climber.stopMotor(climber.pivot);
   }
 
   // Returns true when the command should end.
+  // if the button is released or the max or min angle that the pivot can do is reached
   @Override
   public boolean isFinished() {
     return !pivotButton.get() || (speed < 0 && Constants.Climber.kMinPivotPos >= climber.getPivotAngle()) || 
