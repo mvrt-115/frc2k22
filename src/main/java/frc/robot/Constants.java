@@ -63,17 +63,18 @@ public final class Constants {
         public static final double kWHEELS_SPEED = 0.6;
 
         public static final double kPIVOT_SPEED = 0.4; // speed of intake when going up or down
-        public static final double kPIVOT_STOP_SPEED_WHEN_UP = 0.23; // speed of intake to keep it up
-        public static final double kPIVOT_STOP_SPEED_WHEN_DOWN = -0.23; // speed of intake to keep it down
+        public static final double kPIVOT_STOP_SPEED_WHEN_UP =0.13; // speed of intake to keep it up
+        public static final double kPIVOT_STOP_SPEED_WHEN_DOWN = -0.1; // speed of intake to keep it down
         //change later after testing
 
-        public static final double kMARGIN_OF_ERROR_TICKS = 600;
+        public static final double kMARGIN_OF_ERROR_TICKS = 4000; // constant
+
 
         // change values later
-        public static final double kP = 0.02;
+        public static final double kP = 0.015;
         public static final double kI = 0.0;
-        public static final double kD = 0.0;
-        public static final double kFF = 0.0;
+        public static final double kD = 0.001;//0.001;
+        public static final double kFF = 0;//-0.001;
     }
 
     public static class Limelight

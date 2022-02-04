@@ -42,14 +42,16 @@ public class Intake extends SubsystemBase {
     pivotMotor.setSelectedSensorPosition(0);
 
     pivotMotor.config_kP(Constants.kPIDIdx, Constants.Intake.kP);
+    pivotMotor.config_kI(Constants.kPIDIdx, Constants.Intake.kI);
+    pivotMotor.config_kD(Constants.kPIDIdx, Constants.Intake.kD);
+    pivotMotor.config_kF(Constants.kPIDIdx, Constants.Intake.kFF);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     feedForward = Constants.Intake.kFF * Math.cos(Math.toRadians(getAngle()));
-  }
-    /*switch(state)
+    switch(state)
     {
       case INTAKING: // intake is deployed and starts running
         stopPivot();
@@ -69,10 +71,12 @@ public class Intake extends SubsystemBase {
 
     SmartDashboard.putString("current state of intake", getCurrentStateAsString());
     SmartDashboard.putNumber("power voltage on pivot motor", pivotMotor.getMotorOutputPercent());
-    SmartDashboard.putNumber("Ticks", getCurrentPos())
-;  }
-  
+    SmartDashboard.putNumber("Ticks", getCurrentPos());
+    SmartDashboard.putBoolean("is at top", Math.abs(getCurrentPos()) <= Constants.Intake.kMARGIN_OF_ERROR_TICKS);
+    SmartDashboard.putBoolean("is at bottom", Math.abs(getCurrentPos() - Constants.Intake.kTICKS_TO_BOTTOM) <= Constants.Intake.kMARGIN_OF_ERROR_TICKS);
 
+  }
+    
   public String getCurrentStateAsString()
   {
     switch(state)
@@ -90,7 +94,7 @@ public class Intake extends SubsystemBase {
    */
   public void stopIntake()
   {
-   // intakeMotor.set(ControlMode.PercentOutput, 0);
+    intakeMotor.set(ControlMode.PercentOutput, 0);
    // uncomment when  intake motor is added
   }
 
@@ -157,7 +161,8 @@ public class Intake extends SubsystemBase {
    */
   public boolean isAtTop()
   {
-    return Math.abs(getCurrentPos() - Constants.Intake.kTICKS_TO_TOP) <= Constants.Intake.kMARGIN_OF_ERROR_TICKS;
+    return Math.abs(getCurrentPos()) <= Constants.Intake.kMARGIN_OF_ERROR_TICKS;
+    // Math.abs(getCurrentPos() - Constants.Intake.kTicksTOTop <= blah blah)
   }
 
   /**
@@ -195,7 +200,7 @@ public class Intake extends SubsystemBase {
    */
   public void startIntake()
   {
-    //intakeMotor.set(ControlMode.PercentOutput, Constants.Intake.kWHEELS_SPEED);
+    intakeMotor.set(ControlMode.PercentOutput, Constants.Intake.kWHEELS_SPEED);
     // uncomment when intake motor is added
   }
 
