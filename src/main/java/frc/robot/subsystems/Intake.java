@@ -46,7 +46,7 @@ public class Intake extends SubsystemBase {
     // This method will be called once per scheduler run
     feedForward = Constants.Intake.kFF * Math.cos(Math.toRadians(getAngle()));
     
-    switch(state)
+    /*switch(state)
     {
       case INTAKING: // intake is deployed and starts running
         stopPivot();
@@ -62,7 +62,9 @@ public class Intake extends SubsystemBase {
       case UP:
         stopPivot(); // to keep the intake up
         break;
-    }
+    }*/
+
+    // f   ind ticks to bottom and top
   }
 
   /**
