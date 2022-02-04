@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -36,16 +37,18 @@ public class Intake extends SubsystemBase {
     state = IntakeState.UP;
 
     intakeMotor = TalonFactory.createTalonSRX(Constants.Intake.kROLLER_ID, true); // change motor IDs from Constants later
-    pivotMotor = TalonFactory.createTalonSRX(Constants.Intake.kPIVOT_ID, true); // change motor IDs from Constants later
+    pivotMotor = TalonFactory.createTalonSRX(Constants.Intake.kPIVOT_ID, false); // change motor IDs from Constants later
    
     pivotMotor.setSelectedSensorPosition(0);
+
+    pivotMotor.config_kP(Constants.kPIDIdx, Constants.Intake.kP);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     feedForward = Constants.Intake.kFF * Math.cos(Math.toRadians(getAngle()));
-    
+  }
     /*switch(state)
     {
       case INTAKING: // intake is deployed and starts running
@@ -62,9 +65,24 @@ public class Intake extends SubsystemBase {
       case UP:
         stopPivot(); // to keep the intake up
         break;
-    }*/
+    }
 
-    // f   ind ticks to bottom and top
+    SmartDashboard.putString("current state of intake", getCurrentStateAsString());
+    SmartDashboard.putNumber("power voltage on pivot motor", pivotMotor.getMotorOutputPercent());
+    SmartDashboard.putNumber("Ticks", getCurrentPos())
+;  }
+  
+
+  public String getCurrentStateAsString()
+  {
+    switch(state)
+    {
+      case UP: return "Up";
+      case PIVOTING_DOWN: return "Pivoting down";
+      case PIVOTING_UP: return "pivoting up";
+      case INTAKING: return "intaking";
+      default: return "";
+    }
   }
 
   /**
@@ -72,7 +90,8 @@ public class Intake extends SubsystemBase {
    */
   public void stopIntake()
   {
-    intakeMotor.set(ControlMode.PercentOutput, 0);
+   // intakeMotor.set(ControlMode.PercentOutput, 0);
+   // uncomment when  intake motor is added
   }
 
   /**
@@ -160,6 +179,7 @@ public class Intake extends SubsystemBase {
   {
     if(isAtTop())
     {
+      System.out.println("yo wassup guys im up");
       state = IntakeState.UP;
     }
 
@@ -175,7 +195,8 @@ public class Intake extends SubsystemBase {
    */
   public void startIntake()
   {
-    intakeMotor.set(ControlMode.PercentOutput, Constants.Intake.kWHEELS_SPEED);
+    //intakeMotor.set(ControlMode.PercentOutput, Constants.Intake.kWHEELS_SPEED);
+    // uncomment when intake motor is added
   }
 
   /**
