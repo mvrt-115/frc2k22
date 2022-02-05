@@ -168,7 +168,7 @@ public class Climber extends SubsystemBase {
    Follow this calculation
    */
   public double ticksToDegrees(double ticks) {
-    return Constants.Climber.kTicksPerRotation / 360 * Constants.Climber.kPivotGearRatio * ticks * 360;
+    return (ticks / Constants.Climber.kTicksPerRotation / Constants.Climber.kPivotGearRatio) * 360;
   }
 
   /**

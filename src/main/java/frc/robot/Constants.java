@@ -126,24 +126,27 @@ public final class Constants {
         public static final double kPivotkF = 0;
         public static final double kFeedForwardPivot = 0;
 
-        //positions that arms move to during the climb (all pivots are in degrees, 
-            //all telescopics are in meters)
-        public static final double kTelescopicFullExtend = 0;
-        public static final double kTelescopicFullRetract = 0;
-        public static final double kPivotStowingPos = 0;
-        public static final double kPivotLowestPos = 0;
-        public static final double kPivotHighestPos = 0;
-        public static final double kMaxPivotPos = 150;
-        public static final double kMinPivotPos = 30;
-        public static final double kApproachRungSpeed = 0;
-
         //speeds for manual climbing
         public static final double kTelescopicManualSpeed = 0.1;
         public static final double kPivotManualSpeed = 0.1;
 
-        public static class Auton{
+        public static class Auton {
             public static final double kLiftOffRungTele = 0;
             public static final double kLiftOff = 0;
-        }
+            public static final double kFirstBackPivot = -0;
+            public static final double kGetUnderRungRetract = 0;
+            public static final double kSecondBackPivot = 0;
+
+            //positions that arms move to during the climb (all pivots are in degrees, 
+                //all telescopics are in meters)
+            public static final double kTelescopicFullExtend = 0;
+            public static final double kTelescopicFullRetract = 0;
+            public static final double kPivotStowingPos = 0;
+            public static final double kPivotLowestPos = 0;
+            public static final double kPivotHighestPos = 0;
+            public static final double kMaxPivotPos = 150;
+            public static final double kMinPivotPos = 30;
+            public static final double kApproachRungSpeed = 0;
+            }
     }
 }

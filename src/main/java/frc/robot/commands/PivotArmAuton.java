@@ -46,6 +46,6 @@ public class PivotArmAuton extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return Math.abs(climber.ticksToDegrees(climber.getEncoderValue(climber.pivot)) - finalAngle) < 0.05;
   }
 }

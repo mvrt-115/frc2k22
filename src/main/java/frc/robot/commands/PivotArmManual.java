@@ -55,7 +55,7 @@ public class PivotArmManual extends CommandBase {
   // if the button is released or the max or min angle that the pivot can do is reached
   @Override
   public boolean isFinished() {
-    return !pivotButton.get() || (speed < 0 && Constants.Climber.kMinPivotPos >= climber.getPivotAngle()) || 
-      (speed > 0 && Constants.Climber.kMaxPivotPos <= climber.getPivotAngle());
+    return !pivotButton.get() || (speed < 0 && Constants.Climber.Auton.kMinPivotPos >= climber.getPivotAngle()) || 
+      (speed > 0 && Constants.Climber.Auton.kMaxPivotPos <= climber.getPivotAngle());
   }
 }

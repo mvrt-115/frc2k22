@@ -51,16 +51,16 @@ public class ClimberAuton extends SequentialCommandGroup {
         12. Extend with proximity*/
 
       new TelescopicArmAuton(climber, Constants.Climber.Auton.kLiftOffRungTele), // extend telescopic arms
-      new PivotArmAuton(climber, Constants.Climber.Auton.), // pivot arms forward a little to get it behind mid rung
-      new TelescopicArmAuton(climber, -0.0), // retract telescopic arms so that they are able to be low enough to go under rung
-      new PivotArmAuton(climber, 0.0), // pivot arms forward to get the telescopic under the next rung
-      new TelescopicArmAuton(climber, 0.0), // extend telescopic arms to get the telescopic limit switches lined up with the rung
+      new PivotArmAuton(climber, Constants.Climber.Auton.kFirstBackPivot), // pivot arms forward a little to get it behind mid rung
+      new TelescopicArmAuton(climber, Constants.Climber.Auton.kGetUnderRungRetract), // retract telescopic arms so that they are able to be low enough to go under rung
+      new PivotArmAuton(climber, Constants.Climber.Auton.kSecondBackPivot), // pivot arms forward to get the telescopic under the next rung
+      new TelescopicArmAuton(climber, Constants.Climber.Auton.kTelescopicFullExtend), // extend telescopic arms to get the telescopic limit switches lined up with the rung
       new PivotArmAutonLimit(climber, 0.0), // pivots back for telescopic to touch rung at telescopic limit switch
       new TelescopicArmAutonProximity(climber, -0.0), // retracts telescopic arms so that they hang on rung, and confirmed with proximities
 
       //TELESCOPIC ON RUNG AT THIS POINT
 
-      new TelescopicArmAuton(climber,  Constants.Climber.Auton.kLiftOff), // retracts further to remove hook from lower rung
+      new TelescopicArmAuton(climber, Constants.Climber.Auton.kLiftOff), // retracts further to remove hook from lower rung
       new PivotArmAuton(climber, -0.0), // pivots arm back towards the higher rung
       new TelescopicArmAuton(climber, -0.0), // retracts arm to level limit to higher rung
       new PivotArmAutonLimit(climber, 0.0), // pivots towards rung until limit is activated
