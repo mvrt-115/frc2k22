@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants;
 import frc.robot.subsystems.Climber;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -49,8 +50,8 @@ public class ClimberAuton extends SequentialCommandGroup {
         11. Pivot forward with pivot limit
         12. Extend with proximity*/
 
-      new TelescopicArmAuton(climber, kLiftOffRungTele), // extend telescopic arms
-      new PivotArmAuton(climber, 0.0), // pivot arms forward a little to get it behind mid rung
+      new TelescopicArmAuton(climber, Constants.Climber.Auton.kLiftOffRungTele), // extend telescopic arms
+      new PivotArmAuton(climber, Constants.Climber.Auton.), // pivot arms forward a little to get it behind mid rung
       new TelescopicArmAuton(climber, -0.0), // retract telescopic arms so that they are able to be low enough to go under rung
       new PivotArmAuton(climber, 0.0), // pivot arms forward to get the telescopic under the next rung
       new TelescopicArmAuton(climber, 0.0), // extend telescopic arms to get the telescopic limit switches lined up with the rung
@@ -59,7 +60,7 @@ public class ClimberAuton extends SequentialCommandGroup {
 
       //TELESCOPIC ON RUNG AT THIS POINT
 
-      new TelescopicArmAuton(climber, kLiftOff), // retracts further to remove hook from lower rung
+      new TelescopicArmAuton(climber,  Constants.Climber.Auton.kLiftOff), // retracts further to remove hook from lower rung
       new PivotArmAuton(climber, -0.0), // pivots arm back towards the higher rung
       new TelescopicArmAuton(climber, -0.0), // retracts arm to level limit to higher rung
       new PivotArmAutonLimit(climber, 0.0), // pivots towards rung until limit is activated

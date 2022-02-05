@@ -140,5 +140,10 @@ public final class Constants {
         //speeds for manual climbing
         public static final double kTelescopicManualSpeed = 0.1;
         public static final double kPivotManualSpeed = 0.1;
+
+        public static class Auton{
+            public static final double kLiftOffRungTele = 0;
+            public static final double kLiftOff = 0;
+        }
     }
 }
