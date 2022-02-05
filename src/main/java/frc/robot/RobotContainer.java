@@ -9,8 +9,16 @@ import javax.swing.JInternalFrame;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.commands.*;
-import frc.robot.subsystems.*;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.IntakeBalls;
+import frc.robot.commands.JoystickDrive;
+import frc.robot.commands.SetRPM;
+import frc.robot.commands.StopIntaking;
+import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Intake;
 import frc.robot.util.Limelight;
 import frc.robot.util.RollingAverage;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -23,38 +31,39 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  private final Limelight limelight = new Limelight();
-  private final Drivetrain drivetrain = new Drivetrain();
-  private final Climber climber = new Climber();
-  private final Intake intake = new Intake();
-  private final Shooter shooter = new Shooter(limelight);
-  private final Turret turret = new Turret(limelight);
-  private final Storage storage = new Storage();
+  // The robot's subsystems and commands are defined here...
+ // private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
-  private Joystick driverJoystick;
+  private Joystick driverJoystick; //Joysticks
   private Joystick operatorJoystick;  
   
-  private JoystickButton intakeBalls;
+  private JoystickButton intakeBalls; //buttons
   private JoystickButton alignDrivetrain;
   private JoystickButton expelBalls;
 
-  private RollingAverage throttle = new RollingAverage(50);
-  private RollingAverage wheel = new RollingAverage(15);
+  private Drivetrain drivetrain;
+
+  public RollingAverage throttle, wheel;
 
   private JoystickButton quickturn;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    driverJoystick = new Joystick(0);
-    operatorJoystick = new Joystick(1);
     // Configure the button bindings
     
+    driverJoystick = new Joystick(0);
+
     // intakeBalls = new JoystickButton(operatorJoystick, 0);
     // alignDrivetrain = new JoystickButton(operatorJoystick, 0);
     // expelBalls = new JoystickButton(operatorJoystick, 0);
-    quickturn =new JoystickButton(driverJoystick, 5);
+
+    quickturn = new JoystickButton(driverJoystick, 5);
+    drivetrain = new Drivetrain();
+    throttle = new RollingAverage(50);
+    wheel = new RollingAverage(15);
     
     configureButtonBindings();
+    //SmartDashboard.putData("Run Flywheel", new SetRPM(shooter));
   }
 
   /**
@@ -101,6 +110,7 @@ public class RobotContainer {
   public double getWheel() {
     wheel.updateValue(driverJoystick.getRawAxis(0) * .8);
     return wheel.getAverage();
+
   }
 
   /**

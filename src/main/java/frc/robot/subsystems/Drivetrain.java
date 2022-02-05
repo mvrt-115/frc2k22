@@ -126,6 +126,7 @@ public class Drivetrain extends SubsystemBase {
      * Works with alignToBall() 
      * @return Distance from where the robot is pointing to the ball in pixels
      */
+    // TODO SOHAN SHINGADE DO THIS
     public int getErrorInPixels() {
         return 0;
     }
