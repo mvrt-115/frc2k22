@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Turret.TurretState;
@@ -27,20 +28,26 @@ public class TurnTurret extends CommandBase {
   public void initialize() {
     turret.setState(TurretState.DISABLED);
 
-    turret.turnPercentOut(percentOut);
+    SmartDashboard.putNumber("manual", percentOut);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    turret.turnPercentOut(percentOut);
+
+    SmartDashboard.putNumber("manual", percentOut);
+  }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    SmartDashboard.putNumber("interrupted", percentOut);
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    return false;
   }
 }

@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  */
 public class RobotContainer {
   private final Limelight limelight = new Limelight();
-  // private final Drivetrain drivetrain = new Drivetrain();
+  private final Drivetrain drivetrain = new Drivetrain();
   // private final Climber climber = new Climber();
   // private final Intake intake = new Intake();
   // private final Shooter shooter = new Shooter(limelight);
@@ -36,10 +36,18 @@ public class RobotContainer {
 
   private JoystickButton quickturn;
 
+  public JoystickButton turretClockwise;
+  public JoystickButton turretCounterclockwise;
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     driverJoystick = new Joystick(0);
     operatorJoystick = new Joystick(1);
+
+    turretClockwise = new JoystickButton(driverJoystick, 2);
+    turretCounterclockwise = new JoystickButton(driverJoystick, 3);
+
+    quickturn = new JoystickButton(driverJoystick, 9);
 
     // Configure the button bindings
     configureButtonBindings();
@@ -53,10 +61,12 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // the :: syntax allows us to pass in methods of a class as variables so that the command can continuously access input values
-    // drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
+    drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
 
-    // quickturn = new JoystickButton(driverJoystick, 5);
     turret.setDefaultCommand(new FindTarget(turret));
+
+    turretClockwise.whenPressed(new TurnTurret(turret, -1)).whenReleased(new TurnTurret(turret, 0));
+    turretCounterclockwise.whenPressed(new TurnTurret(turret, 1)).whenReleased(new TurnTurret(turret, 0));
   }
 
   /**

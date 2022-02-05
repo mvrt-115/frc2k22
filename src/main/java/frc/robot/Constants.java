@@ -20,12 +20,11 @@ public final class Constants {
     
     public static final int kPIDIdx = 0;
     public static final int kTimeoutMs = 10;
-    public static final boolean kIsPracticeBot = false;
+    public static final boolean kIsPracticeBot = true;
     public static final double kVoltageComp = 10.0;
     public static final SupplyCurrentLimitConfiguration kCurrentLimit = new SupplyCurrentLimitConfiguration(true, 40, 50, 3.8);
 
     public static class Drivetrain {
-
         // physical constants get from mech once drivetrain is done
         public static final int kTrackScrubFactor = 0;
         public static final double kTrackWidthInches = 0;
@@ -36,10 +35,10 @@ public final class Constants {
         public static final int kCompLeftFollowerId = 3;
         public static final int kCompRightFollowerId = 4;
 
-        public static final int kPracLeftMasterId = 5;
-        public static final int kPracRightMasterId = 6;
-        public static final int kPracLeftFollowerId = 7;
-        public static final int kPracRightFollowerId = 8;
+        public static final int kPracLeftMasterId = 20;
+        public static final int kPracRightMasterId = 1;
+        public static final int kPracLeftFollowerId = 34;
+        public static final int kPracRightFollowerId = 15;
 
         // constants for joystick drive
         public static final double kSensitivity = 0.90;
@@ -68,8 +67,8 @@ public final class Constants {
     }
 
     public static class Turret {
-        public static final double kGearRatio = 156.25; // 150 * 5 * 5 / 24
-        public static final double kTicksPerRevolution = 4096;
+        public static final double kGearRatio = 117.86; // 150 * 5 * 5 / 24
+        public static final double kTicksPerRevolution = 2048;
         public static final double kMinAngle = -180; // degrees
         public static final double kMaxAngle = 180; // degrees
         public static final double kLimelightOffset = 0; // degrees
@@ -82,8 +81,8 @@ public final class Constants {
         public static final double kILarge = 0;
         public static final double kDLarge = 0;
 
-        public static final double kP = 0.03;
+        public static final double kP = 0.1;
         public static final double kI = 0;
-        public static final double kD = 0.01;  // try with 0.007
+        public static final double kD = 0.08;  // try with 0.007
     }
 }

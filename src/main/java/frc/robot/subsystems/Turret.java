@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -23,7 +24,7 @@ public class Turret extends SubsystemBase {
 
   private TurretState state;
 
-  private TalonSRX turret, left, right;
+  private TalonFX turret, left, right;
 
   private Limelight limelight;
 
@@ -42,7 +43,7 @@ public class Turret extends SubsystemBase {
   public Turret(Limelight limelight) {
     this.limelight = limelight;
 
-    turret = TalonFactory.createTalonSRX(61, false);
+    turret = TalonFactory.createTalonFX(0, false);
     // left = TalonFactory.createTalonSRX(38, false);
     // right = TalonFactory.createTalonSRX(42, true);
 
@@ -62,6 +63,7 @@ public class Turret extends SubsystemBase {
 
     turret.setSelectedSensorPosition(0);
     turret.selectProfileSlot(0, 0);
+    turret.setInverted(true);
   }
 
   @Override
