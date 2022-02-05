@@ -34,7 +34,7 @@ public class PivotArmAuton extends CommandBase {
   // sets the position of the pivoting arm to the given angle
   @Override
   public void execute() {
-    climber.setPosition(climber.pivot, finalAngle);
+    climber.setPosition(climber.pivot, finalAngle, 0.0);
   }
 
   // Called once the command ends or is interrupted.

@@ -97,8 +97,7 @@ public final class Constants {
         public static final int kRightTelescopicProximityChannel = 3;
         
         //limit switch panels
-        public static final int kLeftPivotLimitSwitch = 4;
-        public static final int kRightPivotLimitSwitch = 5;
+        public static final int kPivotLimitSwitch = 4;
         public static final int kLeftTelescopicLimitSwitch = 6;
         public static final int kRightTelescopicLimitSwitch = 7;
 
@@ -106,6 +105,11 @@ public final class Constants {
         public static final int kPotentiometerPivotChannel = 0;
         public static final double kPotentiometerRange = 0;
         public static final double kPotentiometerInitialOffset = 0;
+
+        //Math constants for calculating positions
+        public static final double kTicksPerRotation = 0;
+        public static final double kPivotGearRatio = 0;
+        public static final double kTelescopicGearRatio = 0;
         
         //PID constants for each motor
         //telescopic arm extension/retraction PID constants
@@ -113,12 +117,14 @@ public final class Constants {
         public static final double kTelekI = 0;
         public static final double kTelekD = 0;
         public static final double kTelekF = 0;
+        public static final double kFeedForwardTele = 0;
         
         //pivoting arm rotation PID constants
         public static final double kPivotkP = 0;
         public static final double kPivotkI = 0;
         public static final double kPivotkD = 0;
         public static final double kPivotkF = 0;
+        public static final double kFeedForwardPivot = 0;
 
         //positions that arms move to during the climb (all pivots are in degrees, 
             //all telescopics are in meters)

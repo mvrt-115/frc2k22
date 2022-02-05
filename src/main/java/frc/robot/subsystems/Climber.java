@@ -5,7 +5,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.util.TalonFactory;
 
 public class Climber extends SubsystemBase {
 
@@ -29,31 +30,22 @@ public class Climber extends SubsystemBase {
    */
   public Climber() {
     //initializes all motors and sensors
-    pivot = new TalonFX(Constants.Climber.kPivotID);
-    leftTelescopic = new TalonFX(Constants.Climber.kLeftTelescopicID);
-    rightTelescopic = new TalonFX(Constants.Climber.kRightTelescopicID);
+    pivot = TalonFactory.createTalonFX(Constants.Climber.kLeftTelescopicID, TalonFXInvertType.Clockwise);
+    leftTelescopic = TalonFactory.createTalonFX(Constants.Climber.kLeftTelescopicID, false);
+    rightTelescopic = TalonFactory.createTalonFX(Constants.Climber.kRightTelescopicID, false);
     
     pivotProximity = new DigitalInput(Constants.Climber.kPivotProximityChannel);
     leftTelescopicProximity = new DigitalInput(Constants.Climber.kLeftTelescopicProximityChannel);
     rightTelescopicProximity = new DigitalInput(Constants.Climber.kRightTelescopicProximityChannel);
 
+    pivotLimit = new DigitalInput(Constants.Climber.kPivotLimitSwitch);
+    leftTelescopicLimit = new DigitalInput(Constants.Climber.kLeftTelescopicLimitSwitch);
+    rightTelescopicLimit = new DigitalInput(Constants.Climber.kRightTelescopicLimitSwitch);
+
     potentiometerPivot = new AnalogPotentiometer(Constants.Climber.kPotentiometerPivotChannel);
     
-    //reconfiguring all motors
-    pivot.configFactoryDefault();
-    leftTelescopic.configFactoryDefault();
-    rightTelescopic.configFactoryDefault();
-  
-
-    pivot.setInverted(TalonFXInvertType.Clockwise);
-    leftTelescopic.setInverted(false);
-    rightTelescopic.setInverted(false);
-    
+    //reconfiguring all motors with PID constants
     leftTelescopic.follow(rightTelescopic);
-
-    leftTelescopic.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx, Constants.kTimeoutMs);
-    rightTelescopic.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx, Constants.kTimeoutMs);
-    pivot.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx, Constants.kTimeoutMs);
 
     pivot.config_kP(Constants.kPIDIdx, Constants.Climber.kPivotkP);
     pivot.config_kI(Constants.kPIDIdx, Constants.Climber.kPivotkI);
@@ -70,6 +62,15 @@ public class Climber extends SubsystemBase {
     rightTelescopic.config_kD(Constants.kPIDIdx, Constants.Climber.kTelekD);
     rightTelescopic.config_kF(Constants.kPIDIdx, Constants.Climber.kTelekF);
 
+    
+
+
+    /* Methods to add
+    configClosedLoopRampRate (smoothes out acceleration/decceleration)
+    configPeakCurrentLimit (prevents too much power from being drawn at a time)
+    configForwardLimitSwitchSource (sets a remote limit switch to motor to stop when contacted)
+    configForwardSoftLimitThreshold & configForwardSoftLimitEnable (sets a maximum for the motor to run to)
+    */
   }
 
   /**
@@ -94,8 +95,8 @@ public class Climber extends SubsystemBase {
     * @param motor the motor that needs to be set 
     * @param finalPosition final position of the motor
    */
-  public void setPosition(TalonFX motor, double finalPosition) {
-    motor.set(ControlMode.Position, finalPosition);
+  public void setPosition(TalonFX motor, double finalPosition, double feedForward) {
+    motor.set(ControlMode.Position, finalPosition, DemandType.ArbitraryFeedForward, feedForward);
   }
 
   /**
@@ -107,9 +108,13 @@ public class Climber extends SubsystemBase {
     return motor.getSelectedSensorPosition();
   }
 
+  /**
+   * @return The position the encoders have rotated
+   */
   public double getTelescopicPosition()
   {
-    return 0;
+    double average = (getEncoderValue(leftTelescopic) + getEncoderValue(rightTelescopic))/2;
+    return metersToTicks(average);
   }
 
   /**
@@ -119,9 +124,11 @@ public class Climber extends SubsystemBase {
   public double getPivotAnglePoten() {
     return 0;
   }
-
+  /**
+   * @return The pivot angle that the rotating arm is at (using encoders)
+   */
   public double getPivotAngle() {
-    return 0;
+    return getEncoderValue(pivot);
   }
 
   /**
@@ -140,6 +147,43 @@ public class Climber extends SubsystemBase {
    */
   public boolean getLimitSwitch(DigitalInput limitSwitch) {
     return limitSwitch.get();
+  }
+
+  ////////////////////CALCULATIONS//////////////////////////////
+
+  /**
+   * Converts degrees to ticks
+   * @param degrees an angle in degrees
+   * @return        the amount of ticks in that angle
+   */
+  public double degreesToTicks(double degrees) {
+    return (degrees / 360) * Constants.Climber.kTicksPerRotation * Constants.Climber.kPivotGearRatio;
+  }
+
+  /**
+   * Convert the ticks to degrees
+   *@param ticks the amount of ticks rotated
+   *@return The amount of degrees in ticks
+   ticks * rotation/ticks * rotation motor/rotation arm * degrees/rotation = degrees of arm
+   Follow this calculation
+   */
+  public double ticksToDegrees(double ticks) {
+    return Constants.Climber.kTicksPerRotation / 360 * Constants.Climber.kPivotGearRatio * ticks * 360;
+  }
+
+  /**
+   * will do later
+   */
+  public double ticksToMeters(double ticks) {
+    return ticks;
+  }
+  /**
+   * Converts meters to ticks
+   * @param meters a distance in meters
+   * @return        the amount of ticks in that distance
+   */
+  public double metersToTicks(double meters) {
+    return meters ;
   }
   
   @Override

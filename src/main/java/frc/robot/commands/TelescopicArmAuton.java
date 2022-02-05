@@ -35,7 +35,7 @@ public class TelescopicArmAuton extends CommandBase {
   // sets the position of the telescopic arm to the given value
   @Override
   public void execute() {
-    climber.setPosition(climber.leftTelescopic, positionFinal);
+    climber.setPosition(climber.leftTelescopic, positionFinal, 0.0);
    }
 
   // Called once the command ends or is interrupted.

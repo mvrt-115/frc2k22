@@ -16,12 +16,8 @@ public class ClimberAuton extends SequentialCommandGroup {
   /** Creates a new ClimberAuto. */
 
   public ClimberAuton(Climber climber) {
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
 
-    final double distToGrabNextHook = 0.0; // should be simple math
-
-    addCommands( // have to finish this and finalize movement stuff
+    addCommands(
 
       // initial extension already done as it is done via button presses
 
@@ -53,7 +49,7 @@ public class ClimberAuton extends SequentialCommandGroup {
         11. Pivot forward with pivot limit
         12. Extend with proximity*/
 
-      new TelescopicArmAuton(climber, 0.0), // extend telescopic arms
+      new TelescopicArmAuton(climber, kLiftOffRungTele), // extend telescopic arms
       new PivotArmAuton(climber, 0.0), // pivot arms forward a little to get it behind mid rung
       new TelescopicArmAuton(climber, -0.0), // retract telescopic arms so that they are able to be low enough to go under rung
       new PivotArmAuton(climber, 0.0), // pivot arms forward to get the telescopic under the next rung
@@ -63,7 +59,7 @@ public class ClimberAuton extends SequentialCommandGroup {
 
       //TELESCOPIC ON RUNG AT THIS POINT
 
-      new TelescopicArmAuton(climber, 0.0), // retracts further to remove hook from lower rung
+      new TelescopicArmAuton(climber, kLiftOff), // retracts further to remove hook from lower rung
       new PivotArmAuton(climber, -0.0), // pivots arm back towards the higher rung
       new TelescopicArmAuton(climber, -0.0), // retracts arm to level limit to higher rung
       new PivotArmAutonLimit(climber, 0.0), // pivots towards rung until limit is activated
