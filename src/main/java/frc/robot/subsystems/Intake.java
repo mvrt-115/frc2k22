@@ -37,8 +37,9 @@ public class Intake extends SubsystemBase {
     state = IntakeState.UP;
 
     intakeMotor = TalonFactory.createTalonSRX(Constants.Intake.kROLLER_ID, true); // change motor IDs from Constants later
+
     pivotMotor = TalonFactory.createTalonSRX(Constants.Intake.kPIVOT_ID, false); // change motor IDs from Constants later
-   
+    //pivotMotor.setInverted(true);
     pivotMotor.setSelectedSensorPosition(0);
 
     pivotMotor.config_kP(Constants.kPIDIdx, Constants.Intake.kP);
