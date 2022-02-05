@@ -19,24 +19,25 @@ public final class Constants {
     
     public static final int kPIDIdx = 0;
     public static final int kTimeoutMs = 10;
-    public static final boolean kIsPracticeBot = false;
+    public static final boolean kIsPracticeBot = true;
     public static final double kVoltageComp = 10.0;
     public static final SupplyCurrentLimitConfiguration kCurrentLimit = new SupplyCurrentLimitConfiguration(true, 40, 50, 3.8);
 
     public static class Drivetrain {
         // physical constants get from mech once drivetrain is done
-        public static final int kTrackScrubFactor = 0;
-        public static final double kTrackWidthInches = 0;
+        public static final double kTrackScrubFactor = 1.0469745223;
+        public static final double kTrackWidthInches = 24.85;
 
         // ids get from pheonix tuner once drivetrain is done
         public static int kCompLeftMasterId = 1;
         public static int kCompRightMasterId = 2;
         public static int kCompLeftFollowerId = 3;
         public static int kCompRightFollowerId = 4;
-        public static int kPracLeftMasterId = 5;
-        public static int kPracRightMasterId = 6;
-        public static int kPracLeftFollowerId = 7;
-        public static int kPracRightFollowerId = 8;
+       
+        public static int kPracLeftMasterId = 2;
+        public static int kPracRightMasterId = 0;
+        public static int kPracLeftFollowerId = 3;
+        public static int kPracRightFollowerId = 1;
 
         // constants for joystick drive
         public static final double kSensitivity = 0.90;
@@ -50,7 +51,7 @@ public final class Constants {
         public static final double kMaxPixelError = 1.0; // change value later
         
         //constants for getting distance traveled by motors
-        public static final double kTicksPerRevolution = 1.0; //RANDOM VALUES
+        public static final double kTicksPerRevolution = 0; //RANDOM VALUES
         public static final double kGearRatio = 10.0;
         public static final double kwheelCircumference = 5.0;
 
@@ -66,7 +67,7 @@ public final class Constants {
 
         //change values later
         public static final int kAcceptableError = 10;
-        public static final double kDrivetrainMotorSpeed = 0.5;
+        public static final double kDrivetrainMotorSpeed = 0.3;
     }
     
     public static class Intake{

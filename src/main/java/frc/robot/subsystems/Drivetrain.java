@@ -6,6 +6,8 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
+import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 
@@ -55,27 +57,37 @@ public class Drivetrain extends SubsystemBase {
     private PIDController rightController;
 
     public Drivetrain() {
-        if (Constants.kIsPracticeBot) {
-            rightMaster = TalonFactory.createTalonFX(Constants.Drivetrain.kPracRightMasterId, true);
-            leftMaster = TalonFactory.createTalonFX(Constants.Drivetrain.kPracLeftMasterId, false);
-            rightFollower = TalonFactory.createTalonFX(Constants.Drivetrain.kPracRightFollowerId, true);
-            leftFollower = TalonFactory.createTalonFX(Constants.Drivetrain.kPracLeftFollowerId, false);
-        } else {
-            rightMaster = TalonFactory.createTalonFX(Constants.Drivetrain.kCompRightMasterId, true);
-            leftMaster = TalonFactory.createTalonFX(Constants.Drivetrain.kCompLeftMasterId, false);
-            rightFollower = TalonFactory.createTalonFX(Constants.Drivetrain.kCompRightFollowerId, true);
-            leftFollower = TalonFactory.createTalonFX(Constants.Drivetrain.kCompLeftFollowerId, false);
-        }
+        //     if (Constants.kIsPracticeBot) {
+        //         rightMaster = TalonFactory.createTalonFX(Constants.Drivetrain.kPracRightMasterId, true);
+        //         leftMaster = TalonFactory.createTalonFX(Constants.Drivetrain.kPracLeftMasterId, false);
+        //         rightFollower = TalonFactory.createTalonFX(Constants.Drivetrain.kPracRightFollowerId, true);
+        //         leftFollower = TalonFactory.createTalonFX(Constants.Drivetrain.kPracLeftFollowerId, false);
+        //     } else {
+        //         rightMaster = TalonFactory.createTalonFX(Constants.Drivetrain.kCompRightMasterId, true);
+        //         leftMaster = TalonFactory.createTalonFX(Constants.Drivetrain.kCompLeftMasterId, false);
+        //         rightFollower = TalonFactory.createTalonFX(Constants.Drivetrain.kCompRightFollowerId, true);
+        //         leftFollower = TalonFactory.createTalonFX(Constants.Drivetrain.kCompLeftFollowerId, false);
+        //     }
+
+        rightMaster = new TalonFX(Constants.Drivetrain.kPracRightMasterId);
+        rightFollower = new TalonFX(Constants.Drivetrain.kPracRightFollowerId);
+        leftMaster = new TalonFX(Constants.Drivetrain.kPracLeftMasterId);
+        leftFollower = new TalonFX(Constants.Drivetrain.kPracLeftFollowerId);
+        
+        rightMaster.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx, Constants.kTimeoutMs);
+        rightFollower.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx, Constants.kTimeoutMs);
+        leftMaster.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx, Constants.kTimeoutMs);
+        leftFollower.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx, Constants.kTimeoutMs);
 
         rightMaster.configFactoryDefault();
         rightFollower.configFactoryDefault();
         leftMaster.configFactoryDefault();
         leftFollower.configFactoryDefault();
 
-        rightMaster.setInverted(true); //I think we need these because we reset the motors
-        rightFollower.setInverted(true);
-        leftMaster.setInverted(false);
-        leftFollower.setInverted(false);
+        rightMaster.setInverted(TalonFXInvertType.Clockwise); 
+        rightFollower.setInverted(TalonFXInvertType.Clockwise);
+        leftMaster.setInverted(TalonFXInvertType.CounterClockwise);
+        leftFollower.setInverted(TalonFXInvertType.CounterClockwise);
 
         rightMaster.configSupplyCurrentLimit(Constants.kCurrentLimit, Constants.kTimeoutMs);
         rightFollower.configSupplyCurrentLimit(Constants.kCurrentLimit, Constants.kTimeoutMs);
@@ -131,7 +143,7 @@ public class Drivetrain extends SubsystemBase {
         wheel = MathUtils.handleDeadband(wheel, Constants.Drivetrain.kWheelDeadband);
 
         double left = 0, right = 0;
-
+        // setDrivetrainMotorSpeed((throttle+wheel) / 2, (throttle-wheel) / 2);
         final double denominator = Math.sin(Math.PI / 2.0 * Constants.Drivetrain.kWheelNonlinearity);
         // Apply a sin function that's scaled to make it feel better.
         if (!quickTurn) {
@@ -143,7 +155,7 @@ public class Drivetrain extends SubsystemBase {
         wheel *= Constants.Drivetrain.kWheelGain;
         Twist2d motion = new Twist2d(throttle, 0, wheel);
         if (Math.abs(motion.dtheta) < 1E-9) {
-            left = motion.dx;
+            left = motion.dx ;
             right = motion.dx;
         } else {
             double delta_v = Constants.Drivetrain.kTrackWidthInches * motion.dtheta
@@ -153,8 +165,12 @@ public class Drivetrain extends SubsystemBase {
         }
 
         double scaling_factor = Math.max(1.0, Math.max(Math.abs(left), Math.abs(right)));
-
+        // DO NOT DELETE WE DON'T KNOW WHY BUT THIS MAKES IT WORK
+        // SmartDashboard.putNumber("left", left);
+        // SmartDashboard.putNumber("right", right);
         setDrivetrainMotorSpeed(left / scaling_factor, right / scaling_factor);
+
+
     }
 
     @Override
@@ -173,10 +189,12 @@ public class Drivetrain extends SubsystemBase {
         SmartDashboard.putNumber("Right Encoder:", rightMaster.getSelectedSensorPosition());
         SmartDashboard.putNumber("Left Output", leftFollower.getMotorOutputPercent());
         SmartDashboard.putNumber("Right Output", rightFollower.getMotorOutputPercent());
-        SmartDashboard.putString("Drivetrain State", state.toString());
+      //  SmartDashboard.putString("Drivetrain State", state.toString());
         SmartDashboard.putNumber("Gyro Angle:", gyro.getAngle());
         SmartDashboard.putNumber("Left Distance Traveled", getDistanceTravelled(leftMaster, leftFollower));
         SmartDashboard.putNumber("Right Distance Traveled", getDistanceTravelled(rightMaster, rightFollower));
+        SmartDashboard.putNumber("X value", pose.getX());
+        SmartDashboard.putNumber("Y value", pose.getY());
     }
 
     /* GETTERS AND SETTERS (AND RESETTERS) */

@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import javax.swing.JInternalFrame;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -32,20 +34,26 @@ public class RobotContainer {
   private Joystick driverJoystick;
   private Joystick operatorJoystick;  
   
-  private JoystickButton intakeBalls = new JoystickButton(operatorJoystick, 0);
-  private JoystickButton alignDrivetrain = new JoystickButton(operatorJoystick, 0);
-  private JoystickButton expelBalls = new JoystickButton(operatorJoystick, 0);
+  private JoystickButton intakeBalls;
+  private JoystickButton alignDrivetrain;
+  private JoystickButton expelBalls;
 
   private RollingAverage throttle = new RollingAverage(50);
   private RollingAverage wheel = new RollingAverage(15);
 
-  private JoystickButton quickturn = new JoystickButton(driverJoystick, 5);
+  private JoystickButton quickturn;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     driverJoystick = new Joystick(0);
     operatorJoystick = new Joystick(1);
     // Configure the button bindings
+    
+    // intakeBalls = new JoystickButton(operatorJoystick, 0);
+    // alignDrivetrain = new JoystickButton(operatorJoystick, 0);
+    // expelBalls = new JoystickButton(operatorJoystick, 0);
+    quickturn =new JoystickButton(driverJoystick, 5);
+    
     configureButtonBindings();
   }
 
@@ -59,9 +67,9 @@ public class RobotContainer {
     // the :: syntax allows us to pass in methods of a class as variables so that the command can continuously access input values
     drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
 
-    intakeBalls.whenPressed(new IntakeBalls(intake)).whenReleased(new StopIntaking(intake));
-    expelBalls.whenPressed(new ExpelBalls(storage));
-    alignDrivetrain.whenPressed(new AlignIntakeToBall(drivetrain, true)).whenReleased(new AlignIntakeToBall(drivetrain, false));
+    // intakeBalls.whenPressed(new IntakeBalls(intake)).whenReleased(new StopIntaking(intake));
+    // expelBalls.whenPressed(new ExpelBalls(storage));
+    // alignDrivetrain.whenPressed(new AlignIntakeToBall(drivetrain, true)).whenReleased(new AlignIntakeToBall(drivetrain, false));
     /*
       Shoot: 4
       Intake: 5
@@ -91,7 +99,7 @@ public class RobotContainer {
    * @return value from [-1, 1] that is used for input for the robots turning movement
    */
   public double getWheel() {
-    wheel.updateValue(driverJoystick.getRawAxis(0));
+    wheel.updateValue(driverJoystick.getRawAxis(0) * .8);
     return wheel.getAverage();
   }
 
@@ -102,6 +110,8 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return null;
+    //drivetrain.setDrivetrainMotorSpeed(0.2, 0.2);
+   // return new AutonPath6(drivetrain).withTimeout(3);
+   return null;
   }
 }
