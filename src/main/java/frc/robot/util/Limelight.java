@@ -13,6 +13,9 @@ public class Limelight extends SubsystemBase {
   private RollingAverage tx;
   private RollingAverage ty;
   private NetworkTable limelight;
+  public final double height = 2.6416; // meters
+  public final double limelightMountHeight = 2 * 0.3048; // feet to meters
+  private double limelightMountAngle = 20;
 
   public static enum LED_STATE {
     DEFAULT, ON, OFF, BLINKING;
@@ -84,7 +87,7 @@ public class Limelight extends SubsystemBase {
    * @return angle (degrees)
    */
   public double getVerticalOffset() {
-    return ty.getAverage();
+    return ty.getAverage() + limelightMountAngle;
   }
 
   /**
@@ -94,6 +97,24 @@ public class Limelight extends SubsystemBase {
    */
   public double getHorizontalOffset() {
     return tx.getAverage();
+  }
+
+  /**
+   * Get horizontal distance
+   * 
+   * @return distance (meters)
+   */
+  public double getHorizontalDistance() {
+    return height / Math.tan(Math.toRadians(getVerticalOffset() + limelightMountAngle));
+  }
+
+  /**
+   * Get vertical distance
+   * 
+   * @return height (meters)
+   */
+  public double getVerticalDistance() {
+    return height - limelightMountHeight;
   }
 
   /**

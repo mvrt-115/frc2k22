@@ -1,5 +1,7 @@
 package frc.robot.util;
 
+import frc.robot.Constants;
+
 public class MathUtils {
     /**
      * Calculates the new input by the joystick after taking into account deadband
@@ -32,5 +34,20 @@ public class MathUtils {
         // valAfterDeadband = (1 / (1 - inputDeadband)) * (input + (Math.signum(-input)
         // * inputDeadband));
         return valAfterDeadband;
+    }
+
+    public static double rpmToTicks(double in_rpm, double gear_ratio)
+    {
+        return in_rpm / 600 * Constants.Flywheel.TICKS_PER_REVOLUTION * gear_ratio;
+    }
+
+    public static double ticksToRPM(double ticks, double ticks_per_rev, double gear_ratio)
+    {
+        return ticks * 600 / ticks_per_rev / gear_ratio;
+    }
+
+    public static int degreesToTicks(double degrees, double encoder_ticks, double gear_ratio)
+    {
+        return (int) ((encoder_ticks * gear_ratio) * degrees/360);
     }
 }

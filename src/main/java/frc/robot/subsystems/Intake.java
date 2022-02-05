@@ -40,6 +40,7 @@ public class Intake extends SubsystemBase {
 
     pivotMotor = TalonFactory.createTalonSRX(Constants.Intake.kPIVOT_ID, false); // change motor IDs from Constants later
     //pivotMotor.setInverted(true);
+
     pivotMotor.setSelectedSensorPosition(0);
 
     pivotMotor.config_kP(Constants.kPIDIdx, Constants.Intake.kP);
