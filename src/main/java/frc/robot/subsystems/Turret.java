@@ -142,8 +142,14 @@ public class Turret extends SubsystemBase {
       state = TurretState.TARGETING;
 
       turnToTarget();
+    } else if(state == TurretState.SEARCHING) {
+      if(getCurrentPositionDegrees() > Constants.Turret.kMaxAngle || 
+        getCurrentPositionDegrees() < Constants.Turret.kMinAngle) {
+        
+        turnPercentOut(-turret.getMotorOutputPercent());
+      }
     } else {
-      
+      state = TurretState.SEARCHING;
     }
   }
 
