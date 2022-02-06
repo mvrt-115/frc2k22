@@ -36,16 +36,37 @@ public class MathUtils {
         return valAfterDeadband;
     }
 
-    public static double rpmToTicks(double in_rpm, double gear_ratio)
+    /**
+     * Convert RPM to ticks per hundred milliseconds
+     * @param in_rpm
+     * @param ticks_per_rev
+     * @param gear_ratio
+     * @return ticks
+     */
+    public static double rpmToTicks(double in_rpm, double ticks_per_rev, double gear_ratio)
     {
-        return in_rpm / 600 * Constants.Flywheel.TICKS_PER_REVOLUTION * gear_ratio;
+        return in_rpm / 600 * ticks_per_rev * gear_ratio;
     }
 
+    /**
+     * Convert ticks per hundred milliseconds to RPM
+     * @param ticks
+     * @param ticks_per_rev
+     * @param gear_ratio
+     * @return rpm
+     */
     public static double ticksToRPM(double ticks, double ticks_per_rev, double gear_ratio)
     {
         return ticks * 600 / ticks_per_rev / gear_ratio;
     }
 
+    /**
+     * convert angle to a position in ticks
+     * @param degrees
+     * @param encoder_ticks
+     * @param gear_ratio
+     * @return ticks
+     */
     public static int degreesToTicks(double degrees, double encoder_ticks, double gear_ratio)
     {
         return (int) ((encoder_ticks * gear_ratio) * degrees/360);

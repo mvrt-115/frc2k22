@@ -28,12 +28,12 @@ public class Shooter extends SubsystemBase {
 
   private final double MIN_RPM = 8000;
 
-  private final int LEADER_ID = 40;
-  private final int FOLLOWER_ID = 32;
-  private final int HOOD_ID = 1;
+  private final int LEADER_ID = 12;
+  // private final int FOLLOWER_ID = 32;
+  private final int HOOD_ID = 0;
 
   private BaseTalon flywheelLeader;
-  private BaseTalon flywheelFollower;
+  // private BaseTalon flywheelFollower;
   private BaseTalon hoodMotor;
 
   // Attributes of flywheel
@@ -49,10 +49,11 @@ public class Shooter extends SubsystemBase {
   /** Creates a new Shooter. */
   public Shooter(Limelight limelight) {
     // Mind Bending Test on the Reality of our Situation
-    flywheelLeader = TalonFactory.createTalonSRX(LEADER_ID, false);
+    flywheelLeader = TalonFactory.createTalonFX(LEADER_ID, false);
     // flywheelFollower = TalonFactory.createTalonSRX(FOLLOWER_ID, true);
-    hoodMotor = TalonFactory.createTalonSRX(HOOD_ID, false);
+    hoodMotor = TalonFactory.createTalonFX(HOOD_ID, false);
 
+    hoodMotor.setSelectedSensorPosition(0);
     // flywheelFollower.follow(flywheelLeader);
 
     // Sets up PIDF
@@ -130,7 +131,7 @@ public class Shooter extends SubsystemBase {
    */
   public void setTargetAngle(double angle)
   {
-    targetAng = degreesToTicks(angle);
+    targetAng = angle;
   }
 
   /**
@@ -198,6 +199,7 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("target rpm", targetRPM);
     SmartDashboard.putNumber("target angle", targetAng);
     SmartDashboard.putNumber("Hood Angle", getCurrentAngle());
+    SmartDashboard.putNumber("Hood Angle Ticks", hoodMotor.getSelectedSensorPosition());
   }
 
   @Override
@@ -213,6 +215,7 @@ public class Shooter extends SubsystemBase {
       case OFF:
         stopFlywheel();
         // stopHood();
+        hoodMotor.set(ControlMode.Position, degreesToTicks(targetAng));
         break;
       case SPEEDING:
         flywheelLeader.set(ControlMode.Velocity, rpmToTicks(targetRPM));
@@ -297,10 +300,10 @@ public class Shooter extends SubsystemBase {
   }
 
   /**
-     * @param target -- the target RPM
-     * @param acceptableError -- the acceptable +- error range
-     * @return boolean whether the RPM is within the acceptable error or not
-     */
+   * @param target -- the target RPM
+   * @param acceptableError -- the acceptable +- error range
+   * @return boolean whether the RPM is within the acceptable error or not
+   */
   private boolean allWithinError(double targetSpeed, double targetAngle) {
     if(hoodMotor!=null)
     {
