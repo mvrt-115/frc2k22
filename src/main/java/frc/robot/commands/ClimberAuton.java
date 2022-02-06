@@ -5,7 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants;
+import frc.robot.Constants.Climber.Auton;
 import frc.robot.subsystems.Climber;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -14,8 +14,7 @@ import frc.robot.subsystems.Climber;
 
 
 public class ClimberAuton extends SequentialCommandGroup {
-  /** Creates a new ClimberAuto. */
-
+  /** Creates a new ClimberAuton. */
   public ClimberAuton(Climber climber) {
 
     addCommands(
@@ -50,21 +49,22 @@ public class ClimberAuton extends SequentialCommandGroup {
         11. Pivot forward with pivot limit
         12. Extend with proximity*/
 
-      new TelescopicArmAuton(climber, Constants.Climber.Auton.kLiftOffRungTele), // extend telescopic arms
-      new PivotArmAuton(climber, Constants.Climber.Auton.kFirstBackPivot), // pivot arms forward a little to get it behind mid rung
-      new TelescopicArmAuton(climber, Constants.Climber.Auton.kGetUnderRungRetract), // retract telescopic arms so that they are able to be low enough to go under rung
-      new PivotArmAuton(climber, Constants.Climber.Auton.kSecondBackPivot), // pivot arms forward to get the telescopic under the next rung
-      new TelescopicArmAuton(climber, Constants.Climber.Auton.kTelescopicFullExtend), // extend telescopic arms to get the telescopic limit switches lined up with the rung
-      new PivotArmAutonLimit(climber, 0.0), // pivots back for telescopic to touch rung at telescopic limit switch
-      new TelescopicArmAutonProximity(climber, -0.0), // retracts telescopic arms so that they hang on rung, and confirmed with proximities
-
-      //TELESCOPIC ON RUNG AT THIS POINT
-
-      new TelescopicArmAuton(climber, Constants.Climber.Auton.kLiftOff), // retracts further to remove hook from lower rung
-      new PivotArmAuton(climber, -0.0), // pivots arm back towards the higher rung
-      new TelescopicArmAuton(climber, -0.0), // retracts arm to level limit to higher rung
-      new PivotArmAutonLimit(climber, 0.0), // pivots towards rung until limit is activated
-      new PivotArmAutonProximity(climber, -0.0) // retracts arm to hook pivot arms to rung until proximities activate
+      // code begins with the robot on mid rung
+      new TelescopicArmAuton(climber, Auton.kLiftOffRungTele), // extend telescopic arms
+      new PivotArmAuton(climber, Auton.kFirstForwardPivot), // pivot arms forward a little to get it behind mid rung
+      new TelescopicArmAuton(climber, Auton.kGetUnderRungRetract), // retract telescopic arms so that they are able to be low enough to go under rung
+      new PivotArmAuton(climber, Auton.kSecondForwardPivot), // pivot arms forward to get the telescopic under the next rung
+      new TelescopicArmAuton(climber, Auton.kTelescopicFullExtend), // extend telescopic arms to get the telescopic limit switches lined up with the rung
+      new TelescopicArmAutonLimit(climber, Auton.kRotateToHighRung), // pivots back for telescopic to touch rung at telescopic limit switch
+      new TelescopicArmAutonProximity(climber, Auton.kHookHighRung), 
+      new PivotArmAuton(climber, Auton.kShiftWeight), // shift the weight on to the Telescoping arm
+      new TelescopicArmAuton(climber, Auton.kRetractPivotLiftOff), // retracts the telescopic arm to allow pivoting arm to rotate back
+      new PivotArmAuton(climber, Auton.kFirstBackPivot), // rotate the pivoting arm, ready to retract the telscopic arm
+      new TelescopicArmAuton(climber, Auton.kExtendPivotingUnderRung), // retract telescopic arm to pivot pivoting arm 
+      new PivotArmAuton(climber, Auton.kSecondBackPivot), // rotate the arm only a little to avoid hitting the high rung
+      new TelescopicArmAuton(climber, Auton.kTelescopicFullRetract), // extend the telescopic arm to avoid pivoting arm from hitting the high run
+      new PivotArmAutonLimit(climber, Auton.kRotateToHighRung), // rotate the pivoting arm behind the high rung
+      new PivotArmAutonProximity(climber, Auton.kRetractPivotHang) // retracts telescopic arms so that they hang on rung, and confirmed with proximities
     );
   }
 }

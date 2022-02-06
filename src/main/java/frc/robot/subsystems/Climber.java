@@ -42,7 +42,13 @@ public class Climber extends SubsystemBase {
     leftTelescopicLimit = new DigitalInput(Constants.Climber.kLeftTelescopicLimitSwitch);
     rightTelescopicLimit = new DigitalInput(Constants.Climber.kRightTelescopicLimitSwitch);
 
-    potentiometerPivot = new AnalogPotentiometer(Constants.Climber.kPotentiometerPivotChannel);
+    /**
+   * Sets speed to given motor
+   * @param potentiometer id
+   * @param range of motion (in degrees) - Ex. 0-180 (degrees) - 
+   * @param location where potentiometer reads 0v (starting point of motion)
+  */
+    potentiometerPivot = new AnalogPotentiometer(Constants.Climber.kPotentiometerPivotChannel, 0, 0);
     
     //reconfiguring all motors with PID constants
     leftTelescopic.follow(rightTelescopic);

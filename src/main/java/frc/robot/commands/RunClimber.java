@@ -16,7 +16,7 @@ public class RunClimber extends SequentialCommandGroup {
   public RunClimber(Climber climberIn) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-
+    climber = climberIn;
     /** the climber auton which is designed for one complete climb is called
      *  twice to account for two climbs in order to get to the high rung */ 
     addCommands(

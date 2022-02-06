@@ -132,9 +132,8 @@ public final class Constants {
 
         public static class Auton {
             public static final double kLiftOffRungTele = 0;
-            public static final double kLiftOff = 0;
             public static final double kFirstBackPivot = -0;
-            public static final double kGetUnderRungRetract = 0;
+            public static final double kGetUnderRungRetract = -0;
             public static final double kSecondBackPivot = 0;
 
             //positions that arms move to during the climb (all pivots are in degrees, 
@@ -147,6 +146,17 @@ public final class Constants {
             public static final double kMaxPivotPos = 150;
             public static final double kMinPivotPos = 30;
             public static final double kApproachRungSpeed = 0;
-            }
+            public static final double kRotateToHighRung = 0;
+			public static final double kRetractForPivotingArm = 0;
+            public static final double kRotateBack = 0;
+			public static final double kShiftWeight = 0;
+            public static final double kRotateToAvoidHighRung = 0;
+            public static final double kExtendToAvoidHighRung = 0;
+            public static final double kRotateBehindHighRung = 0;
+            public static final double kHookHighRung = 0;
+            public static final double kRetractPivotLiftOff = 0;
+            public static final double kExtendPivotingUnderRung = 0;
+            public static final double kRetractPivotHang = 0;
+        }
     }
 }
