@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
@@ -27,6 +29,7 @@ public class Shooter extends SubsystemBase {
   }
 
   private final double MIN_RPM = 8000;
+  private double adjFF;
 
   private final int LEADER_ID = 12;
   // private final int FOLLOWER_ID = 32;
@@ -65,7 +68,10 @@ public class Shooter extends SubsystemBase {
     hoodMotor.config_kP(Constants.kPIDIdx, Constants.Hood.P);
     hoodMotor.config_kI(Constants.kPIDIdx, Constants.Hood.I);
     hoodMotor.config_kD(Constants.kPIDIdx, Constants.Hood.D);
-    hoodMotor.config_kF(Constants.kPIDIdx, Constants.Hood.F);
+
+    adjFF = Constants.Hood.kFF * Math.cos(hoodMotor.getSelectedSensorPosition());
+
+    hoodMotor.setNeutralMode(NeutralMode.Brake);
 
     this.limelight = limelight;
 
@@ -208,9 +214,10 @@ public class Shooter extends SubsystemBase {
     rpm.updateValue(ticksToRPM(flywheelLeader.getSelectedSensorVelocity()));
     log();
     SmartDashboard.putNumber("time", Timer.getFPGATimestamp()); // to debug periodic
-
+          
+    
     // Sets state periodically
-    switch(this.state)
+    switch(state)
     {
       case OFF:
         stopFlywheel();
@@ -219,8 +226,7 @@ public class Shooter extends SubsystemBase {
         break;
       case SPEEDING:
         flywheelLeader.set(ControlMode.Velocity, rpmToTicks(targetRPM));
-        if (hoodMotor != null)
-          hoodMotor.set(ControlMode.Position, degreesToTicks(targetAng));
+        stopHood();
         if(allWithinError(targetRPM, targetAng))
         {
           setState(ShooterState.ATSPEED);

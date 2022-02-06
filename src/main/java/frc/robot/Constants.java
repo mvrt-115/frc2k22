@@ -96,6 +96,7 @@ public final class Constants {
         public static final double GEAR_RATIO = 480.0/26.0;
         public static final int ENCODER_TICKS = 2048;
         public static final int ACCEPTABLE_ERROR = 2;
+        public static final double kFF = 0;
     }
 
     public static class Flywheel
