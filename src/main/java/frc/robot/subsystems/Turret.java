@@ -19,7 +19,7 @@ import frc.robot.util.TalonFactory;
 public class Turret extends SubsystemBase {
 
   public static enum TurretState {
-    TARGETING, FLIPPING, CAN_SHOOT, DISABLED
+    TARGETING, FLIPPING, SEARCHING, CAN_SHOOT, DISABLED
   }
 
   private TurretState state;
@@ -75,9 +75,6 @@ public class Turret extends SubsystemBase {
     SmartDashboard.putBoolean("flipping", state == TurretState.FLIPPING);
     SmartDashboard.putBoolean("<= 10", Math.abs(getCurrentPositionDegrees()) <= 10);
 
-    if(state != TurretState.FLIPPING)
-      updateTargetDegrees();
-    
     // continue looking for target
     if(state == TurretState.FLIPPING) {
       turnToTarget();
@@ -86,13 +83,13 @@ public class Turret extends SubsystemBase {
         setState(TurretState.TARGETING);
         updateTargetDegrees();
       }   
-    }
+    } else {
+      updateTargetDegrees();
 
-    if(state == TurretState.TARGETING) {
-      // System.out.println("Target");
-      target();
-    } else if(state != TurretState.FLIPPING) { 
-      turnPercentOut(0);
+      if(state == TurretState.TARGETING || state == TurretState.SEARCHING)
+        target();
+      else
+        turnPercentOut(0);
     }
     
     // determine if we can shoot if we are within some margin of error
@@ -142,7 +139,11 @@ public class Turret extends SubsystemBase {
    */
   public void target() {
     if(limelight.targetsFound()) {
+      state = TurretState.TARGETING;
+
       turnToTarget();
+    } else {
+      
     }
   }
 

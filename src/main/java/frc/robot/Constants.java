@@ -67,7 +67,7 @@ public final class Constants {
     }
 
     public static class Turret {
-        public static final double kGearRatio = 117.86; // 150 * 5 * 5 / 24
+        public static final double kGearRatio = 47.8; // 150 * 5 * 5 / 24
         public static final double kTicksPerRevolution = 2048;
         public static final double kMinAngle = -180; // degrees
         public static final double kMaxAngle = 180; // degrees
