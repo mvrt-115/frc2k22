@@ -7,7 +7,11 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DigitalOutput;
+import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -15,9 +19,10 @@ import frc.robot.util.TalonFactory;
 
 public class Storage extends SubsystemBase {
   /** Creates a new Storage. */
-  private DigitalInput breakBeamFirst; // break beam 
-  public DigitalInput breakBeamLast;
-  private BaseTalon storageMotor1, storageMotor2; // motor that runs the belt
+  private DigitalInput breakBeamFirst; // break beam
+  public DigitalInput breakBeamLast; // change from AnalogInput to DigitalInput when
+  //testing with breakbeam. Keep as AnalogInput when testing with UltrasonicSensor
+  private BaseTalon storageMotor1; // motor that runs the belt
   public static enum StorageState {EXPELLING, NOT_EXPELLING}; // states of the storage as to whether it will expel the balls or not
   public static StorageState currentState; // the current state of the storage
   private int balls;
@@ -25,6 +30,7 @@ public class Storage extends SubsystemBase {
   public boolean secondBreakBeamBroken = false;
   
   public Storage() {
+    breakBeamFirst.get();
     storageMotor1 = TalonFactory.createTalonSRX(Constants.Storage.kMotor1ID, true);
     breakBeamFirst = new DigitalInput(Constants.Storage.kBreakBeamPort0);
     breakBeamLast = new DigitalInput(Constants.Storage.kBreakBeamPort1);
@@ -47,25 +53,48 @@ public class Storage extends SubsystemBase {
     {
       if(!breakBeamFirst.get())
       {
-        firstBreakBeamBroken = true;
+        //firstBreakBeamBroken = true;
         runMotor();
       }
 
       else if(!breakBeamLast.get())
       {
-        secondBreakBeamBroken = true;
+        //secondBreakBeamBroken = true;
         runMotor();
       }
 
       else if(breakBeamFirst.get() && breakBeamLast.get())
       {
         stopMotor();
+        
+      }
+
+      if(breakBeamLast.get())
+      {
+        secondBreakBeamBroken = false;
+      }
+
+      if(breakBeamFirst.get())
+      {
+        firstBreakBeamBroken = false;
       }
     }
 
     else if(currentState == StorageState.EXPELLING)
     {
       runMotor();
+    }
+
+    SmartDashboard.putString("current state", getCurrentStateAsString());
+    SmartDashboard.putNumber("number of balls in hopper", balls);
+  }
+
+  private String getCurrentStateAsString()
+  {
+    switch(currentState){
+      case NOT_EXPELLING: return "NOT EXPELLING";
+      case EXPELLING: return "EXPELLING";
+      default: return "";
     }
   }
 
@@ -98,16 +127,16 @@ public class Storage extends SubsystemBase {
 
     if(currentState == StorageState.NOT_EXPELLING)
     {
-      if(firstBreakBeamBroken)
+      if(!firstBreakBeamBroken && !breakBeamFirst.get())
       {
         incrementBalls();
-        firstBreakBeamBroken = false;
+        firstBreakBeamBroken = true;
       }
 
-      if(secondBreakBeamBroken)
+      if(!secondBreakBeamBroken && !breakBeamLast.get())
       {
         decrementBalls();
-        secondBreakBeamBroken = false;
+        secondBreakBeamBroken = true;
       }
     }
   }
@@ -119,3 +148,17 @@ public class Storage extends SubsystemBase {
     storageMotor1.set(ControlMode.PercentOutput, 0);
   }
 }
+
+/*class UltrasonicLogic extends Ultrasonic {
+  private double epsilon = 60; // millimeters 
+  private double width = 256; // millimeters
+  UltrasonicLogic(DigitalOutput out, DigitalInput in)
+  {
+    super(out, in);
+  }
+
+  public boolean get()
+  {
+    return (Math.abs(super.getRangeMM() - width) > epsilon);
+  }
+}*/
