@@ -58,7 +58,7 @@ public class TelescopicManual extends CommandBase {
    *  are completely extended or retracted  */ 
   @Override
   public boolean isFinished() {
-    return !teleButton.get() || (speed < 0 && Constants.Climber.Auton.kTelescopicFullRetract >= climber.getTelescopicPosition()) || 
-    (speed > 0 && Constants.Climber.Auton.kTelescopicFullExtend <= climber.getTelescopicPosition());
+    return !teleButton.get() || (speed < 0 && Constants.Climber.kTelescopicFullRetract >= climber.getTelescopicPosition()) || 
+    (speed > 0 && Constants.Climber.kTelescopicFullExtend <= climber.getTelescopicPosition());
   }
 }

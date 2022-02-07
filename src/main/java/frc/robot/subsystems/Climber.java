@@ -9,7 +9,6 @@ import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
-import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -23,7 +22,6 @@ public class Climber extends SubsystemBase {
     //for detecting whether robot is hooked on rungs or not for each type of arm
   public DigitalInput pivotLimit, leftTelescopicLimit, rightTelescopicLimit; //inductive proximity sensors 
     //for detecting whether robot is hooked on rungs or not for each type of arm
-  public AnalogPotentiometer potentiometerPivot; //potentiometer to measure the turn of the pivoting arm
 
   /**
    * Initializes all objects and reconfigures all motors to requirements
@@ -41,14 +39,6 @@ public class Climber extends SubsystemBase {
     pivotLimit = new DigitalInput(Constants.Climber.kPivotLimitSwitch);
     leftTelescopicLimit = new DigitalInput(Constants.Climber.kLeftTelescopicLimitSwitch);
     rightTelescopicLimit = new DigitalInput(Constants.Climber.kRightTelescopicLimitSwitch);
-
-    /**
-   * Sets speed to given motor
-   * @param potentiometer id
-   * @param range of motion (in degrees) - Ex. 0-180 (degrees) - 
-   * @param location where potentiometer reads 0v (starting point of motion)
-  */
-    potentiometerPivot = new AnalogPotentiometer(Constants.Climber.kPotentiometerPivotChannel, 0, 0);
     
     //reconfiguring all motors with PID constants
     leftTelescopic.follow(rightTelescopic);
@@ -69,11 +59,9 @@ public class Climber extends SubsystemBase {
     rightTelescopic.config_kF(Constants.kPIDIdx, Constants.Climber.kTelekF);
 
     
-
+    pivot.configForwardSoftLimitThreshold(degreesToTicks(Math.asin(16/30) * (180 / Math.PI)));
 
     /* Methods to add
-    configClosedLoopRampRate (smoothes out acceleration/decceleration)
-    configPeakCurrentLimit (prevents too much power from being drawn at a time)
     configForwardLimitSwitchSource (sets a remote limit switch to motor to stop when contacted)
     configForwardSoftLimitThreshold & configForwardSoftLimitEnable (sets a maximum for the motor to run to)
     */
@@ -120,21 +108,14 @@ public class Climber extends SubsystemBase {
   public double getTelescopicPosition()
   {
     double average = (getEncoderValue(leftTelescopic) + getEncoderValue(rightTelescopic))/2;
-    return metersToTicks(average);
+    return ticksToMeters(average);
   }
 
-  /**
-   * Calculates the angle the pivot has moved through for the selected potentiometer
-   * @return angle travelled by pivot
-   */
-  public double getPivotAnglePoten() {
-    return 0;
-  }
   /**
    * @return The pivot angle that the rotating arm is at (using encoders)
    */
   public double getPivotAngle() {
-    return getEncoderValue(pivot);
+    return ticksToDegrees(getEncoderValue(pivot));
   }
 
   /**
@@ -178,7 +159,9 @@ public class Climber extends SubsystemBase {
   }
 
   /**
-   * will do later
+   * Converts ticks to meters
+   * @param ticks The ticks to convert
+   * @return The tick value converted to meters 
    */
   public double ticksToMeters(double ticks) {
     return ticks;
@@ -189,7 +172,7 @@ public class Climber extends SubsystemBase {
    * @return        the amount of ticks in that distance
    */
   public double metersToTicks(double meters) {
-    return meters ;
+    return meters;
   }
   
   @Override

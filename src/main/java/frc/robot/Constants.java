@@ -130,33 +130,31 @@ public final class Constants {
         public static final double kTelescopicManualSpeed = 0.1;
         public static final double kPivotManualSpeed = 0.1;
 
-        public static class Auton {
-            public static final double kLiftOffRungTele = 0;
-            public static final double kFirstBackPivot = -0;
-            public static final double kGetUnderRungRetract = -0;
-            public static final double kSecondBackPivot = 0;
+        //manual position constants
+        public static final double kTelescopicFullExtend = 0;
+        public static final double kTelescopicFullRetract = 0;
+        public static final double kPivotStowingPos = 0;
+        public static final double kPivotLowestPos = 0;
+        public static final double kPivotHighestPos = 0;
+        public static final double kMaxPivotPos = 150;
+        public static final double kMinPivotPos = 30;
+        public static final double kApproachRungSpeed = 0;
 
+        //
+        public static class Auton {
             //positions that arms move to during the climb (all pivots are in degrees, 
-                //all telescopics are in meters)
-            public static final double kTelescopicFullExtend = 0;
-            public static final double kTelescopicFullRetract = 0;
-            public static final double kPivotStowingPos = 0;
-            public static final double kPivotLowestPos = 0;
-            public static final double kPivotHighestPos = 0;
-            public static final double kMaxPivotPos = 150;
-            public static final double kMinPivotPos = 30;
-            public static final double kApproachRungSpeed = 0;
-            public static final double kRotateToHighRung = 0;
-			public static final double kRetractForPivotingArm = 0;
-            public static final double kRotateBack = 0;
-			public static final double kShiftWeight = 0;
-            public static final double kRotateToAvoidHighRung = 0;
-            public static final double kExtendToAvoidHighRung = 0;
-            public static final double kRotateBehindHighRung = 0;
-            public static final double kHookHighRung = 0;
-            public static final double kRetractPivotLiftOff = 0;
-            public static final double kExtendPivotingUnderRung = 0;
-            public static final double kRetractPivotHang = 0;
+                //all telescopics are in meters
+            // 62.64 degrees between lower and higher rung
+
+            public static final double kLiftOffRungTele = 0; // < 52.22in and > 33in
+            public static final double kPivotTeleBack = 0; // 65 degrees
+            public static final double kRotateToHighRungTele = -0; //  degrees
+            public static final double kHookHighRungTele = -0; // 65-62.64 degrees
+            public static final double kShiftWeight = 0; //
+            public static final double kRetractPivotLiftOff = -0; // -3.9 inches 
+            public static final double kPivotPivotingBack = -0; // 64 degrees
+            public static final double kRotateToHighRungPivot = -0; // Slightly more than 62.64 degrees
+            public static final double kRetractPivotHang = 0;  // max length (62 inches - current value)
         }
     }
 }
