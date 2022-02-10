@@ -27,6 +27,10 @@ public class LinearActuator {
     this.distFromBase = distFromBase;
     this.height = height;
     this.maxHeight = maxHeight;
+
+    this.actuatorMotor.config_kP(Constants.kPIDIdx, Constants.Hood.P);
+    this.actuatorMotor.config_kI(Constants.kPIDIdx, Constants.Hood.I);
+    this.actuatorMotor.config_kD(Constants.kPIDIdx, Constants.Hood.D);
   }
 
   /**
