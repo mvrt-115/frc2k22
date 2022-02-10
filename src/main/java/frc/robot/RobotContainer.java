@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  */
 public class RobotContainer {
   private final Limelight limelight = new Limelight();
-  private final Drivetrain drivetrain = new Drivetrain();
+  // private final Drivetrain drivetrain = new Drivetrain();
   // private final Climber climber = new Climber();
   // private final Intake intake = new Intake();
   // private final Shooter shooter = new Shooter(limelight);
@@ -61,12 +61,12 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // the :: syntax allows us to pass in methods of a class as variables so that the command can continuously access input values
-    drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
+    // drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
 
     turret.setDefaultCommand(new FindTarget(turret));
 
-    turretClockwise.whenPressed(new TurnTurret(turret, -1)).whenReleased(new TurnTurret(turret, 0));
-    turretCounterclockwise.whenPressed(new TurnTurret(turret, 1)).whenReleased(new TurnTurret(turret, 0));
+    // turretClockwise.whenPressed(new TurnTurret(turret, -0.5)).whenReleased(new TurnTurret(turret, 0));
+    // turretCounterclockwise.whenPressed(new TurnTurret(turret, 0.5)).whenReleased(new TurnTurret(turret, 0));
   }
 
   /**
@@ -98,6 +98,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return null;
+    return new TurretSetupAlign(turret);
   }
 }

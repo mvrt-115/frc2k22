@@ -8,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -15,6 +16,8 @@ import frc.robot.util.Derivitive;
 import frc.robot.util.Limelight;
 import frc.robot.util.MathUtils;
 import frc.robot.util.TalonFactory;
+
+// TODO: Edge cases for turret (need to recalibrate should be able to recalibrate no matter where turret is)
 
 public class Turret extends SubsystemBase {
 
@@ -25,8 +28,8 @@ public class Turret extends SubsystemBase {
   private TurretState state;
 
   private TalonFX turret, left, right;
-
   private Limelight limelight;
+  private DigitalInput magLimit;
 
   private double targetDegrees;
 
@@ -44,8 +47,9 @@ public class Turret extends SubsystemBase {
     this.limelight = limelight;
 
     turret = TalonFactory.createTalonFX(0, false);
-    // left = TalonFactory.createTalonSRX(38, false);
+    // left = TalonFactory.createTaloSRX(38, false);
     // right = TalonFactory.createTalonSRX(42, true);
+    magLimit = new DigitalInput(0);
 
     targetDegrees = 0;
 
@@ -61,35 +65,33 @@ public class Turret extends SubsystemBase {
     turret.config_kI(1, Constants.Turret.kILarge);
     turret.config_kD(1, Constants.Turret.kDLarge);
 
-    turret.setSelectedSensorPosition(0);
+    resetEncoder();
     turret.selectProfileSlot(0, 0);
     turret.setInverted(true);
   }
 
   @Override
   public void periodic() {
-    // if(state != TurretState.DISABLED)
-    //  return;
     log();
+    if(state != TurretState.FLIPPING)
+      updateTargetDegrees();
 
-    SmartDashboard.putBoolean("flipping", state == TurretState.FLIPPING);
-    SmartDashboard.putBoolean("<= 10", Math.abs(getCurrentPositionDegrees()) <= 10);
-
+    
     // continue looking for target
     if(state == TurretState.FLIPPING) {
       turnToTarget();
       
-      if(Math.abs(getCurrentPositionDegrees()) <= 10 || Math.abs(getCurrentPositionDegrees() - targetDegrees) <= 10) {
+      if(magLimit.get()) {
         setState(TurretState.TARGETING);
         updateTargetDegrees();
-      }   
-    } else {
-      updateTargetDegrees();
-
-      if(state == TurretState.TARGETING || state == TurretState.SEARCHING)
-        target();
-      else
-        turnPercentOut(0);
+      }
+        
+    }
+    if(state == TurretState.TARGETING) {
+      // System.out.println("Target");
+      target();
+    } else if(state != TurretState.FLIPPING){ 
+      turnPercentOut(0);
     }
     
     // determine if we can shoot if we are within some margin of error
@@ -97,10 +99,38 @@ public class Turret extends SubsystemBase {
       setState(TurretState.CAN_SHOOT);
     else if(state != TurretState.FLIPPING)
       setState(TurretState.TARGETING);
+    // log();
+
+    // if(state != TurretState.DISABLED)
+    //  return;
+
+    // SmartDashboard.putBoolean("flipping", state == TurretState.FLIPPING);
+    // SmartDashboard.putBoolean("<= 10", Math.abs(getCurrentPositionDegrees()) <= 10);
+
+    // // continue looking for target
+    // if(state == TurretState.FLIPPING) {
+    //   turnToTarget();
+      
+    //   if(Math.abs(getCurrentPositionDegrees()) <= 10 || Math.abs(getCurrentPositionDegrees() - targetDegrees) <= 10) {
+    //     setState(TurretState.TARGETING);
+    //     updateTargetDegrees();
+    //   }   
+    // } else {
+    //   updateTargetDegrees();
+
+    //   if(state == TurretState.TARGETING || state == TurretState.SEARCHING)
+    //     target();
+    //   else
+    //     turnPercentOut(0);
+    // }
+    
+    // // determine if we can shoot if we are within some margin of error
+    // if(Math.abs(limelight.getHorizontalOffset()) <= 1 && state != TurretState.FLIPPING)
+    //   setState(TurretState.CAN_SHOOT);
+    // else if(state != TurretState.FLIPPING)
+    //   setState(TurretState.TARGETING);
     // left.set(ControlMode.PercentOutput, 0.7);
     // right.set(ControlMode.PercentOutput, -0.7);
-
-    
   }
 
   public void updateTargetDegrees() {
@@ -190,6 +220,13 @@ public class Turret extends SubsystemBase {
   }
 
   /**
+   * Resets the encoder position to 0
+   */
+  public void resetEncoder() {
+    turret.setSelectedSensorPosition(0);
+  }
+
+  /**
    * If the turret is not being used or if it is within some margin of error, we can shoot
    * @return if we can shoot
    */
@@ -205,6 +242,13 @@ public class Turret extends SubsystemBase {
     this.state = state;
   }
 
+  /**
+   * @return The current state of the turret
+   */
+  public TurretState getTurretState() {
+    return state;
+  }
+
   /** 
    * Finds the current position in degrees
    * @return  the current position of the turret in degrees
@@ -218,10 +262,11 @@ public class Turret extends SubsystemBase {
   }
 
   /**
-   * @return The current state of the turret
+   * Gets if the mag limit switch is aligned
+   * @return The alignment state (true/false)
    */
-  public TurretState getTurretState() {
-    return state;
+  public boolean getMagAligned() {
+    return !magLimit.get();
   }
 
   /**
@@ -233,5 +278,6 @@ public class Turret extends SubsystemBase {
     SmartDashboard.putString("Turret State", state.toString());
     SmartDashboard.putNumber("Turret Output", turret.getMotorOutputPercent());
     SmartDashboard.putNumber("Target Degrees", targetDegrees);
+    SmartDashboard.putBoolean("Is Aligned", getMagAligned());
   }
 }

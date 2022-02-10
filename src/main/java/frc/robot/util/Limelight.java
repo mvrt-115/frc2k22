@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Limelight extends SubsystemBase {
 
+  Derivitive deltaE = new Derivitive();
+
   private RollingAverage tx;
   private RollingAverage ty;
   private NetworkTable limelight;
@@ -31,10 +33,9 @@ public class Limelight extends SubsystemBase {
   public Limelight() {
     
     limelight = NetworkTableInstance.getDefault().getTable("limelight");
-    tx = new RollingAverage(5);
+    tx = new RollingAverage(50);
     ty = new RollingAverage(5);
-
-    lastTx = 0;
+    
     setLED(LED_STATE.DEFAULT);
     setPipeline(CAM_MODE.VISION_WIDE);
   }
@@ -44,13 +45,16 @@ public class Limelight extends SubsystemBase {
     // update ty and tx
     updateEntry("ty", ty);
     updateEntry("tx", tx);
-    
+
+    // deltaE.update(getHorizontalOffset());
+
     log();
   }
 
   public void log() {
-    SmartDashboard.putNumber("tx", limelight.getEntry("tx").getDouble(0));
+    SmartDashboard.putNumber("tx", tx.getAverage());
     SmartDashboard.putNumber("ty", limelight.getEntry("ty").getDouble(0));
+    // SmartDashboard.putNumber("delta e", deltaE.get());
     
     // System.out.println(NetworkTableInstance.getDefault().getEntry("limelight").getNumber(0));
   }
@@ -92,9 +96,10 @@ public class Limelight extends SubsystemBase {
    * @param rollingAvg  The rolling average to update (ty or tx)
    */
   private void updateEntry(String key, RollingAverage rollingAvg) {
-    if (targetsFound()) 
+    double val = limelight.getEntry(key).getDouble(0);
+    // if (targetsFound() && Math.abs(val - tx.getAverage()) < 2) 
       // System.out.println("got value: " + key + " " +limelight.);
-      rollingAvg.updateValue(limelight.getEntry(key).getDouble(0));
+      rollingAvg.updateValue((limelight.getEntry(key).getDouble(0)));
     //  System.out.println(limelight.getEntry(key).getDouble(0));
     // }
       
