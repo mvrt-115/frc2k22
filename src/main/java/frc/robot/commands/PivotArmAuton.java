@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Climber;
+import frc.robot.util.MathUtils;
 
 /**
  * Runs the pivot arm motor using positional PID on the angle turn until final angle is reached
@@ -46,6 +47,6 @@ public class PivotArmAuton extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(climber.ticksToDegrees(climber.getEncoderValue(climber.pivot)) - finalAngle) < 0.05;
+    return Math.abs(MathUtils.ticksToDegrees(climber.getEncoderValue(climber.pivot)) - finalAngle) < 0.05;
   }
 }

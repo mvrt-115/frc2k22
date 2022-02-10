@@ -6,6 +6,8 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 
+import frc.robot.util.MathUtils;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -131,30 +133,34 @@ public final class Constants {
         public static final double kPivotManualSpeed = 0.1;
 
         //manual position constants
-        public static final double kTelescopicFullExtend = 0;
+        public static final double kTelescopicFullExtend = 62;
         public static final double kTelescopicFullRetract = 0;
         public static final double kPivotStowingPos = 0;
-        public static final double kPivotLowestPos = 0;
-        public static final double kPivotHighestPos = 0;
-        public static final double kMaxPivotPos = 150;
-        public static final double kMinPivotPos = 30;
-        public static final double kApproachRungSpeed = 0;
+        public static final double kPivotMaxForwardPos = 66;
+        public static final double kPivotMaxReversePos = -3;
+        public static final double kApproachRungSpeed = 0.05;
 
-        //
+        //31" in height of pivot arm
+        //30" min 62" max of telescopic 
         public static class Auton {
             //positions that arms move to during the climb (all pivots are in degrees, 
                 //all telescopics are in meters
+            // 0" on telescopic is 30"
+            // 0 degrees on pivot is 90 degrees from the chassis (measured from the 14 in side of the chassis)
+
             // 62.64 degrees between lower and higher rung
 
-            public static final double kLiftOffRungTele = 0; // < 52.22in and > 33in
-            public static final double kPivotTeleBack = 0; // 65 degrees
-            public static final double kRotateToHighRungTele = -0; //  degrees
-            public static final double kHookHighRungTele = -0; // 65-62.64 degrees
-            public static final double kShiftWeight = 0; //
-            public static final double kRetractPivotLiftOff = -0; // -3.9 inches 
-            public static final double kPivotPivotingBack = -0; // 64 degrees
-            public static final double kRotateToHighRungPivot = -0; // Slightly more than 62.64 degrees
-            public static final double kRetractPivotHang = 0;  // max length (62 inches - current value)
+            public static final double kTelescopicFullExtendTicks = MathUtils.inchesToTicks(kTelescopicFullExtend);
+            public static final double kTelescopicFullRetractTicks = MathUtils.inchesToTicks(kTelescopicFullRetract);
+            public static final double kLiftOffRungTele = MathUtils.inchesToTicks(50); // 50" (< 52.22in and > 33in)
+            public static final double kPivotTeleBack = MathUtils.degreesToTicks(65); // 65 degrees
+            public static final double kRotateToHighRungTele = MathUtils.degreesToTicks(62.5); // 62.5 degrees
+            public static final double kHookHighRungTele = MathUtils.inchesToTicks(53); // 53" (52.22 + 0.83 (radius of rung))
+            public static final double kShiftWeight = 0; //Test values??? degrees
+            public static final double kRetractPivotLiftOff = MathUtils.inchesToTicks(49.15); // 49.15" (53-3.9)
+            public static final double kPivotPivotingBack = MathUtils.degreesToTicks(-2); // -2 degrees
+            public static final double kRotateToHighRungPivot = MathUtils.degreesToTicks(0); // 0 degrees
+            public static final double kRetractPivotHang = MathUtils.inchesToTicks(1);  // 1" 
         }
     }
 }

@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.util.MathUtils;
 import frc.robot.util.TalonFactory;
 
 public class Climber extends SubsystemBase {
@@ -59,12 +60,21 @@ public class Climber extends SubsystemBase {
     rightTelescopic.config_kF(Constants.kPIDIdx, Constants.Climber.kTelekF);
 
     
-    pivot.configForwardSoftLimitThreshold(degreesToTicks(Math.asin(16/30) * (180 / Math.PI)));
+    pivot.configForwardSoftLimitThreshold(Constants.Climber.kPivotMaxForwardPos);
+    pivot.configReverseSoftLimitThreshold(Constants.Climber.kPivotMaxReversePos);
 
-    /* Methods to add
-    configForwardLimitSwitchSource (sets a remote limit switch to motor to stop when contacted)
-    configForwardSoftLimitThreshold & configForwardSoftLimitEnable (sets a maximum for the motor to run to)
-    */
+    leftTelescopic.configForwardSoftLimitThreshold(Constants.Climber.kTelescopicFullExtend);
+    leftTelescopic.configReverseSoftLimitThreshold(Constants.Climber.kTelescopicFullRetract);
+
+    rightTelescopic.configForwardSoftLimitThreshold(Constants.Climber.kTelescopicFullExtend);
+    rightTelescopic.configReverseSoftLimitThreshold(Constants.Climber.kTelescopicFullRetract);
+
+    pivot.configForwardSoftLimitEnable(true);
+    pivot.configReverseSoftLimitEnable(true);
+    leftTelescopic.configForwardSoftLimitEnable(true);
+    leftTelescopic.configReverseSoftLimitEnable(true);
+    rightTelescopic.configForwardSoftLimitEnable(true);
+    rightTelescopic.configReverseSoftLimitEnable(true);
   }
 
   /**
@@ -108,14 +118,14 @@ public class Climber extends SubsystemBase {
   public double getTelescopicPosition()
   {
     double average = (getEncoderValue(leftTelescopic) + getEncoderValue(rightTelescopic))/2;
-    return ticksToMeters(average);
+    return MathUtils.ticksToMeters(average);
   }
 
   /**
    * @return The pivot angle that the rotating arm is at (using encoders)
    */
   public double getPivotAngle() {
-    return ticksToDegrees(getEncoderValue(pivot));
+    return MathUtils.ticksToDegrees(getEncoderValue(pivot));
   }
 
   /**
@@ -136,45 +146,6 @@ public class Climber extends SubsystemBase {
     return limitSwitch.get();
   }
 
-  ////////////////////CALCULATIONS//////////////////////////////
-
-  /**
-   * Converts degrees to ticks
-   * @param degrees an angle in degrees
-   * @return        the amount of ticks in that angle
-   */
-  public double degreesToTicks(double degrees) {
-    return (degrees / 360) * Constants.Climber.kTicksPerRotation * Constants.Climber.kPivotGearRatio;
-  }
-
-  /**
-   * Convert the ticks to degrees
-   *@param ticks the amount of ticks rotated
-   *@return The amount of degrees in ticks
-   ticks * rotation/ticks * rotation motor/rotation arm * degrees/rotation = degrees of arm
-   Follow this calculation
-   */
-  public double ticksToDegrees(double ticks) {
-    return (ticks / Constants.Climber.kTicksPerRotation / Constants.Climber.kPivotGearRatio) * 360;
-  }
-
-  /**
-   * Converts ticks to meters
-   * @param ticks The ticks to convert
-   * @return The tick value converted to meters 
-   */
-  public double ticksToMeters(double ticks) {
-    return ticks;
-  }
-  /**
-   * Converts meters to ticks
-   * @param meters a distance in meters
-   * @return        the amount of ticks in that distance
-   */
-  public double metersToTicks(double meters) {
-    return meters;
-  }
-  
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

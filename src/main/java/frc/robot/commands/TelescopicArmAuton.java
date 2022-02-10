@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Climber;
+import frc.robot.util.MathUtils;
 
 /**
  * Runs the telescopic arm motor using positional PID until final position is reached
@@ -48,6 +49,6 @@ public class TelescopicArmAuton extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(climber.ticksToMeters(climber.getTelescopicPosition()) - positionFinal) < 0.05 ;
+    return Math.abs(MathUtils.ticksToMeters(climber.getTelescopicPosition()) - positionFinal) < 0.05 ;
   }
 }
