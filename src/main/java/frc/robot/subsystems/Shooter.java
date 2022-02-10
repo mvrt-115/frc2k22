@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.Limelight;
+import frc.robot.util.LinearActuator;
 import frc.robot.util.RollingAverage;
 import frc.robot.util.TalonFactory;
 import frc.robot.Constants;
@@ -35,9 +36,17 @@ public class Shooter extends SubsystemBase {
   // private final int FOLLOWER_ID = 32;
   private final int HOOD_ID = 0;
 
+  // Linear Actuator IDs (random rn)
+  private final int LEFT_HOOD_ID = 100;
+  private final int RIGHT_HOOD_ID = 100;
+
   private BaseTalon flywheelLeader;
   // private BaseTalon flywheelFollower;
   private BaseTalon hoodMotor;
+
+  // Left Actuator is leader, right is follower
+  private LinearActuator leftActuator;
+  private LinearActuator rightActuator;
 
   // Attributes of flywheel
   private ShooterState state;
@@ -58,6 +67,27 @@ public class Shooter extends SubsystemBase {
 
     hoodMotor.setSelectedSensorPosition(0);
     // flywheelFollower.follow(flywheelLeader);
+
+
+    // Creating Actuators and setting up initial conditions
+    /*leftActuator = new LinearActuator(TalonFactory.createTalonFX(LEFT_HOOD_ID, false), 
+                                      Constants.Hood.HOOD_RADIUS, Constants.Actuator.DIST_FROM_BASE,
+                                      Constants.Actuator.ACT_HEIGHT, Constants.Actuator.MAX_HEIGHT);
+    rightActuator = new LinearActuator(TalonFactory.createTalonFX(RIGHT_HOOD_ID, false), 
+                                      Constants.Hood.HOOD_RADIUS, Constants.Actuator.DIST_FROM_BASE,
+                                      Constants.Actuator.ACT_HEIGHT, Constants.Actuator.MAX_HEIGHT);
+
+    rightActuator.getTalon().follow(leftActuator.getTalon());
+    leftActuator.setPosition(0);
+
+    leftActuator.getTalon().setNeutralMode(NeutralMode.Brake);
+    rightActuator.getTalon().setNeutralMode(NeutralMode.Brake);
+    
+    leftActuator.config_kP(Constants.kPIDIdx, Constants.Hood.P);
+    leftActuator.config_kI(Constants.kPIDIdx, Constants.Hood.I);
+    leftActuator.config_kD(Constants.kPIDIdx, Constants.Hood.D);*/
+
+
 
     // Sets up PIDF
     flywheelLeader.config_kP(Constants.kPIDIdx, Constants.Flywheel.P);
@@ -93,6 +123,8 @@ public class Shooter extends SubsystemBase {
   public void stopHood()
   {
     hoodMotor.set(ControlMode.PercentOutput, 0);
+
+    // leftActuator.setPosition(0);
   }
 
   /**
@@ -111,6 +143,8 @@ public class Shooter extends SubsystemBase {
   public double getCurrentAngle()
   {
     return ticksToDegrees(flywheelLeader.getSelectedSensorPosition());
+
+    // return leftActuator.getAngle();
   }
 
   /**
@@ -138,6 +172,8 @@ public class Shooter extends SubsystemBase {
   public void setTargetAngle(double angle)
   {
     targetAng = angle;
+
+    // leftActuator.setPositionFromAngle(angle);
   }
 
   /**
@@ -223,6 +259,7 @@ public class Shooter extends SubsystemBase {
         stopFlywheel();
         // stopHood();
         hoodMotor.set(ControlMode.Position, degreesToTicks(targetAng));
+        // leftActuator.setPositionByAngle(targetAng);
         break;
       case SPEEDING:
         flywheelLeader.set(ControlMode.Velocity, rpmToTicks(targetRPM));

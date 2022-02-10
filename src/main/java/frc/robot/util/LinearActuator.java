@@ -43,13 +43,21 @@ public class LinearActuator {
   }
 
   /**
-   * 
+   * Sets the position given a parameter, if the given value is less than the height of the
+   * unextended linear actuator, then the position is set to the base height
    * @param position
    */
   public void setPosition(double position)
   {
-    this.position = position;
-    actuatorMotor.set(ControlMode.Position, positionToTicks(position));
+    if(position>=height)
+    {
+      this.position = position;
+      actuatorMotor.set(ControlMode.Position, positionToTicks(position));
+    }
+    else
+    {
+      this.position = height;
+    }
   }
 
   /**
@@ -60,5 +68,19 @@ public class LinearActuator {
   public double positionToTicks(double position)
   {
     return position / Constants.Actuator.THREAD_DISTANCE * Constants.Actuator.GEAR_RATIO * Constants.Actuator.TICKS_PER_ROTATION;
+  }
+
+  public double getAngle()
+  {
+    double length = height+position;
+
+    double angle = Math.acos(Math.pow(radius, 2)+Math.pow(distFromBase, 2)-Math.pow(length, 2)/(2*radius*distFromBase));
+  
+    return Math.toDegrees(angle);
+  }
+
+  public BaseTalon getTalon()
+  {
+    return actuatorMotor;
   }
 }
