@@ -123,6 +123,9 @@ public final class Constants {
         public static final double DIST_FROM_BASE = 2 + HOOD_RADIUS;
         public static final double ACT_HEIGHT = 5;
         public static final double MAX_HEIGHT = 5;
+        public static final double P = 0.05;
+        public static final double I = 0;
+        public static final double D = 0.19;
     }
 
     public static class Storage
