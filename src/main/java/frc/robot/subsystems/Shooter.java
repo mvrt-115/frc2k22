@@ -81,11 +81,7 @@ public class Shooter extends SubsystemBase {
     leftActuator.setPosition(0);
 
     leftActuator.getTalon().setNeutralMode(NeutralMode.Brake);
-    rightActuator.getTalon().setNeutralMode(NeutralMode.Brake);
-    
-    leftActuator.config_kP(Constants.kPIDIdx, Constants.Hood.P);
-    leftActuator.config_kI(Constants.kPIDIdx, Constants.Hood.I);
-    leftActuator.config_kD(Constants.kPIDIdx, Constants.Hood.D);*/
+    rightActuator.getTalon().setNeutralMode(NeutralMode.Brake);*/
 
 
 
