@@ -29,8 +29,11 @@ public class Storage extends SubsystemBase {
   public boolean firstBreakBeamBroken = false;
   public boolean secondBreakBeamBroken = false;
   
+  // test the storage code! 
+  // utilize the breakbeam placements from Wednesday
+  // make sure states work
+  
   public Storage() {
-    breakBeamFirst.get();
     storageMotor1 = TalonFactory.createTalonSRX(Constants.Storage.kMotor1ID, true);
     breakBeamFirst = new DigitalInput(Constants.Storage.kBreakBeamPort0);
     breakBeamLast = new DigitalInput(Constants.Storage.kBreakBeamPort1);
@@ -53,13 +56,11 @@ public class Storage extends SubsystemBase {
     {
       if(!breakBeamFirst.get())
       {
-        //firstBreakBeamBroken = true;
         runMotor();
       }
 
       else if(!breakBeamLast.get())
       {
-        //secondBreakBeamBroken = true;
         runMotor();
       }
 
@@ -87,6 +88,8 @@ public class Storage extends SubsystemBase {
 
     SmartDashboard.putString("current state", getCurrentStateAsString());
     SmartDashboard.putNumber("number of balls in hopper", balls);
+    SmartDashboard.putBoolean("is first breakbeam broke", !breakBeamFirst.get());
+    SmartDashboard.putBoolean("is second breakbeam broken", !breakBeamLast.get());
   }
 
   private String getCurrentStateAsString()
@@ -148,17 +151,3 @@ public class Storage extends SubsystemBase {
     storageMotor1.set(ControlMode.PercentOutput, 0);
   }
 }
-
-/*class UltrasonicLogic extends Ultrasonic {
-  private double epsilon = 60; // millimeters 
-  private double width = 256; // millimeters
-  UltrasonicLogic(DigitalOutput out, DigitalInput in)
-  {
-    super(out, in);
-  }
-
-  public boolean get()
-  {
-    return (Math.abs(super.getRangeMM() - width) > epsilon);
-  }
-}*/
