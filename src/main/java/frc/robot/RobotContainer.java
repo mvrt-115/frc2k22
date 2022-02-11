@@ -67,22 +67,17 @@ public class RobotContainer {
     /*drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
     intakeBalls.whenPressed(new IntakeBalls(intake)).whenReleased(new StopIntaking(intake));
     */
-    // forwardarmManual.whenPressed(new PivotArmManual(climber, this::getForwardArmManual, Constants.Climber.kPivotManualSpeed));
-    // backarmManual.whenPressed(new PivotArmManual(climber, this::getBackArmManual, -(Constants.Climber.kPivotManualSpeed)));
-    // uparmManual.whenPressed(new TelescopicManual(climber, this::getUpArmManual, Constants.Climber.kTelescopicManualSpeed));
-    // downarmManual.whenPressed(new TelescopicManual(climber, this::getDownArmManual, -(Constants.Climber.kTelescopicManualSpeed)));
+
     if(telescopicButton.get()) {
-      //double speed = 0;
       if(retractButton.get()) 
-        telescopicButton.whenPressed(new ClimberManual(climber, climber.leftTelescopic, this::getRetractArmManual, -Constants.Climber.kApproachRungSpeed));
-      telescopicButton.whenPressed(new ClimberManual(climber, climber.leftTelescopic, this::getExtendArmManual, Constants.Climber.kApproachRungSpeed));
+        telescopicButton.whenPressed(new ClimberManual(climber, climber.leftTelescopic, this::getTelescopicReverseManual, -Constants.Climber.kApproachRungSpeed));
+      telescopicButton.whenPressed(new ClimberManual(climber, climber.leftTelescopic, this::getTelescopicArmManual, Constants.Climber.kApproachRungSpeed));
     }
 
     if(pivotButton.get()) {
-      //double speed = 0;
       if(reverseButton.get()) 
-        pivotButton.whenPressed(new ClimberManual(climber, climber.pivot, this::getBackArmManual, -Constants.Climber.kApproachRungSpeed));
-      pivotButton.whenPressed(new ClimberManual(climber, climber.pivot, this::getForwardArmManual, Constants.Climber.kApproachRungSpeed));
+        pivotButton.whenPressed(new ClimberManual(climber, climber.pivot, this::getPivotReverseManual, -Constants.Climber.kApproachRungSpeed));
+      pivotButton.whenPressed(new ClimberManual(climber, climber.pivot, this::getPivotArmManual, Constants.Climber.kApproachRungSpeed));
     }
 
   }
@@ -109,27 +104,37 @@ public class RobotContainer {
     return wheel.getAverage();
   }*/
 
-  public boolean getForwardArmManual()
+  public boolean getPivotArmManual()
   {
-    //return forwardarmManual.get();
     return pivotButton.get();
   }
 
-  public boolean getBackArmManual()
+  public boolean getTelescopicArmManual()
   {
-    //return backarmManual.get();
-    return reverseButton.get();
-  }
-
-  public boolean getExtendArmManual() {
-    //return uparmManual.get();
     return telescopicButton.get();
   }
 
-  public boolean getRetractArmManual()
+  public boolean getReverseManual() {
+    return reverseButton.get();
+  }
+
+  public boolean getAllStates(JoystickButton[] buttons)
   {
-    //return downarmManual.get();
-    return retractButton.get();
+    boolean totalState = true;
+    for(int i = 0; i < buttons.length; i++)
+      if(!buttons[i].get()) totalState = false;
+
+    return totalState;
+  }
+
+  public boolean getTelescopicReverseManual()
+  {
+    return getAllStates(new JoystickButton[]{telescopicButton, reverseButton});
+  }
+
+  public boolean getPivotReverseManual()
+  {
+    return getAllStates(new JoystickButton[]{pivotButton, reverseButton});
   }
 
   /**

@@ -86,8 +86,23 @@ public class MathUtils {
    * @param inches a distance inches
    * @return        the amount of meters in that distance
    */
+  public static double metersToInches(double meters)
+  {
+    return meters / 100 * 2.54;
+  }
+
+  /**
+   * Converts inches to meters
+   * @param inches a distance inches
+   * @return        the amount of meters in that distance
+   */
   public static double inchesToTicks(double inches)
   {
     return metersToTicks(inchesToMeters(inches));
+  }
+
+  public static double ticksToInches(double ticks)
+  {
+    return metersToInches(ticksToMeters(ticks));
   }
 }

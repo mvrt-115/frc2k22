@@ -133,12 +133,12 @@ public final class Constants {
         public static final double kPivotManualSpeed = 0.1;
 
         //manual position constants
-        public static final double kTelescopicFullExtend = 62;
-        public static final double kTelescopicFullRetract = 0;
-        public static final double kPivotStowingPos = 0;
-        public static final double kPivotMaxForwardPos = 66;
-        public static final double kPivotMaxReversePos = -3;
-        public static final double kApproachRungSpeed = 0.05;
+        public static final double kTelescopicFullExtend = 62; //inches
+        public static final double kTelescopicFullRetract = 0; //inches
+        public static final double kPivotStowingPos = 0; //degrees
+        public static final double kPivotMaxForwardPos = 66; //degrees
+        public static final double kPivotMaxReversePos = -3; //degrees
+        public static final double kApproachRungSpeed = 0.05; //PercentOutput
 
         //31" in height of pivot arm
         //30" min 62" max of telescopic 
@@ -161,6 +161,8 @@ public final class Constants {
             public static final double kPivotPivotingBack = MathUtils.degreesToTicks(-2); // -2 degrees
             public static final double kRotateToHighRungPivot = MathUtils.degreesToTicks(0); // 0 degrees
             public static final double kRetractPivotHang = MathUtils.inchesToTicks(1);  // 1" 
+
+            public static final double kAcceptablePIDError = 10; //ticks
         }
     }
 }

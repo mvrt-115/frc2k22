@@ -113,12 +113,13 @@ public class Climber extends SubsystemBase {
   }
 
   /**
-   * @return The position the encoders have rotated
+   * Gives the position of the telescopic arms through values given by encoder
+   * @return The inches the encoders have rotated
    */
   public double getTelescopicPosition()
   {
     double average = (getEncoderValue(leftTelescopic) + getEncoderValue(rightTelescopic))/2;
-    return MathUtils.ticksToMeters(average);
+    return MathUtils.ticksToInches(average);
   }
 
   /**
