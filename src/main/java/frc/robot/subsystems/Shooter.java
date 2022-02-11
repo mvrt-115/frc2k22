@@ -140,7 +140,7 @@ public class Shooter extends SubsystemBase {
   {
     return ticksToDegrees(flywheelLeader.getSelectedSensorPosition());
 
-    // return leftActuator.getAngle();
+    // return leftActuator.getHoodAngle();
   }
 
   /**
