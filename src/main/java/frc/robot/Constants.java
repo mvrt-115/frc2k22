@@ -82,7 +82,7 @@ public final class Constants {
         public static final int kMotorSpeed = 0; // change value later
     }
 
-    public static class Climber{
+    public static class Climber {
         //constants for the climber arms 
         // change values later
 

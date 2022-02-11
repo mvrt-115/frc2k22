@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
+
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.Constants.Climber.Auton;
@@ -14,9 +16,9 @@ import frc.robot.subsystems.Climber;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 
 
-public class ClimberAuton extends SequentialCommandGroup {
+public class ClimberAutonSequence extends SequentialCommandGroup {
   /** Creates a new ClimberAuton. */
-  public ClimberAuton(Climber climber) {
+  public ClimberAutonSequence(Climber climber) {
 
     addCommands(
 
@@ -34,7 +36,20 @@ public class ClimberAuton extends SequentialCommandGroup {
         12. Extend with proximity*/
 
       // code begins with the robot on mid rung
-      new TelescopicArmAuton(climber, Auton.kLiftOffRungTele), // extend telescopic arms
+     new ClimberAuton(climber, climber.leftTelescopic, Auton.kLiftOffRungTele), 
+     new ClimberAuton(climber, climber.pivot, Auton.kPivotTeleBack), 
+     new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.kTelescopicFullExtend), 
+     new ClimberAuton(climber, climber.leftTelescopic, Auton.kRotateToHighRungTele, climber.leftTelescopicLimit),
+     new ClimberAuton(climber, climber.leftTelescopic, Auton.kHookHighRungTele, climber.leftTelescopicProximity),
+     new ClimberAuton(climber, climber.pivot, Auton.kShiftWeight), 
+     new ClimberAuton(climber, climber.leftTelescopic, Auton.kRetractPivotLiftOff), 
+     new ClimberAuton(climber, climber.pivot, Auton.kPivotPivotingBack), 
+     new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.kTelescopicFullRetract), 
+     new ClimberAuton(climber, climber.pivot, Auton.kRotateToHighRungPivot, climber.pivotLimit), 
+     new ClimberAuton(climber, climber.leftTelescopic, Auton.kRetractPivotHang, climber.pivotProximity) 
+
+      // code begins with the robot on mid rung
+     /* new TelescopicArmAuton(climber, Auton.kLiftOffRungTele), // extend telescopic arms
       new PivotArmAuton(climber, Auton.kPivotTeleBack), // pivot telescopic arms back to get the telescopic behind the higher rung
       new TelescopicArmAuton(climber, Constants.Climber.kTelescopicFullExtend), // extend telescopic arms to get the telescopic limit switches lined up with the rung
       new TelescopicArmAutonLimit(climber, Auton.kRotateToHighRungTele), // pivots back for telescopic to touch rung at telescopic limit switch
@@ -44,7 +59,8 @@ public class ClimberAuton extends SequentialCommandGroup {
       new PivotArmAuton(climber, Auton.kPivotPivotingBack), // pivots pivoting arms back to get them behind the higher rung
       new TelescopicArmAuton(climber, Constants.Climber.kTelescopicFullRetract), // extend the telescopic arm to avoid pivoting arm from hitting the high run
       new PivotArmAutonLimit(climber, Auton.kRotateToHighRungPivot), // rotate the pivoting arm behind the high rung
-      new PivotArmAutonProximity(climber, Auton.kRetractPivotHang) // retracts telescopic arms so that they hang on rung, and confirmed with proximities
+      new PivotArmAutonProximity(climber, Auton.kRetractPivotHang) // retracts telescopic arms so that they hang on rung, and confirmed with proximities */
     );
   }
 }
+

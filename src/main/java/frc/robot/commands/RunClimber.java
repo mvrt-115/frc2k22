@@ -20,8 +20,8 @@ public class RunClimber extends SequentialCommandGroup {
     /** the climber auton which is designed for one complete climb is called
      *  twice to account for two climbs in order to get to the high rung */ 
     addCommands(
-      new ClimberAuton(climber),
-      new ClimberAuton(climber)
+      new ClimberAutonSequence(climber),
+      new ClimberAutonSequence(climber)
     );
   }
 }

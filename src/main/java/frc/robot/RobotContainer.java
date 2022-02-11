@@ -32,10 +32,13 @@ public class RobotContainer {
   private Joystick operatorJoystick;  
   
   //private JoystickButton intakeBalls = new JoystickButton(operatorJoystick, 0);
-  private JoystickButton forwardarmManual;
-  private JoystickButton backarmManual;
-  private JoystickButton uparmManual;
-  private JoystickButton downarmManual;
+
+  // climber operator manual buttons
+  private JoystickButton pivotButton;
+  private JoystickButton telescopicButton;
+  private JoystickButton reverseButton;
+  private JoystickButton retractButton;
+
 
   /*private RollingAverage throttle = new RollingAverage(50);
   private RollingAverage wheel = new RollingAverage(15);
@@ -47,10 +50,8 @@ public class RobotContainer {
     //driverJoystick = new Joystick(0);
     operatorJoystick = new Joystick(0);
 
-    forwardarmManual = new JoystickButton(operatorJoystick, 3);
-    backarmManual =  new JoystickButton(operatorJoystick, 4);
-    uparmManual = new JoystickButton(operatorJoystick, 1);
-    downarmManual = new JoystickButton(operatorJoystick, 2);
+    pivotButton = new JoystickButton(operatorJoystick, 3);
+    telescopicButton =  new JoystickButton(operatorJoystick, 4);
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -66,10 +67,24 @@ public class RobotContainer {
     /*drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
     intakeBalls.whenPressed(new IntakeBalls(intake)).whenReleased(new StopIntaking(intake));
     */
-    forwardarmManual.whenPressed(new PivotArmManual(climber, this::getForwardArmManual, Constants.Climber.kPivotManualSpeed));
-    backarmManual.whenPressed(new PivotArmManual(climber, this::getBackArmManual, -(Constants.Climber.kPivotManualSpeed)));
-    uparmManual.whenPressed(new TelescopicManual(climber, this::getUpArmManual, Constants.Climber.kTelescopicManualSpeed));
-    downarmManual.whenPressed(new TelescopicManual(climber, this::getDownArmManual, -(Constants.Climber.kTelescopicManualSpeed)));
+    // forwardarmManual.whenPressed(new PivotArmManual(climber, this::getForwardArmManual, Constants.Climber.kPivotManualSpeed));
+    // backarmManual.whenPressed(new PivotArmManual(climber, this::getBackArmManual, -(Constants.Climber.kPivotManualSpeed)));
+    // uparmManual.whenPressed(new TelescopicManual(climber, this::getUpArmManual, Constants.Climber.kTelescopicManualSpeed));
+    // downarmManual.whenPressed(new TelescopicManual(climber, this::getDownArmManual, -(Constants.Climber.kTelescopicManualSpeed)));
+    if(telescopicButton.get()) {
+      //double speed = 0;
+      if(retractButton.get()) 
+        telescopicButton.whenPressed(new ClimberManual(climber, climber.leftTelescopic, this::getRetractArmManual, -Constants.Climber.kApproachRungSpeed));
+      telescopicButton.whenPressed(new ClimberManual(climber, climber.leftTelescopic, this::getExtendArmManual, Constants.Climber.kApproachRungSpeed));
+    }
+
+    if(pivotButton.get()) {
+      //double speed = 0;
+      if(reverseButton.get()) 
+        pivotButton.whenPressed(new ClimberManual(climber, climber.pivot, this::getBackArmManual, -Constants.Climber.kApproachRungSpeed));
+      pivotButton.whenPressed(new ClimberManual(climber, climber.pivot, this::getForwardArmManual, Constants.Climber.kApproachRungSpeed));
+    }
+
   }
 
   /**
@@ -96,21 +111,25 @@ public class RobotContainer {
 
   public boolean getForwardArmManual()
   {
-    return forwardarmManual.get();
+    //return forwardarmManual.get();
+    return pivotButton.get();
   }
 
   public boolean getBackArmManual()
   {
-    return backarmManual.get();
+    //return backarmManual.get();
+    return reverseButton.get();
   }
 
-  public boolean getUpArmManual() {
-    return uparmManual.get();
+  public boolean getExtendArmManual() {
+    //return uparmManual.get();
+    return telescopicButton.get();
   }
 
-  public boolean getDownArmManual()
+  public boolean getRetractArmManual()
   {
-    return downarmManual.get();
+    //return downarmManual.get();
+    return retractButton.get();
   }
 
   /**

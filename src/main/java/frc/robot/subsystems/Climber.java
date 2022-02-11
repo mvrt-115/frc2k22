@@ -146,6 +146,15 @@ public class Climber extends SubsystemBase {
     return limitSwitch.get();
   }
 
+  public boolean detectAllSensors(DigitalInput[] sensors) {
+    for(DigitalInput sensor : sensors) {
+      if(!sensor.get()) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

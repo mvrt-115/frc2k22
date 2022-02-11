@@ -49,6 +49,6 @@ public class TelescopicArmAuton extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(MathUtils.ticksToMeters(climber.getTelescopicPosition()) - positionFinal) < 0.05 ;
+    return Math.abs(MathUtils.ticksToMeters(climber.getTelescopicPosition()) - positionFinal) < 0.05;
   }
 }
