@@ -22,25 +22,26 @@ public final class Constants {
     
     public static final int kPIDIdx = 0;
     public static final int kTimeoutMs = 10;
-    public static final boolean kIsPracticeBot = false;
+    public static final boolean kIsPracticeBot = true;
     public static final double kVoltageComp = 10.0;
     public static final SupplyCurrentLimitConfiguration kCurrentLimit = new SupplyCurrentLimitConfiguration(true, 40, 50, 3.8);
 
     public static class Drivetrain {
 
         // physical constants get from mech once drivetrain is done
-        public static final int kTrackScrubFactor = 0;
-        public static final double kTrackWidthInches = 0;
+        public static final double kTrackScrubFactor = 1.0469745223;
+        public static final double kTrackWidthInches = 24.85;
 
         // ids get from pheonix tuner once drivetrain is done
         public static int kCompLeftMasterId = 1;
         public static int kCompRightMasterId = 2;
         public static int kCompLeftFollowerId = 3;
         public static int kCompRightFollowerId = 4;
-        public static int kPracLeftMasterId = 5;
-        public static int kPracRightMasterId = 6;
-        public static int kPracLeftFollowerId = 7;
-        public static int kPracRightFollowerId = 8;
+       
+        public static int kPracLeftMasterId = 2;
+        public static int kPracRightMasterId = 0;
+        public static int kPracLeftFollowerId = 3;
+        public static int kPracRightFollowerId = 1;
 
         // constants for joystick drive
         public static final double kSensitivity = 0.90;
@@ -49,6 +50,28 @@ public final class Constants {
         public static final double kWheelGain = 0.05;
         public static final double kWheelNonlinearity = 0.05;
 
+        //constants for aligning to ball from the camera
+        public static final double kThrottle  = 0.0; // change value later
+        public static final double kMaxPixelError = 1.0; // change value later
+        
+        //constants for getting distance traveled by motors
+        public static final double kTicksPerRevolution = 2048;
+        public static final double kGearRatio = 12.78;
+        public static final double kwheelCircumference = 6*Math.PI; // inches
+
+        public static final double kP = 1.6498;
+        public static final double kI = 0;
+        public static final double kD = 0;
+        public static final double kFF = 0;
+
+        //values to be determined after the robot is characterized
+        public static final double kS = 0.5985; //units: Volts
+        public static final double kV = 2.8888; //units: Volts * Seconds / Meters
+        public static final double kA = 0.14018; //units: Volts * Seconds^2 / Meters
+
+        //change values later
+        public static final int kAcceptableError = 10;
+        public static final double kDrivetrainMotorSpeed = 0.3;
     }
     
     public static class Intake{
@@ -63,17 +86,18 @@ public final class Constants {
         public static final double kWHEELS_SPEED = 0.6;
 
         public static final double kPIVOT_SPEED = 0.4; // speed of intake when going up or down
-        public static final double kPIVOT_STOP_SPEED_WHEN_UP = 0.23; // speed of intake to keep it up
-        public static final double kPIVOT_STOP_SPEED_WHEN_DOWN = -0.23; // speed of intake to keep it down
+        public static final double kPIVOT_STOP_SPEED_WHEN_UP =0.13; // speed of intake to keep it up
+        public static final double kPIVOT_STOP_SPEED_WHEN_DOWN = -0.1; // speed of intake to keep it down
         //change later after testing
 
-        public static final double kMARGIN_OF_ERROR_TICKS = 600;
+        public static final double kMARGIN_OF_ERROR_TICKS = 4000; // constant
+
 
         // change values later
-        public static final double kP = 0.02;
+        public static final double kP = 0.015;
         public static final double kI = 0.0;
-        public static final double kD = 0.0;
-        public static final double kFF = 0.0;
+        public static final double kD = 0.001;//0.001;
+        public static final double kFF = 0;//-0.001;
     }
 
     public static class Limelight
