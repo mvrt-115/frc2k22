@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.Servo;
 import frc.robot.util.Limelight;
 import frc.robot.util.LinearActuator;
 import frc.robot.util.RollingAverage;
@@ -42,15 +43,15 @@ public class Shooter extends SubsystemBase {
   private final int HOOD_ID = 22; //0
 
   // Linear Actuator IDs (random rn)
-  private final int LEFT_HOOD_ID = 100;
-  private final int RIGHT_HOOD_ID = 100;
+  private final int LEFT_HOOD_ID = 100; // left actuator
+  private final int RIGHT_HOOD_ID = 100; // right actuator
 
   private BaseTalon flywheelLeader;
   private BaseTalon hoodMotor;
 
-  // Left Actuator is leader, right is follower
-  private LinearActuator leftActuator;
-  private LinearActuator rightActuator;
+  // ACtuators
+  private LinearActuator leftActuator;  // left actuator
+  private LinearActuator rightActuator;  // right actuator
 
   // Attributes of flywheel
   private ShooterState state;
@@ -75,19 +76,21 @@ public class Shooter extends SubsystemBase {
 
 
     // Creating Actuators and setting up initial conditions
-    /*leftActuator = new LinearActuator(TalonFactory.createTalonFX(LEFT_HOOD_ID, false), 
+    leftActuator = new LinearActuator(new Servo(LEFT_HOOD_ID), 
                                       Constants.Hood.HOOD_RADIUS, Constants.Actuator.DIST_FROM_BASE,
-                                      Constants.Actuator.ACT_HEIGHT, Constants.Actuator.MAX_HEIGHT);
-    rightActuator = new LinearActuator(TalonFactory.createTalonFX(RIGHT_HOOD_ID, false), 
+                                      Constants.Actuator.ACT_HEIGHT, Constants.Actuator.MAX_HEIGHT,
+                                      Constants.Actuator.DEGREES_FROM_HORIZONTAL);
+    rightActuator = new LinearActuator(new Servo(RIGHT_HOOD_ID), 
                                       Constants.Hood.HOOD_RADIUS, Constants.Actuator.DIST_FROM_BASE,
-                                      Constants.Actuator.ACT_HEIGHT, Constants.Actuator.MAX_HEIGHT);
+                                      Constants.Actuator.ACT_HEIGHT, Constants.Actuator.MAX_HEIGHT,
+                                      Constants.Actuator.DEGREES_FROM_HORIZONTAL);
 
-    rightActuator.getTalon().follow(leftActuator.getTalon());
+    // Initializing them at their min height
     leftActuator.setPosition(0);
+    rightActuator.setPosition(0);
 
-    leftActuator.getTalon().setNeutralMode(NeutralMode.Brake);
-    rightActuator.getTalon().setNeutralMode(NeutralMode.Brake);*/
-
+    //leadActuator.getTalon().setNeutralMode(NeutralMode.Brake);
+    //followActuator.getTalon().setNeutralMode(NeutralMode.Brake);
 
 
     // Sets up PIDF
@@ -96,13 +99,13 @@ public class Shooter extends SubsystemBase {
     flywheelLeader.config_kD(Constants.kPIDIdx, Constants.Flywheel.D);
     flywheelLeader.config_kF(Constants.kPIDIdx, Constants.Flywheel.F);
 
-    hoodMotor.config_kP(Constants.kPIDIdx, Constants.Hood.P);
+    /*hoodMotor.config_kP(Constants.kPIDIdx, Constants.Hood.P);
     hoodMotor.config_kI(Constants.kPIDIdx, Constants.Hood.I);
     hoodMotor.config_kD(Constants.kPIDIdx, Constants.Hood.D);
 
     adjjustFF = Constants.Hood.kFF * Math.cos(hoodMotor.getSelectedSensorPosition());
 
-    hoodMotor.setNeutralMode(NeutralMode.Brake);
+    hoodMotor.setNeutralMode(NeutralMode.Brake);*/
 
     this.limelight = limelight;
 
@@ -124,9 +127,17 @@ public class Shooter extends SubsystemBase {
    */
   public void stopHood()
   {
-    hoodMotor.set(ControlMode.PercentOutput, 0);
+    // hoodMotor.set(ControlMode.PercentOutput, 0);
 
-    // leftActuator.setPosition(0);
+    // servos don't need a method like this
+  }
+
+  /**
+   * Puts hood back to original state
+   */
+  public void resetHood()
+  {
+    leftActuator.setPosition(0);
   }
 
   /**
@@ -144,9 +155,9 @@ public class Shooter extends SubsystemBase {
    */
   public double getCurrentAngle()
   {
-    return ticksToDegrees(flywheelLeader.getSelectedSensorPosition());
+    // return ticksToDegrees(flywheelLeader.getSelectedSensorPosition());
 
-    // return leftActuator.getHoodAngle();
+    return (leftActuator.getHoodAngle()+rightActuator.getHoodAngle())/2;
   }
 
   /**
@@ -295,13 +306,19 @@ public class Shooter extends SubsystemBase {
         break;
     }
 
+    // With servos all this is kinda unnecessary but idt it matters so we can keep it
+
     switch(hoodState)
     {
       case OFF:
         stopHood();
         break;
       case ADJUSTING:
-        hoodMotor.set(ControlMode.Position, degreesToTicks(targetAng));
+        // hoodMotor.set(ControlMode.Position, degreesToTicks(targetAng));
+
+        leftActuator.setPositionFromAngle(targetAng);
+        rightActuator.setPositionFromAngle(targetAng);
+
         if(allWithinPositionError(targetAng))
         {
           setHoodState(HoodState.ATPOSITION);
@@ -390,10 +407,18 @@ public class Shooter extends SubsystemBase {
   }
 
   private boolean allWithinPositionError(double targetAngle) {
-    if (hoodMotor != null)
+    /*if (hoodMotor != null)
     {
       return Math.abs(getCurrentAngle() - targetAngle) <= Constants.Hood.ACCEPTABLE_ERROR;
+    }*/
+
+    if (leftActuator != null)
+    {
+        //return Math.abs(leftActuator.getHoodAngle() - targetAngle) <= Constants.Hood.ACCEPTABLE_ERROR;
+
+        return true; // we aren't able to test the hood rn so have this always return true
     }
+
     return true;
   }
 

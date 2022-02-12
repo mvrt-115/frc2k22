@@ -126,6 +126,9 @@ public final class Constants {
         public static final double P = 0.05;
         public static final double I = 0;
         public static final double D = 0.19;
+        public static final double kDefaultMaxServoPWM = 2.4;
+        public static final double kDefaultMinServoPWM = 0.6;
+        public static final double DEGREES_FROM_HORIZONTAL = 15; // How many degrees below the flywheel that the actuator is
     }
 
     public static class Storage
