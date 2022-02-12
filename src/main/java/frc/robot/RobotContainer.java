@@ -65,8 +65,8 @@ public class RobotContainer {
 
     turret.setDefaultCommand(new FindTarget(turret));
 
-    // turretClockwise.whenPressed(new TurnTurret(turret, -0.5)).whenReleased(new TurnTurret(turret, 0));
-    // turretCounterclockwise.whenPressed(new TurnTurret(turret, 0.5)).whenReleased(new TurnTurret(turret, 0));
+    turretClockwise.whenPressed(new TurretManual(turret, -0.5, turretClockwise::get));
+    turretCounterclockwise.whenPressed(new TurretManual(turret, 0.5, turretCounterclockwise::get));
   }
 
   /**

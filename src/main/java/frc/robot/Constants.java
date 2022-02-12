@@ -84,5 +84,6 @@ public final class Constants {
         public static final double kP = 0.1;
         public static final double kI = 0;
         public static final double kD = 0.005;  // try with 0.007
+        public static final double kTurnSpeed = 0.3;
     }
 }

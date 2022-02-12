@@ -27,13 +27,13 @@ public class TurretSetupAlign extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    turret.turnPercentOut(-0.2);
+    turret.setPercentOutput(-0.2);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    turret.turnPercentOut(0);
+    turret.setPercentOutput(0);
     turret.resetEncoder();
 
     turret.setState(TurretState.TARGETING);
