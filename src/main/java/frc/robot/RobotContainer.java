@@ -31,7 +31,7 @@ public class RobotContainer {
   private Joystick driverJoystick;
   private Joystick operatorJoystick;  
   
-  //private JoystickButton intakeBalls = new JoystickButton(operatorJoystick, 0);
+  private JoystickButton intakeBalls = new JoystickButton(operatorJoystick, 0);
 
   // climber operator manual buttons
   private JoystickButton pivotButton;
@@ -40,11 +40,12 @@ public class RobotContainer {
   private JoystickButton retractButton;
 
 
-  /*private RollingAverage throttle = new RollingAverage(50);
+  private RollingAverage throttle = new RollingAverage(50);
   private RollingAverage wheel = new RollingAverage(15);
 
   private JoystickButton quickturn = new JoystickButton(driverJoystick, 5);
-  */
+
+  
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     //driverJoystick = new Joystick(0);
@@ -71,13 +72,13 @@ public class RobotContainer {
     if(telescopicButton.get()) {
       if(retractButton.get()) 
         telescopicButton.whenPressed(new ClimberManual(climber, climber.leftTelescopic, this::getTelescopicReverseManual, -Constants.Climber.kApproachRungSpeed));
-      telescopicButton.whenPressed(new ClimberManual(climber, climber.leftTelescopic, this::getTelescopicArmManual, Constants.Climber.kApproachRungSpeed));
+      else telescopicButton.whenPressed(new ClimberManual(climber, climber.leftTelescopic, this::getTelescopicArmManual, Constants.Climber.kApproachRungSpeed));
     }
 
     if(pivotButton.get()) {
       if(reverseButton.get()) 
         pivotButton.whenPressed(new ClimberManual(climber, climber.pivot, this::getPivotReverseManual, -Constants.Climber.kApproachRungSpeed));
-      pivotButton.whenPressed(new ClimberManual(climber, climber.pivot, this::getPivotArmManual, Constants.Climber.kApproachRungSpeed));
+      else pivotButton.whenPressed(new ClimberManual(climber, climber.pivot, this::getPivotArmManual, Constants.Climber.kApproachRungSpeed));
     }
 
   }
@@ -88,10 +89,10 @@ public class RobotContainer {
    * 
    * @return value from [-1, 1] that is used for input for the the robot forward or backwards movement
    */
-  /*public double getThrottle() {
+  public double getThrottle() {
     throttle.updateValue(-driverJoystick.getRawAxis(5));
     return throttle.getAverage();
-  }*/
+  }
 
   /**
    * Gets the wheel input from the Driver Joystick wheel axis which is used to turn the robot while
@@ -99,10 +100,10 @@ public class RobotContainer {
    * 
    * @return value from [-1, 1] that is used for input for the robots turning movement
    */
-  /*public double getWheel() {
+  public double getWheel() {
     wheel.updateValue(driverJoystick.getRawAxis(0));
     return wheel.getAverage();
-  }*/
+  }
 
   public boolean getPivotArmManual()
   {
@@ -118,23 +119,21 @@ public class RobotContainer {
     return reverseButton.get();
   }
 
-  public boolean getAllStates(JoystickButton[] buttons)
+  public boolean getAllButtonStates(JoystickButton[] buttons)
   {
-    boolean totalState = true;
+    boolean totalButtonState = true;
     for(int i = 0; i < buttons.length; i++)
-      if(!buttons[i].get()) totalState = false;
+      if(!buttons[i].get()) totalButtonState = false;
 
-    return totalState;
+    return totalButtonState;
   }
 
-  public boolean getTelescopicReverseManual()
-  {
-    return getAllStates(new JoystickButton[]{telescopicButton, reverseButton});
+  public boolean getTelescopicReverseManual() {
+    return getAllButtonStates(new JoystickButton[]{telescopicButton, reverseButton});
   }
 
-  public boolean getPivotReverseManual()
-  {
-    return getAllStates(new JoystickButton[]{pivotButton, reverseButton});
+  public boolean getPivotReverseManual() {
+    return getAllButtonStates(new JoystickButton[]{pivotButton, reverseButton});
   }
 
   /**
