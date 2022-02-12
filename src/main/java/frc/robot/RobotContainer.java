@@ -15,6 +15,7 @@ import frc.robot.commands.SetRPM;
 import frc.robot.commands.StopShooter;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Shooter.HoodState;
 import frc.robot.subsystems.Shooter.ShooterState;
 import frc.robot.util.Limelight;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -74,6 +75,7 @@ public class RobotContainer {
    */
   public void disabledPeriodic() {
     shooter.setState(ShooterState.OFF);
+    shooter.setHoodState(HoodState.OFF);
     shooter.log();
   }
 }

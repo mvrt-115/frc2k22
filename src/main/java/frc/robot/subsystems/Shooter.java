@@ -28,19 +28,24 @@ public class Shooter extends SubsystemBase {
     OFF, SPEEDING, ATSPEED;
   }
 
-  private final double MIN_RPM = 8000;
-  private double adjFF;
+  public enum HoodState
+  {
+    OFF, ADJUSTING, ATPOSITION;
+  }
+
+  private final double MAX_RPM = 8000;
+  private final double MAX_ANGLE = 40;
+  private double adjjustFF = 0;
 
   private final int LEADER_ID = 12;
-  // private final int FOLLOWER_ID = 32;
-  private final int HOOD_ID = 0;
+  private final int HOOD_ID = 22; //0
 
   private BaseTalon flywheelLeader;
-  // private BaseTalon flywheelFollower;
   private BaseTalon hoodMotor;
 
   // Attributes of flywheel
   private ShooterState state;
+  private HoodState hoodState;
   private double targetRPM = 0;
 
   // Target Angle in radians
@@ -69,13 +74,14 @@ public class Shooter extends SubsystemBase {
     hoodMotor.config_kI(Constants.kPIDIdx, Constants.Hood.I);
     hoodMotor.config_kD(Constants.kPIDIdx, Constants.Hood.D);
 
-    adjFF = Constants.Hood.kFF * Math.cos(hoodMotor.getSelectedSensorPosition());
+    adjjustFF = Constants.Hood.kFF * Math.cos(hoodMotor.getSelectedSensorPosition());
 
     hoodMotor.setNeutralMode(NeutralMode.Brake);
 
     this.limelight = limelight;
 
     state = ShooterState.OFF;
+    hoodState = HoodState.OFF;
     rpm = new RollingAverage(Constants.Flywheel.NUM_AVG);
   }
 
@@ -119,7 +125,7 @@ public class Shooter extends SubsystemBase {
    */
   public void setTargetRPM(double exit_velocity)
   {
-    targetRPM = Math.min(MIN_RPM, exit_velocity);
+    targetRPM = Math.min(MAX_RPM, exit_velocity);
     
     if(exit_velocity==0)
     {
@@ -137,7 +143,15 @@ public class Shooter extends SubsystemBase {
    */
   public void setTargetAngle(double angle)
   {
-    targetAng = angle;
+    targetAng = Math.min(angle, MAX_ANGLE);
+    if (angle == 0)
+    {
+      setHoodState(HoodState.OFF);
+    }
+    else
+    {
+      setHoodState(HoodState.ADJUSTING);
+    }
   }
 
   /**
@@ -152,6 +166,20 @@ public class Shooter extends SubsystemBase {
       {
         targetRPM = 0;
       }
+  }
+
+  /**
+   * Sets the state of the Hood
+   * Sets the target angle to 0 if state is OFF
+   * @param _state
+   */
+  public void setHoodState(HoodState _state) {
+    this.hoodState = _state;
+
+    if (_state == HoodState.OFF)
+    {
+      targetAng = 0;
+    }
   }
 
   /**
@@ -221,21 +249,38 @@ public class Shooter extends SubsystemBase {
     {
       case OFF:
         stopFlywheel();
-        // stopHood();
-        hoodMotor.set(ControlMode.Position, degreesToTicks(targetAng));
         break;
       case SPEEDING:
         flywheelLeader.set(ControlMode.Velocity, rpmToTicks(targetRPM));
-        stopHood();
-        if(allWithinError(targetRPM, targetAng))
+        if(allWithinRPMError(targetRPM))
         {
           setState(ShooterState.ATSPEED);
         }
         break;
       case ATSPEED:
-        if(!allWithinError(targetRPM, targetAng))
+        if(!allWithinRPMError(targetRPM))
         {
           setState(ShooterState.SPEEDING);
+        }
+        break;
+    }
+
+    switch(hoodState)
+    {
+      case OFF:
+        stopHood();
+        break;
+      case ADJUSTING:
+        hoodMotor.set(ControlMode.Position, degreesToTicks(targetAng));
+        if(allWithinPositionError(targetAng))
+        {
+          setHoodState(HoodState.ATPOSITION);
+        }
+        break;
+      case ATPOSITION:
+        if(!allWithinPositionError(targetRPM))
+        {
+          setHoodState(HoodState.ADJUSTING);
         }
         break;
     }
@@ -310,14 +355,16 @@ public class Shooter extends SubsystemBase {
    * @param acceptableError -- the acceptable +- error range
    * @return boolean whether the RPM is within the acceptable error or not
    */
-  private boolean allWithinError(double targetSpeed, double targetAngle) {
-    if(hoodMotor!=null)
-    {
-      return Math.abs(rpm.getAverage() - targetSpeed) <= Constants.Flywheel.ACCEPTABLE_ERROR
-          && Math.abs(getCurrentAngle() - targetAngle) <= Constants.Hood.ACCEPTABLE_ERROR;
-    }
-
+  private boolean allWithinRPMError(double targetSpeed) {
     return Math.abs(rpm.getAverage() - targetSpeed) <= Constants.Flywheel.ACCEPTABLE_ERROR;
+  }
+
+  private boolean allWithinPositionError(double targetAngle) {
+    if (hoodMotor != null)
+    {
+      return Math.abs(getCurrentAngle() - targetAngle) <= Constants.Hood.ACCEPTABLE_ERROR;
+    }
+    return true;
   }
 
   /**

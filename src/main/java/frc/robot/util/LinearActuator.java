@@ -16,17 +16,19 @@ public class LinearActuator {
   double position;
   double radius;
   double distFromBase;
-  double height;
+  double minHeight;
   double maxHeight;
+  double degreesFromHorizontal;
 
   /** Creates a new LinearActuator. */
-  public LinearActuator(BaseTalon actuatorMotor, double radius, double distFromBase, double height, double maxHeight) {
+  public LinearActuator(BaseTalon actuatorMotor, double radius, double distFromBase, double height, double maxHeight, double degreesFromHorizontal) {
     this.actuatorMotor = actuatorMotor;
     position = 0;
     this.radius = radius;
     this.distFromBase = distFromBase;
-    this.height = height;
+    this.minHeight = height;
     this.maxHeight = maxHeight;
+    this.degreesFromHorizontal = degreesFromHorizontal;
   }
 
   /**
@@ -35,15 +37,16 @@ public class LinearActuator {
    */
   public void setPositionFromAngle(double angle)
   {
-    double pos = Math.sqrt(Math.pow(radius, 2) + Math.pow(distFromBase, 2) - 2 * radius * distFromBase * Math.cos(Math.toRadians(angle)));
-    if (maxHeight - pos >= 0 && pos-height >= 0)
+    double theta = Math.toRadians(angle + degreesFromHorizontal);
+    double pos = Math.sqrt(Math.pow(radius, 2) + Math.pow(distFromBase, 2) - 2 * radius * distFromBase * Math.cos(theta));
+    if (maxHeight - pos >= 0 && pos - minHeight >= 0)
       setPosition(pos);
     else
-      setPosition(pos > maxHeight? maxHeight : height);
+      setPosition(pos > maxHeight? maxHeight : minHeight);
   }
 
   /**
-   * 
+   * set position of linear actuator
    * @param position
    */
   public void setPosition(double position)

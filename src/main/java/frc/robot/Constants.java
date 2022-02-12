@@ -87,13 +87,13 @@ public final class Constants {
     {
         public static final double MIN_ANG = 60;
         public static final double MAX_ANG = 80;
-        public static final double P = 0.05;
-        public static final double I = 0;
-        public static final double D = 1.9;
+        public static final double P = 0.005;
+        public static final double I = 0.005;
+        public static final double D = 0.005;
         public static final double F = 0.058;
         public static final double RADIUS = 8.5;
         public static final double MAX_VOLTAGE_COMPENSATION = 5;
-        public static final double GEAR_RATIO = 480.0/26.0;
+        public static final double GEAR_RATIO = 1; // 480.0/26.0
         public static final int ENCODER_TICKS = 2048;
         public static final int ACCEPTABLE_ERROR = 2;
         public static final double kFF = 0;
@@ -101,9 +101,9 @@ public final class Constants {
 
     public static class Flywheel
     {
-        public static final double P = 1.46;
+        public static final double P = 0.6;
         public static final double I = -0.03;
-        public static final double D = 15.5;
+        public static final double D = 15.8;
         public static final double F = 0.058;
         public static final double RADIUS = 2;
         public static final double ACCEPTABLE_ERROR = 50;
