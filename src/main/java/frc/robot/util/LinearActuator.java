@@ -29,6 +29,10 @@ public class LinearActuator {
     this.minHeight = height;
     this.maxHeight = maxHeight;
     this.degreesFromHorizontal = degreesFromHorizontal;
+
+    this.actuatorMotor.config_kP(Constants.kPIDIdx, Constants.Actuator.P);
+    this.actuatorMotor.config_kI(Constants.kPIDIdx, Constants.Actuator.I);
+    this.actuatorMotor.config_kD(Constants.kPIDIdx, Constants.Actuator.D);
   }
 
   /**
@@ -46,13 +50,21 @@ public class LinearActuator {
   }
 
   /**
-   * set position of linear actuator
+   * Sets the position given a parameter, if the given value is less than the height of the
+   * unextended linear actuator, then the position is set to the base height
    * @param position
    */
   public void setPosition(double position)
   {
-    this.position = position;
-    actuatorMotor.set(ControlMode.Position, positionToTicks(position));
+    if(position>=minHeight)
+    {
+      this.position = position;
+      actuatorMotor.set(ControlMode.Position, positionToTicks(position));
+    }
+    else
+    {
+      this.position = minHeight;
+    }
   }
 
   /**
@@ -63,5 +75,27 @@ public class LinearActuator {
   public double positionToTicks(double position)
   {
     return position / Constants.Actuator.THREAD_DISTANCE * Constants.Actuator.GEAR_RATIO * Constants.Actuator.TICKS_PER_ROTATION;
+  }
+
+  /**
+   * Returns the angle (in degrees) of the hood from the position of the linear actuator
+   * @return angle (in degrees)
+   */
+  public double getHoodAngle()
+  {
+    double length = minHeight+position;
+
+    double angle = Math.acos(Math.pow(radius, 2)+Math.pow(distFromBase, 2)-Math.pow(length, 2)/(2*radius*distFromBase));
+  
+    return Math.toDegrees(angle);
+  }
+
+  /**
+   * Returns the Talon object of the linear actuator
+   * @return Talon
+   */
+  public BaseTalon getTalon()
+  {
+    return actuatorMotor;
   }
 }
