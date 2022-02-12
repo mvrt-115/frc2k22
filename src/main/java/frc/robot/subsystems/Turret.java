@@ -81,16 +81,16 @@ public class Turret extends SubsystemBase {
 
     if(state == TurretState.SEARCHING) {
       double pos = getCurrentPositionDegrees();
-      if(Math.abs(pos - Constants.Turret.kMinAngle) < Constants.Turret.kEThreshold) 
-        zeroing = true;
-      if(Math.abs(pos) < Constants.Turret.kEThreshold)
-        zeroing = false;
-      else if(Math.abs(Math.abs(pos) - Constants.Turret.kMinAngle) < Constants.Turret.kEThreshold) 
+      // if(Math.abs(pos - Constants.Turret.kMa) < Constants.Turret.kEThreshold) 
+      //   zeroing = false;//true;
+      // if(Math.abs(pos) < Constants.Turret.kEThreshold)
+      //   zeroing = false;
+      if(Math.abs(pos) >= Constants.Turret.kMaxAngle) 
         searchDirection *= -1;
 
-      if(zeroing) 
-        turnDegrees(0);
-      else
+      // if(zeroing) 
+      //   turnDegrees(0);
+      // else
         setPercentOutput(searchDirection * Constants.Turret.kTurnSpeed);
     }
     
@@ -213,6 +213,7 @@ public class Turret extends SubsystemBase {
     SmartDashboard.putNumber("Horizontal Error", limelight.getHorizontalOffset());
     SmartDashboard.putString("Turret State", state.toString());
     SmartDashboard.putNumber("Turret Output", turret.getMotorOutputPercent());
+    SmartDashboard.putNumber("Direction", searchDirection)
     SmartDashboard.putNumber("Target Degrees", targetDegrees);
     SmartDashboard.putBoolean("Is Aligned", getMagAligned());
   }
