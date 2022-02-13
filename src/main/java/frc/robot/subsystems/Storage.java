@@ -19,8 +19,9 @@ import frc.robot.util.TalonFactory;
 
 public class Storage extends SubsystemBase {
   /** Creates a new Storage. */
-  private DigitalInput breakBeamFirst; // break beam
-  public DigitalInput breakBeamLast; // change from AnalogInput to DigitalInput when
+  //private Ultrasonic ultrasonicFirst; // break beam
+  private DigitalInput breakBeamFirst;
+  private DigitalInput breakBeamLast; // change from AnalogInput to DigitalInput when
   //testing with breakbeam. Keep as AnalogInput when testing with UltrasonicSensor
   private BaseTalon storageMotor1; // motor that runs the belt
   public static enum StorageState {EXPELLING, NOT_EXPELLING}; // states of the storage as to whether it will expel the balls or not
@@ -34,11 +35,11 @@ public class Storage extends SubsystemBase {
   // make sure states work
   
   public Storage() {
-    storageMotor1 = TalonFactory.createTalonSRX(Constants.Storage.kMotor1ID, true);
-    breakBeamFirst = new DigitalInput(Constants.Storage.kBreakBeamPort0);
-    breakBeamLast = new DigitalInput(Constants.Storage.kBreakBeamPort1);
+    storageMotor1 = TalonFactory.createTalonSRX(20, true);
+    breakBeamLast = new DigitalInput(0);
+    breakBeamFirst = new DigitalInput(1);
     currentState = StorageState.NOT_EXPELLING;
-    balls = 1; // change on day of match
+    balls = 0; // change on day of match
   }
 
   /**
@@ -48,14 +49,16 @@ public class Storage extends SubsystemBase {
    */
   @Override
   public void periodic() {
-    if(balls > 2) currentState = StorageState.EXPELLING;
-
-    if(balls == 0) currentState = StorageState.NOT_EXPELLING;
+   // if(balls > 2) currentState = StorageState.EXPELLING;
+    // uncomment above statement when testing on practice bot
+    // test this later
+   // if(balls == 0) currentState = StorageState.NOT_EXPELLING;
     
     if(currentState == StorageState.NOT_EXPELLING)
     {
       if(!breakBeamFirst.get())
       {
+        SmartDashboard.putBoolean("running motor", true);
         runMotor();
       }
 
@@ -88,8 +91,8 @@ public class Storage extends SubsystemBase {
 
     SmartDashboard.putString("current state", getCurrentStateAsString());
     SmartDashboard.putNumber("number of balls in hopper", balls);
-    SmartDashboard.putBoolean("is first breakbeam broke", !breakBeamFirst.get());
     SmartDashboard.putBoolean("is second breakbeam broken", !breakBeamLast.get());
+    SmartDashboard.putBoolean("is first breakbeam broken", !breakBeamFirst.get());
   }
 
   private String getCurrentStateAsString()
@@ -120,6 +123,16 @@ public class Storage extends SubsystemBase {
   public int getBalls() {
     return balls;
   }
+
+  public DigitalInput getBreakBeamFirst()
+  {
+    return breakBeamFirst;
+  }
+
+  public DigitalInput getBreakBeamLast()
+  {
+    return breakBeamLast;
+  }
   /**
    * This runs the motor at a set speed to take in the balls into the storage container.
    * if a negative number is passed in, all the balls are expelled.
@@ -129,19 +142,33 @@ public class Storage extends SubsystemBase {
     storageMotor1.set(ControlMode.PercentOutput, Constants.Storage.kMotorSpeed * (currentState == StorageState.EXPELLING ? -1 : 1)); //smol if statement
 
     if(currentState == StorageState.NOT_EXPELLING)
-    {
+   {
       if(!firstBreakBeamBroken && !breakBeamFirst.get())
       {
-        incrementBalls();
+     //   incrementBalls();
         firstBreakBeamBroken = true;
       }
 
       if(!secondBreakBeamBroken && !breakBeamLast.get())
       {
-        decrementBalls();
+      //  decrementBalls();
         secondBreakBeamBroken = true;
       }
-    }
+   }
+
+   else if(currentState == StorageState.EXPELLING)
+   {
+     if(!breakBeamFirst.get() && !firstBreakBeamBroken)
+     {
+      firstBreakBeamBroken = true; 
+     // decrementBalls();
+     }
+   }
+  }
+
+  public void setState(StorageState stateIn)
+  {
+    currentState = stateIn;
   }
 
   /**
