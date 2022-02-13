@@ -53,7 +53,7 @@ public class Climber extends SubsystemBase {
         rightTelescopicLimit = new DigitalInput(Constants.Climber.kRightTelescopicLimitSwitch);
 
         // reconfiguring all motors with PID constants
-        leftTelescopic.follow(rightTelescopic);
+        rightTelescopic.follow(leftTelescopic);
 
         pivot.config_kP(Constants.kPIDIdx, Constants.Climber.kPivotkP);
         pivot.config_kI(Constants.kPIDIdx, Constants.Climber.kPivotkI);
@@ -172,18 +172,30 @@ public class Climber extends SubsystemBase {
         return true;
     }
 
+    /* sets the pivot state to the state given through the parameter
+     * @param state of the climber at the moment 
+     */
     public void setPivotState(ClimberState state) {
         pivotState = state;
     }
 
+    /* sets the telescopic state to the state given through the parameter
+     * @param state of the climber at the moment 
+     */
     public void setTelescopicState(ClimberState state) {
         telescopicState = state;
     }
 
+    /** gets the pivot state of the climber 
+     * @return pivot state of the climber
+     */
     public ClimberState getPivotState() {
         return pivotState;
     }
 
+    /** gets the telescopic state of the climber 
+     * @return telescopic state of the climber
+     */
     public ClimberState getTelescopicState() {
         return telescopicState;
     }
@@ -191,21 +203,32 @@ public class Climber extends SubsystemBase {
     // This method will be called once per scheduler run
     @Override
     public void periodic() {
+        // checks to see if the pivot limit switch has been contacted and then sets the state to the pivot limit state
         if (getLimitSwitch(pivotLimit)) 
             setPivotState(ClimberState.PIVOT_LIMIT);
             
+        // checks to see if the telescopic limit swtiches have been constacted and then sets the state to the telescopic limit state
         if (getLimitSwitch(rightTelescopicLimit) && getLimitSwitch(leftTelescopicLimit))
             setTelescopicState(ClimberState.TELESCOPIC_LIMIT);
 
+        /* check to see if the telescopic proximity sense the rung and checks to make sure that telescopic limit swtiches are touched
+         *  and then sets the telescopic state to the telescopic proximity (telescopic amrs on rung) */
         if (getProximity(leftTelescopicProximity) && getProximity(rightTelescopicProximity) && getPivotState() == ClimberState.TELESCOPIC_LIMIT) 
             setTelescopicState(ClimberState.TELESCOPIC_PROXIMITY);
 
+        /* checks to see if the pivot proximity sense the rung and then checks to see if the previous state is set to the pivot limit switch
+         * being contacted and then the pivot proximity state is set (pivot arms on rung) */
         if(getProximity(pivotProximity) && getPivotState() == ClimberState.PIVOT_LIMIT) 
           setPivotState(ClimberState.PIVOT_PROXIMITY);
 
+        /* if the pivot proximity has not sensed the rung and the pivot state is the proximity state then the pivot state is set as none 
+         * (pivot not on rung) */
         if(!getProximity(pivotProximity) && getPivotState() == ClimberState.PIVOT_PROXIMITY) 
             setPivotState(ClimberState.NONE);
             
+        /* if the telescopic proximity sensors have not sensed the rung and the telescopic state is the proximity state then the 
+         *  telescopic state is set to none (telescopic not on rung)
+        */
         if(!getProximity(rightTelescopicProximity) &&!getProximity(leftTelescopicProximity) 
             && getPivotState() == ClimberState.TELESCOPIC_PROXIMITY) 
               setTelescopicState(ClimberState.NONE);

@@ -46,9 +46,16 @@ public class ClimberManual extends CommandBase {
     }
 
     // Returns true when the command should end.
+    /* checks to see if the button has been released and the arms based on whichever button is being released, those arms
+     * have not reached their limits whether it be the full extract/retract for the telescopic arms and the full pivot
+     * forward/backward for the pivot arms. 
+     */
     @Override
     public boolean isFinished() {
-        return !button.get() && ((motor.equals(climber.leftTelescopic) && ( speed < 0 && Constants.Climber.kTelescopicFullRetract >= climber.getTelescopicPosition()) || (speed > 0 && Constants.Climber.kTelescopicFullExtend <= climber.getTelescopicPosition())) || ( motor.equals(climber.pivot) && (speed < 0 && Constants.Climber.kPivotMaxForwardPos >= climber.getPivotAngle()) || 
-      (speed > 0 && Constants.Climber.kPivotMaxReversePos <= climber.getPivotAngle()) ) );
+        return !button.get() && ((motor.equals(climber.leftTelescopic) 
+        && ( speed < 0 && Constants.Climber.kTelescopicFullRetract >= climber.getTelescopicPosition()) 
+        || (speed > 0 && Constants.Climber.kTelescopicFullExtend <= climber.getTelescopicPosition())) 
+        || ( motor.equals(climber.pivot) && (speed < 0 && Constants.Climber.kPivotMaxForwardPos >= climber.getPivotAngle()) 
+        || (speed > 0 && Constants.Climber.kPivotMaxReversePos <= climber.getPivotAngle()) ) );
     }
 }

@@ -140,6 +140,9 @@ public final class Constants {
         public static final double kPivotMaxReversePos = -3; //degrees
         public static final double kApproachRungSpeed = 0.05; //PercentOutput
 
+        //button constants
+        public static final double kAxisThreshold = 0.6;
+
         //31" in height of pivot arm
         //30" min 62" max of telescopic 
         public static class Auton {
@@ -159,8 +162,9 @@ public final class Constants {
             public static final double kShiftWeight = 0; //Test values??? degrees
             public static final double kRetractPivotLiftOff = MathUtils.inchesToTicks(49.15); // 49.15" (53-3.9)
             public static final double kPivotPivotingBack = MathUtils.degreesToTicks(-2); // -2 degrees
+            public static final double kPivotToRung = MathUtils.degreesToTicks(2); // 2 degrees
             public static final double kRotateToHighRungPivot = MathUtils.degreesToTicks(0); // 0 degrees
-            public static final double kRetractPivotHang = MathUtils.inchesToTicks(1);  // 1" 
+            public static final double kExtendPivotHang = MathUtils.inchesToTicks(1);  // 1" 
 
             public static final double kAcceptablePIDError = 10; //ticks
         }

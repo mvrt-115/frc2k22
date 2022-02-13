@@ -36,8 +36,8 @@ public class RobotContainer {
   // climber operator manual buttons
   private JoystickButton pivotButton;
   private JoystickButton telescopicButton;
-  private JoystickButton reverseButton;
-  private JoystickButton retractButton;
+  private JoystickButton startClimb;
+  private JoystickButton stopClimb;
 
 
   private RollingAverage throttle = new RollingAverage(50);
@@ -53,6 +53,8 @@ public class RobotContainer {
 
     pivotButton = new JoystickButton(operatorJoystick, 3);
     telescopicButton =  new JoystickButton(operatorJoystick, 4);
+    startClimb = new JoystickButton(operatorJoystick, 8);
+    stopClimb = new JoystickButton(operatorJoystick, 7);
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -69,19 +71,28 @@ public class RobotContainer {
     intakeBalls.whenPressed(new IntakeBalls(intake)).whenReleased(new StopIntaking(intake));
     */
 
+    /* if the telescopic button extend is pressed then it is checked to see if the top button is pressed for retracting the telescopic arm
+    ** and based on that the correct command is called */
     if(telescopicButton.get()) {
-      if(retractButton.get()) 
+      if(getReverseManual()) 
         telescopicButton.whenPressed(new ClimberManual(climber, climber.leftTelescopic, this::getTelescopicReverseManual, -Constants.Climber.kApproachRungSpeed));
       else telescopicButton.whenPressed(new ClimberManual(climber, climber.leftTelescopic, this::getTelescopicArmManual, Constants.Climber.kApproachRungSpeed));
     }
 
+    /* if the pivot button forward is pressed then it is checked to see if the top button is pressed for pivoting backward for the pivot arm
+    ** and based on that the correct command is called */
     if(pivotButton.get()) {
-      if(reverseButton.get()) 
+      if(getReverseManual()) 
         pivotButton.whenPressed(new ClimberManual(climber, climber.pivot, this::getPivotReverseManual, -Constants.Climber.kApproachRungSpeed));
       else pivotButton.whenPressed(new ClimberManual(climber, climber.pivot, this::getPivotArmManual, Constants.Climber.kApproachRungSpeed));
     }
 
+    startClimb.whenPressed(new StartStopClimb(this::getStopClimb, climber));
+    
   }
+
+
+  /////////////////////////////////////////////////GETTERS//////////////////////////////////////////////
 
   /**
    * Gets the throttle input from the Driver Joystick throttle axis which is
@@ -105,22 +116,38 @@ public class RobotContainer {
     return wheel.getAverage();
   }
 
+  /**
+   * Gets the state of the pivot button
+   * @return all buttons states for buttons passed (boolean)
+   */
   public boolean getPivotArmManual()
   {
     return pivotButton.get();
   }
 
+  /**
+   * Gets the state of the telescopic button
+   * @return boolean for state of telescopic button
+   */
   public boolean getTelescopicArmManual()
   {
     return telescopicButton.get();
   }
 
+  /**
+   * Gets the state of the reverse button
+   * @return boolean for state of reverse button
+   */
   public boolean getReverseManual() {
-    return reverseButton.get();
+    return operatorJoystick.getRawAxis(3) >= Constants.Climber.kAxisThreshold;
   }
 
-  public boolean getAllButtonStates(JoystickButton[] buttons)
-  {
+  /** 
+   * Gets the state of all buttons (if all buttoons are pressed, then is true, otherwise false)
+   * @param buttons the array of all buttons that need to be checked
+   * @return all buttons states for buttons passed (boolean)
+   */
+  public boolean getAllButtonStates(JoystickButton[] buttons) {
     boolean totalButtonState = true;
     for(int i = 0; i < buttons.length; i++)
       if(!buttons[i].get()) totalButtonState = false;
@@ -128,12 +155,45 @@ public class RobotContainer {
     return totalButtonState;
   }
 
-  public boolean getTelescopicReverseManual() {
-    return getAllButtonStates(new JoystickButton[]{telescopicButton, reverseButton});
+  /**
+   * Gets the collective state of the reverse trigger and the given button
+   * @param button button that needs to be checked in conjunction with the trigger
+   * @return boolean representing the collective state of the button and trigger
+    */
+  public boolean getReverseButton(JoystickButton button) {
+    return button.get() && getReverseManual();
   }
 
+  /** 
+   * Gets the states of the telescopic and reverse buttons for running the telescopic in reverse
+   * @return buttons' total states (boolean)
+   */ 
+  public boolean getTelescopicReverseManual() {
+    return getReverseButton(telescopicButton);
+  }
+
+  /**
+   * Gets the states of the pivot and reverse buttons for running the pivot arm in reverse
+   * @return buttons' total state (boolean)
+   */
   public boolean getPivotReverseManual() {
-    return getAllButtonStates(new JoystickButton[]{pivotButton, reverseButton});
+    return getReverseButton(pivotButton);
+  }
+
+  /**
+   * Gets the state of the start button
+   * @return boolean for state of start button
+   */
+  public boolean getStartClimb() {
+    return startClimb.get();
+  }
+
+  /**
+   * Gets the state of the stop button
+   * @return boolean for state of stop button
+   */
+  public boolean getStopClimb() {
+    return stopClimb.get();
   }
 
   /**

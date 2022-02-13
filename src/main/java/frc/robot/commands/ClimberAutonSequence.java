@@ -46,7 +46,7 @@ public class ClimberAutonSequence extends SequentialCommandGroup {
      new ClimberAuton(climber, climber.pivot, Auton.kPivotPivotingBack), 
      new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.kTelescopicFullRetract), 
      new ClimberAuton(climber, climber.pivot, Auton.kRotateToHighRungPivot, climber.pivotLimit), 
-     new ClimberAuton(climber, climber.leftTelescopic, Auton.kRetractPivotHang, climber.pivotProximity) 
+     new ClimberAuton(climber, climber.leftTelescopic, Auton.kExtendPivotHang, climber.pivotProximity) 
 
       // code begins with the robot on mid rung
      /* new TelescopicArmAuton(climber, Auton.kLiftOffRungTele), // extend telescopic arms
