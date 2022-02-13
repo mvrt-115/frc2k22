@@ -128,7 +128,7 @@ public class Turret extends SubsystemBase {
 
       turnDegrees(targetDegrees);
     } else {
-      state = TurretState.SEARCHING;
+      // state = TurretState.SEARCHING;
     }
   }
 
@@ -213,7 +213,7 @@ public class Turret extends SubsystemBase {
     SmartDashboard.putNumber("Horizontal Error", limelight.getHorizontalOffset());
     SmartDashboard.putString("Turret State", state.toString());
     SmartDashboard.putNumber("Turret Output", turret.getMotorOutputPercent());
-    SmartDashboard.putNumber("Direction", searchDirection)
+    SmartDashboard.putNumber("Direction", searchDirection);
     SmartDashboard.putNumber("Target Degrees", targetDegrees);
     SmartDashboard.putBoolean("Is Aligned", getMagAligned());
   }
