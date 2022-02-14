@@ -79,9 +79,9 @@ public class Intake extends SubsystemBase {
     */
   public void stopPivot() {
     if(state == IntakeState.INTAKING)
-      pivotMotor.set(ControlMode.PercentOutput, Constants.Intake.PIVOT_SPEED_WHEN_DOWN);
+      pivotMotor.set(ControlMode.PercentOutput, Constants.Intake.kPIVOT_STOP_SPEED_WHEN_DOWN);
     else if(state == IntakeState.UP)
-      pivotMotor.set(ControlMode.PercentOutput, Constants.Intake.PIVOT_SPEED_WHEN_UP);
+      pivotMotor.set(ControlMode.PercentOutput, Constants.Intake.kPIVOT_STOP_SPEED_WHEN_UP);
     else 
       pivotMotor.set(ControlMode.PercentOutput, 0);
   }

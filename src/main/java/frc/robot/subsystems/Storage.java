@@ -11,9 +11,12 @@ import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DigitalOutput;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants;
 import frc.robot.util.TalonFactory;
 
@@ -24,22 +27,29 @@ public class Storage extends SubsystemBase {
   private DigitalInput breakBeamLast; // change from AnalogInput to DigitalInput when
   //testing with breakbeam. Keep as AnalogInput when testing with UltrasonicSensor
   private BaseTalon storageMotor1; // motor that runs the belt
-  public static enum StorageState {EXPELLING, NOT_EXPELLING}; // states of the storage as to whether it will expel the balls or not
+  public static enum StorageState {EXPELLING, NOT_EXPELLING, MANUAL}; // states of the storage as to whether it will expel the balls or not
   public static StorageState currentState; // the current state of the storage
   private int balls;
-  public boolean firstBreakBeamBroken = false;
-  public boolean secondBreakBeamBroken = false;
-  
+
+  public double lastTimeTop; 
+  public double lastTimeBottom;
+
+  private boolean firstBreakBeamBroken = false;
+  private boolean secondBreakBeamBroken = false;
+  public Joystick button;  
   // test the storage code! 
   // utilize the breakbeam placements from Wednesday
   // make sure states work
   
-  public Storage() {
+  public Storage(Joystick button) {
     storageMotor1 = TalonFactory.createTalonSRX(20, true);
     breakBeamLast = new DigitalInput(0);
     breakBeamFirst = new DigitalInput(1);
     currentState = StorageState.NOT_EXPELLING;
     balls = 0; // change on day of match
+    this.button = button;
+    lastTimeBottom = Timer.getFPGATimestamp();
+    lastTimeTop = Timer.getFPGATimestamp();
   }
 
   /**
@@ -54,6 +64,10 @@ public class Storage extends SubsystemBase {
     // test this later
    // if(balls == 0) currentState = StorageState.NOT_EXPELLING;
     
+    if(currentState == StorageState.MANUAL){
+      runMotor(button.getRawAxis(5) * 0.5);
+    }
+
     if(currentState == StorageState.NOT_EXPELLING)
     {
       if(!breakBeamFirst.get())
@@ -62,15 +76,13 @@ public class Storage extends SubsystemBase {
         runMotor();
       }
 
-      else if(!breakBeamLast.get())
-      {
-        runMotor();
+      if(!breakBeamLast.get()){
+        checkBreakbeams();
       }
 
-      else if(breakBeamFirst.get() && breakBeamLast.get())
+      else if(breakBeamFirst.get())
       {
         stopMotor();
-        
       }
 
       if(breakBeamLast.get())
@@ -92,6 +104,7 @@ public class Storage extends SubsystemBase {
     SmartDashboard.putString("current state", getCurrentStateAsString());
     SmartDashboard.putNumber("number of balls in hopper", balls);
     SmartDashboard.putBoolean("is second breakbeam broken", !breakBeamLast.get());
+    SmartDashboard.putNumber("axis value", button.getRawAxis(5));
     SmartDashboard.putBoolean("is first breakbeam broken", !breakBeamFirst.get());
   }
 
@@ -100,6 +113,7 @@ public class Storage extends SubsystemBase {
     switch(currentState){
       case NOT_EXPELLING: return "NOT EXPELLING";
       case EXPELLING: return "EXPELLING";
+      case MANUAL: return "MANUAL";
       default: return "";
     }
   }
@@ -140,30 +154,40 @@ public class Storage extends SubsystemBase {
    */
   public void runMotor(){
     storageMotor1.set(ControlMode.PercentOutput, Constants.Storage.kMotorSpeed * (currentState == StorageState.EXPELLING ? -1 : 1)); //smol if statement
+    checkBreakbeams();
+  }
 
+  public void runMotor(double speed){
+    storageMotor1.set(ControlMode.PercentOutput, speed);
+    checkBreakbeams();
+  }
+
+  public void checkBreakbeams(){
     if(currentState == StorageState.NOT_EXPELLING)
-   {
-      if(!firstBreakBeamBroken && !breakBeamFirst.get())
+    {
+       if(!firstBreakBeamBroken && !breakBeamFirst.get() && Timer.getFPGATimestamp() - lastTimeBottom > 0.3 )
+       {
+         incrementBalls();
+         firstBreakBeamBroken = true;
+         lastTimeBottom = Timer.getFPGATimestamp();
+       }
+ 
+       if(!secondBreakBeamBroken && !breakBeamLast.get() && Timer.getFPGATimestamp() - lastTimeTop > 0.3)
+       {
+         decrementBalls();
+         lastTimeTop = Timer.getFPGATimestamp();
+         secondBreakBeamBroken = true;
+       }
+    }
+ 
+    else if(currentState == StorageState.EXPELLING)
+    {
+      if(!breakBeamFirst.get() && !firstBreakBeamBroken)
       {
-     //   incrementBalls();
-        firstBreakBeamBroken = true;
+       firstBreakBeamBroken = true; 
+      // decrementBalls();
       }
-
-      if(!secondBreakBeamBroken && !breakBeamLast.get())
-      {
-      //  decrementBalls();
-        secondBreakBeamBroken = true;
-      }
-   }
-
-   else if(currentState == StorageState.EXPELLING)
-   {
-     if(!breakBeamFirst.get() && !firstBreakBeamBroken)
-     {
-      firstBreakBeamBroken = true; 
-     // decrementBalls();
-     }
-   }
+    }
   }
 
   public void setState(StorageState stateIn)

@@ -27,27 +27,31 @@ public class RobotContainer {
   private final Intake intake = new Intake();
   private final Shooter shooter = new Shooter(limelight);
   private final Turret turret = new Turret(limelight);
-  private final Storage storage = new Storage();
+  private Joystick operatorJoystick = new Joystick(1);  
+  private final Storage storage = new Storage(operatorJoystick);
 
   private Joystick driverJoystick;
-  private Joystick operatorJoystick;  
   
-  private JoystickButton pivot = new JoystickButton(driverJoystick, 0);
-  private JoystickButton intakeBalls = new JoystickButton(driverJoystick, 0);
+  private JoystickButton pivot;
+  private JoystickButton intakeBalls;
   
-  private JoystickButton expelBalls = new JoystickButton(operatorJoystick, 0);
+  private JoystickButton expelBalls;
 
   private RollingAverage throttle = new RollingAverage(50);
   private RollingAverage wheel = new RollingAverage(15);
 
-  private JoystickButton quickturn = new JoystickButton(driverJoystick, 5);
+  private JoystickButton quickturn;
+  private JoystickButton storageOverride; //Manual override for storage
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     driverJoystick = new Joystick(0);
-    operatorJoystick = new Joystick(1);
+    intakeBalls = new JoystickButton(driverJoystick, 1);
+    storageOverride = new JoystickButton(operatorJoystick, 10);
+    // operatorJoystick = new Joystick(1);
     // Configure the button bindings
     configureButtonBindings();
+    
   }
 
   /**
@@ -58,10 +62,13 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // the :: syntax allows us to pass in methods of a class as variables so that the command can continuously access input values
-    drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
-    pivot.whenPressed(new Pivot(intake));
-    intakeBalls.whenPressed(new IntakeBalls(intake)).whenReleased(new StopIntaking(intake));
-    expelBalls.whenPressed(new ExpelBalls(storage));
+    //drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
+    //pivot.whenPressed(new Pivot(intake));
+    //intakeBalls.whenPressed(new IntakeBalls(intake)).whenReleased(new StopIntaking(intake));
+    //expelBalls.whenPressed(new ExpelBalls(storage));
+    storage.setDefaultCommand(new ManualOverrideControl(storage, this::getStorageThrottle));
+    storageOverride.whenPressed(new SwitchManual(storage));
+
     /*
       Shoot: 5(1 indexed)
       Intake: 6(1 indexed)
@@ -89,6 +96,9 @@ public class RobotContainer {
   public double getWheel() {
     wheel.updateValue(driverJoystick.getRawAxis(0));
     return wheel.getAverage();
+  }
+  public double getStorageThrottle(){
+    return 0.4* operatorJoystick.getRawAxis(5);
   }
 
   /**
