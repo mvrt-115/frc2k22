@@ -4,6 +4,7 @@
 
 package frc.robot.util;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -14,9 +15,9 @@ public class Limelight extends SubsystemBase {
   private RollingAverage tx;
   private RollingAverage ty;
   private NetworkTable limelight;
-  public final double height = 45;//2.6416; // meters
-  public final double limelightMountHeight = 15;//2 * 0.3048; // feet to meters
-  private double limelightMountAngle = 20;
+  public final double height = 104;//2.6416; // meters
+  public final double limelightMountHeight = 24;//2 * 0.3048; // feet to meters
+  private double limelightMountAngle = 40;
 
   public static enum LED_STATE {
     DEFAULT, ON, OFF, BLINKING;
@@ -89,7 +90,7 @@ public class Limelight extends SubsystemBase {
    * @return angle (degrees)
    */
   public double getVerticalOffset() {
-    return ty.getAverage() + limelightMountAngle;
+    return 90 - ty.getAverage() + limelightMountAngle;
   }
 
   /**
@@ -107,7 +108,7 @@ public class Limelight extends SubsystemBase {
    * @return distance (meters)
    */
   public double getHorizontalDistance() {
-    return height / Math.tan(Math.toRadians(getVerticalOffset())) - 14;
+    return getVerticalDistance() / Math.tan(Math.toRadians(getVerticalOffset()));
   }
 
   /**

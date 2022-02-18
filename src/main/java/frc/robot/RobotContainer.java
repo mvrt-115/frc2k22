@@ -9,12 +9,15 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants.Turret;
+import frc.robot.subsystems.Turret;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.FindTarget;
 import frc.robot.commands.PIDTune;
 import frc.robot.commands.SetHoodAngle;
 import frc.robot.commands.SetRPM;
 import frc.robot.commands.StopShooter;
+import frc.robot.commands.TurretManual;
+import frc.robot.commands.TurretSetupAlign;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Shooter.HoodState;
@@ -57,7 +60,17 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
+    driverJoystick = new Joystick(0);
+    operatorJoystick = new Joystick(1);
+
+    turretClockwise = new JoystickButton(driverJoystick, 2);
+    turretCounterclockwise = new JoystickButton(driverJoystick, 3);
+
+    quickturn = new JoystickButton(driverJoystick, 9);
+
+    // Configure the button bindings
     configureButtonBindings();
+
     SmartDashboard.putData("Run Flywheel", new SetRPM(shooter));
     SmartDashboard.putData("Change Angle", new SetHoodAngle(shooter));
     SmartDashboard.putData("Config PIDF", new PIDTune(shooter.getMotor(), 
@@ -75,7 +88,35 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void configureButtonBindings() {}
+  private void configureButtonBindings() 
+  {
+    //turret.setDefaultCommand(new FindTarget(turret));
+
+    //turretClockwise.whenPressed(new TurretManual(turret, -0.5, turretClockwise::get));
+    //turretCounterclockwise.whenPressed(new TurretManual(turret, 0.5, turretCounterclockwise::get));
+  }
+
+  /**
+   * Gets the throttle input from the Driver Joystick throttle axis which is
+   * used to move the robot forward and backwards
+   * 
+   * @return value from [-1, 1] that is used for input for the the robot forward or backwards movement
+   */
+  public double getThrottle() {
+    throttle.updateValue(-driverJoystick.getRawAxis(5));
+    return throttle.getAverage();
+  }
+  
+  /**
+   * Gets the wheel input from the Driver Joystick wheel axis which is used to turn the robot while
+   * either driving or quickturning
+   * 
+   * @return value from [-1, 1] that is used for input for the robots turning movement
+   */
+  public double getWheel() {
+    wheel.updateValue(driverJoystick.getRawAxis(0));
+    return wheel.getAverage();
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -84,6 +125,8 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
+    //return new TurretSetupAlign(turret);
+
     return m_autoCommand;
   }
 
