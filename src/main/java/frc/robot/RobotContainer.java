@@ -6,8 +6,10 @@ package frc.robot;
 
 import edu.wpi.first.hal.simulation.AnalogInDataJNI;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants.Turret;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.PIDTune;
 import frc.robot.commands.SetHoodAngle;
@@ -18,7 +20,9 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Shooter.HoodState;
 import frc.robot.subsystems.Shooter.ShooterState;
 import frc.robot.util.Limelight;
+import frc.robot.util.RollingAverage;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -36,6 +40,19 @@ public class RobotContainer {
   private final Limelight limelight = new Limelight();
   private final Shooter shooter = new Shooter(limelight);
   private final StopShooter stopShooter = new StopShooter(shooter);
+
+  private final Turret turret = new Turret(limelight);
+
+  private Joystick driverJoystick;
+  private Joystick operatorJoystick;  
+
+  private RollingAverage throttle = new RollingAverage(50);
+  private RollingAverage wheel = new RollingAverage(15);
+
+  private JoystickButton quickturn;
+
+  public JoystickButton turretClockwise;
+  public JoystickButton turretCounterclockwise;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {

@@ -48,6 +48,8 @@ public class MathUtils {
         return in_rpm / 600 * ticks_per_rev * gear_ratio;
     }
 
+    
+
     /**
      * Convert ticks per hundred milliseconds to RPM
      * @param ticks
@@ -58,6 +60,17 @@ public class MathUtils {
     public static double ticksToRPM(double ticks, double ticks_per_rev, double gear_ratio)
     {
         return ticks * 600 / ticks_per_rev / gear_ratio;
+    }
+
+    /**
+     * Converts ticks to degrees
+     * @param ticks         motor ticks
+     * @param gearRatio     number of motor turns required to turn object once
+     * @param ticksPerRev   ticks per revolution (4096 for TalonSRX, 2048 for TalonFX)
+     * @return              degrees of rotation from the given ticks
+     */
+    public static double ticksToDegrees(double ticks, double gearRatio, double ticksPerRev) {
+        return ticks / (ticksPerRev * gearRatio) * 360.0;
     }
 
     /**

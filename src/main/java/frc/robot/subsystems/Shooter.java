@@ -76,18 +76,18 @@ public class Shooter extends SubsystemBase {
 
 
     // Creating Actuators and setting up initial conditions
-    leftActuator = new LinearActuator(new Servo(LEFT_HOOD_ID), 
-                                      Constants.Hood.HOOD_RADIUS, Constants.Actuator.DIST_FROM_BASE,
-                                      Constants.Actuator.ACT_HEIGHT, Constants.Actuator.MAX_HEIGHT,
-                                      Constants.Actuator.DEGREES_FROM_HORIZONTAL);
-    rightActuator = new LinearActuator(new Servo(RIGHT_HOOD_ID), 
-                                      Constants.Hood.HOOD_RADIUS, Constants.Actuator.DIST_FROM_BASE,
-                                      Constants.Actuator.ACT_HEIGHT, Constants.Actuator.MAX_HEIGHT,
-                                      Constants.Actuator.DEGREES_FROM_HORIZONTAL);
+    // leftActuator = new LinearActuator(new Servo(LEFT_HOOD_ID), 
+    //                                   Constants.Hood.HOOD_RADIUS, Constants.Actuator.DIST_FROM_BASE,
+    //                                   Constants.Actuator.ACT_HEIGHT, Constants.Actuator.MAX_HEIGHT,
+    //                                   Constants.Actuator.DEGREES_FROM_HORIZONTAL);
+    // rightActuator = new LinearActuator(new Servo(RIGHT_HOOD_ID), 
+    //                                   Constants.Hood.HOOD_RADIUS, Constants.Actuator.DIST_FROM_BASE,
+    //                                   Constants.Actuator.ACT_HEIGHT, Constants.Actuator.MAX_HEIGHT,
+    //                                   Constants.Actuator.DEGREES_FROM_HORIZONTAL);
 
     // Initializing them at their min height
-    leftActuator.setPosition(0);
-    rightActuator.setPosition(0);
+    // leftActuator.setPosition(0);
+    // rightActuator.setPosition(0);
 
     //leadActuator.getTalon().setNeutralMode(NeutralMode.Brake);
     //followActuator.getTalon().setNeutralMode(NeutralMode.Brake);
@@ -137,7 +137,7 @@ public class Shooter extends SubsystemBase {
    */
   public void resetHood()
   {
-    leftActuator.setPosition(0);
+    // leftActuator.setPosition(0);
   }
 
   /**
@@ -155,9 +155,9 @@ public class Shooter extends SubsystemBase {
    */
   public double getCurrentAngle()
   {
-    // return ticksToDegrees(flywheelLeader.getSelectedSensorPosition());
+    return ticksToDegrees(flywheelLeader.getSelectedSensorPosition());
 
-    return (leftActuator.getHoodAngle()+rightActuator.getHoodAngle())/2;
+    // return (leftActuator.getHoodAngle()+rightActuator.getHoodAngle())/2;
   }
 
   /**
@@ -316,8 +316,8 @@ public class Shooter extends SubsystemBase {
       case ADJUSTING:
         // hoodMotor.set(ControlMode.Position, degreesToTicks(targetAng));
 
-        leftActuator.setPositionFromAngle(targetAng);
-        rightActuator.setPositionFromAngle(targetAng);
+        // leftActuator.setPositionFromAngle(targetAng);
+        // rightActuator.setPositionFromAngle(targetAng);
 
         if(allWithinPositionError(targetAng))
         {
