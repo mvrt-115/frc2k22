@@ -273,8 +273,8 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putString("State", state.toString());
     SmartDashboard.putNumber("target rpm", targetRPM);
     SmartDashboard.putNumber("target angle", targetAng);
-    SmartDashboard.putNumber("Hood Angle", getCurrentAngle());
-    SmartDashboard.putNumber("Hood Angle Ticks", hoodMotor.getSelectedSensorPosition());
+    // SmartDashboard.putNumber("Hood Angle", getCurrentAngle());
+    // SmartDashboard.putNumber("Hood Angle Ticks", hoodMotor.getSelectedSensorPosition());
   }
 
   @Override
