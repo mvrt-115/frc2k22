@@ -90,7 +90,7 @@ public class Limelight extends SubsystemBase {
    * @return angle (degrees)
    */
   public double getVerticalOffset() {
-    return 90 - ty.getAverage() + 90 - limelightMountAngle;
+    return limelightMountAngle - ty.getAverage();
   }
 
   /**
