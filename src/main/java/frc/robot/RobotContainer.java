@@ -38,8 +38,11 @@ public class RobotContainer {
   private JoystickButton telescopicButton;
   private JoystickButton startClimb;
   private JoystickButton stopClimb;
+
+//Climber tests
   private JoystickButton manualButtonClimb;
   private int buttonCounter;
+  private boolean manualLastState;
 
 
   private RollingAverage throttle = new RollingAverage(50);
@@ -57,7 +60,9 @@ public class RobotContainer {
     telescopicButton =  new JoystickButton(operatorJoystick, 4);
     startClimb = new JoystickButton(operatorJoystick, 8);
     stopClimb = new JoystickButton(operatorJoystick, 7);
-    manualButtonClimb = new JoystickButton(operatorJoystick, 8);
+
+
+    manualButtonClimb = new JoystickButton(operatorJoystick, 0);
     buttonCounter = 0;
     // Configure the button bindings
     configureButtonBindings();
@@ -97,6 +102,8 @@ public class RobotContainer {
       manualButtonClimb.whenPressed(new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.kTelescopicFullExtend, climber.leftTelescopicProximity));
 
     
+    manualSequenceTest();
+    manualLastState = manualButtonClimb.get();
   }
 
 
@@ -205,14 +212,58 @@ public class RobotContainer {
   }
 
   public boolean getManualSequenceButton(){
-    buttonCounter++;
-    return manualButtonClimb.get();
+    if(manualButtonClimb.get() != manualLastState && manualButtonClimb.get())
+    {
+      buttonCounter++;
+      return manualButtonClimb.get();
+    }
+    return false;
   }
 
   public void manualSequenceTest() {
-    if(getManualSequenceButton() && buttonCounter == 0)
+    if(getManualSequenceButton() && buttonCounter == 1)
     {
-
+      new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.Auton.kLiftOffRungTele);
+    }
+    else if(getManualSequenceButton() && buttonCounter == 2)
+    {
+      new ClimberAuton(climber, climber.pivot, Constants.Climber.Auton.kPivotTeleBack);
+    }
+    else if(getManualSequenceButton() && buttonCounter == 3)
+    {
+      new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.kTelescopicFullExtend);
+    }
+    else if(getManualSequenceButton() && buttonCounter == 4)
+    {
+      new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.Auton.kRotateToHighRungTele, climber.leftTelescopicLimit);
+    }
+    else if(getManualSequenceButton() && buttonCounter == 5)
+    {
+      new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.Auton.kHookHighRungTele, climber.leftTelescopicProximity);
+    }
+    else if(getManualSequenceButton() && buttonCounter == 6)
+    {
+      new ClimberAuton(climber, climber.pivot, Constants.Climber.Auton.kShiftWeight);
+    }
+    else if(getManualSequenceButton() && buttonCounter == 7)
+    {
+      new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.Auton.kRetractPivotLiftOff);
+    }
+    else if(getManualSequenceButton() && buttonCounter == 8)
+    {
+      new ClimberAuton(climber, climber.pivot, Constants.Climber.Auton.kPivotPivotingBack);
+    }
+    else if(getManualSequenceButton() && buttonCounter == 9)
+    {
+      new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.kTelescopicFullRetract);
+    }
+    else if(getManualSequenceButton() && buttonCounter == 10)
+    {
+      new ClimberAuton(climber, climber.pivot, Constants.Climber.Auton.kRotateToHighRungPivot, climber.pivotLimit);
+    }
+    else if(getManualSequenceButton() && buttonCounter == 11)
+    {
+      new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.Auton.kExtendPivotHang, climber.pivotProximity);
     }
   }
 
