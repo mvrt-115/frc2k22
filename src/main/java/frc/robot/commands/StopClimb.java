@@ -38,6 +38,6 @@ public class StopClimb extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return getStopState.get(); //checks if stopbutton is pressed
+    return getStopState.get(); //checks if stop button is pressed
   }
 }

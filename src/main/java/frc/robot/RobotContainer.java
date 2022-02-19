@@ -38,6 +38,8 @@ public class RobotContainer {
   private JoystickButton telescopicButton;
   private JoystickButton startClimb;
   private JoystickButton stopClimb;
+  private JoystickButton manualButtonClimb;
+  private int buttonCounter;
 
 
   private RollingAverage throttle = new RollingAverage(50);
@@ -55,6 +57,8 @@ public class RobotContainer {
     telescopicButton =  new JoystickButton(operatorJoystick, 4);
     startClimb = new JoystickButton(operatorJoystick, 8);
     stopClimb = new JoystickButton(operatorJoystick, 7);
+    manualButtonClimb = new JoystickButton(operatorJoystick, 8);
+    buttonCounter = 0;
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -88,6 +92,10 @@ public class RobotContainer {
     }
 
     startClimb.whenPressed(new StartStopClimb(this::getStopClimb, climber));
+
+    if(manualButtonClimb.get() && buttonCounter==1)
+      manualButtonClimb.whenPressed(new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.kTelescopicFullExtend, climber.leftTelescopicProximity));
+
     
   }
 
@@ -194,6 +202,18 @@ public class RobotContainer {
    */
   public boolean getStopClimb() {
     return stopClimb.get();
+  }
+
+  public boolean getManualSequenceButton(){
+    buttonCounter++;
+    return manualButtonClimb.get();
+  }
+
+  public void manualSequenceTest() {
+    if(getManualSequenceButton() && buttonCounter == 0)
+    {
+
+    }
   }
 
   /**
