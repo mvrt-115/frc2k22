@@ -36,8 +36,10 @@ public class ClimberAuton extends CommandBase {
   public void execute() {
     //runs the motor using PID to given position, and calculates respective FeedForward constant
     double feedForward = 0; 
+    
     if(motor.equals(climber.leftTelescopic)) feedForward = Constants.Climber.kFeedForwardTele;
-    else feedForward = Constants.Climber.kFeedForwardPivot * Math.sin(climber.getPivotAngle() * 180 / Math.PI);
+    else 
+      feedForward = Constants.Climber.kFeedForwardPivot * Math.sin(climber.getPivotAngle() * 180 / Math.PI);
 
     climber.setPosition(motor, position, feedForward);
   }

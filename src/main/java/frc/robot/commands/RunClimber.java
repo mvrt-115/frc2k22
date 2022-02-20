@@ -25,12 +25,13 @@ public class RunClimber extends SequentialCommandGroup {
 //STARTS WITH TELESCOPIC FULLY EXTENDED AND CONTACTING MID RUNG
 
     addCommands(
-      new ClimberAuton(climber, climber.pivot, Constants.Climber.Auton.kPivotPivotingBack),
+     /* new ClimberAuton(climber, climber.pivot, Constants.Climber.Auton.kPivotPivotingBack),
       new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.Auton.kTelescopicFullRetractTicks),
       new ClimberAuton(climber, climber.pivot, Constants.Climber.Auton.kRotateToHighRungPivot, climber.pivotLimit),
-      new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.Auton.kExtendPivotHang, climber.pivotProximity),
-      new ClimberAutonSequence(climber),
-      new ClimberAutonSequence(climber)
+      new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.Auton.kExtendPivotHang, climber.pivotProximity),*/
+      new ClimbMidRungAutonSequence(climber),
+      new ClimberTraversalAutonSequence(climber),
+      new ClimberTraversalAutonSequence(climber)
     );
   }
 }

@@ -16,9 +16,9 @@ import frc.robot.subsystems.Climber;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 
 
-public class ClimberAutonSequence extends SequentialCommandGroup {
+public class ClimberTraversalAutonSequence extends SequentialCommandGroup {
   /** Creates a new ClimberAuton. */
-  public ClimberAutonSequence(Climber climber) {
+  public ClimberTraversalAutonSequence(Climber climber) {
 
     addCommands(
 

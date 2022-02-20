@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
+import frc.robot.Constants.Climber.Auton;
 import frc.robot.util.Limelight;
 import frc.robot.util.RollingAverage;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -85,7 +86,8 @@ public class RobotContainer {
     if(telescopicButton.get()) {
       if(getReverseManual()) 
         telescopicButton.whenPressed(new ClimberManual(climber, climber.leftTelescopic, this::getTelescopicReverseManual, -Constants.Climber.kApproachRungSpeed));
-      else telescopicButton.whenPressed(new ClimberManual(climber, climber.leftTelescopic, this::getTelescopicArmManual, Constants.Climber.kApproachRungSpeed));
+      else 
+        telescopicButton.whenPressed(new ClimberManual(climber, climber.leftTelescopic, this::getTelescopicArmManual, Constants.Climber.kApproachRungSpeed));
     }
 
     /* if the pivot button forward is pressed then it is checked to see if the top button is pressed for pivoting backward for the pivot arm
@@ -93,15 +95,24 @@ public class RobotContainer {
     if(pivotButton.get()) {
       if(getReverseManual()) 
         pivotButton.whenPressed(new ClimberManual(climber, climber.pivot, this::getPivotReverseManual, -Constants.Climber.kApproachRungSpeed));
-      else pivotButton.whenPressed(new ClimberManual(climber, climber.pivot, this::getPivotArmManual, Constants.Climber.kApproachRungSpeed));
+      else 
+        pivotButton.whenPressed(new ClimberManual(climber, climber.pivot, this::getPivotArmManual, Constants.Climber.kApproachRungSpeed));
     }
 
-    startClimb.whenPressed(new StartStopClimb(this::getStopClimb, climber));
+    /** If the start climber button is pressed, then the start and stop climber parellel command is called and the instance of the stop climber 
+     *  to help the command choose whether the stop climber or not
+     */
+    if(getStartClimb())
+      startClimb.whenPressed(new StartStopClimb(this::getStopClimb, climber));
 
-    if(manualButtonClimb.get() && buttonCounter==1)
-      manualButtonClimb.whenPressed(new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.kTelescopicFullExtend, climber.leftTelescopicProximity));
+    //if(manualButtonClimb.get() && buttonCounter==1)
+    //  manualOneRungSeqeunceTest();
+    //manualSequenceTest();
+    //manualButtonClimb.whenPressed(new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.kTelescopicFullExtend, climber.leftTelescopicProximity));
 
-    
+    /** the manual sequence method is called and checks the amount of times the button is pressed and runs the commands in that order and the 
+     *  state of the button is stored as the past state and is called to check if the button was ever realeased
+     */
     manualSequenceTest();
     manualLastState = manualButtonClimb.get();
   }
@@ -166,7 +177,6 @@ public class RobotContainer {
     boolean totalButtonState = true;
     for(int i = 0; i < buttons.length; i++)
       if(!buttons[i].get()) totalButtonState = false;
-
     return totalButtonState;
   }
 
@@ -211,6 +221,8 @@ public class RobotContainer {
     return stopClimb.get();
   }
 
+  /* Gets the state of the manual sequence button and checks to see if the last button state was released and 
+     then the button counter is incremented to show that the button was pressed */
   public boolean getManualSequenceButton(){
     if(manualButtonClimb.get() != manualLastState && manualButtonClimb.get())
     {
@@ -220,6 +232,39 @@ public class RobotContainer {
     return false;
   }
 
+  /** Each time the manual climb button is pressed, the next command in the sequence for the mid rung climb is called and 
+   * the number of times the button is called is stored in the buttonCounter variable
+   */
+  public void manualOneRungSeqeunceTest(){
+    if(getManualSequenceButton() && buttonCounter == 1)
+    {
+      new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.kTelescopicFullExtend, climber.leftTelescopicLimit);
+    }
+    if(getManualSequenceButton() && buttonCounter == 2)
+    {
+      new ClimberAuton(climber, climber.pivot, Auton.kPivotPivotingBack);
+    }
+    if(getManualSequenceButton() && buttonCounter == 3)
+    {
+      new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.Auton.kHookHighRungTele, climber.leftTelescopicProximity);
+    }
+    if(getManualSequenceButton() && buttonCounter == 4)
+    {
+      new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.kTelescopicFullRetract);
+    }
+    if(getManualSequenceButton() && buttonCounter == 5)
+    {
+      new ClimberAuton(climber, climber.pivot, Auton.kRotateToHighRungPivot, climber.pivotLimit);
+    }
+    if(getManualSequenceButton() && buttonCounter == 6)
+    {
+      new ClimberAuton(climber, climber.leftTelescopic, Auton.kExtendPivotHang, climber.pivotProximity);
+    }
+  }
+
+  /** Each time the manual climb button is pressed, the next command in the sequence for the traversal climb is called and 
+   *  the number of times the button is called is stored in the buttonCounter variable
+   */
   public void manualSequenceTest() {
     if(getManualSequenceButton() && buttonCounter == 1)
     {
