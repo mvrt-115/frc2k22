@@ -1,28 +1,20 @@
-// Copyright (c) FIRST and other WPILib contributors.
+ // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Turret;
-import frc.robot.subsystems.Turret.TurretState;
 
-public class FindTarget extends CommandBase {
-  private Turret turret;
-
-  /** Creates a new FindTarget. */
-  public FindTarget(Turret turret) {
-    this.turret = turret;
-
-    addRequirements(turret);
+public class MoveBack extends CommandBase {
+  /** Creates a new MoveBack. */
+  public MoveBack() {
+    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    turret.setState(TurretState.TARGETING);
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override

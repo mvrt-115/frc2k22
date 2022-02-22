@@ -4,11 +4,10 @@
 
 package frc.robot.util;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.NetworkTableType;
-import edu.wpi.first.networktables.NetworkTableValue;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -19,7 +18,9 @@ public class Limelight extends SubsystemBase {
   private RollingAverage tx;
   private RollingAverage ty;
   private NetworkTable limelight;
-  double lastTx;
+  public final double height = 104;//2.6416; // meters
+  public final double limelightMountHeight = 24;//2 * 0.3048; // feet to meters
+  private double limelightMountAngle = 40;
 
   public static enum LED_STATE {
     DEFAULT, ON, OFF, BLINKING;
@@ -45,18 +46,7 @@ public class Limelight extends SubsystemBase {
     // update ty and tx
     updateEntry("ty", ty);
     updateEntry("tx", tx);
-
-    // deltaE.update(getHorizontalOffset());
-
-    log();
-  }
-
-  public void log() {
-    SmartDashboard.putNumber("tx", tx.getAverage());
-    SmartDashboard.putNumber("ty", limelight.getEntry("ty").getDouble(0));
-    // SmartDashboard.putNumber("delta e", deltaE.get());
-    
-    // System.out.println(NetworkTableInstance.getDefault().getEntry("limelight").getNumber(0));
+    SmartDashboard.putNumber("Dist From Target", getHorizontalDistance());
   }
 
   public void setLED(LED_STATE newState) {
@@ -111,7 +101,7 @@ public class Limelight extends SubsystemBase {
    * @return angle (degrees)
    */
   public double getVerticalOffset() {
-    return ty.getAverage();
+    return limelightMountAngle - ty.getAverage();
   }
 
   /**
@@ -120,10 +110,26 @@ public class Limelight extends SubsystemBase {
    * @return angle (degrees)
    */
   public double getHorizontalOffset() {
-    if(targetsFound())
-      lastTx = limelight.getEntry("tx").getDouble(0);
-    return lastTx;//tx.getAverage();
-  } 
+    return tx.getAverage();
+  }
+
+  /**
+   * Get horizontal distance
+   * 
+   * @return distance (meters)
+   */
+  public double getHorizontalDistance() {
+    return getVerticalDistance() / Math.tan(Math.toRadians(getVerticalOffset()));
+  }
+
+  /**
+   * Get vertical distance
+   * 
+   * @return height (meters)
+   */
+  public double getVerticalDistance() {
+    return height - limelightMountHeight;
+  }
 
   /**
    * Whether limelight has found any valid targets

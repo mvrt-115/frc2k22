@@ -5,36 +5,38 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Turret;
-import frc.robot.subsystems.Turret.TurretState;
+import frc.robot.subsystems.Storage;
 
-public class FindTarget extends CommandBase {
-  private Turret turret;
-
-  /** Creates a new FindTarget. */
-  public FindTarget(Turret turret) {
-    this.turret = turret;
-
-    addRequirements(turret);
+public class ExpelBalls extends CommandBase {
+  private Storage storage;
+  /** Creates a new ExpelBalls. */
+  public ExpelBalls(Storage storageIn) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    storage = storageIn;
+    addRequirements(storage);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    turret.setState(TurretState.TARGETING);
+    Storage.currentState = Storage.StorageState.EXPELLING;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    storage.runMotor(false);
+  }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    Storage.currentState = Storage.StorageState.NOT_EXPELLING;
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

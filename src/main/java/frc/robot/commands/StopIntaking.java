@@ -5,36 +5,41 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Turret;
-import frc.robot.subsystems.Turret.TurretState;
+import frc.robot.Constants;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Intake.IntakeState;
 
-public class FindTarget extends CommandBase {
-  private Turret turret;
-
-  /** Creates a new FindTarget. */
-  public FindTarget(Turret turret) {
-    this.turret = turret;
-
-    addRequirements(turret);
+public class StopIntaking extends CommandBase {
+  /** Creates a new StopIntaking. */
+  private Intake intake;
+  public StopIntaking(Intake intakeIn) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    intake = intakeIn;
+    addRequirements(intake);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    turret.setState(TurretState.TARGETING);
+    intake.setPosition(Constants.Intake.kTICKS_TO_BOTTOM);
+    intake.setState(IntakeState.PIVOTING_UP);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+
+  }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    // don't modify this command!
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

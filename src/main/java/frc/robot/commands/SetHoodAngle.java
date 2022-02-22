@@ -4,44 +4,43 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Turret;
-import frc.robot.subsystems.Turret.TurretState;
+import frc.robot.subsystems.Shooter;
 
-public class TurretSetupAlign extends CommandBase {
-  private Turret turret;
+public class SetHoodAngle extends CommandBase {
+  private Shooter shooter;
+  private double angle;
 
-  /** Creates a new TurretSetupAlign. */
-  public TurretSetupAlign(Turret turret) {
-    this.turret = turret;
-
-    addRequirements(turret);
+  /** Creates a new SetHoodAngle. */
+  public SetHoodAngle(Shooter shooter) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(shooter);
+    this.shooter = shooter;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    turret.setState(Turret.TurretState.DISABLED);
+    angle = SmartDashboard.getNumber("Set Hood Angle", 0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    turret.setPercentOutput(-0.2);
+    shooter.setTargetAngle(angle);
+    angle = SmartDashboard.getNumber("Set Hood Angle", angle);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    turret.setPercentOutput(0);
-    turret.resetEncoder();
-
-    turret.setState(TurretState.TARGETING);
+    SmartDashboard.putNumber("Set Hood Angle", angle);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return turret.getMagAligned();
+    return false;
   }
 }
