@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,22 +17,22 @@ public class Drivetrain extends SubsystemBase {
     }
     private DrivetrainState state;
 
-    private TalonFX rightMaster;
-    private TalonFX leftMaster;
-    private TalonFX rightFollower;
-    private TalonFX leftFollower;
+    private TalonSRX rightMaster;
+    private TalonSRX leftMaster;
+    private TalonSRX rightFollower;
+    private TalonSRX leftFollower;
 
     public Drivetrain() {
         if (Constants.kIsPracticeBot) {
-            rightMaster = TalonFactory.createTalonFX(Constants.Drivetrain.kPracRightMasterId, true);
-            leftMaster = TalonFactory.createTalonFX(Constants.Drivetrain.kPracLeftMasterId, false);
-            rightFollower = TalonFactory.createTalonFX(Constants.Drivetrain.kPracRightFollowerId, true);
-            leftFollower = TalonFactory.createTalonFX(Constants.Drivetrain.kPracLeftFollowerId, false);
+            rightMaster = TalonFactory.createTalonSRX(Constants.Drivetrain.kPracRightMasterId, true);
+            leftMaster = TalonFactory.createTalonSRX(Constants.Drivetrain.kPracLeftMasterId, false);
+            rightFollower = TalonFactory.createTalonSRX(Constants.Drivetrain.kPracRightFollowerId, true);
+            leftFollower = TalonFactory.createTalonSRX(Constants.Drivetrain.kPracLeftFollowerId, false);
         } else {
-            rightMaster = TalonFactory.createTalonFX(Constants.Drivetrain.kCompRightMasterId, true);
-            leftMaster = TalonFactory.createTalonFX(Constants.Drivetrain.kCompLeftMasterId, false);
-            rightFollower = TalonFactory.createTalonFX(Constants.Drivetrain.kCompRightFollowerId, true);
-            leftFollower = TalonFactory.createTalonFX(Constants.Drivetrain.kCompLeftFollowerId, false);
+            rightMaster = TalonFactory.createTalonSRX(Constants.Drivetrain.kCompRightMasterId, true);
+            leftMaster = TalonFactory.createTalonSRX(Constants.Drivetrain.kCompLeftMasterId, false);
+            rightFollower = TalonFactory.createTalonSRX(Constants.Drivetrain.kCompRightFollowerId, true);
+            leftFollower = TalonFactory.createTalonSRX(Constants.Drivetrain.kCompLeftFollowerId, false);
         }
     }
 
@@ -121,6 +122,8 @@ public class Drivetrain extends SubsystemBase {
     public void log() {
         SmartDashboard.putNumber("Left Output", leftFollower.getMotorOutputPercent());
         SmartDashboard.putNumber("right Output", rightFollower.getMotorOutputPercent());
-        SmartDashboard.putString("Drivetrain State", state.toString());
+        
+        if(state != null)
+            SmartDashboard.putString("Drivetrain State", state.toString());
     }
 }

@@ -10,8 +10,10 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Drivetrain;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.FindTarget;
+import frc.robot.commands.JoystickDrive;
 import frc.robot.commands.PIDTune;
 import frc.robot.commands.SetHoodAngle;
 import frc.robot.commands.SetRPM;
@@ -42,6 +44,7 @@ public class RobotContainer {
 
   private final Limelight limelight = new Limelight();
   private final Shooter shooter = new Shooter(limelight);
+  private final Drivetrain dt = new Drivetrain();
   private final StopShooter stopShooter = new StopShooter(shooter);
 
   private final Turret turret = new Turret(limelight);
@@ -80,6 +83,7 @@ public class RobotContainer {
                                                       Constants.Flywheel.F,
                                                       "Flywheel",
                                                       stopShooter));
+    dt.setDefaultCommand(new JoystickDrive(dt, this::getThrottle, this::getWheel, quickturn::get));
   }
 
   /**
