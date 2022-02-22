@@ -10,6 +10,7 @@ import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -42,10 +43,10 @@ public class Drivetrain extends SubsystemBase {
 
     private DrivetrainState state;
 
-    private TalonSRX rightMaster;
-    private TalonSRX leftMaster;
-    private TalonSRX rightFollower;
-    private TalonSRX leftFollower;
+    private TalonFX rightMaster;
+    private TalonFX leftMaster;
+    private TalonFX rightFollower;
+    private TalonFX leftFollower;
 
     private AHRS gyro;
 

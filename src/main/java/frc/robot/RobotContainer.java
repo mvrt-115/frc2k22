@@ -115,13 +115,13 @@ public class RobotContainer {
 
     SmartDashboard.putData("Run Flywheel", new SetRPM(shooter));
     SmartDashboard.putData("Change Angle", new SetHoodAngle(shooter));
-    SmartDashboard.putData("Config PIDF", new PIDTune(shooter.getMotor(), 
-                                                      Constants.Flywheel.P, 
-                                                      Constants.Flywheel.I,
-                                                      Constants.Flywheel.D,
-                                                      Constants.Flywheel.F,
-                                                      "Flywheel",
-                                                      stopShooter));
+    // SmartDashboard.putData("Config PIDF", new PIDTune(shooter.getMotor(), 
+    //                                                   Constants.Flywheel.P, 
+    //                                                   Constants.Flywheel.I,
+    //                                                   Constants.Flywheel.D,
+    //                                                   Constants.Flywheel.F,
+    //                                                   "Flywheel",
+    //                                                   stopShooter));
     dt.setDefaultCommand(new JoystickDrive(dt, this::getThrottle, this::getWheel, quickturn::get));
   }
 

@@ -280,8 +280,7 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-        }
-    }
+  
     // With servos all this is kinda unnecessary but idt it matters so we can keep it
 
     switch(hoodState)

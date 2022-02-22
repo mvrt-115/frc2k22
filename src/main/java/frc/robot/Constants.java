@@ -143,43 +143,6 @@ public final class Constants {
         public static final double GEAR_RATIO = 50.0/36.0; // Can change
     }
 
-    public static class Limelight
-    {
-        public static final double MOUNT_ANGLE = 15;
-        public static final double Height_IN = 36;
-        public static final double TARGET_HEIGHT_IN = 104;
-    }
-
-    public static class Hood
-    {
-        public static final double MIN_ANG = 60;
-        public static final double MAX_ANG = 80;
-        public static final double P = 0.005;
-        public static final double I = 0.005;
-        public static final double D = 0.005;
-        public static final double F = 0.058;
-        public static final double RADIUS = 8.5;
-        public static final double MAX_VOLTAGE_COMPENSATION = 5;
-        public static final double GEAR_RATIO = 1; // 480.0/26.0
-        public static final int ENCODER_TICKS = 2048;
-        public static final int ACCEPTABLE_ERROR = 2;
-        public static final double kFF = 0;
-        public static final double HOOD_RADIUS = 11.5;
-    }
-
-    public static class Flywheel
-    {
-        public static final double P = 0.6;
-        public static final double I = -0.03;
-        public static final double D = 15.8;
-        public static final double F = 0.058;
-        public static final double RADIUS = 2;
-        public static final double ACCEPTABLE_ERROR = 50;
-        public static final double MAX_VOLTAGE_COMPENSATION = 10;
-        public static final double TICKS_PER_REVOLUTION = 2048;
-        public static final int NUM_AVG = 5;
-        public static final double GEAR_RATIO = 32.0/32.0; // Can change
-    }
 
     public static class Actuator
     {
