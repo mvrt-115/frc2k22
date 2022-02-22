@@ -45,6 +45,7 @@ import frc.robot.util.Limelight;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.AutonPath6;
+import frc.robot.commands.DisableTurret;
 import frc.robot.commands.JoystickDrive;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.util.RollingAverage;
@@ -83,6 +84,7 @@ public class RobotContainer {
 
   private JoystickButton quickturn;
 
+  private JoystickButton disableTurret;
   public JoystickButton turretClockwise;
   public JoystickButton turretCounterclockwise;
 
@@ -92,6 +94,7 @@ public class RobotContainer {
     driverJoystick = new Joystick(0);
     operatorJoystick = new Joystick(1);
 
+    disableTurret = new JoystickButton(operatorJoystick, 1);
     turretClockwise = new JoystickButton(driverJoystick, 2);
     turretCounterclockwise = new JoystickButton(driverJoystick, 3);
 
@@ -121,7 +124,6 @@ public class RobotContainer {
     //                                                   Constants.Flywheel.F,
     //                                                   "Flywheel",
     //                                                   stopShooter));
-    dt.setDefaultCommand(new JoystickDrive(dt, this::getThrottle, this::getWheel, quickturn::get));
   }
 
   /**
@@ -148,6 +150,10 @@ public class RobotContainer {
 
     //turretClockwise.whenPressed(new TurretManual(turret, -0.5, turretClockwise::get));
     //turretCounterclockwise.whenPressed(new TurretManual(turret, 0.5, turretCounterclockwise::get));
+
+    turret.setDefaultCommand(new FindTarget(turret));
+    
+    disableTurret.whenPressed(new DisableTurret(turret));
   }
 
   /**
