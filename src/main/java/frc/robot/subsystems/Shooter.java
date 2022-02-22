@@ -5,16 +5,22 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.Servo;
 import frc.robot.util.Limelight;
+import frc.robot.util.LinearActuator;
 import frc.robot.util.RollingAverage;
 import frc.robot.util.TalonFactory;
 import frc.robot.Constants;
+import frc.robot.util.MathUtils;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 
 public class Shooter extends SubsystemBase {
@@ -24,18 +30,32 @@ public class Shooter extends SubsystemBase {
     OFF, SPEEDING, ATSPEED;
   }
 
-  private final double MIN_RPM = 8000;
+  public enum HoodState
+  {
+    OFF, ADJUSTING, ATPOSITION;
+  }
 
-  private final int LEADER_ID = 40;
-  private final int FOLLOWER_ID = 32;
-  private final int HOOD_ID = 1;
+  private final double MAX_RPM = 8000;
+  private final double MAX_ANGLE = 40;
+  private double adjjustFF = 0;
+
+  private final int LEADER_ID = 12;
+  private final int HOOD_ID = 22; //0
+
+  // Linear Actuator IDs (random rn)
+  private final int LEFT_HOOD_ID = 100; // left actuator
+  private final int RIGHT_HOOD_ID = 100; // right actuator
 
   private BaseTalon flywheelLeader;
-  private BaseTalon flywheelFollower;
   private BaseTalon hoodMotor;
+
+  // ACtuators
+  private LinearActuator leftActuator;  // left actuator
+  private LinearActuator rightActuator;  // right actuator
 
   // Attributes of flywheel
   private ShooterState state;
+  private HoodState hoodState;
   private double targetRPM = 0;
 
   // Target Angle in radians
@@ -47,11 +67,31 @@ public class Shooter extends SubsystemBase {
   /** Creates a new Shooter. */
   public Shooter(Limelight limelight) {
     // Mind Bending Test on the Reality of our Situation
-    flywheelLeader = TalonFactory.createTalonSRX(LEADER_ID, false);
+    flywheelLeader = TalonFactory.createTalonFX(LEADER_ID, false);
     // flywheelFollower = TalonFactory.createTalonSRX(FOLLOWER_ID, true);
-    // hoodMotor = TalonFactory.createTalonSRX(HOOD_ID, false);
+    hoodMotor = TalonFactory.createTalonFX(HOOD_ID, false);
 
+    hoodMotor.setSelectedSensorPosition(0);
     // flywheelFollower.follow(flywheelLeader);
+
+
+    // Creating Actuators and setting up initial conditions
+    // leftActuator = new LinearActuator(new Servo(LEFT_HOOD_ID), 
+    //                                   Constants.Hood.HOOD_RADIUS, Constants.Actuator.DIST_FROM_BASE,
+    //                                   Constants.Actuator.ACT_HEIGHT, Constants.Actuator.MAX_HEIGHT,
+    //                                   Constants.Actuator.DEGREES_FROM_HORIZONTAL);
+    // rightActuator = new LinearActuator(new Servo(RIGHT_HOOD_ID), 
+    //                                   Constants.Hood.HOOD_RADIUS, Constants.Actuator.DIST_FROM_BASE,
+    //                                   Constants.Actuator.ACT_HEIGHT, Constants.Actuator.MAX_HEIGHT,
+    //                                   Constants.Actuator.DEGREES_FROM_HORIZONTAL);
+
+    // Initializing them at their min height
+    // leftActuator.setPosition(0);
+    // rightActuator.setPosition(0);
+
+    //leadActuator.getTalon().setNeutralMode(NeutralMode.Brake);
+    //followActuator.getTalon().setNeutralMode(NeutralMode.Brake);
+
 
     // Sets up PIDF
     flywheelLeader.config_kP(Constants.kPIDIdx, Constants.Flywheel.P);
@@ -59,35 +99,74 @@ public class Shooter extends SubsystemBase {
     flywheelLeader.config_kD(Constants.kPIDIdx, Constants.Flywheel.D);
     flywheelLeader.config_kF(Constants.kPIDIdx, Constants.Flywheel.F);
 
-    // hoodMotor.config_kP(Constants.kPIDIdx, Constants.Hood.PHood);
-    // hoodMotor.config_kI(Constants.kPIDIdx, Constants.Hood.IHood);
-    // hoodMotor.config_kD(Constants.kPIDIdx, Constants.Hood.DHood);
-    // hoodMotor.config_kF(Constants.kPIDIdx, Constants.Hood.FHood);
+    /*hoodMotor.config_kP(Constants.kPIDIdx, Constants.Hood.P);
+    hoodMotor.config_kI(Constants.kPIDIdx, Constants.Hood.I);
+    hoodMotor.config_kD(Constants.kPIDIdx, Constants.Hood.D);
+
+    adjjustFF = Constants.Hood.kFF * Math.cos(hoodMotor.getSelectedSensorPosition());
+
+    hoodMotor.setNeutralMode(NeutralMode.Brake);*/
 
     this.limelight = limelight;
 
     state = ShooterState.OFF;
+    hoodState = HoodState.OFF;
     rpm = new RollingAverage(Constants.Flywheel.NUM_AVG);
   }
 
+  /**
+   * Stops Shooter
+   */
   public void stopFlywheel()
   {
     flywheelLeader.set(ControlMode.PercentOutput, 0);
   }
 
+  /**
+   * Stops Hood position change
+   */
   public void stopHood()
   {
-    hoodMotor.set(ControlMode.PercentOutput, 0);
+    // hoodMotor.set(ControlMode.PercentOutput, 0);
+
+    // servos don't need a method like this
   }
 
+  /**
+   * Puts hood back to original state
+   */
+  public void resetHood()
+  {
+    // leftActuator.setPosition(0);
+  }
+
+  /**
+   * Get the current flywheel rpm
+   * @return rpm
+   */
   public double getCurrentRPM()
   {
     return rpm.getAverage();
   }
 
+  /**
+   * Gets the current hood angle
+   * @return angle
+   */
+  public double getCurrentAngle()
+  {
+    return ticksToDegrees(flywheelLeader.getSelectedSensorPosition());
+
+    // return (leftActuator.getHoodAngle()+rightActuator.getHoodAngle())/2;
+  }
+
+  /**
+   * Sets the target rpm of the shooter
+   * @param exit_velocity (an rpm value)
+   */
   public void setTargetRPM(double exit_velocity)
   {
-    targetRPM = Math.min(MIN_RPM, exit_velocity);
+    targetRPM = Math.min(MAX_RPM, exit_velocity);
     
     if(exit_velocity==0)
     {
@@ -99,6 +178,28 @@ public class Shooter extends SubsystemBase {
     }
   }
 
+  /**
+   * Set shooter hood angle
+   * @param angle (in degrees)
+   */
+  public void setTargetAngle(double angle)
+  {
+    targetAng = Math.min(angle, MAX_ANGLE);
+    if (angle == 0)
+    {
+      setHoodState(HoodState.OFF);
+    }
+    else
+    {
+      setHoodState(HoodState.ADJUSTING);
+    }
+  }
+
+  /**
+   * Sets the state of the Flywheel
+   * Sets target rpm to 0 if state is OFF
+   * @param _state
+   */
   public void setState(ShooterState _state) {
       this.state = _state;
 
@@ -108,21 +209,63 @@ public class Shooter extends SubsystemBase {
       }
   }
 
+  /**
+   * Sets the state of the Hood
+   * Sets the target angle to 0 if state is OFF
+   * @param _state
+   */
+  public void setHoodState(HoodState _state) {
+    this.hoodState = _state;
+
+    if (_state == HoodState.OFF)
+    {
+      targetAng = 0;
+    }
+  }
+
+  /**
+   * Convets rpm to ticks per millisecond
+   * @param in_rpm
+   * @return ticks
+   */
   public double rpmToTicks(double in_rpm)
   {
     return in_rpm / 600 * Constants.Flywheel.TICKS_PER_REVOLUTION * Constants.Flywheel.GEAR_RATIO;
   }
 
+  /**
+   * Converts ticks per millisecond to rpm
+   * @param ticks
+   * @return rpm
+   */
   public double ticksToRPM(double ticks)
   {
     return ticks * 600 / Constants.Flywheel.TICKS_PER_REVOLUTION / Constants.Flywheel.GEAR_RATIO;
   }
 
+  /**
+   * Converts degrees to amount of ticks to rotate
+   * @param degrees
+   * @return ticks
+   */
   public int degreesToTicks(double degrees)
   {
     return (int) ((Constants.Hood.ENCODER_TICKS * Constants.Hood.GEAR_RATIO) * degrees/360);
   }
 
+  /**
+   * Converts the ticks rotated to degrees rotated
+   * @param ticks
+   * @return degrees
+   */
+  public double ticksToDegrees(double ticks)
+  {
+    return ticks / (Constants.Hood.ENCODER_TICKS * Constants.Hood.GEAR_RATIO) * 360.0;
+  }
+
+  /**
+   * Log Shooter values to SmartDashboard
+   */
   public void log()
   {
     SmartDashboard.putNumber("Flywheel RPM", getCurrentRPM());
@@ -130,41 +273,46 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putString("State", state.toString());
     SmartDashboard.putNumber("target rpm", targetRPM);
     SmartDashboard.putNumber("target angle", targetAng);
+    // SmartDashboard.putNumber("Hood Angle", getCurrentAngle());
+    // SmartDashboard.putNumber("Hood Angle Ticks", hoodMotor.getSelectedSensorPosition());
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+        }
+    }
+    // With servos all this is kinda unnecessary but idt it matters so we can keep it
 
-    rpm.updateValue(ticksToRPM(flywheelLeader.getSelectedSensorVelocity()));
-    log();
-    SmartDashboard.putNumber("time", Timer.getFPGATimestamp()); // to debug periodic
-
-    // Sets state periodically
-    switch(this.state)
+    switch(hoodState)
     {
       case OFF:
-        stopFlywheel();
-        // stopHood();
+        stopHood();
         break;
-      case SPEEDING:
-        flywheelLeader.set(ControlMode.Velocity, rpmToTicks(targetRPM));
-        if (hoodMotor != null)
-          hoodMotor.set(ControlMode.Position, degreesToTicks(targetAng));
-        if(allWithinError(targetRPM, Constants.Flywheel.ACCEPTABLE_ERROR))
+      case ADJUSTING:
+        // hoodMotor.set(ControlMode.Position, degreesToTicks(targetAng));
+
+        // leftActuator.setPositionFromAngle(targetAng);
+        // rightActuator.setPositionFromAngle(targetAng);
+
+        if(allWithinPositionError(targetAng))
         {
-          setState(ShooterState.ATSPEED);
+          setHoodState(HoodState.ATPOSITION);
         }
         break;
-      case ATSPEED:
-        if(!allWithinError(targetRPM, Constants.Flywheel.ACCEPTABLE_ERROR))
+      case ATPOSITION:
+        if(!allWithinPositionError(targetRPM))
         {
-          setState(ShooterState.SPEEDING);
+          setHoodState(HoodState.ADJUSTING);
         }
         break;
     }
   }
 
+  /**
+   * Get required RPM for shooter
+   * @return required rpm for shooter
+   */
   public double getRequiredRPM()
   {
     // metric values will be used until return
@@ -188,6 +336,10 @@ public class Shooter extends SubsystemBase {
     return Units.metersToInches(60) * vel_proj / (Constants.Flywheel.RADIUS * 2 * Math.PI);
   }
 
+  /**
+   * Get required hood angle from limelight distance
+   * @return Required Hood Angle
+   */
   public double getRequiredAng()
   {
     // metric values will be used until return
@@ -222,11 +374,35 @@ public class Shooter extends SubsystemBase {
   }
 
   /**
-     * @param target -- the target RPM
-     * @param acceptableError -- the acceptable +- error range
-     * @return boolean whether the RPM is within the acceptable error or not
-     */
-    private boolean allWithinError(double target, double acceptableError) {
-      return Math.abs(rpm.getAverage() - target) <= acceptableError;
+   * @param target -- the target RPM
+   * @param acceptableError -- the acceptable +- error range
+   * @return boolean whether the RPM is within the acceptable error or not
+   */
+  private boolean allWithinRPMError(double targetSpeed) {
+    return Math.abs(rpm.getAverage() - targetSpeed) <= Constants.Flywheel.ACCEPTABLE_ERROR;
+  }
+
+  private boolean allWithinPositionError(double targetAngle) {
+    /*if (hoodMotor != null)
+    {
+      return Math.abs(getCurrentAngle() - targetAngle) <= Constants.Hood.ACCEPTABLE_ERROR;
+    }*/
+
+    if (leftActuator != null)
+    {
+        //return Math.abs(leftActuator.getHoodAngle() - targetAngle) <= Constants.Hood.ACCEPTABLE_ERROR;
+
+        return true; // we aren't able to test the hood rn so have this always return true
+    }
+
+    return true;
+  }
+
+  /**
+   * @return BaseTalon flywheel leader
+   */
+  public BaseTalon getMotor()
+  {
+    return flywheelLeader;
   }
 }

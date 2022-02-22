@@ -143,10 +143,86 @@ public final class Constants {
         public static final double GEAR_RATIO = 50.0/36.0; // Can change
     }
 
+    public static class Limelight
+    {
+        public static final double MOUNT_ANGLE = 15;
+        public static final double Height_IN = 36;
+        public static final double TARGET_HEIGHT_IN = 104;
+    }
+
+    public static class Hood
+    {
+        public static final double MIN_ANG = 60;
+        public static final double MAX_ANG = 80;
+        public static final double P = 0.005;
+        public static final double I = 0.005;
+        public static final double D = 0.005;
+        public static final double F = 0.058;
+        public static final double RADIUS = 8.5;
+        public static final double MAX_VOLTAGE_COMPENSATION = 5;
+        public static final double GEAR_RATIO = 1; // 480.0/26.0
+        public static final int ENCODER_TICKS = 2048;
+        public static final int ACCEPTABLE_ERROR = 2;
+        public static final double kFF = 0;
+        public static final double HOOD_RADIUS = 11.5;
+    }
+
+    public static class Flywheel
+    {
+        public static final double P = 0.6;
+        public static final double I = -0.03;
+        public static final double D = 15.8;
+        public static final double F = 0.058;
+        public static final double RADIUS = 2;
+        public static final double ACCEPTABLE_ERROR = 50;
+        public static final double MAX_VOLTAGE_COMPENSATION = 10;
+        public static final double TICKS_PER_REVOLUTION = 2048;
+        public static final int NUM_AVG = 5;
+        public static final double GEAR_RATIO = 32.0/32.0; // Can change
+    }
+
+    public static class Actuator
+    {
+        public static final double THREAD_DISTANCE = 0.4; // in
+        public static final double GEAR_RATIO = 56.0 / 34.0;
+        public static final double TICKS_PER_ROTATION = 4096;
+        public static final double HOOD_RADIUS = 11.5;
+        public static final double DIST_FROM_BASE = 2 + HOOD_RADIUS;
+        public static final double ACT_HEIGHT = 5;
+        public static final double MAX_HEIGHT = 5;
+        public static final double P = 0.05;
+        public static final double I = 0;
+        public static final double D = 0.19;
+        public static final double kDefaultMaxServoPWM = 2.4;
+        public static final double kDefaultMinServoPWM = 0.6;
+        public static final double DEGREES_FROM_HORIZONTAL = 15; // How many degrees below the flywheel that the actuator is
+    }
+
     public static class Storage
     {
         public static final int kBreakBeamPort = 0;
         public static final int kMotorID = 0;
         public static final int kMotorSpeed = 0;
+    }
+
+    public static class Turret {
+        public static final double kGearRatio = 47.8; // 150 * 5 * 5 / 24
+        public static final double kTicksPerRevolution = 2048;
+        public static final double kMinAngle = -180; // degrees
+        public static final double kMaxAngle = 180; // degrees
+        public static final double kLimelightOffset = 40; // degrees
+
+        public static final double kEThreshold = 60;
+        public static final double kLowETurnThreshold = 0; // degrees; limelight x fov = 59.6
+
+        // for large angles > 60 degrees
+        public static final double kPLarge = 0.5;
+        public static final double kILarge = 0;
+        public static final double kDLarge = 0;
+
+        public static final double kP = 0.1;
+        public static final double kI = 0;
+        public static final double kD = 0.005;  // try with 0.007
+        public static final double kTurnSpeed = 0.3;
     }
 }

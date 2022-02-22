@@ -42,10 +42,10 @@ public class Drivetrain extends SubsystemBase {
 
     private DrivetrainState state;
 
-    private TalonFX rightMaster;
-    private TalonFX leftMaster;
-    private TalonFX rightFollower;
-    private TalonFX leftFollower;
+    private TalonSRX rightMaster;
+    private TalonSRX leftMaster;
+    private TalonSRX rightFollower;
+    private TalonSRX leftFollower;
 
     private AHRS gyro;
 

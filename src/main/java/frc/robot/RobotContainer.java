@@ -14,6 +14,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.hal.simulation.AnalogInDataJNI;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -26,6 +27,21 @@ import frc.robot.commands.StopIntaking;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Drivetrain;
+import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.FindTarget;
+import frc.robot.commands.JoystickDrive;
+import frc.robot.commands.PIDTune;
+import frc.robot.commands.SetHoodAngle;
+import frc.robot.commands.SetRPM;
+import frc.robot.commands.StopShooter;
+import frc.robot.commands.TurretManual;
+import frc.robot.commands.TurretSetupAlign;
+import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Shooter.HoodState;
+import frc.robot.subsystems.Shooter.ShooterState;
 import frc.robot.util.Limelight;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -52,13 +68,36 @@ public class RobotContainer {
   private JoystickButton expelBalls;
 
   private Drivetrain drivetrain;
+  
+  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+
+  private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
+
+  private final Limelight limelight = new Limelight();
+  private final Shooter shooter = new Shooter(limelight);
+  private final Drivetrain dt = new Drivetrain();
+  private final StopShooter stopShooter = new StopShooter(shooter);
+
+  private final Turret turret = new Turret(limelight);
 
   public RollingAverage throttle, wheel;
 
   private JoystickButton quickturn;
 
+  public JoystickButton turretClockwise;
+  public JoystickButton turretCounterclockwise;
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    // Configure the button bindings
+    driverJoystick = new Joystick(0);
+    operatorJoystick = new Joystick(1);
+
+    turretClockwise = new JoystickButton(driverJoystick, 2);
+    turretCounterclockwise = new JoystickButton(driverJoystick, 3);
+
+    quickturn = new JoystickButton(driverJoystick, 9);
+
     // Configure the button bindings
     
     driverJoystick = new Joystick(0);
@@ -73,7 +112,17 @@ public class RobotContainer {
     wheel = new RollingAverage(15);
     
     configureButtonBindings();
-    //SmartDashboard.putData("Run Flywheel", new SetRPM(shooter));
+
+    SmartDashboard.putData("Run Flywheel", new SetRPM(shooter));
+    SmartDashboard.putData("Change Angle", new SetHoodAngle(shooter));
+    SmartDashboard.putData("Config PIDF", new PIDTune(shooter.getMotor(), 
+                                                      Constants.Flywheel.P, 
+                                                      Constants.Flywheel.I,
+                                                      Constants.Flywheel.D,
+                                                      Constants.Flywheel.F,
+                                                      "Flywheel",
+                                                      stopShooter));
+    dt.setDefaultCommand(new JoystickDrive(dt, this::getThrottle, this::getWheel, quickturn::get));
   }
 
   /**
@@ -98,6 +147,8 @@ public class RobotContainer {
       Align To ball: 0
     */
 
+    //turretClockwise.whenPressed(new TurretManual(turret, -0.5, turretClockwise::get));
+    //turretCounterclockwise.whenPressed(new TurretManual(turret, 0.5, turretCounterclockwise::get));
   }
 
   /**
@@ -110,7 +161,7 @@ public class RobotContainer {
     throttle.updateValue(-driverJoystick.getRawAxis(5) * .7);
     return throttle.getAverage();
   }
-
+  
   /**
    * Gets the wheel input from the Driver Joystick wheel axis which is used to turn the robot while
    * either driving or quickturning
@@ -129,9 +180,17 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // Trajectory tr = TrajectoryGenerator.generateTrajectory(new Pose2d(0, 0, new Rotation2d()), List.of(new Translation2d(0, 1), new Translation2d(0,2)), new Pose2d(0, 3, new Rotation2d()), new TrajectoryConfig(10, 2));//PathPlanner.loadPath("TryPath", 4, 4);\
    // Trajectory tr = PathPlanner.loadPath("TryPath", 4, 4);
     return new AutonPath6(drivetrain);
     //return new DriveTrajectory(drivetrain);
+  }
+  
+  /**
+   * Use this to declare subsystem disabled behavior
+   */
+  public void disabledPeriodic() {
+    shooter.setState(ShooterState.OFF);
+    shooter.setHoodState(HoodState.OFF);
+    shooter.log();
   }
 }
