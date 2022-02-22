@@ -14,14 +14,17 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.FindTarget;
 import frc.robot.commands.JoystickDrive;
+import frc.robot.commands.ManualOverrideControl;
 import frc.robot.commands.PIDTune;
 import frc.robot.commands.SetHoodAngle;
 import frc.robot.commands.SetRPM;
 import frc.robot.commands.StopShooter;
+import frc.robot.commands.SwitchManual;
 import frc.robot.commands.TurretManual;
 import frc.robot.commands.TurretSetupAlign;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Storage;
 import frc.robot.subsystems.Shooter.HoodState;
 import frc.robot.subsystems.Shooter.ShooterState;
 import frc.robot.util.Limelight;
@@ -55,6 +58,10 @@ public class RobotContainer {
   private RollingAverage throttle = new RollingAverage(50);
   private RollingAverage wheel = new RollingAverage(15);
 
+  private final Storage storage = new Storage(operatorJoystick);
+
+  private JoystickButton storageOverride;
+
   private JoystickButton quickturn;
 
   public JoystickButton turretClockwise;
@@ -66,10 +73,14 @@ public class RobotContainer {
     driverJoystick = new Joystick(0);
     operatorJoystick = new Joystick(1);
 
+    storageOverride = new JoystickButton(driverJoystick, 0);
+
     turretClockwise = new JoystickButton(driverJoystick, 2);
     turretCounterclockwise = new JoystickButton(driverJoystick, 3);
 
     quickturn = new JoystickButton(driverJoystick, 9);
+
+ 
 
     // Configure the button bindings
     configureButtonBindings();
@@ -95,6 +106,8 @@ public class RobotContainer {
   private void configureButtonBindings() 
   {
     //turret.setDefaultCommand(new FindTarget(turret));
+    storage.setDefaultCommand(new ManualOverrideControl(storage, this::getStorageThrottle));
+    storageOverride.whenPressed(new SwitchManual(storage));
 
     //turretClockwise.whenPressed(new TurretManual(turret, -0.5, turretClockwise::get));
     //turretCounterclockwise.whenPressed(new TurretManual(turret, 0.5, turretCounterclockwise::get));
@@ -141,5 +154,9 @@ public class RobotContainer {
     shooter.setState(ShooterState.OFF);
     shooter.setHoodState(HoodState.OFF);
     shooter.log();
+  }
+
+  public double getStorageThrottle(){
+    return 0.4* operatorJoystick.getRawAxis(5);
   }
 }
