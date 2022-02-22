@@ -90,8 +90,8 @@ public final class Constants {
         //NEED TO BE CHANGED WHEN FULLY WIRED OR TESTING
         //motors
         public static final int kPivotID = 0; // 22
-        public static final int kRightTelescopicID = 0;
-        public static final int kLeftTelescopicID = 0;
+        public static final int kRightTelescopicID = 11;
+        public static final int kLeftTelescopicID = 4;
 
         //inductive proximity sensors
         public static final int kPivotProximityChannel = 0;
@@ -129,14 +129,15 @@ public final class Constants {
         public static final double kFeedForwardPivot = 0;
 
         //speeds for manual climbing
-        public static final double kTelescopicManualSpeed = 0.1;
+        public static final double kTelescopicRetractManualSpeed = 0.25;
+        public static final double kTelescopicExtendManualSpeed = -0.20;
         public static final double kPivotManualSpeed = 0.1;
 
         //manual position constants
-        public static final double kTelescopicFullExtend = 62; //inches
-        public static final double kTelescopicFullRetract = 0; //inches
+        public static final double kTelescopicFullExtend = 0; //inches
+        public static final double kTelescopicFullRetract = -32; //inches
         public static final double kPivotStowingPos = 0; //degrees
-        public static final double kPivotMaxForwardPos = 66; //degrees
+        public static final double kPivotMaxForwardPos = 30; //degrees
         public static final double kPivotMaxReversePos = -3; //degrees
         public static final double kApproachRungSpeed = 0.05; //PercentOutput
 

@@ -85,9 +85,9 @@ public class RobotContainer {
     ** and based on that the correct command is called */
     if(telescopicButton.get()) {
       if(getReverseManual()) 
-        telescopicButton.whenPressed(new ClimberManual(climber, climber.leftTelescopic, this::getTelescopicReverseManual, -Constants.Climber.kApproachRungSpeed));
+        telescopicButton.whenPressed(new ClimberManual(climber, climber.leftTelescopic, this::getTelescopicReverseManual, Constants.Climber.kTelescopicRetractManualSpeed));
       else 
-        telescopicButton.whenPressed(new ClimberManual(climber, climber.leftTelescopic, this::getTelescopicArmManual, Constants.Climber.kApproachRungSpeed));
+        telescopicButton.whenPressed(new ClimberManual(climber, climber.leftTelescopic, this::getTelescopicArmManual, Constants.Climber.kTelescopicExtendManualSpeed));
     }
 
     /* if the pivot button forward is pressed then it is checked to see if the top button is pressed for pivoting backward for the pivot arm

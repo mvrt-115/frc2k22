@@ -73,8 +73,8 @@ public class Climber extends SubsystemBase {
         pivot.configForwardSoftLimitThreshold(Constants.Climber.kPivotMaxForwardPos);
         pivot.configReverseSoftLimitThreshold(Constants.Climber.kPivotMaxReversePos);
 
-        leftTelescopic.configForwardSoftLimitThreshold(Constants.Climber.kTelescopicFullExtend);
-        leftTelescopic.configReverseSoftLimitThreshold(Constants.Climber.kTelescopicFullRetract);
+        leftTelescopic.configForwardSoftLimitThreshold(Constants.Climber.Auton.kTelescopicFullExtendTicks);
+        leftTelescopic.configReverseSoftLimitThreshold(Constants.Climber.Auton.kTelescopicFullRetractTicks);
 
         rightTelescopic.configForwardSoftLimitThreshold(Constants.Climber.kTelescopicFullExtend);
         rightTelescopic.configReverseSoftLimitThreshold(Constants.Climber.kTelescopicFullRetract);
