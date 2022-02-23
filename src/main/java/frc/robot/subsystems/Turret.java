@@ -1,3 +1,4 @@
+
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
@@ -32,6 +33,7 @@ public class Turret extends SubsystemBase {
   private double targetDegrees;
   private double searchDirection;
   private boolean zeroing;
+  private double offset;
 
   /** Creates a new Turret. */
   public Turret(Limelight limelight) {
@@ -43,6 +45,8 @@ public class Turret extends SubsystemBase {
     targetDegrees = 0;
     searchDirection = 1;
     zeroing = false;
+
+    offset = 0;
 
     state = TurretState.DISABLED;
 
@@ -95,16 +99,16 @@ public class Turret extends SubsystemBase {
     }
     
     // determine if we can shoot if we are within some margin of error
-    if(Math.abs(limelight.getHorizontalOffset()) <= 1 && state != TurretState.FLIPPING)
+    if(Math.abs(limelight.getHorizontalOffset()+offset) <= 1 && state != TurretState.FLIPPING)
       setState(TurretState.CAN_SHOOT);
     else if(state != TurretState.FLIPPING)
       setState(TurretState.TARGETING);
   }
 
   public void updateTargetDegrees() {
-    if(limelight.targetsFound() && Math.abs(limelight.getHorizontalOffset()) > 4) {
+    if(limelight.targetsFound() && Math.abs(limelight.getHorizontalOffset()+offset) > 4) {
       // find target position by using current position and data from limelight
-      targetDegrees = getCurrentPositionDegrees() + limelight.getHorizontalOffset();
+      targetDegrees = getCurrentPositionDegrees() + limelight.getHorizontalOffset()+offset;
 
       if(targetDegrees > Constants.Turret.kMaxAngle + 20) {
         setState(TurretState.FLIPPING);
@@ -205,12 +209,22 @@ public class Turret extends SubsystemBase {
     return !magLimit.get();
   }
 
+  public void setOffset(double _offset)
+  {
+    offset = _offset;
+  }
+
+  public double getOffset()
+  {
+    return offset;
+  }
+
   /**
    * Logs data about Turret Subsystem to SmartDashboard
    */
   public void log() {
     SmartDashboard.putNumber("Turret Position (Degrees)", getCurrentPositionDegrees());
-    SmartDashboard.putNumber("Horizontal Error", limelight.getHorizontalOffset());
+    SmartDashboard.putNumber("Horizontal Error", limelight.getHorizontalOffset()+offset);
     SmartDashboard.putString("Turret State", state.toString());
     SmartDashboard.putNumber("Turret Output", turret.getMotorOutputPercent());
     SmartDashboard.putNumber("Target Degrees", targetDegrees);

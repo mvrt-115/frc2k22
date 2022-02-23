@@ -11,6 +11,9 @@ import frc.robot.util.LinearActuator;
 import frc.robot.util.RollingAverage;
 import frc.robot.util.TalonFactory;
 import frc.robot.Constants;
+import frc.robot.Constants.Flywheel;
+import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Turret;
 import frc.robot.util.MathUtils;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
@@ -63,10 +66,12 @@ public class Shooter extends SubsystemBase {
 
   private RollingAverage rpm;
   private Limelight limelight;
+  private Drivetrain drivetrain;
+  private Turret turret;
 
   /** Creates a new Shooter. */
-  public Shooter(Limelight limelight) {
-    // Mind Bending Test on the Reality of our Situation
+  public Shooter(Limelight limelight, Drivetrain drivetrain, Turret turret) {
+    // Mind Bending Test aon the Reality of our Situation
     flywheelLeader = TalonFactory.createTalonFX(LEADER_ID, false);
     // flywheelFollower = TalonFactory.createTalonSRX(FOLLOWER_ID, true);
     hoodMotor = TalonFactory.createTalonFX(HOOD_ID, false);
@@ -108,6 +113,8 @@ public class Shooter extends SubsystemBase {
     hoodMotor.setNeutralMode(NeutralMode.Brake);*/
 
     this.limelight = limelight;
+    this.drivetrain = drivetrain;
+    this.turret = turret;
 
     state = ShooterState.OFF;
     hoodState = HoodState.OFF;
@@ -280,6 +287,9 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+  
+    // With servos all this is kinda unnecessary but idt it matters so we can keep it
+
     rpm.updateValue(ticksToRPM(flywheelLeader.getSelectedSensorVelocity()));
     log();
     SmartDashboard.putNumber("time", Timer.getFPGATimestamp()); // to debug periodic
@@ -306,9 +316,7 @@ public class Shooter extends SubsystemBase {
         break;
     }
 
-    // With servos all this is kinda unnecessary but idt it matters so we can keep it
-
-    switch(hoodState)
+    /*switch(hoodState)
     {
       case OFF:
         stopHood();
@@ -330,7 +338,7 @@ public class Shooter extends SubsystemBase {
           setHoodState(HoodState.ADJUSTING);
         }
         break;
-    }
+    }*/
   }
 
   /**
@@ -406,11 +414,11 @@ public class Shooter extends SubsystemBase {
     return Math.abs(rpm.getAverage() - targetSpeed) <= Constants.Flywheel.ACCEPTABLE_ERROR;
   }
 
-  private boolean allWithinPositionError(double targetAngle) {
-    /*if (hoodMotor != null)
+  /*private boolean allWithinPositionError(double targetAngle) {
+    if (hoodMotor != null)
     {
       return Math.abs(getCurrentAngle() - targetAngle) <= Constants.Hood.ACCEPTABLE_ERROR;
-    }*/
+    }
 
     if (leftActuator != null)
     {
@@ -420,6 +428,42 @@ public class Shooter extends SubsystemBase {
     }
 
     return true;
+  }*/
+
+  /**
+   * Moves the turret to an offset angle and return the rpm to be added to the initial rpm
+   * @return addedRPM
+   */
+  public double moveShoot()
+  {
+    double driveSpeed = (drivetrain.getSpeeds().leftMetersPerSecond+drivetrain.getSpeeds().rightMetersPerSecond)/2;
+    
+    double initSpeed = getVelocityFromWheelRPM();
+    double addSpeed = Math.sqrt(Math.pow(initSpeed, 2) + 2*initSpeed*driveSpeed*Math.cos(1-turret.getCurrentPositionDegrees()+Math.pow(driveSpeed, 2)));
+
+    double offset = Math.asin(driveSpeed*Math.sin(1-turret.getCurrentPositionDegrees())/(initSpeed+addSpeed));
+
+    turret.setOffset(offset);
+
+    return (turret.getCurrentPositionDegrees()>90) ? getRPMFromVelocity(addSpeed) : -1*getRPMFromVelocity(addSpeed);
+  }
+
+  /**
+   * Converts the rpm of the flywheel to linear velocity
+   * @return linear velocity
+   */
+  public double getVelocityFromWheelRPM()
+  {
+    return getRequiredRPM()/Constants.Flywheel.RADIUS/60;
+  }
+
+  /**
+   * Converts the linear velocity of the flywheel to rpm
+   * @return rpm
+   */
+  public double getRPMFromVelocity(double velocity)
+  {
+    return velocity*Constants.Flywheel.RADIUS*60;
   }
 
   /**
