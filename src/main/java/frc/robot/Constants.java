@@ -28,19 +28,21 @@ public final class Constants {
 
     public static class Drivetrain {
 
+        
         // physical constants get from mech once drivetrain is done
-        public static final int kTrackScrubFactor = 0;
-        public static final double kTrackWidthInches = 0;
+        public static final double kTrackScrubFactor = 1.0469745223;
+        public static final double kTrackWidthInches = 24.85;
 
         // ids get from pheonix tuner once drivetrain is done
         public static int kCompLeftMasterId = 1;
         public static int kCompRightMasterId = 2;
         public static int kCompLeftFollowerId = 3;
         public static int kCompRightFollowerId = 4;
-        public static int kPracLeftMasterId = 5;
-        public static int kPracRightMasterId = 6;
-        public static int kPracLeftFollowerId = 7;
-        public static int kPracRightFollowerId = 8;
+       
+        public static int kPracLeftMasterId = 2;
+        public static int kPracRightMasterId = 0;
+        public static int kPracLeftFollowerId = 3;
+        public static int kPracRightFollowerId = 1;
 
         // constants for joystick drive
         public static final double kSensitivity = 0.90;
@@ -48,6 +50,29 @@ public final class Constants {
         public static final double kThrottleDeadband = 0.02;
         public static final double kWheelGain = 0.05;
         public static final double kWheelNonlinearity = 0.05;
+
+        //constants for aligning to ball from the camera
+        public static final double kThrottle  = 0.0; // change value later
+        public static final double kMaxPixelError = 1.0; // change value later
+        
+        //constants for getting distance traveled by motors
+        public static final double kTicksPerRevolution = 0; //RANDOM VALUES
+        public static final double kGearRatio = 10.0;
+        public static final double kwheelCircumference = 5.0;
+
+        public static final double kP = 0;
+        public static final double kI = 0;
+        public static final double kD = 0;
+        public static final double kFF = 0;
+
+        //values to be determined after the robot is characterized
+        public static final double kS = 0.1; //units: Volts
+        public static final double kV = 0.1; //units: Volts * Seconds / Meters
+        public static final double kA = 0.1; //units: Volts * Seconds^2 / Meters
+
+        //change values later
+        public static final int kAcceptableError = 10;
+        public static final double kDrivetrainMotorSpeed = 0.3;
 
     }
     

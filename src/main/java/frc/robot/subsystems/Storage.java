@@ -7,16 +7,11 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants;
 import frc.robot.util.TalonFactory;
 
@@ -42,10 +37,10 @@ public class Storage extends SubsystemBase {
   // make sure states work
   
   public Storage(Joystick button) {
-    storageMotor1 = TalonFactory.createTalonSRX(20, true);
+    storageMotor1 = TalonFactory.createTalonSRX(19, true);
     breakBeamLast = new DigitalInput(0);
     breakBeamFirst = new DigitalInput(1);
-    currentState = StorageState.AUTOMATIC;
+    currentState = StorageState.MANUAL;
     balls = 0; // change on day of match
     this.button = button;
     lastTimeBottom = Timer.getFPGATimestamp();
@@ -65,7 +60,7 @@ public class Storage extends SubsystemBase {
    // if(balls == 0) currentState = StorageState.NOT_EXPELLING;
     
     if(currentState == StorageState.MANUAL){
-      runMotor(button.getRawAxis(5) * 0.5);
+      // runMotor(button.getRawAxis(5) * 0.5);
     }
 
     if(currentState == StorageState.AUTOMATIC)
@@ -152,7 +147,7 @@ public class Storage extends SubsystemBase {
 
   public void runMotor(double speed){
     storageMotor1.set(ControlMode.PercentOutput, speed);
-    checkBreakbeams();
+    // checkBreakbeams();
   }
 
   public void checkBreakbeams(){

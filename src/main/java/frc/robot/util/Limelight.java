@@ -4,7 +4,6 @@
 
 package frc.robot.util;
 
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -15,8 +14,11 @@ public class Limelight extends SubsystemBase {
   private RollingAverage tx;
   private RollingAverage ty;
   private NetworkTable limelight;
-  public final double height = 104;//2.6416; // meters
-  public final double limelightMountHeight = 24;//2 * 0.3048; // feet to meters
+
+  // TODO: CHANGE THE LIMELIGHT CONSTANTS !!!!!!!!
+
+  public final double height = 104; //2.6416; // meters
+  public final double limelightMountHeight = 24;  //2 * 0.3048; // feet to meters
   private double limelightMountAngle = 40;
 
   public static enum LED_STATE {

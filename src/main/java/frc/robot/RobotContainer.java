@@ -4,28 +4,13 @@
 
 package frc.robot;
 
-import edu.wpi.first.hal.simulation.AnalogInDataJNI;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.commands.ExampleCommand;
-import frc.robot.commands.FindTarget;
-import frc.robot.commands.JoystickDrive;
-import frc.robot.commands.ManualOverrideControl;
-import frc.robot.commands.PIDTune;
-import frc.robot.commands.SetHoodAngle;
-import frc.robot.commands.SetRPM;
-import frc.robot.commands.StopShooter;
-import frc.robot.commands.SwitchManual;
-import frc.robot.commands.TurretManual;
-import frc.robot.commands.TurretSetupAlign;
-import frc.robot.subsystems.ExampleSubsystem;
-import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Storage;
-import frc.robot.subsystems.Shooter.HoodState;
+import frc.robot.commands.*;
+import frc.robot.subsystems.*;
 import frc.robot.subsystems.Shooter.ShooterState;
 import frc.robot.util.Limelight;
 import frc.robot.util.RollingAverage;
@@ -50,7 +35,7 @@ public class RobotContainer {
   private final Drivetrain dt = new Drivetrain();
   private final StopShooter stopShooter = new StopShooter(shooter);
 
-  private final Turret turret = new Turret(limelight);
+  // private final Turret turret = new Turret(limelight);
 
   private Joystick driverJoystick;
   private Joystick operatorJoystick;  
@@ -60,7 +45,7 @@ public class RobotContainer {
 
   private final Storage storage = new Storage(operatorJoystick);
 
-  private JoystickButton storageOverride;
+  // private JoystickButton storageOverride;
 
   private JoystickButton quickturn;
 
@@ -73,7 +58,7 @@ public class RobotContainer {
     driverJoystick = new Joystick(0);
     operatorJoystick = new Joystick(1);
 
-    storageOverride = new JoystickButton(driverJoystick, 0);
+    // storageOverride = new JoystickButton(driverJoystick, 0);
 
     turretClockwise = new JoystickButton(driverJoystick, 2);
     turretCounterclockwise = new JoystickButton(driverJoystick, 3);
@@ -85,7 +70,7 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
 
-    SmartDashboard.putData("Run Flywheel", new SetRPM(shooter));
+    SmartDashboard.putData("Run Flywheel", new SetRPM(shooter, storage));
     SmartDashboard.putData("Change Angle", new SetHoodAngle(shooter));
     SmartDashboard.putData("Config PIDF", new PIDTune(shooter.getMotor(), 
                                                       Constants.Flywheel.P, 
@@ -94,6 +79,7 @@ public class RobotContainer {
                                                       Constants.Flywheel.F,
                                                       "Flywheel",
                                                       stopShooter));
+
     dt.setDefaultCommand(new JoystickDrive(dt, this::getThrottle, this::getWheel, quickturn::get));
   }
 
@@ -106,8 +92,8 @@ public class RobotContainer {
   private void configureButtonBindings() 
   {
     //turret.setDefaultCommand(new FindTarget(turret));
-    storage.setDefaultCommand(new ManualOverrideControl(storage, this::getStorageThrottle));
-    storageOverride.whenPressed(new SwitchManual(storage));
+    // storage.setDefaultCommand(new ManualOverrideControl(storage, this::getStorageThrottle));
+    // storageOverride.whenPressed(new SwitchManual(storage));
 
     //turretClockwise.whenPressed(new TurretManual(turret, -0.5, turretClockwise::get));
     //turretCounterclockwise.whenPressed(new TurretManual(turret, 0.5, turretCounterclockwise::get));
@@ -152,8 +138,7 @@ public class RobotContainer {
    */
   public void disabledPeriodic() {
     shooter.setState(ShooterState.OFF);
-    shooter.setHoodState(HoodState.OFF);
-    shooter.log();
+    // shooter.setHoodState(HoodState.OFF);
   }
 
   public double getStorageThrottle(){

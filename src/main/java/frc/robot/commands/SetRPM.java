@@ -7,31 +7,38 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Storage;
+import frc.robot.subsystems.Shooter.ShooterState;
 
 public class SetRPM extends CommandBase {
   /** Creates a new SetRPM. */
   private Shooter shooter;
   private double rpm;
+  private Storage storage;
 
-  public SetRPM(Shooter shooter) {
+  public SetRPM(Shooter shooter, Storage storage) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.shooter = shooter;
-    addRequirements(shooter);
+    this.storage = storage;
+    addRequirements(shooter, storage);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    double defaultRPM = shooter.getRequiredRPM();
-    rpm = SmartDashboard.getNumber("new rpm", 100);
+    double defaultRPM = 1000;//shooter.getRequiredRPM();
+    rpm = SmartDashboard.getNumber("new rpm", defaultRPM);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooter.setTargetRPM(-rpm);
+    shooter.setTargetRPM(rpm);
     SmartDashboard.putNumber("new rpm", rpm);
     SmartDashboard.putBoolean("changing rpm", true);
+
+    if(shooter.getState() == ShooterState.ATSPEED)
+      storage.runMotor(1);
   }
 
   // Called once the command ends or is interrupted.

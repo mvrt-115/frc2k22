@@ -6,7 +6,6 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Storage;
-import frc.robot.subsystems.Storage.StorageState;
 
 public class SwitchManual extends CommandBase {
   /** Creates a new SwitchManual. */
