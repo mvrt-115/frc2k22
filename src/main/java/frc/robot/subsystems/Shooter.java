@@ -229,7 +229,6 @@ public class Shooter extends SubsystemBase {
     rpm.updateValue(MathUtils.ticksToRPM(flywheelLeader.getSelectedSensorVelocity(), Constants.Flywheel.TICKS_PER_REVOLUTION, Constants.Flywheel.GEAR_RATIO));
     log();
     SmartDashboard.putNumber("time", Timer.getFPGATimestamp()); // to debug periodic
-          
     
     // Sets state periodically
     switch(state) {
@@ -269,6 +268,9 @@ public class Shooter extends SubsystemBase {
         }
         break;
     }*/
+
+    // Adjusts turret to correct offset
+    // moveAlign();
   }
 
   /**
@@ -346,6 +348,21 @@ public class Shooter extends SubsystemBase {
     }
 
     return true;
+  }*/
+
+  /**
+   * Adjusts the turret to the correct offset
+   */
+  /*public void moveAlign()
+  {
+    double driveSpeed = (drivetrain.getSpeeds().leftMetersPerSecond+drivetrain.getSpeeds().rightMetersPerSecond)/2;
+    
+    double initSpeed = getVelocityFromWheelRPM();
+    double addSpeed = Math.sqrt(Math.pow(initSpeed, 2) + 2*initSpeed*driveSpeed*Math.cos(1-turret.getCurrentPositionDegrees())+Math.pow(driveSpeed, 2));
+
+    double offset = Math.asin(driveSpeed*Math.sin(1-turret.getCurrentPositionDegrees())/(initSpeed+addSpeed));
+
+    turret.setOffset(offset);
   }*/
 
   /**

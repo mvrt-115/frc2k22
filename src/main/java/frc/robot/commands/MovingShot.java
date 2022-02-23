@@ -36,13 +36,9 @@ public class MovingShot extends CommandBase {
     double driveSpeed = (drivetrain.getSpeeds().leftMetersPerSecond+drivetrain.getSpeeds().rightMetersPerSecond)/2;
     
     double initSpeed = shooter.getVelocityFromWheelRPM();
-    double addSpeed = Math.sqrt(Math.pow(initSpeed, 2) + 2*initSpeed*driveSpeed*Math.cos(1-turret.getCurrentPositionDegrees()+Math.pow(driveSpeed, 2)));
+    double addSpeed = Math.sqrt(Math.pow(initSpeed, 2) + 2*initSpeed*driveSpeed*Math.cos(1-turret.getCurrentPositionDegrees()+turret.getOffset())+Math.pow(driveSpeed, 2));
 
-    double offset = Math.asin(driveSpeed*Math.sin(1-turret.getCurrentPositionDegrees())/(initSpeed+addSpeed));
-
-    turret.setOffset(offset);
-
-    double increasedRPM = (turret.getCurrentPositionDegrees()>90) ? shooter.getRPMFromVelocity(addSpeed) : -1* shooter.getRPMFromVelocity(addSpeed);
+    double increasedRPM = (turret.getCurrentPositionDegrees()-turret.getOffset()>90) ? shooter.getRPMFromVelocity(addSpeed) : -1* shooter.getRPMFromVelocity(addSpeed);
 
     shooter.setTargetRPM(increasedRPM + shooter.getRequiredRPM());
 
