@@ -5,40 +5,36 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Turret.TurretState;
 
-public class AlignIntakeToBall extends CommandBase {
-  /** Creates a new AlignIntakeToBall. */
+public class FindTarget extends CommandBase {
+  private Turret turret;
 
-  private boolean notStopping;
-  private Drivetrain drivetrain;
+  /** Creates a new FindTarget. */
+  public FindTarget(Turret turret) {
+    this.turret = turret;
 
-  public AlignIntakeToBall(Drivetrain drivetrain2, boolean _notStopping) 
-  {
-    drivetrain = drivetrain2;
-    notStopping = _notStopping;
-    addRequirements(drivetrain);
+    addRequirements(turret);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    turret.setState(TurretState.TARGETING);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    //drivetrain.alignToBall();
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    drivetrain.stopDrivetrainMotors();
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return !notStopping;
+    return false;
   }
 }

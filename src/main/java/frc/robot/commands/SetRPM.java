@@ -22,14 +22,14 @@ public class SetRPM extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    // double defaultRPM = shooter.getRequiredRPM();
+    double defaultRPM = shooter.getRequiredRPM();
     rpm = SmartDashboard.getNumber("new rpm", 100);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooter.setTargetRPM(rpm);
+    shooter.setTargetRPM(-rpm);
     SmartDashboard.putNumber("new rpm", rpm);
     SmartDashboard.putBoolean("changing rpm", true);
   }

@@ -146,4 +146,24 @@ public final class Constants {
         public static final int kMotorID = 0;
         public static final int kMotorSpeed = 0;
     }
+    public static class Turret {
+        public static final double kGearRatio = 47.8; // 150 * 5 * 5 / 24
+        public static final double kTicksPerRevolution = 2048;
+        public static final double kMinAngle = -180; // degrees
+        public static final double kMaxAngle = 180; // degrees
+        public static final double kLimelightOffset = 40; // degrees
+
+        public static final double kEThreshold = 60;
+        public static final double kLowETurnThreshold = 0; // degrees; limelight x fov = 59.6
+
+        // for large angles > 60 degrees
+        public static final double kPLarge = 0.5;
+        public static final double kILarge = 0;
+        public static final double kDLarge = 0;
+
+        public static final double kP = 0.1;
+        public static final double kI = 0;
+        public static final double kD = 0.005;  // try with 0.007
+        public static final double kTurnSpeed = 0.3;
+    }
 }

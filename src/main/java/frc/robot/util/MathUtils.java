@@ -98,6 +98,16 @@ public class MathUtils {
         double metersPerSecond = wheelRotationsPerSecond * Units.inchesToMeters(wheelCircumference);
         return metersPerSecond;
     }
+    /**
+     * Converts ticks to degrees
+     * @param ticks         motor ticks
+     * @param gearRatio     number of motor turns required to turn object once
+     * @param ticksPerRev   ticks per revolution (4096 for TalonSRX, 2048 for TalonFX)
+     * @return              degrees of rotation from the given ticks
+     */
+    public static double ticksToDegrees(double ticks, double gearRatio, double ticksPerRev) {
+        return ticks / (ticksPerRev * gearRatio) * 360.0;
+    }
 
     public static double inchesToMeters(double inches) {
         return inches * 0.0254; // no way it's Team 254 :O

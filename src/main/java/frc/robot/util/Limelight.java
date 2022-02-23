@@ -4,18 +4,23 @@
 
 package frc.robot.util;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Limelight extends SubsystemBase {
 
+  Derivitive deltaE = new Derivitive();
+
   private RollingAverage tx;
   private RollingAverage ty;
   private NetworkTable limelight;
-  public final double height = 2.6416; // meters
-  public final double limelightMountHeight = 2 * 0.3048; // feet to meters
-  private double limelightMountAngle = 20;
+  public final double height = 104;//2.6416; // meters
+  public final double limelightMountHeight = 24;//2 * 0.3048; // feet to meters
+  private double limelightMountAngle = 40;
 
   public static enum LED_STATE {
     DEFAULT, ON, OFF, BLINKING;
@@ -27,10 +32,13 @@ public class Limelight extends SubsystemBase {
 
   /** Creates a new LimelightWrapper. */
   public Limelight() {
+    
     limelight = NetworkTableInstance.getDefault().getTable("limelight");
-    ty = new RollingAverage(20);
-    tx = new RollingAverage(20);
-
+    tx = new RollingAverage(50);
+    ty = new RollingAverage(5);
+    
+    setLED(LED_STATE.DEFAULT);
+    setPipeline(CAM_MODE.VISION_WIDE);
   }
 
   @Override
@@ -38,6 +46,7 @@ public class Limelight extends SubsystemBase {
     // update ty and tx
     updateEntry("ty", ty);
     updateEntry("tx", tx);
+    SmartDashboard.putNumber("Dist From Target", getHorizontalDistance());
   }
 
   public void setLED(LED_STATE newState) {
@@ -63,10 +72,10 @@ public class Limelight extends SubsystemBase {
         limelight.getEntry("pipeline").setNumber(0);
         break;
       case VISION_ZOOM:
-        limelight.getEntry("pipeline").setNumber(1);
+        limelight.getEntry("pipeline").setNumber(0);
         break;
       case DRIVER:
-        limelight.getEntry("pipeline").setNumber(2);
+        limelight.getEntry("pipeline").setNumber(0);
         break;
     }
   }
@@ -77,8 +86,13 @@ public class Limelight extends SubsystemBase {
    * @param rollingAvg  The rolling average to update (ty or tx)
    */
   private void updateEntry(String key, RollingAverage rollingAvg) {
-    if (targetsFound())
-      rollingAvg.updateValue(limelight.getEntry(key).getDouble(0.0));
+    double val = limelight.getEntry(key).getDouble(0);
+    // if (targetsFound() && Math.abs(val - tx.getAverage()) < 2) 
+      // System.out.println("got value: " + key + " " +limelight.);
+      rollingAvg.updateValue((limelight.getEntry(key).getDouble(0)));
+    //  System.out.println(limelight.getEntry(key).getDouble(0));
+    // }
+      
   }
 
   /**
@@ -87,7 +101,7 @@ public class Limelight extends SubsystemBase {
    * @return angle (degrees)
    */
   public double getVerticalOffset() {
-    return ty.getAverage() + limelightMountAngle;
+    return limelightMountAngle - ty.getAverage();
   }
 
   /**
@@ -105,7 +119,7 @@ public class Limelight extends SubsystemBase {
    * @return distance (meters)
    */
   public double getHorizontalDistance() {
-    return height / Math.tan(Math.toRadians(getVerticalOffset() + limelightMountAngle));
+    return getVerticalDistance() / Math.tan(Math.toRadians(getVerticalOffset()));
   }
 
   /**

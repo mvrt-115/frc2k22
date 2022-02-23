@@ -5,19 +5,17 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Shooter.ShooterState;
 
-public class AlignIntakeToBall extends CommandBase {
-  /** Creates a new AlignIntakeToBall. */
+public class StopShooter extends CommandBase {
+  Shooter shooter;
 
-  private boolean notStopping;
-  private Drivetrain drivetrain;
-
-  public AlignIntakeToBall(Drivetrain drivetrain2, boolean _notStopping) 
-  {
-    drivetrain = drivetrain2;
-    notStopping = _notStopping;
-    addRequirements(drivetrain);
+  /** Creates a new StopShooter. */
+  public StopShooter(Shooter shooter) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(shooter);
+    this.shooter = shooter;
   }
 
   // Called when the command is initially scheduled.
@@ -27,18 +25,17 @@ public class AlignIntakeToBall extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    //drivetrain.alignToBall();
+    shooter.stopFlywheel();
+    shooter.setState(ShooterState.OFF);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    drivetrain.stopDrivetrainMotors();
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return !notStopping;
+    return false;
   }
 }
