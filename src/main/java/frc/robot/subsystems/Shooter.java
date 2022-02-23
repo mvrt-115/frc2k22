@@ -70,7 +70,7 @@ public class Shooter extends SubsystemBase {
   private Turret turret;
 
   /** Creates a new Shooter. */
-  public Shooter(Limelight limelight, Drivetrain drivetrain, Turret turret) {
+  public Shooter(Limelight limelight/*, Drivetrain drivetrain, Turret turret*/) {
     // Mind Bending Test aon the Reality of our Situation
     flywheelLeader = TalonFactory.createTalonFX(LEADER_ID, false);
     // flywheelFollower = TalonFactory.createTalonSRX(FOLLOWER_ID, true);
@@ -113,8 +113,8 @@ public class Shooter extends SubsystemBase {
     hoodMotor.setNeutralMode(NeutralMode.Brake);*/
 
     this.limelight = limelight;
-    this.drivetrain = drivetrain;
-    this.turret = turret;
+    //this.drivetrain = drivetrain;
+    //this.turret = turret;
 
     state = ShooterState.OFF;
     hoodState = HoodState.OFF;
@@ -434,7 +434,7 @@ public class Shooter extends SubsystemBase {
    * Moves the turret to an offset angle and return the rpm to be added to the initial rpm
    * @return addedRPM
    */
-  public double moveShoot()
+  /*public double moveShoot()
   {
     double driveSpeed = (drivetrain.getSpeeds().leftMetersPerSecond+drivetrain.getSpeeds().rightMetersPerSecond)/2;
     
@@ -446,7 +446,7 @@ public class Shooter extends SubsystemBase {
     turret.setOffset(offset);
 
     return (turret.getCurrentPositionDegrees()>90) ? getRPMFromVelocity(addSpeed) : -1*getRPMFromVelocity(addSpeed);
-  }
+  }*/
 
   /**
    * Converts the rpm of the flywheel to linear velocity
