@@ -26,7 +26,7 @@ public class SetRPM extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    double defaultRPM = 1000;//shooter.getRequiredRPM();
+    double defaultRPM = shooter.getRequiredRPM();
     rpm = SmartDashboard.getNumber("new rpm", defaultRPM);
   }
 
@@ -37,8 +37,10 @@ public class SetRPM extends CommandBase {
     SmartDashboard.putNumber("new rpm", rpm);
     SmartDashboard.putBoolean("changing rpm", true);
 
-    if(shooter.getState() == ShooterState.ATSPEED)
+    // if(shooter.getState() == ShooterState.ATSPEED)
       storage.runMotor(1);
+    // else
+    //   storage.runMotor(0);
   }
 
   // Called once the command ends or is interrupted.
