@@ -4,35 +4,99 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import java.util.List;
+
+import com.pathplanner.lib.PathPlanner;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Drivetrain;
 
-public class AutonPath6 extends CommandBase {
+public class AutonPath6 extends SequentialCommandGroup {
   /** Creates a new AutonPath6. */
 
   private Drivetrain drivetrain;
   public AutonPath6(Drivetrain dr) 
   {
+    int delay = 5;
     drivetrain = dr;
+    
+    addCommands(
+      // moveFront().withTimeout(delay),
+      // moveBack().withTimeout(delay),
+      moveFrontWithPathPlanner().withTimeout(delay)
+      // moveBackWithPathPlanner().withTimeout(delay),
+      // rotateAndMove().withTimeout(delay)
+    );
+  }
+  @Override
+  public void execute() {
+    super.execute();
   }
 
-  // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    drivetrain.setDrivetrainMotorSpeed(0.3, 0.3);
+  public void end(boolean interrupted) {
+      super.end(interrupted);
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {}
+  public Command moveBack()
+  {
+    Trajectory tr = TrajectoryGenerator.generateTrajectory(
+      new Pose2d(0, 0, new Rotation2d(0)),
+      List.of(
+        new Translation2d(0, -1),
+        new Translation2d(0, -2),
+        new Translation2d(0, -3)
+      ),
+      new Pose2d(0, -4, new Rotation2d(0)),
+      new TrajectoryConfig(8, 2)
+    );
+    drivetrain.resetGyro();
+    drivetrain.setOdometry(tr.getInitialPose());
+    //relativeTo method here
+    return drivetrain.getRamseteCommand(tr);
+  }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {}
+  public Command moveFront()
+  {
+    Trajectory tr = TrajectoryGenerator.generateTrajectory(
+      new Pose2d(0, 0, new Rotation2d(0)), 
+      List.of(
+        new Translation2d(0, 1),
+        new Translation2d(0, 2),
+        new Translation2d(0, 3)
+      ), 
+      new Pose2d(0, 4, new Rotation2d(0)), 
+      new TrajectoryConfig(8, 2)
+    );
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
+    drivetrain.resetGyro();
+    drivetrain.setOdometry(tr.getInitialPose());
+
+    return drivetrain.getRamseteCommand(tr);
+  }
+
+  public Command moveFrontWithPathPlanner()
+  {
+    Trajectory tr = PathPlanner.loadPath("MoveFrontPath", 8, 2);
+    return drivetrain.getRamseteCommand(tr);
+  }
+
+  public Command moveBackWithPathPlanner()
+  {
+    Trajectory tr = PathPlanner.loadPath("MoveBackPath", 8, 2);
+    return drivetrain.getRamseteCommand(tr);
+  }
+
+  public Command rotateAndMove()
+  {
+    Trajectory tr = PathPlanner.loadPath("RotateAndMove", 8, 2);
+    return drivetrain.getRamseteCommand(tr);
   }
 }

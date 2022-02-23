@@ -29,7 +29,6 @@ import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.MathUtils;
-import frc.robot.util.TalonFactory;
 
 public class Drivetrain extends SubsystemBase {
     
@@ -39,10 +38,7 @@ public class Drivetrain extends SubsystemBase {
 
     private DrivetrainState state;
 
-    private TalonFX rightMaster;
-    private TalonFX leftMaster;
-    private TalonFX rightFollower;
-    private TalonFX leftFollower;
+    private TalonFX rightMaster, leftMaster, rightFollower, leftFollower;
 
     private AHRS gyro;
 
@@ -52,9 +48,7 @@ public class Drivetrain extends SubsystemBase {
     private Field2d field;
     private SimpleMotorFeedforward feedforward;
     private DifferentialDriveKinematics kinematics;
-
-    private PIDController leftController;
-    private PIDController rightController;
+    private PIDController leftController, rightController;
 
     public Drivetrain() {
         //     if (Constants.kIsPracticeBot) {
@@ -74,15 +68,15 @@ public class Drivetrain extends SubsystemBase {
         leftMaster = new TalonFX(Constants.Drivetrain.kPracLeftMasterId);
         leftFollower = new TalonFX(Constants.Drivetrain.kPracLeftFollowerId);
         
-        rightMaster.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx, Constants.kTimeoutMs);
-        rightFollower.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx, Constants.kTimeoutMs);
-        leftMaster.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx, Constants.kTimeoutMs);
-        leftFollower.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx, Constants.kTimeoutMs);
-
         rightMaster.configFactoryDefault();
         rightFollower.configFactoryDefault();
         leftMaster.configFactoryDefault();
         leftFollower.configFactoryDefault();
+
+        rightMaster.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx, Constants.kTimeoutMs);
+        rightFollower.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx, Constants.kTimeoutMs);
+        leftMaster.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx, Constants.kTimeoutMs);
+        leftFollower.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx, Constants.kTimeoutMs);
 
         rightMaster.setInverted(TalonFXInvertType.Clockwise); 
         rightFollower.setInverted(TalonFXInvertType.Clockwise);
@@ -107,28 +101,13 @@ public class Drivetrain extends SubsystemBase {
        
         leftController = new PIDController(Constants.Drivetrain.kP, Constants.Drivetrain.kI, Constants.Drivetrain.kD);
         rightController = new PIDController(Constants.Drivetrain.kP, Constants.Drivetrain.kI, Constants.Drivetrain.kD);
-    }
-
-    /** 
-     * Method for the drivetrain to align to the ball detected using a camera
-     * (Basically turns the robot towards the ball as the corresponding button is held down)
-     */
-    public void alignToBall() {
-        int error = getErrorInPixels();
-        if (Math.abs(error) > 0 && Math.abs(error) < Constants.Drivetrain.kAcceptableError) {
-            double speedOfWheel = error / Constants.Drivetrain.kMaxPixelError;
-            cheesyIshDrive(Constants.Drivetrain.kThrottle, speedOfWheel * error > 0 ? 1 : -1, true);
-        }
-    }
-
-    /**
-     * Method to be implemented by Sohan
-     * Works with alignToBall() 
-     * @return Distance from where the robot is pointing to the ball in pixels
-     */
-    // TODO SOHAN SHINGADE DO THIS
-    public int getErrorInPixels() {
-        return 0;
+    
+        leftMaster.setSelectedSensorPosition(0);
+        leftFollower.setSelectedSensorPosition(0);
+        rightMaster.setSelectedSensorPosition(0);
+        rightFollower.setSelectedSensorPosition(0);
+        SmartDashboard.putData("field", field);
+        gyro.reset();
     }
 
     /**
@@ -166,12 +145,10 @@ public class Drivetrain extends SubsystemBase {
         }
 
         double scaling_factor = Math.max(1.0, Math.max(Math.abs(left), Math.abs(right)));
-        // DO NOT DELETE WE DON'T KNOW WHY BUT THIS MAKES IT WORK
+        // DO NOT DELETE WE DON'T KNOW WHY BUT THIS MAKES IT WORK3
         // SmartDashboard.putNumber("left", left);
         // SmartDashboard.putNumber("right", right);
         setDrivetrainMotorSpeed(left / scaling_factor, right / scaling_factor);
-
-
     }
 
     @Override
@@ -190,12 +167,28 @@ public class Drivetrain extends SubsystemBase {
         SmartDashboard.putNumber("Right Encoder:", rightMaster.getSelectedSensorPosition());
         SmartDashboard.putNumber("Left Output", leftFollower.getMotorOutputPercent());
         SmartDashboard.putNumber("Right Output", rightFollower.getMotorOutputPercent());
-      //  SmartDashboard.putString("Drivetrain State", state.toString());
-        SmartDashboard.putNumber("Gyro Angle:", gyro.getAngle());
+        SmartDashboard.putNumber("Gyro Angle:", -gyro.getAngle());
+        SmartDashboard.putNumber("Pose Gyro Angle", pose.getRotation().getDegrees());
         SmartDashboard.putNumber("Left Distance Traveled", getDistanceTravelled(leftMaster, leftFollower));
         SmartDashboard.putNumber("Right Distance Traveled", getDistanceTravelled(rightMaster, rightFollower));
         SmartDashboard.putNumber("X value", pose.getX());
         SmartDashboard.putNumber("Y value", pose.getY());
+        SmartDashboard.putData("SD Field", field);
+    }
+    
+    /**
+     * Method was done very "badly", need to fix using PID
+     * @param targetAngle
+     */
+    public void quickturn(double targetAngle) //in degrees
+    {
+        double currentAngle = getGyroAngle().getDegrees();
+        while (currentAngle <= Math.abs(targetAngle - 10))
+        {
+            setDrivetrainMotorSpeed(0.1, -0.1);
+            currentAngle = getGyroAngle().getDegrees();
+        }
+        setDrivetrainMotorSpeed(0, 0);
     }
 
     /* GETTERS AND SETTERS (AND RESETTERS) */
@@ -212,6 +205,25 @@ public class Drivetrain extends SubsystemBase {
         leftFollower.set(ControlMode.PercentOutput, left);
         rightFollower.set(ControlMode.PercentOutput, right);
         rightMaster.set(ControlMode.PercentOutput, right);
+    }
+    
+    /**
+     * Used in auton
+     * 
+     * @param leftMetersPerSecond - speed of the left side
+     * @param rightMetersPerSecond - speed of right side
+     */
+    public void setDrivetrainVelocity(double leftMetersPerSecond, double rightMetersPerSecond){
+        double leftRadiansPerSec = MathUtils.metersToRadians(leftMetersPerSecond, Constants.Drivetrain.kwheelCircumference);
+        double rightRadiansPerSec = MathUtils.metersToRadians(rightMetersPerSecond, Constants.Drivetrain.kwheelCircumference);
+
+        double leftVolts = feedforward.calculate(leftRadiansPerSec);
+        double rightVolts = feedforward.calculate(rightRadiansPerSec);
+        
+        leftMaster.set(ControlMode.PercentOutput, leftVolts / 12.0);
+        leftFollower.set(ControlMode.PercentOutput, leftVolts / 12.0);
+        rightMaster.set(ControlMode.PercentOutput, rightVolts / 12.0);
+        rightFollower.set(ControlMode.PercentOutput, rightVolts / 12.0);
     }
 
     /**
@@ -287,7 +299,8 @@ public class Drivetrain extends SubsystemBase {
                 ticks,
                 Constants.Drivetrain.kTicksPerRevolution,
                 Constants.Drivetrain.kGearRatio,
-                Constants.Drivetrain.kwheelCircumference);
+                Constants.Drivetrain.kwheelCircumference
+            );
     }
 
     /**
@@ -338,6 +351,7 @@ public class Drivetrain extends SubsystemBase {
      * @return kinematics
      */
     public DifferentialDriveKinematics getKinematics() {
+    
         return kinematics;
     }
 
@@ -356,7 +370,15 @@ public class Drivetrain extends SubsystemBase {
     public Pose2d getPose() {
         return pose;
     }
-
+    
+    /**
+     * Returns the field
+     * @return the robot field, shown in smartdashboard.
+     */
+    public Field2d getField() {
+        return field;
+    }
+    
     /** 
      * Resets the gyro 
      */
@@ -370,6 +392,14 @@ public class Drivetrain extends SubsystemBase {
     public void resetOdometry() {
         resetEncoders();
         odometry.update(new Rotation2d(), 0, 0);
+    }
+
+    /** 
+     * Reset the odometry and the encoders
+     */
+    public void setOdometry(Pose2d newPose) {
+        resetEncoders();
+        odometry.resetPosition(pose, new Rotation2d(0));
     }
 
     /** 

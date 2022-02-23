@@ -55,9 +55,10 @@ public final class Constants {
         public static final double kMaxPixelError = 1.0; // change value later
         
         //constants for getting distance traveled by motors
-        public static final double kTicksPerRevolution = 0; //RANDOM VALUES
-        public static final double kGearRatio = 10.0;
-        public static final double kwheelCircumference = 5.0;
+        public static final double kTicksPerRevolution = 2048; 
+        public static final double kGearRatio = 12.78;
+        
+        public static final double kwheelCircumference = 6*Math.PI;  //INCHES
 
         public static final double kP = 0;
         public static final double kI = 0;
@@ -65,9 +66,9 @@ public final class Constants {
         public static final double kFF = 0;
 
         //values to be determined after the robot is characterized
-        public static final double kS = 0.1; //units: Volts
-        public static final double kV = 0.1; //units: Volts * Seconds / Meters
-        public static final double kA = 0.1; //units: Volts * Seconds^2 / Meters
+        public static final double kS = 0.5985; //units: Volts
+        public static final double kV = 2.8888; //units: Volts * Seconds / Meters
+        public static final double kA = 0.14018; //units: Volts * Seconds^2 / Meters
 
         //change values later
         public static final int kAcceptableError = 10;
@@ -80,27 +81,23 @@ public final class Constants {
         // the # of ticks it takes to be at the bottom when pivoting
         public static final double kTICKS_TO_TOP = 23400; // the # of ticks it takes to be at the top when pivoting
 
+        public static final int kPIVOT_ID = 34; // change later
+        public static final int kROLLER_ID = 0; // change later
 
-        public static final int kPIVOT_ID = 35; // change later
-        public static final int kROLLER_ID = 31; // change later
-
-
-        public static final double kWHEELS_SPEED = -1;
+        public static final double kWHEELS_SPEED = 0.6;
 
         public static final double kPIVOT_SPEED = 0.4; // speed of intake when going up or down
         public static final double kPIVOT_STOP_SPEED_WHEN_UP =0.13; // speed of intake to keep it up
-
-        public static final double kPIVOT_STOP_SPEED_WHEN_DOWN = -0.23; // speed of intake to keep it down
+        public static final double kPIVOT_STOP_SPEED_WHEN_DOWN = -0.1; // speed of intake to keep it down
         //change later after testing
 
-        public static final double kMARGIN_OF_ERROR_TICKS = 6000; // constant
+        public static final double kMARGIN_OF_ERROR_TICKS = 4000; // constant
 
 
         // change values later
-        public static final double kP = 0.02;
+        public static final double kP = 0.015;
         public static final double kI = 0.0;
-        public static final double kD = 0.000;//0.001;
-
+        public static final double kD = 0.001;//0.001;
         public static final double kFF = 0;//-0.001;
     }
 

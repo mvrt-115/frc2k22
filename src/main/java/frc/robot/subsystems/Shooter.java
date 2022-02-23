@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 
 public class Shooter extends SubsystemBase {
@@ -27,11 +26,11 @@ public class Shooter extends SubsystemBase {
   private final double MIN_RPM = 8000;
 
   private final int LEADER_ID = 40;
-  private final int FOLLOWER_ID = 32;
-  private final int HOOD_ID = 1;
+  // private final int FOLLOWER_ID = 32;
+  // private final int HOOD_ID = 1;
 
   private BaseTalon flywheelLeader;
-  private BaseTalon flywheelFollower;
+  // private BaseTalon flywheelFollower;
   private BaseTalon hoodMotor;
 
   // Attributes of flywheel

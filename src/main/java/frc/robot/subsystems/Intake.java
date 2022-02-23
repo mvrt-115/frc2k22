@@ -7,18 +7,9 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-
-import edu.wpi.first.util.sendable.Sendable;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.RobotContainer;
 import frc.robot.util.TalonFactory;
 
 public class Intake extends SubsystemBase {
@@ -39,10 +30,8 @@ public class Intake extends SubsystemBase {
     state = IntakeState.UP;
 
     intakeMotor = TalonFactory.createTalonSRX(Constants.Intake.kROLLER_ID, true); // change motor IDs from Constants later
-
     pivotMotor = TalonFactory.createTalonSRX(Constants.Intake.kPIVOT_ID, false); // change motor IDs from Constants later
-    //pivotMotor.setInverted(true);
-
+   
     pivotMotor.setSelectedSensorPosition(0);
 
     pivotMotor.config_kP(Constants.kPIDIdx, Constants.Intake.kP);

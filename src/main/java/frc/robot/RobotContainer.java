@@ -4,26 +4,16 @@
 
 package frc.robot;
 
-import javax.swing.JInternalFrame;
-
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.commands.ExampleCommand;
-import frc.robot.commands.IntakeBalls;
-import frc.robot.commands.JoystickDrive;
-import frc.robot.commands.SetRPM;
-
-import frc.robot.commands.StopIntaking;
-import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.ExampleSubsystem;
-import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Intake;
-import frc.robot.util.Limelight;
-import frc.robot.util.RollingAverage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.FiveBallAuton;
+import frc.robot.commands.JoystickDrive;
+import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Intake;
+import frc.robot.util.RollingAverage;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -36,13 +26,12 @@ public class RobotContainer {
  // private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
   private Joystick driverJoystick; //Joysticks
-  private Joystick operatorJoystick;  
-  
-  private JoystickButton intakeBalls; //buttons
-  private JoystickButton alignDrivetrain;
-  private JoystickButton expelBalls;
+  // private Joystick operatorJoystick;  
+  // private JoystickButton intakeBalls; //buttons
+  // private JoystickButton alignDrivetrain;
+  // private JoystickButton expelBalls;
 
-  private Drivetrain drivetrain;
+  private Drivetrain drivetrain = new Drivetrain();
 
   public RollingAverage throttle, wheel;
 
@@ -51,15 +40,9 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
-    
     driverJoystick = new Joystick(0);
+    quickturn = new JoystickButton(driverJoystick, 0);
 
-    // intakeBalls = new JoystickButton(operatorJoystick, 0);
-    // alignDrivetrain = new JoystickButton(operatorJoystick, 0);
-    // expelBalls = new JoystickButton(operatorJoystick, 0);
-
-    quickturn = new JoystickButton(driverJoystick, 5);
-    drivetrain = new Drivetrain();
     throttle = new RollingAverage(50);
     wheel = new RollingAverage(15);
     
@@ -75,20 +58,13 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // the :: syntax allows us to pass in methods of a class as variables so that the command can continuously access input values
-    drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
-
-    // intakeBalls.whenPressed(new IntakeBalls(intake)).whenReleased(new StopIntaking(intake));
-    // expelBalls.whenPressed(new ExpelBalls(storage));
-    // alignDrivetrain.whenPressed(new AlignIntakeToBall(drivetrain, true)).whenReleased(new AlignIntakeToBall(drivetrain, false));
-    /*
-      Shoot: 4
-      Intake: 5
-      Expell Balls: <find>
-      Climb: <find for operator>
-      Turret Manual: ????
-      Align To ball: 0
-    */
-
+    drivetrain.setDefaultCommand(
+      new JoystickDrive(
+        drivetrain, 
+        this::getThrottle, 
+        this::getWheel, 
+        quickturn::get)
+      );
   }
 
   /**
@@ -98,7 +74,7 @@ public class RobotContainer {
    * @return value from [-1, 1] that is used for input for the the robot forward or backwards movement
    */
   public double getThrottle() {
-    throttle.updateValue(-driverJoystick.getRawAxis(5));
+    throttle.updateValue(-driverJoystick.getRawAxis(5) * .7);
     return throttle.getAverage();
   }
 
@@ -120,9 +96,12 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
-    //drivetrain.setDrivetrainMotorSpeed(0.2, 0.2);
-   // return new AutonPath6(drivetrain).withTimeout(3);
-   return null;
+    System.out.println("Returned Auton Command");
+    return new FiveBallAuton(drivetrain, new Intake());
+  }
+
+  public Command getSimulationCommand()
+  {
+    return new FiveBallAuton(drivetrain, new Intake());
   }
 }

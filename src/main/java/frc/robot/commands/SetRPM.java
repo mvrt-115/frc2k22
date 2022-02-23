@@ -22,7 +22,7 @@ public class SetRPM extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    double defaultRPM = shooter.getRequiredRPM();
+    // double defaultRPM = shooter.getRequiredRPM();
     rpm = SmartDashboard.getNumber("new rpm", 100);
   }
 
