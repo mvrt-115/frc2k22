@@ -25,9 +25,6 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
-  TalonSRX stor = new TalonSRX(19);
-  TalonFX shot = new TalonFX(12
-  );
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -37,7 +34,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
-    // m_robotContainer = new RobotContainer();
+    m_robotContainer = new RobotContainer();
   }
 
   /**
@@ -97,8 +94,6 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    stor.set(ControlMode.PercentOutput, -1);
-    shot.set(ControlMode.PercentOutput, -1);
   }
 
   @Override

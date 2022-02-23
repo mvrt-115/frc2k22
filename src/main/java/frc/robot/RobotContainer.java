@@ -45,7 +45,7 @@ public class RobotContainer {
   // private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
 
   private final Limelight limelight = new Limelight();
-  private final Shooter shooter = new Shooter(limelight);
+  // private final Shooter shooter = new Shooter(limelight);
   // private final StopShooter stopShooter = new StopShooter(shooter);
 
   private final Turret turret = new Turret(limelight);
@@ -85,8 +85,8 @@ public class RobotContainer {
     
     configureButtonBindings();
 
-    SmartDashboard.putData("Run Flywheel", new SetRPM(shooter));
-    SmartDashboard.putData("Change Angle", new SetHoodAngle(shooter));
+    // SmartDashboard.putData("Run Flywheel", new SetRPM(shooter));
+    // SmartDashboard.putData("Change Angle", new SetHoodAngle(shooter));
     // SmartDashboard.putData("Config PIDF", new PIDTune(shooter.getMotor(), 
     //                                                   Constants.Flywheel.P, 
     //                                                   Constants.Flywheel.I,
@@ -123,7 +123,7 @@ public class RobotContainer {
 
     turret.setDefaultCommand(new FindTarget(turret));
     
-    disableTurret.whenPressed(new DisableTurret(turret));
+    // disableTurret.whenPressed(new DisableTurret(turret));
   }
 
   /**
@@ -164,8 +164,8 @@ public class RobotContainer {
    * Use this to declare subsystem disabled behavior
    */
   public void disabledPeriodic() {
-    shooter.setState(ShooterState.OFF);
-    shooter.setHoodState(HoodState.OFF);
-    shooter.log();
+    // shooter.setState(ShooterState.OFF);
+    // shooter.setHoodState(HoodState.OFF);
+    // shooter.log();
   }
 }
