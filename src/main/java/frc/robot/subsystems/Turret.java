@@ -7,7 +7,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
-import edu.wpi.first.wpilibj.DigitalInput;
+// import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -27,22 +27,22 @@ public class Turret extends SubsystemBase {
 
   private TalonFX turret;
   private Limelight limelight;
-  private DigitalInput magLimit;
+  // private DigitalInput magLimit;
 
   private double targetDegrees;
   private double searchDirection;
-  private boolean zeroing;
+  // private boolean zeroing;
 
   /** Creates a new Turret. */
   public Turret(Limelight limelight) {
     this.limelight = limelight;
 
-    turret = TalonFactory.createTalonFX(0, false);
-    magLimit = new DigitalInput(0);
+    turret = TalonFactory.createTalonFX(0, true);
+    // magLimit = new DigitalInput(0);
 
     targetDegrees = 0;
     searchDirection = 1;
-    zeroing = false;
+    // zeroing = false;
 
     state = TurretState.DISABLED;
 
@@ -52,21 +52,20 @@ public class Turret extends SubsystemBase {
 
     resetEncoder();
     turret.selectProfileSlot(0, 0);
-    turret.setInverted(true);
   }
 
   @Override
   public void periodic() {
     log();
+    // unless flipping keep track of the target degrees
     if(state != TurretState.FLIPPING)
       updateTargetDegrees();
 
-    
-    // continue looking for target
     if(state == TurretState.FLIPPING) {
       turnDegrees(targetDegrees);
       
-      if(magLimit.get()) {
+      // once flipped to a point when target not in view, begin targetting again
+      if(!limelight.targetsFound()) {
         setState(TurretState.TARGETING);
         updateTargetDegrees();
       }
@@ -79,30 +78,30 @@ public class Turret extends SubsystemBase {
         setPercentOutput(0);
     }
 
-    if(state == TurretState.SEARCHING) {
-      double pos = getCurrentPositionDegrees();
-      // // if(Math.abs(pos - Constants.Turret.kMa) < Constants.Turret.kEThreshold) 
-      // //   zeroing = false;//true;
-      // // if(Math.abs(pos) < Constants.Turret.kEThreshold)
-      // //   zeroing = false;
-      // if(Math.abs(pos) >= Constants.Turret.kMaxAngle) 
-      //   searchDirection *= -1;
+    // if(state == TurretState.SEARCHING) {
+    //   double pos = getCurrentPositionDegrees();
+    //   // // if(Math.abs(pos - Constants.Turret.kMa) < Constants.Turret.kEThreshold) 
+    //   // //   zeroing = false;//true;
+    //   // // if(Math.abs(pos) < Constants.Turret.kEThreshold)
+    //   // //   zeroing = false;
+    //   // if(Math.abs(pos) >= Constants.Turret.kMaxAngle) 
+    //   //   searchDirection *= -1;
 
-      // // if(zeroing) 
-      // //   turnDegrees(0);
-      // // else
-      if(Math.abs(pos - Constants.Turret.kMinAngle) < Constants.Turret.kEThreshold) 
-        zeroing = true;
-      if(Math.abs(pos) < Constants.Turret.kEThreshold)
-        zeroing = false;
-      else if(Math.abs(Math.abs(pos) - Constants.Turret.kMinAngle) < Constants.Turret.kEThreshold) 
-        searchDirection *= -1;
+    //   // // if(zeroing) 
+    //   // //   turnDegrees(0);
+    //   // // else
+    //   if(Math.abs(pos - Constants.Turret.kMinAngle) < Constants.Turret.kEThreshold) 
+    //     zeroing = true;
+    //   if(Math.abs(pos) < Constants.Turret.kEThreshold)
+    //     zeroing = false;
+    //   else if(Math.abs(Math.abs(pos) - Constants.Turret.kMinAngle) < Constants.Turret.kEThreshold) 
+    //     searchDirection *= -1;
 
-      if(zeroing) 
-        turnDegrees(0);
-      else
-        setPercentOutput(searchDirection * Constants.Turret.kTurnSpeed);
-    }
+    //   if(zeroing) 
+    //     turnDegrees(0);
+    //   else
+    //     setPercentOutput(searchDirection * Constants.Turret.kTurnSpeed);
+    // }
     
     // determine if we can shoot if we are within some margin of error
     if(Math.abs(limelight.getHorizontalOffset()) <= 1 && state != TurretState.FLIPPING)
@@ -112,7 +111,7 @@ public class Turret extends SubsystemBase {
   }
 
   public void updateTargetDegrees() {
-    if(limelight.targetsFound() && Math.abs(limelight.getHorizontalOffset()) > 4) {
+    if(limelight.targetsFound() && Math.abs(limelight.getHorizontalOffset()) > 2) {
       // find target position by using current position and data from limelight
       targetDegrees = getCurrentPositionDegrees() + limelight.getHorizontalOffset();
 
@@ -212,7 +211,7 @@ public class Turret extends SubsystemBase {
    * @return The alignment state (true/false)
    */
   public boolean getMagAligned() {
-    return !magLimit.get();
+    return false;//!magLimit.get();
   }
 
   /**
@@ -225,6 +224,6 @@ public class Turret extends SubsystemBase {
     SmartDashboard.putNumber("Turret Output", turret.getMotorOutputPercent());
     SmartDashboard.putNumber("Direction", searchDirection);
     SmartDashboard.putNumber("Target Degrees", targetDegrees);
-    SmartDashboard.putBoolean("Is Aligned", getMagAligned());
+    // SmartDashboard.putBoolean("Is Aligned", getMagAligned());
   }
 }

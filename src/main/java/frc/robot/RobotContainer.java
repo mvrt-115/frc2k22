@@ -4,47 +4,19 @@
 
 package frc.robot;
 
-import java.util.List;
-
-import com.pathplanner.lib.PathPlanner;
-
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.hal.simulation.AnalogInDataJNI;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.commands.ExampleCommand;
 //import frc.robot.commands.SetRPM;
 
-import frc.robot.commands.StopIntaking;
-import frc.robot.subsystems.ExampleSubsystem;
-import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Turret;
-import frc.robot.subsystems.Drivetrain;
-import frc.robot.commands.ExampleCommand;
-import frc.robot.commands.FindTarget;
-import frc.robot.commands.JoystickDrive;
-import frc.robot.commands.PIDTune;
-import frc.robot.commands.SetHoodAngle;
-import frc.robot.commands.SetRPM;
-import frc.robot.commands.StopShooter;
-import frc.robot.commands.TurretManual;
-import frc.robot.commands.TurretSetupAlign;
-import frc.robot.subsystems.ExampleSubsystem;
-import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.*;
+import frc.robot.commands.*;
 import frc.robot.subsystems.Shooter.HoodState;
 import frc.robot.subsystems.Shooter.ShooterState;
 import frc.robot.util.Limelight;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.AutonPath6;
 import frc.robot.commands.DisableTurret;
 import frc.robot.commands.JoystickDrive;
 import frc.robot.subsystems.Drivetrain;
@@ -63,20 +35,18 @@ public class RobotContainer {
   private Joystick driverJoystick; //Joysticks
   private Joystick operatorJoystick;  
   
-  private JoystickButton intakeBalls; //buttons
-  private JoystickButton alignDrivetrain;
-  private JoystickButton expelBalls;
+  // private JoystickButton intakeBalls; //buttons
+  // private JoystickButton alignDrivetrain;
+  // private JoystickButton expelBalls;
 
   private Drivetrain drivetrain;
-  
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
-  private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
+
+  // private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
 
   private final Limelight limelight = new Limelight();
   private final Shooter shooter = new Shooter(limelight);
-  private final Drivetrain dt = new Drivetrain();
-  private final StopShooter stopShooter = new StopShooter(shooter);
+  // private final StopShooter stopShooter = new StopShooter(shooter);
 
   private final Turret turret = new Turret(limelight);
 
@@ -186,7 +156,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
    // Trajectory tr = PathPlanner.loadPath("TryPath", 4, 4);
-    return new AutonPath6(drivetrain);
+    return null;//new AutonPath6(drivetrain);
     //return new DriveTrajectory(drivetrain);
   }
   
