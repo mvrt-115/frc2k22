@@ -218,6 +218,7 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("RPM Needed", getRequiredRPM());
     SmartDashboard.putString("Shooter State", state.toString());
     SmartDashboard.putNumber("Target RPM", targetRPM);
+    SmartDashboard.putNumber("Flywheel Temp", flywheelLeader.getTemperature());
     // SmartDashboard.putNumber("Hood Angle", getCurrentAngle());
     // SmartDashboard.putNumber("Hood Angle Ticks", hoodMotor.getSelectedSensorPosition());
   }
@@ -242,7 +243,7 @@ public class Shooter extends SubsystemBase {
         flywheelLeader.set(ControlMode.Velocity, MathUtils.rpmToTicks(targetRPM, Constants.Flywheel.TICKS_PER_REVOLUTION, Constants.Flywheel.GEAR_RATIO));
         if(allWithinRPMError(targetRPM)) {
           setState(ShooterState.ATSPEED);
-          SmartDashboard.putNumber("at sppee", 2);
+          SmartDashboard.putNumber("at sppee ", 2);
         }
           
         break;
@@ -282,6 +283,7 @@ public class Shooter extends SubsystemBase {
    * @return required rpm for shooter
    */
   public double getRequiredRPM() {
+    /*
     // metric values will be used until return
     double distance = Units.inchesToMeters(limelight.getHorizontalDistance());
 
@@ -297,6 +299,9 @@ public class Shooter extends SubsystemBase {
       vel_proj = 0.2546 * Math.pow(dx, 2) - 0.0295 * dx + 7.0226;
     
     return 1.8*(Units.metersToInches(60) * vel_proj / (Constants.Flywheel.RADIUS * 2 * Math.PI));
+    */
+
+    return 640.55*Math.pow(limelight.getHorizontalDistance(), 0.3468);
   }
 
   /**
