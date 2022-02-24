@@ -51,7 +51,7 @@ public class Turret extends SubsystemBase {
 
     state = TurretState.DISABLED;
 
-    turret.config_kP(0, Constants.Turret.kP);
+    turret.config_kP(0, Constants.Turret.kPLarge);
     turret.config_kI(0, Constants.Turret.kI);
     turret.config_kD(0, Constants.Turret.kD);
 
@@ -77,31 +77,42 @@ public class Turret extends SubsystemBase {
     double p = SmartDashboard.getNumber("turret p", Constants.Turret.kP);
     double i = SmartDashboard.getNumber("turret i", Constants.Turret.kI);
     double d = SmartDashboard.getNumber("turret d", Constants.Turret.kD);
-    targetDegrees = getCurrentPositionDegrees() + limelight.getHorizontalOffset();
+    // targetDegrees = getCurrentPositionDegrees() + limelight.getHorizontalOffset();
 
     if(state == TurretState.FLIPPING) {
       turret.set(ControlMode.Position, MathUtils.degreesToTicks(targetDegrees, Constants.Turret.kTicksPerRevolution, Constants.Turret.kGearRatio));
       
-      if(Math.abs(targetDegrees - getCurrentPositionDegrees()) < 0) 
+      if(Math.abs(targetDegrees - getCurrentPositionDegrees()) < 1) 
         setState(TurretState.TARGETING);
     } else {
       
 
       // turret.set(ControlMode.Position, MathUtils.degreesToTicks(targetDegrees, Constants.Turret.kTicksPerRevolution, Constants.Turret.kGearRatio));
 
+      double error = limelight.getHorizontalOffset() / 30;
+      double time = Timer.getFPGATimestamp();
+
+      SmartDashboard.putNumber("deriv", (((error - lastError) / (time - lastTime)) * d));
+
+
+      SmartDashboard.putNumber("Error", error);
+
       area+= lastError * (Timer.getFPGATimestamp() - lastTime);
 
-      turret.set(ControlMode.PercentOutput, 
-        (p * limelight.getHorizontalOffset())
-        + (i * area) + 
-        (((limelight.getHorizontalOffset() - lastError) / (Timer.getFPGATimestamp() - lastTime)) * d)
-        );
+      if(Math.abs(limelight.getHorizontalOffset()) > 1)
+        turret.set(ControlMode.PercentOutput, 
+          (p * error)
+          + (i * area) + 
+          (((error - lastError) / (time - lastTime)) * d)
+          );
+      else
+        turret.set(ControlMode.PercentOutput, 0);
       
-      lastError = limelight.getHorizontalOffset();
-      lastTime = Timer.getFPGATimestamp();
+      lastError = error;
+      lastTime = time;
 
       if(Math.abs(getCurrentPositionDegrees()) >= Constants.Turret.kMaxAngle) {
-        turret.set(ControlMode.PercentOutput, 0);
+        // turret.set(ControlMode.PercentOutput, 0);
         setState(TurretState.FLIPPING);
         if(getCurrentPositionDegrees() < 0)
           targetDegrees = 160;

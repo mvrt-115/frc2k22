@@ -178,16 +178,16 @@ public final class Constants {
         public static final double kLowETurnThreshold = 0; // degrees; limelight x fov = 59.6
 
         // for large angles > 60 degrees
-        public static final double kPLarge = 0.1;
+        public static final double kPLarge = 0.3;
         public static final double kILarge = 0;
         public static final double kDLarge = 0;
 
         // public static final double kP = 0.05;
         // public static final double kI = 0;
         // public static final double kD = 0.03;  // try with 0.007
-        public static final double kP = 0.004;
+        public static final double kP = 0.3;
         public static final double kI = 0;
-        public static final double kD = 0.00 ;//-0.05;//16;
+        public static final double kD = 0.3;//-0.05;//16;
         public static final double kTurnSpeed = 0.3;
     }
 }
