@@ -78,22 +78,23 @@ public class RobotContainer {
     // alignDrivetrain = new JoystickButton(operatorJoystick, 0);
     // expelBalls = new JoystickButton(operatorJoystick, 0);
 
-    quickturn = new JoystickButton(driverJoystick, 5);
+    quickturn = new JoystickButton(driverJoystick, 1);
     drivetrain = new Drivetrain();
     throttle = new RollingAverage(50);
     wheel = new RollingAverage(15);
+
     
     configureButtonBindings();
 
     // SmartDashboard.putData("Run Flywheel", new SetRPM(shooter));
     // SmartDashboard.putData("Change Angle", new SetHoodAngle(shooter));
-    // SmartDashboard.putData("Config PIDF", new PIDTune(shooter.getMotor(), 
-    //                                                   Constants.Flywheel.P, 
-    //                                                   Constants.Flywheel.I,
-    //                                                   Constants.Flywheel.D,
-    //                                                   Constants.Flywheel.F,
-    //                                                   "Flywheel",
-    //                                                   stopShooter));
+    SmartDashboard.putData("Config PIDF", new PIDTune(turret.getMotor(), 
+                                                      Constants.Turret.kP, 
+                                                      Constants.Turret.kI,
+                                                      Constants.Turret.kD,
+                                                      0,
+                                                      "Turret",
+                                                      new DisableTurret(turret)));
   }
 
   /**
