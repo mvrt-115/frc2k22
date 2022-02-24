@@ -35,12 +35,10 @@ public class MovingShot extends CommandBase {
   public void execute() {
     // double driveSpeed = (drivetrain.getSpeeds().leftMetersPerSecond+drivetrain.getSpeeds().rightMetersPerSecond)/2;
     
-<<<<<<< HEAD
-    double initSpeed = shooter.getVelocityFromWheelRPM();
-    double addSpeed = Math.sqrt(Math.pow(initSpeed, 2) + 2*initSpeed*driveSpeed*Math.cos(1-turret.getCurrentPositionDegrees()+turret.getOffset())+Math.pow(driveSpeed, 2));
+    // double initSpeed = shooter.getVelocityFromWheelRPM();
+    // double addSpeed = Math.sqrt(Math.pow(initSpeed, 2) + 2*initSpeed*driveSpeed*Math.cos(1-turret.getCurrentPositionDegrees()+turret.getOffset())+Math.pow(driveSpeed, 2));
 
-    double increasedRPM = (turret.getCurrentPositionDegrees()-turret.getOffset()>90) ? shooter.getRPMFromVelocity(addSpeed) : -1* shooter.getRPMFromVelocity(addSpeed);
-=======
+    // double increasedRPM = (turret.getCurrentPositionDegrees()-turret.getOffset()>90) ? shooter.getRPMFromVelocity(addSpeed) : -1* shooter.getRPMFromVelocity(addSpeed);
     // double initSpeed = shooter.getVelocityFromWheelRPM();
     // double addSpeed = Math.sqrt(Math.pow(initSpeed, 2) + 2*initSpeed*driveSpeed*Math.cos(1-turret.getCurrentPositionDegrees()+Math.pow(driveSpeed, 2)));
 
@@ -49,7 +47,6 @@ public class MovingShot extends CommandBase {
     // turret.setOffset(offset);
 
     // double increasedRPM = (turret.getCurrentPositionDegrees()>90) ? shooter.getRPMFromVelocity(addSpeed) : -1* shooter.getRPMFromVelocity(addSpeed);
->>>>>>> c8e00a17a9579d9c8ae6974c9dc54e507547706e
 
     // shooter.setTargetRPM(increasedRPM + shooter.getRequiredRPM());
 
