@@ -132,7 +132,7 @@ public final class Constants {
         public static final double D = 15.8;
         public static final double F = 0.058;
         public static final double RADIUS = 2;
-        public static final double ACCEPTABLE_ERROR = 50;
+        public static final double ACCEPTABLE_ERROR = 100;
         public static final double MAX_VOLTAGE_COMPENSATION = 10;
         public static final double TICKS_PER_REVOLUTION = 2048;
         public static final int NUM_AVG = 5;

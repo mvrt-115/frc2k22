@@ -37,7 +37,7 @@ public class Storage extends SubsystemBase {
   // make sure states work
   
   public Storage(Joystick button) {
-    storageMotor1 = TalonFactory.createTalonSRX(19, true);
+    storageMotor1 = TalonFactory.createTalonSRX(21, true);
     breakBeamLast = new DigitalInput(0);
     breakBeamFirst = new DigitalInput(1);
     currentState = StorageState.MANUAL;
@@ -94,7 +94,7 @@ public class Storage extends SubsystemBase {
     SmartDashboard.putString("current state", getCurrentStateAsString());
     SmartDashboard.putNumber("number of balls in hopper", balls);
     SmartDashboard.putBoolean("is second breakbeam broken", !breakBeamLast.get());
-    SmartDashboard.putNumber("axis value", button.getRawAxis(5));
+    // SmartDashboard.putNumber("axis value", button.getRawAxis(5));
     SmartDashboard.putBoolean("is first breakbeam broken", !breakBeamFirst.get());
   }
 
