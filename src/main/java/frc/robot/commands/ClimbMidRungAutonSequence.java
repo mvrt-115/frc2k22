@@ -21,10 +21,10 @@ public class ClimbMidRungAutonSequence extends SequentialCommandGroup {
     this.climber = climber;
 
     addCommands(
-      new ClimberAuton(climber, climber.pivot, Auton.kPivotPivotingBack),
+      // new ClimberAuton(climber, climber.pivot, Auton.kPivotPivotingBack),
       new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.Auton.kHookHighRungTele, climber.leftTelescopicProximity),
       new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.kTelescopicFullRetract),
-      new ClimberAuton(climber, climber.pivot, Auton.kRotateToHighRungPivot, climber.pivotLimit),
+      // new ClimberAuton(climber, climber.pivot, Auton.kRotateToHighRungPivot, climber.pivotLimit),
       new ClimberAuton(climber, climber.leftTelescopic, Auton.kExtendPivotHang, climber.pivotProximity)
     );
   }

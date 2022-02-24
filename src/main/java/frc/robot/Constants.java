@@ -89,9 +89,17 @@ public final class Constants {
         //IDs/channels for sensors and motors
         //NEED TO BE CHANGED WHEN FULLY WIRED OR TESTING
         //motors
-        public static final int kPivotID = 0; // 22
+        //public static final int kPivotID = 0; // 22
         public static final int kRightTelescopicID = 11;
         public static final int kLeftTelescopicID = 4;
+
+        // Servo Contants
+        public static final int kRightServoID = 1; //Check (analog input)
+        public static final int kLeftServoID = 2; // Check (analog input)
+
+        public static final double kServoTurn = 90;
+        public static final double kServoOnThreshold = 0.001;
+        public static final double kInitialServoAngle = 0;
 
         //inductive proximity sensors
         public static final int kPivotProximityChannel = 0;
@@ -129,8 +137,8 @@ public final class Constants {
         public static final double kFeedForwardPivot = 0;
 
         //speeds for manual climbing
-        public static final double kTelescopicRetractManualSpeed = 0.25;
-        public static final double kTelescopicExtendManualSpeed = -0.20;
+        public static final double kTelescopicRetractManualSpeed = -0.25;
+        public static final double kTelescopicExtendManualSpeed = 0.20;
         public static final double kPivotManualSpeed = 0.1;
 
         //manual position constants
@@ -142,7 +150,7 @@ public final class Constants {
         public static final double kApproachRungSpeed = 0.05; //PercentOutput
 
         //button constants
-        public static final double kAxisThreshold = 0.6;
+        public static final double kAxisThreshold = 0.2;
 
         //31" in height of pivot arm
         //30" min 62" max of telescopic 

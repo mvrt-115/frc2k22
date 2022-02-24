@@ -37,15 +37,15 @@ public class ClimberTraversalAutonSequence extends SequentialCommandGroup {
 
       // code begins with the robot on mid rung
      new ClimberAuton(climber, climber.leftTelescopic, Auton.kLiftOffRungTele), 
-     new ClimberAuton(climber, climber.pivot, Auton.kPivotTeleBack), 
+    //  new ClimberAuton(climber, climber.pivot, Auton.kPivotTeleBack), 
      new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.kTelescopicFullExtend), 
      new ClimberAuton(climber, climber.leftTelescopic, Auton.kRotateToHighRungTele, climber.leftTelescopicLimit),
      new ClimberAuton(climber, climber.leftTelescopic, Auton.kHookHighRungTele, climber.leftTelescopicProximity),
-     new ClimberAuton(climber, climber.pivot, Auton.kShiftWeight), 
+    //  new ClimberAuton(climber, climber.pivot, Auton.kShiftWeight), 
      new ClimberAuton(climber, climber.leftTelescopic, Auton.kRetractPivotLiftOff), 
-     new ClimberAuton(climber, climber.pivot, Auton.kPivotPivotingBack), 
+    //  new ClimberAuton(climber, climber.pivot, Auton.kPivotPivotingBack), 
      new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.kTelescopicFullRetract), 
-     new ClimberAuton(climber, climber.pivot, Auton.kRotateToHighRungPivot, climber.pivotLimit), 
+    //  new ClimberAuton(climber, climber.pivot, Auton.kRotateToHighRungPivot, climber.pivotLimit), 
      new ClimberAuton(climber, climber.leftTelescopic, Auton.kExtendPivotHang, climber.pivotProximity) 
 
       // code begins with the robot on mid rung

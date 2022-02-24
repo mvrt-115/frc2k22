@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.Constants.Climber.Auton;
@@ -31,8 +32,6 @@ public class RobotContainer {
 
   private Joystick driverJoystick;
   private Joystick operatorJoystick;  
-  
-  private JoystickButton intakeBalls = new JoystickButton(operatorJoystick, 0);
 
   // climber operator manual buttons
   private JoystickButton pivotButton;
@@ -49,12 +48,12 @@ public class RobotContainer {
   private RollingAverage throttle = new RollingAverage(50);
   private RollingAverage wheel = new RollingAverage(15);
 
-  private JoystickButton quickturn = new JoystickButton(driverJoystick, 5);
+  private JoystickButton quickturn; 
 
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    //driverJoystick = new Joystick(0);
+    driverJoystick = new Joystick(1);
     operatorJoystick = new Joystick(0);
 
     pivotButton = new JoystickButton(operatorJoystick, 3);
@@ -65,6 +64,9 @@ public class RobotContainer {
 
     manualButtonClimb = new JoystickButton(operatorJoystick, 0);
     buttonCounter = 0;
+
+
+    quickturn = new JoystickButton(driverJoystick, 5); 
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -84,26 +86,29 @@ public class RobotContainer {
     /* if the telescopic button extend is pressed then it is checked to see if the top button is pressed for retracting the telescopic arm
     ** and based on that the correct command is called */
     if(telescopicButton.get()) {
-      if(getReverseManual()) 
+      if(getReverseManual()) {
         telescopicButton.whenPressed(new ClimberManual(climber, climber.leftTelescopic, this::getTelescopicReverseManual, Constants.Climber.kTelescopicRetractManualSpeed));
-      else 
+        System.out.println("This should retract");
+      }
+      else {
         telescopicButton.whenPressed(new ClimberManual(climber, climber.leftTelescopic, this::getTelescopicArmManual, Constants.Climber.kTelescopicExtendManualSpeed));
+        System.out.println("This should extend");
+      }
     }
 
     /* if the pivot button forward is pressed then it is checked to see if the top button is pressed for pivoting backward for the pivot arm
     ** and based on that the correct command is called */
-    if(pivotButton.get()) {
-      if(getReverseManual()) 
-        pivotButton.whenPressed(new ClimberManual(climber, climber.pivot, this::getPivotReverseManual, -Constants.Climber.kApproachRungSpeed));
-      else 
-        pivotButton.whenPressed(new ClimberManual(climber, climber.pivot, this::getPivotArmManual, Constants.Climber.kApproachRungSpeed));
-    }
+    // if(pivotButton.get()) {
+    //   if(getReverseManual()) 
+    //     pivotButton.whenPressed(new ClimberManual(climber, climber.pivot, this::getPivotReverseManual, -Constants.Climber.kApproachRungSpeed));
+    //   else 
+    //     pivotButton.whenPressed(new ClimberManual(climber, climber.pivot, this::getPivotArmManual, Constants.Climber.kApproachRungSpeed));
 
     /** If the start climber button is pressed, then the start and stop climber parellel command is called and the instance of the stop climber 
      *  to help the command choose whether the stop climber or not
      */
-    if(getStartClimb())
-      startClimb.whenPressed(new StartStopClimb(this::getStopClimb, climber));
+    // if(getStartClimb())
+      // startClimb.whenPressed(new StartStopClimb(this::getStopClimb, climber));
 
     //if(manualButtonClimb.get() && buttonCounter==1)
     //  manualOneRungSeqeunceTest();
@@ -113,8 +118,8 @@ public class RobotContainer {
     /** the manual sequence method is called and checks the amount of times the button is pressed and runs the commands in that order and the 
      *  state of the button is stored as the past state and is called to check if the button was ever realeased
      */
-    manualSequenceTest();
-    manualLastState = manualButtonClimb.get();
+    // manualSequenceTest();
+    // manualLastState = manualButtonClimb.get();
   }
 
 
@@ -165,6 +170,7 @@ public class RobotContainer {
    * @return boolean for state of reverse button
    */
   public boolean getReverseManual() {
+    System.out.println("GET REVERSE HAS BEEN CALLED");
     return operatorJoystick.getRawAxis(3) >= Constants.Climber.kAxisThreshold;
   }
 
@@ -235,6 +241,7 @@ public class RobotContainer {
   /** Each time the manual climb button is pressed, the next command in the sequence for the mid rung climb is called and 
    * the number of times the button is called is stored in the buttonCounter variable
    */
+  /*
   public void manualOneRungSeqeunceTest(){
     if(getManualSequenceButton() && buttonCounter == 1)
     {
@@ -261,10 +268,11 @@ public class RobotContainer {
       new ClimberAuton(climber, climber.leftTelescopic, Auton.kExtendPivotHang, climber.pivotProximity);
     }
   }
-
+  */
   /** Each time the manual climb button is pressed, the next command in the sequence for the traversal climb is called and 
    *  the number of times the button is called is stored in the buttonCounter variable
    */
+  /*
   public void manualSequenceTest() {
     if(getManualSequenceButton() && buttonCounter == 1)
     {
@@ -311,7 +319,7 @@ public class RobotContainer {
       new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.Auton.kExtendPivotHang, climber.pivotProximity);
     }
   }
-
+  */
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *

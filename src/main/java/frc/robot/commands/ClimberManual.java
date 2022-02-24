@@ -55,7 +55,7 @@ public class ClimberManual extends CommandBase {
         return !button.get() && ((motor.equals(climber.leftTelescopic) 
         && ( speed < 0 && Constants.Climber.kTelescopicFullRetract >= climber.getTelescopicPosition()) 
         || (speed > 0 && Constants.Climber.kTelescopicFullExtend <= climber.getTelescopicPosition())) 
-        || ( motor.equals(climber.pivot) && (speed < 0 && Constants.Climber.kPivotMaxForwardPos >= climber.getPivotAngle()) 
-        || (speed > 0 && Constants.Climber.kPivotMaxReversePos <= climber.getPivotAngle()) ) );
+        || /*( motor.equals(climber.pivot)*/(speed < 0 && Constants.Climber.kPivotMaxForwardPos >= climber.getPivotAngle()) 
+        || (speed > 0 && Constants.Climber.kPivotMaxReversePos <= climber.getPivotAngle()));
     }
 }

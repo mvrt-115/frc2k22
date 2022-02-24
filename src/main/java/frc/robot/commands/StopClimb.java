@@ -32,7 +32,7 @@ public class StopClimb extends CommandBase {
   public void end(boolean interrupted) {
     //stops all motors
     climber.stopMotor(climber.leftTelescopic);
-    climber.stopMotor(climber.pivot);
+    // climber.stopMotor(climber.pivot);
   }
 
   // Returns true when the command should end.

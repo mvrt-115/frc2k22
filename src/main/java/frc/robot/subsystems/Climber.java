@@ -10,6 +10,7 @@ import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.MathUtils;
@@ -17,9 +18,10 @@ import frc.robot.util.TalonFactory;
 
 public class Climber extends SubsystemBase {
 
-    public TalonFX pivot; // motor for both pivoting arms
+    //public TalonFX pivot; // motor for both pivoting arms
     public TalonFX leftTelescopic, rightTelescopic; // motors for each telescopic arm, controlling extending and
                                                     // collapsing motions
+    public Servo leftServo, rightServo; // servos that act as ratchets
     public DigitalInput pivotProximity, leftTelescopicProximity, rightTelescopicProximity; // inductive proximity
                                                                                            // sensors
     // for detecting whether robot is hooked on rungs or not for each type of arm
@@ -40,9 +42,12 @@ public class Climber extends SubsystemBase {
      */
     public Climber() {
         // initializes all motors and sensors
-        pivot = TalonFactory.createTalonFX(Constants.Climber.kLeftTelescopicID, TalonFXInvertType.Clockwise);
+        // pivot = TalonFactory.createTalonFX(Constants.Climber.kLeftTelescopicID, TalonFXInvertType.Clockwise);
         leftTelescopic = TalonFactory.createTalonFX(Constants.Climber.kLeftTelescopicID, false);
         rightTelescopic = TalonFactory.createTalonFX(Constants.Climber.kRightTelescopicID, false);
+
+        leftServo = new Servo(Constants.Climber.kLeftServoID);
+        rightServo = new Servo(Constants.Climber.kRightServoID);
 
         pivotProximity = new DigitalInput(Constants.Climber.kPivotProximityChannel);
         leftTelescopicProximity = new DigitalInput(Constants.Climber.kLeftTelescopicProximityChannel);
@@ -55,10 +60,10 @@ public class Climber extends SubsystemBase {
         // reconfiguring all motors with PID constants
         rightTelescopic.follow(leftTelescopic);
 
-        pivot.config_kP(Constants.kPIDIdx, Constants.Climber.kPivotkP);
-        pivot.config_kI(Constants.kPIDIdx, Constants.Climber.kPivotkI);
-        pivot.config_kD(Constants.kPIDIdx, Constants.Climber.kPivotkD);
-        pivot.config_kF(Constants.kPIDIdx, Constants.Climber.kPivotkF);
+        // pivot.config_kP(Constants.kPIDIdx, Constants.Climber.kPivotkP);
+        // pivot.config_kI(Constants.kPIDIdx, Constants.Climber.kPivotkI);
+        // pivot.config_kD(Constants.kPIDIdx, Constants.Climber.kPivotkD);
+        // pivot.config_kF(Constants.kPIDIdx, Constants.Climber.kPivotkF);
 
         leftTelescopic.config_kP(Constants.kPIDIdx, Constants.Climber.kTelekP);
         leftTelescopic.config_kI(Constants.kPIDIdx, Constants.Climber.kTelekI);
@@ -70,21 +75,25 @@ public class Climber extends SubsystemBase {
         rightTelescopic.config_kD(Constants.kPIDIdx, Constants.Climber.kTelekD);
         rightTelescopic.config_kF(Constants.kPIDIdx, Constants.Climber.kTelekF);
 
-        pivot.configForwardSoftLimitThreshold(Constants.Climber.kPivotMaxForwardPos);
-        pivot.configReverseSoftLimitThreshold(Constants.Climber.kPivotMaxReversePos);
+        // pivot.configForwardSoftLimitThreshold(Constants.Climber.kPivotMaxForwardPos);
+        // pivot.configReverseSoftLimitThreshold(Constants.Climber.kPivotMaxReversePos);
 
+        /*
         leftTelescopic.configForwardSoftLimitThreshold(Constants.Climber.Auton.kTelescopicFullExtendTicks);
         leftTelescopic.configReverseSoftLimitThreshold(Constants.Climber.Auton.kTelescopicFullRetractTicks);
 
         rightTelescopic.configForwardSoftLimitThreshold(Constants.Climber.kTelescopicFullExtend);
         rightTelescopic.configReverseSoftLimitThreshold(Constants.Climber.kTelescopicFullRetract);
 
-        pivot.configForwardSoftLimitEnable(true);
-        pivot.configReverseSoftLimitEnable(true);
+        // pivot.configForwardSoftLimitEnable(true);
+        // pivot.configReverseSoftLimitEnable(true);
         leftTelescopic.configForwardSoftLimitEnable(true);
         leftTelescopic.configReverseSoftLimitEnable(true);
         rightTelescopic.configForwardSoftLimitEnable(true);
         rightTelescopic.configReverseSoftLimitEnable(true);
+        */
+        leftServo.setZeroLatch();
+        rightServo.setZeroLatch();
     }
 
     /**
@@ -140,7 +149,8 @@ public class Climber extends SubsystemBase {
      * @return The pivot angle that the rotating arm is at (using encoders)
      */
     public double getPivotAngle() {
-        return MathUtils.ticksToDegrees(getEncoderValue(pivot));
+        // return MathUtils.ticksToDegrees(getEncoderValue(pivot));
+        return 0;
     }
 
     /**
@@ -232,5 +242,14 @@ public class Climber extends SubsystemBase {
         if(!getProximity(rightTelescopicProximity) &&!getProximity(leftTelescopicProximity) 
             && getPivotState() == ClimberState.TELESCOPIC_PROXIMITY) 
               setTelescopicState(ClimberState.NONE);
+
+        if(Math.abs(leftTelescopic.getMotorOutputPercent()) <= Constants.Climber.kServoOnThreshold){
+            leftServo.setAngle(Constants.Climber.kInitialServoAngle);
+            rightServo.setAngle(Constants.Climber.kInitialServoAngle);
+        }
+        else {
+            leftServo.setAngle(Constants.Climber.kServoTurn);
+            rightServo.setAngle(Constants.Climber.kServoTurn);
+        }
     }
 }
