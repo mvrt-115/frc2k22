@@ -27,6 +27,8 @@ public final class Constants {
     public static final SupplyCurrentLimitConfiguration kCurrentLimit = new SupplyCurrentLimitConfiguration(true, 40, 50, 3.8);
 
     public static class Drivetrain {
+
+        
         // physical constants get from mech once drivetrain is done
         public static final double kTrackScrubFactor = 1.0469745223;
         public static final double kTrackWidthInches = 24.85;
@@ -135,7 +137,7 @@ public final class Constants {
         public static final double DHood = 6.9;
         public static final double FHood = 0.058;
         public static final double RADIUS = 2;
-        public static final double ACCEPTABLE_ERROR = 50;
+        public static final double ACCEPTABLE_ERROR = 100;
         public static final double MAX_VOLTAGE_COMPENSATION = 10;
         public static final double TICKS_PER_REVOLUTION = 4096;
         public static final int NUM_AVG = 5;

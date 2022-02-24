@@ -4,43 +4,36 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Storage;
 
-public class SetHoodAngle extends CommandBase {
-  private Shooter shooter;
-  private double angle;
+public class SwitchManual extends CommandBase {
+  /** Creates a new SwitchManual. */
+  private Storage storage;
 
-  /** Creates a new SetHoodAngle. */
-  public SetHoodAngle(Shooter shooter) {
+  public SwitchManual(Storage storage) {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(shooter);
-    this.shooter = shooter;
+    this.storage = storage;
+    addRequirements(storage);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    angle = SmartDashboard.getNumber("Set Hood Angle", 0);
+    storage.setState(storage.currentState == Storage.StorageState.MANUAL ? Storage.StorageState.AUTOMATIC : Storage.StorageState.MANUAL);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    // shooter.setTargetAngle(angle);
-    angle = SmartDashboard.getNumber("Set Hood Angle", angle);
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    SmartDashboard.putNumber("Set Hood Angle", angle);
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

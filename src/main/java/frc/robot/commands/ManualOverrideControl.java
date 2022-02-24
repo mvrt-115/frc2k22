@@ -4,39 +4,43 @@
 
 package frc.robot.commands;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Storage;
 
-public class ExpelBalls extends CommandBase {
+public class ManualOverrideControl extends CommandBase {
+  /** Creates a new ManualOverrideControl. */
+  private Supplier<Double> throttle;
   private Storage storage;
-  /** Creates a new ExpelBalls. */
-  public ExpelBalls(Storage storageIn) {
+  public ManualOverrideControl(Storage storage, Supplier<Double> throttle) {
     // Use addRequirements() here to declare subsystem dependencies.
-    storage = storageIn;
+    this.storage = storage;
     addRequirements(storage);
+    this.throttle = throttle;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    Storage.currentState = Storage.StorageState.EXPELLING;
+    if(storage.currentState == Storage.StorageState.MANUAL){
+      if(Math.abs(throttle.get())>0.03){
+        storage.runMotor(throttle.get());
+      }
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    storage.runMotor(false);
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    Storage.currentState = Storage.StorageState.NOT_EXPELLING;
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    return false;
   }
 }

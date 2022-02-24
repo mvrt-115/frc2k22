@@ -45,18 +45,23 @@ public class RobotContainer {
   // private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
 
   private final Limelight limelight = new Limelight();
-  // private final Shooter shooter = new Shooter(limelight);
+  private final Shooter shooter = new Shooter(limelight);
+  private final Turret turret = new Turret(limelight);
   // private final StopShooter stopShooter = new StopShooter(shooter);
 
-  private final Turret turret = new Turret(limelight);
+  // private final Turret turret = new Turret(limelight);
 
   public RollingAverage throttle, wheel;
+
+  private final Storage storage = new Storage(operatorJoystick);
+
+  // private JoystickButton storageOverride;
 
   private JoystickButton quickturn;
 
   private JoystickButton disableTurret;
-  public JoystickButton turretClockwise;
-  public JoystickButton turretCounterclockwise;
+  // public JoystickButton turretClockwise;
+  // public JoystickButton turretCounterclockwise;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -64,11 +69,13 @@ public class RobotContainer {
     driverJoystick = new Joystick(0);
     operatorJoystick = new Joystick(1);
 
-    disableTurret = new JoystickButton(operatorJoystick, 1);
-    turretClockwise = new JoystickButton(driverJoystick, 2);
-    turretCounterclockwise = new JoystickButton(driverJoystick, 3);
+    // disableTurret = new JoystickButton(operatorJoystick, 1);
+    // // turretClockwise = new JoystickButton(driverJoystick, 2);
+    // turretCounterclockwise = new JoystickButton(driverJoystick, 3);
 
     quickturn = new JoystickButton(driverJoystick, 9);
+
+ 
 
     // Configure the button bindings
     
@@ -88,13 +95,6 @@ public class RobotContainer {
 
     // SmartDashboard.putData("Run Flywheel", new SetRPM(shooter));
     // SmartDashboard.putData("Change Angle", new SetHoodAngle(shooter));
-    SmartDashboard.putData("Config PIDF", new PIDTune(turret.getMotor(), 
-                                                      Constants.Turret.kP, 
-                                                      Constants.Turret.kI,
-                                                      Constants.Turret.kD,
-                                                      0,
-                                                      "Turret",
-                                                      new DisableTurret(turret)));
   }
 
   /**
@@ -165,8 +165,11 @@ public class RobotContainer {
    * Use this to declare subsystem disabled behavior
    */
   public void disabledPeriodic() {
-    // shooter.setState(ShooterState.OFF);
+    shooter.setState(ShooterState.OFF);
     // shooter.setHoodState(HoodState.OFF);
-    // shooter.log();
+  }
+
+  public double getStorageThrottle(){
+    return 0.4* operatorJoystick.getRawAxis(5);
   }
 }

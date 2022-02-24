@@ -1,3 +1,4 @@
+
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
@@ -48,6 +49,8 @@ public class Turret extends SubsystemBase {
     targetDegrees = 0;
     searchDirection = 1;
     // zeroing = false;
+
+    // offset = 0;
 
     state = TurretState.DISABLED;
 
@@ -275,12 +278,22 @@ public class Turret extends SubsystemBase {
     return false;//!magLimit.get();
   }
 
+  // public void setOffset(double _offset)
+  // {
+  //   offset = _offset;
+  // }
+
+  // public double getOffset()
+  // {
+  //   return offset;
+  // }
+
   /**
    * Logs data about Turret Subsystem to SmartDashboard
    */
   public void log() {
     SmartDashboard.putNumber("Turret Position (Degrees)", getCurrentPositionDegrees());
-    SmartDashboard.putNumber("Horizontal Error", limelight.getHorizontalOffset());
+    // SmartDashboard.putNumber("Horizontal Error", limelight.getHorizontalOffset()+offset);
     SmartDashboard.putString("Turret State", state.toString());
     SmartDashboard.putNumber("Turret Output", turret.getMotorOutputPercent());
     SmartDashboard.putNumber("Direction", searchDirection);
