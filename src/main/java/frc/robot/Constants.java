@@ -30,7 +30,7 @@ public final class Constants {
 
         // physical constants get from mech once drivetrain is done
         public static final double kTrackScrubFactor = 1.0469745223;
-        public static final double kTrackWidthInches = 24.85;
+        public static final double kTrackWidthInches = 27.125; //24.85;
 
         // ids get from pheonix tuner once drivetrain is done
         public static int kCompLeftMasterId = 1;
@@ -49,10 +49,6 @@ public final class Constants {
         public static final double kThrottleDeadband = 0.02;
         public static final double kWheelGain = 0.05;
         public static final double kWheelNonlinearity = 0.05;
-
-        //constants for aligning to ball from the camera
-        public static final double kThrottle  = 0.0; // change value later
-        public static final double kMaxPixelError = 1.0; // change value later
         
         //constants for getting distance traveled by motors
         public static final double kTicksPerRevolution = 2048; 
@@ -60,19 +56,15 @@ public final class Constants {
         
         public static final double kwheelCircumference = 6*Math.PI;  //INCHES
 
-        public static final double kP = 0;
+        public static final double kP = 3.2364;
         public static final double kI = 0;
         public static final double kD = 0;
         public static final double kFF = 0;
 
         //values to be determined after the robot is characterized
-        public static final double kS = 0.5985; //units: Volts
-        public static final double kV = 2.8888; //units: Volts * Seconds / Meters
-        public static final double kA = 0.14018; //units: Volts * Seconds^2 / Meters
-
-        //change values later
-        public static final int kAcceptableError = 10;
-        public static final double kDrivetrainMotorSpeed = 0.3;
+        public static final double kS = 0.61702; //units: Volts
+        public static final double kV = 2.8581; //units: Volts * Seconds / Meters
+        public static final double kA = 0.20282; //units: Volts * Seconds^2 / Meters
     }
     
     public static class Intake{

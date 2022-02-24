@@ -155,7 +155,7 @@ public class Drivetrain extends SubsystemBase {
     public void periodic() {
         pose = odometry.update(getGyroAngle(), getDistanceTravelled(leftMaster, leftFollower),
                 getDistanceTravelled(rightMaster, rightFollower));
-        field.setRobotPose(pose);
+        field.setRobotPose(odometry.getPoseMeters());
         log();
     }
 
@@ -173,22 +173,7 @@ public class Drivetrain extends SubsystemBase {
         SmartDashboard.putNumber("Right Distance Traveled", getDistanceTravelled(rightMaster, rightFollower));
         SmartDashboard.putNumber("X value", pose.getX());
         SmartDashboard.putNumber("Y value", pose.getY());
-        SmartDashboard.putData("SD Field", field);
-    }
-    
-    /**
-     * Method was done very "badly", need to fix using PID
-     * @param targetAngle
-     */
-    public void quickturn(double targetAngle) //in degrees
-    {
-        double currentAngle = getGyroAngle().getDegrees();
-        while (currentAngle <= Math.abs(targetAngle - 10))
-        {
-            setDrivetrainMotorSpeed(0.1, -0.1);
-            currentAngle = getGyroAngle().getDegrees();
-        }
-        setDrivetrainMotorSpeed(0, 0);
+        // SmartDashboard.putData("SD Field", field);
     }
 
     /* GETTERS AND SETTERS (AND RESETTERS) */

@@ -20,25 +20,25 @@ import frc.robot.subsystems.Intake;
 public class FiveBallAuton extends SequentialCommandGroup {
   
   private Drivetrain drivetrain;
+  //private Intake intake;
 
-  public FiveBallAuton(Drivetrain dr, Intake intake) {
+  public FiveBallAuton(Drivetrain dr, Intake in) {
     drivetrain = dr;
+    //intake = in;
+
     drivetrain.setOdometry(new Pose2d(0, 0, new Rotation2d(0)));
 
     addCommands(
       path6part1(),
-      //new IntakeBalls(intake),
+      //new IntakeBalls(intake).withTimeout(2),
       //new ShootBalls(shooter),
-      //can we add the rotation2d thing here? set the angle as a parameter idk
-      //how else do we add it as a command??
-      quickTurn(7.70, 0.68, 100),
+      quickTurn(drivetrain.getPose().getX(), drivetrain.getPose().getY(), 100), //quickTurn(7.70, 0.68, 100),
       path6part2(),
-      //new IntakeBalls(intake),
+      //new IntakeBalls(intake).withTimeout(2),
       //new ShootBalls(shooter),
-      //drivetrain.quickTurn(35.7),
-      quickTurn(5.33, 1.83, 35.7),
-      path6part3()
-      //new IntakeBalls(intake)
+      quickTurn(drivetrain.getPose().getX(), drivetrain.getPose().getY(), 35.7), //quickTurn(5.33, 1.83, 35.7),
+      path6part3()//,
+      //new IntakeBalls(intake).withTimeout(3)
       //new ShootBalls(shooter)
     );
   }
