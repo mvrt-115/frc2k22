@@ -1,4 +1,4 @@
-// I hope this works
+// to use as a last resort, hopefully we never use this file
 
 package frc.robot.commands;
 import java.util.List;

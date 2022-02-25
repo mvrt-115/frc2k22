@@ -6,7 +6,6 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.MotorCommutation;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
@@ -25,7 +24,6 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -96,11 +94,11 @@ public class Drivetrain extends SubsystemBase {
         rightFollower.follow(rightMaster);
         leftFollower.follow(leftMaster);
 
+        //hmmmmmm
         rightMaster.setSafetyEnabled(false);
         rightFollower.setSafetyEnabled(false);
         leftMaster.setSafetyEnabled(false);
         leftFollower.setSafetyEnabled(false);
-
         differentialDrive = new DifferentialDrive(leftMaster, rightMaster);
 
         pose = new Pose2d();
@@ -114,11 +112,10 @@ public class Drivetrain extends SubsystemBase {
         leftController = new PIDController(Constants.Drivetrain.kP, Constants.Drivetrain.kI, Constants.Drivetrain.kD);
         rightController = new PIDController(Constants.Drivetrain.kP, Constants.Drivetrain.kI, Constants.Drivetrain.kD);
     
-        leftMaster.setSelectedSensorPosition(0);
-        leftFollower.setSelectedSensorPosition(0);
-        rightMaster.setSelectedSensorPosition(0);
-        rightFollower.setSelectedSensorPosition(0);
+        resetEncoders(); //resetting all the encoders (aka motor.setSelectedSensorPosition(0))
+
         SmartDashboard.putData("field", field);
+        
         gyro.reset();
     }
 
@@ -165,6 +162,7 @@ public class Drivetrain extends SubsystemBase {
 
     @Override
     public void periodic() {
+        //hmmmmmmmmmmmm (imo it doesn't really make a difference, idk)
         differentialDrive.feed();
         leftMaster.feed();
         rightMaster.feed();
@@ -236,7 +234,6 @@ public class Drivetrain extends SubsystemBase {
      */
     public void setOutputVoltage(double leftVoltage, double rightVoltage) {
         SmartDashboard.putNumber("Left Voltage: ", leftVoltage);
-        // differentialDrive
         setDrivetrainMotorSpeed(leftVoltage/Constants.kVoltageComp, rightVoltage/Constants.kVoltageComp);
     }
 
@@ -304,7 +301,7 @@ public class Drivetrain extends SubsystemBase {
                 Constants.Drivetrain.kTicksPerRevolution,
                 Constants.Drivetrain.kGearRatio,
                 Constants.Drivetrain.kwheelCircumference
-            );
+        );
     }
 
     /**
@@ -355,7 +352,6 @@ public class Drivetrain extends SubsystemBase {
      * @return kinematics
      */
     public DifferentialDriveKinematics getKinematics() {
-    
         return kinematics;
     }
 
@@ -404,6 +400,7 @@ public class Drivetrain extends SubsystemBase {
     public void setOdometry(Pose2d newPose) {
         resetEncoders();
         odometry.resetPosition(newPose, new Rotation2d(0));
+        //odometry.resetPosition(newPose, newPose.getRotation());
     }
 
     /** 
