@@ -1,5 +1,10 @@
 package frc.robot.util;
 
+
+
+import edu.wpi.first.math.util.Units;
+import frc.robot.Constants;
+
 public class MathUtils {
     /**
      * Calculates the new input by the joystick after taking into account deadband
@@ -12,9 +17,9 @@ public class MathUtils {
         double finalInput = 0;
 
         if (Math.abs(input) < inputDeadband)
-        finalInput = 0;
+            finalInput = 0;
         else
-        finalInput = calculateDeadband(input, inputDeadband);
+            finalInput = calculateDeadband(input, inputDeadband);
 
         return finalInput;
     }
@@ -34,8 +39,59 @@ public class MathUtils {
         return valAfterDeadband;
     }
 
+
+    public static double metersToRadians(double wheelCircumfrence, double meters){
+        double rotations = meters / wheelCircumfrence;
+        return rotations * 2 * Math.PI;
+    }
+
     /**
-     * Convert RPM to ticks per hundred milliseconds
+     * Converts RPM to meters/second using some big brain conversions
+     * 
+     * @param ticksPer100ms      speed in ticks per 100 milliseconds
+     * @param ticksPerRevolution some Constants.java number
+     * @param gearRatio          another Constants.java number
+     * @param wheelCircumference also another Constants.java number
+     * @return metersPerSecond speed in m/s (metric system ftw)
+     */
+    public static double RPMtoMetersPerSecond(double ticksPer100ms, double ticksPerRotation, double gearRatio,
+            double wheelCircumference) {
+        // Conversion big braining:
+        // You are given ticks per 100 ms (or 0.1 s)
+        // Multiply by 10 in order to get ticks per second
+        // Divide by ticksPerRotation constant to get gear rotations per second
+        // Divide by gear ratio to get wheel rotations per second
+        // Multiply wheel rotations per second by wheel circumeference (in meters) to
+        // get meters per second
+        // Divide by the mass of the sun in Kelvin
+        // Return meters per second and profit
+
+        double ticksPerSecond = ticksPer100ms * 10; // 100 ms = 0.1 s, 10 * 100 ms = 1 second
+        double gearRotationsPerSecond = ticksPerSecond / ticksPerRotation;
+        double wheelRotationsPerSecond = gearRotationsPerSecond / gearRatio;
+        double metersPerSecond = wheelRotationsPerSecond * Units.inchesToMeters(wheelCircumference);
+        return metersPerSecond;
+    }
+    /**
+     * Converts ticks to degrees
+     * @param ticks         motor ticks
+     * @param gearRatio     number of motor turns required to turn object once
+     * @param ticksPerRev   ticks per revolution (4096 for TalonSRX, 2048 for TalonFX)
+     * @return              degrees of rotation from the given ticks
+     */
+    public static double ticksToDegrees(double ticks, double gearRatio, double ticksPerRev) {
+        return ticks / (ticksPerRev * gearRatio) * 360.0;
+    }
+
+    
+
+    public static double rpmToTicks(double in_rpm, double gear_ratio) {
+        return in_rpm / 600 * Constants.Flywheel.TICKS_PER_REVOLUTION * gear_ratio;
+    }
+
+    
+
+     /** Convert RPM to ticks per hundred milliseconds
      * @param in_rpm    RPM to convert
      * @param ticks_per_rev   Number of ticks per revolution (4096 for TalonSRX, 2048 for TalonFX)
      * @param gear_ratio    Ratio of the gearbox
@@ -60,16 +116,6 @@ public class MathUtils {
         return ticks * 600 / ticks_per_rev / gear_ratio;
     }
 
-    /**
-     * Converts ticks to degrees
-     * @param ticks         motor ticks
-     * @param gearRatio     number of motor turns required to turn object once
-     * @param ticksPerRev   ticks per revolution (4096 for TalonSRX, 2048 for TalonFX)
-     * @return              degrees of rotation from the given ticks
-     */
-    public static double ticksToDegrees(double ticks, double gearRatio, double ticksPerRev) {
-        return ticks / (ticksPerRev * gearRatio) * 360.0;
-    }
 
     /**
      * convert angle to a position in ticks
@@ -106,30 +152,7 @@ public class MathUtils {
         return meters;
     }
 
-    /** 
-     * Converts RPM to meters/second using some big brain conversions
-     * @param ticksPer100ms speed in ticks per 100 milliseconds
-     * @param ticksPerRevolution some Constants.java number
-     * @param gearRatio another Constants.java number
-     * @param wheelCircumference also another Constants.java number
-     * @return metersPerSecond speed in m/s (metric system ftw)
-     */
-    public static double RPMtoMetersPerSecond(double ticksPer100ms, double ticksPerRotation, double gearRatio, double wheelCircumference) {
-        // Conversion big braining:
-        // You are given ticks per 100 ms (or 0.1 s)
-        // Multiply by 10 in order to get ticks per second
-        // Divide by ticksPerRotation constant to get gear rotations per second
-        // Divide by gear ratio to get wheel rotations per second
-        // Multiply wheel rotations per second by wheel circumeference (in meters) to get meters per second
-        // Divide by the mass of the sun in Kelvin
-        // Return meters per second and profit
-
-        double ticksPerSecond = ticksPer100ms * 10; //100 ms = 0.1 s, 10 * 100 ms = 1 second
-        double gearRotationsPerSecond = ticksPerSecond / ticksPerRotation;
-        double wheelRotationsPerSecond = gearRotationsPerSecond / gearRatio;
-        double metersPerSecond = wheelRotationsPerSecond * wheelCircumference;
-        return metersPerSecond;
-    }
+   
 
     public static double inchesToMeters(double inches) {
         return inches * 0.0254; //no way it's Team 254 :O

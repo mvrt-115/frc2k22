@@ -45,8 +45,8 @@ public class Turret extends SubsystemBase {
   public Turret(Limelight limelight) {
     this.limelight = limelight;
 
-    turret = TalonFactory.createTalonFX(0, true);
-    magLimit = new DigitalInput(0);
+    turret = TalonFactory.createTalonFX(5, true);
+    magLimit = new DigitalInput(9);
 
     targetDegrees = 0;
     searchDirection = 1;
@@ -67,8 +67,8 @@ public class Turret extends SubsystemBase {
   public void periodic() {
     // log();
 
-    turret.set(ControlMode.Position, MathUtils.degreesToTicks(180, 2048, Constants.Turret.kGearRatio));
-    SmartDashboard.putNumber("turret ticks", turret.getSelectedSensorPosition(0));
+    // turret.set(ControlMode.Position, MathUtils.degreesToTicks(180, 2048, Constants.Turret.kGearRatio));
+    // SmartDashboard.putNumber("turret ticks", turret.getSelectedSensorPosition(0));
 
     // unless flipping keep track of the target degrees
     // if(state != TurretState.FLIPPING)

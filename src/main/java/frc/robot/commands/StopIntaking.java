@@ -5,7 +5,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Intake.IntakeState;
 
@@ -21,7 +20,6 @@ public class StopIntaking extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    intake.setPosition(Constants.Intake.kTICKS_TO_BOTTOM);
     intake.setState(IntakeState.PIVOTING_UP);
   }
 

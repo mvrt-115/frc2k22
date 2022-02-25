@@ -56,11 +56,11 @@ public class SetRPM extends CommandBase {
     // SmartDashboard.putBoolean("changing rpm", true);
 
     if(rpm == 0)
-      storage.stopMotor();
+      storage.runMotor(0);
     if(shooter.getState() == ShooterState.ATSPEED)
       storage.runMotor(1);
     else
-       storage.stopMotor();
+       storage.runMotor(0);
   }
 
   // Called once the command ends or is interrupted.
