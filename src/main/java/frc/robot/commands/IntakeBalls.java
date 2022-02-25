@@ -5,41 +5,33 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Intake.IntakeState;
 
-public class StopIntaking extends CommandBase {
-  /** Creates a new StopIntaking. */
-  private Intake intake;
-  public StopIntaking(Intake intakeIn) {
+public class IntakeBalls extends CommandBase {
+  /** Creates a new IntakeBalls. */
+  Intake intake;
+
+  public IntakeBalls(Intake intk) {
     // Use addRequirements() here to declare subsystem dependencies.
-    intake = intakeIn;
-    addRequirements(intake);
+
+    intake = intk;
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    //intake.setPosition(Constants.Intake.kTICKS_TO_BOTTOM);
-    intake.setState(IntakeState.PIVOTING_UP);
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    // don't modify this command!
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    return false;
   }
 }

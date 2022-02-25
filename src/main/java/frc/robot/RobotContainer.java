@@ -17,8 +17,12 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.FiveBallAuton;
+import frc.robot.commands.FiveBallAutonHardcoded;
+import frc.robot.commands.Forward;
 import frc.robot.commands.JoystickDrive;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Intake;
 import frc.robot.util.RollingAverage;
 
 /**
@@ -101,25 +105,28 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    //System.out.println("Returned Auton Command");
-    //return new FiveBallAuton(drivetrain, new Intake());
-    //return new Forward(drivetrain);
+    // System.out.println("Returned Auton Command");
+    // return new FiveBallAuton(drivetrain, new Intake());
+    // return new Forward(drivetrain);
     // Trajectory trajectory = PathPlanner.loadPath("Forward", 2, 2);
     // drivetrain.getField().getObject("traj").setTrajectory(trajectory);
     // return drivetrain.getRamseteCommand(trajectory);
-    Trajectory exampleTrajectory =
-        TrajectoryGenerator.generateTrajectory(
-            // Start at the origin facing the +X direction
-            new Pose2d(0, 0, new Rotation2d(0)),
-            // Pass through these two interior waypoints, making an 's' curve path
-            List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
-            // End 3 meters straight ahead of where we started, facing forward
-            new Pose2d(3, 0, new Rotation2d(0)),
-            // Pass config
-            new TrajectoryConfig(1, 1));
+    // Trajectory exampleTrajectory =
+    //     TrajectoryGenerator.generateTrajectory(
+    //         // Start at the origin facing the +X direction
+    //         new Pose2d(0, 0, new Rotation2d(0)),
+    //         // Pass through these two interior waypoints, making an 's' curve path
+    //         List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
+    //         // End 3 meters straight ahead of where we started, facing forward
+    //         new Pose2d(3, 0, new Rotation2d(0)),
+    //         // Pass config
+    //         new TrajectoryConfig(1, 1));
 
-    return drivetrain.getRamseteCommand(exampleTrajectory);
+    // return drivetrain.getRamseteCommand(exampleTrajectory);
 
+    return new FiveBallAutonHardcoded(drivetrain, new Intake());
+    // return new FiveBallAuton(drivetrain, new Intake());
+    // return new Forward(drivetrain);
             
   }
 }

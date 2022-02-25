@@ -26,19 +26,19 @@ public class FiveBallAutonHardcoded extends SequentialCommandGroup {
     drivetrain.setOdometry(new Pose2d(0, 0, new Rotation2d(0)));
 
     addCommands(
-      path6part1(),
+      path6part1()
       //new IntakeBalls(intake),
       //new ShootBalls(shooter),
       //can we add the rotation2d thing here? set the angle as a parameter idk
       //how else do we add it as a command??
-      quickTurn(7.70, 0.68, 100),
-      path6part2(),
-      //new IntakeBalls(intake),
-      //new ShootBalls(shooter),
-      //drivetrain.quickTurn(35.7),
-      quickTurn(5.33, 1.83, 35.7),
-      path6part3()
-      //new IntakeBalls(intake)
+      // quickTurn(7.70, 0.68, 100),
+      // path6part2(),
+      // //new IntakeBalls(intake),
+      // //new ShootBalls(shooter),
+      // //drivetrain.quickTurn(35.7),
+      // quickTurn(5.33, 1.83, 35.7),
+      // path6part3()
+      // //new IntakeBalls(intake)
       //new ShootBalls(shooter)
     );
   }
@@ -86,25 +86,25 @@ public class FiveBallAutonHardcoded extends SequentialCommandGroup {
     return drivetrain.getRamseteCommand(trajectory);
   }
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-    SmartDashboard.putString("Auton Path 6", "Starting!");
-  }
+  // // Called when the command is initially scheduled.
+  // @Override
+  // public void initialize() {
+  //   SmartDashboard.putString("Auton Path 6", "Starting!");
+  // }
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    SmartDashboard.putString("Auton Path 6", "Running!");
-  }
+  // // Called every time the scheduler runs while the command is scheduled.
+  // @Override
+  // public void execute() {
+  //   SmartDashboard.putString("Auton Path 6", "Running!");
+  // }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {}
+  // // Called once the command ends or is interrupted.
+  // @Override
+  // public void end(boolean interrupted) {}
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
-  }
+  // // Returns true when the command should end.
+  // @Override
+  // public boolean isFinished() {
+  //   return false;
+  // }
 }

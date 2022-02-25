@@ -56,15 +56,15 @@ public final class Constants {
         
         public static final double kwheelCircumference = 6*Math.PI;  //INCHES
 
-        public static final double kP = 3.2364;
+        public static final double kP = 0; //3.2364;
         public static final double kI = 0;
         public static final double kD = 0;
         public static final double kFF = 0;
 
         //values to be determined after the robot is characterized
-        public static final double kS = 0.61702; //units: Volts
-        public static final double kV = 2.8581; //units: Volts * Seconds / Meters
-        public static final double kA = 0.20282; //units: Volts * Seconds^2 / Meters
+        public static final double kS = 0.57954; //0.61702; //units: Volts
+        public static final double kV = 2.856; //2.8581; //units: Volts * Seconds / Meters
+        public static final double kA = 0; //0.22684; //0.20282; //units: Volts * Seconds^2 / Meters
     }
     
     public static class Intake{

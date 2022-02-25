@@ -6,9 +6,11 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.MotorCommutation;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -22,6 +24,8 @@ import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -38,7 +42,7 @@ public class Drivetrain extends SubsystemBase {
 
     private DrivetrainState state;
 
-    private TalonFX rightMaster, leftMaster, rightFollower, leftFollower;
+    private WPI_TalonFX rightMaster, leftMaster, rightFollower, leftFollower;
 
     private AHRS gyro;
 
@@ -49,6 +53,7 @@ public class Drivetrain extends SubsystemBase {
     private SimpleMotorFeedforward feedforward;
     private DifferentialDriveKinematics kinematics;
     private PIDController leftController, rightController;
+    private DifferentialDrive differentialDrive;
 
     public Drivetrain() {
         //     if (Constants.kIsPracticeBot) {
@@ -63,10 +68,10 @@ public class Drivetrain extends SubsystemBase {
         //         leftFollower = TalonFactory.createTalonFX(Constants.Drivetrain.kCompLeftFollowerId, false);
         //     }
 
-        rightMaster = new TalonFX(Constants.Drivetrain.kPracRightMasterId);
-        rightFollower = new TalonFX(Constants.Drivetrain.kPracRightFollowerId);
-        leftMaster = new TalonFX(Constants.Drivetrain.kPracLeftMasterId);
-        leftFollower = new TalonFX(Constants.Drivetrain.kPracLeftFollowerId);
+        rightMaster = new WPI_TalonFX(Constants.Drivetrain.kPracRightMasterId);
+        rightFollower = new WPI_TalonFX(Constants.Drivetrain.kPracRightFollowerId);
+        leftMaster = new WPI_TalonFX(Constants.Drivetrain.kPracLeftMasterId);
+        leftFollower = new WPI_TalonFX(Constants.Drivetrain.kPracLeftFollowerId);
         
         rightMaster.configFactoryDefault();
         rightFollower.configFactoryDefault();
@@ -90,6 +95,13 @@ public class Drivetrain extends SubsystemBase {
 
         rightFollower.follow(rightMaster);
         leftFollower.follow(leftMaster);
+
+        rightMaster.setSafetyEnabled(false);
+        rightFollower.setSafetyEnabled(false);
+        leftMaster.setSafetyEnabled(false);
+        leftFollower.setSafetyEnabled(false);
+
+        differentialDrive = new DifferentialDrive(leftMaster, rightMaster);
 
         pose = new Pose2d();
         gyro = new AHRS(SPI.Port.kMXP);
@@ -153,6 +165,12 @@ public class Drivetrain extends SubsystemBase {
 
     @Override
     public void periodic() {
+        // differentialDrive.feed();
+        // leftMaster.feed();
+        // rightMaster.feed();
+        // leftFollower.feed();
+        // rightFollower.feed();
+
         pose = odometry.update(getGyroAngle(), getDistanceTravelled(leftMaster, leftFollower),
                 getDistanceTravelled(rightMaster, rightFollower));
         field.setRobotPose(odometry.getPoseMeters());
@@ -218,6 +236,7 @@ public class Drivetrain extends SubsystemBase {
      */
     public void setOutputVoltage(double leftVoltage, double rightVoltage) {
         SmartDashboard.putNumber("Left Voltage: ", leftVoltage);
+        // differentialDrive
         setDrivetrainMotorSpeed(leftVoltage/Constants.kVoltageComp, rightVoltage/Constants.kVoltageComp);
     }
 
