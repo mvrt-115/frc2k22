@@ -98,6 +98,7 @@ public class Intake extends SubsystemBase {
    */
   public void stopIntake()
   {
+    pivotMotor.setNeutralMode(NeutralMode.Coast);
     intakeMotor.set(ControlMode.PercentOutput, 0);
    // uncomment when  intake motor is added
   }
@@ -203,6 +204,7 @@ public class Intake extends SubsystemBase {
    */
   public void startIntake()
   {
+    pivotMotor.setNeutralMode(NeutralMode.Brake);
     intakeMotor.set(ControlMode.PercentOutput, Constants.Intake.kWHEELS_SPEED);
     // uncomment when intake motor is added
   }
