@@ -48,6 +48,7 @@ public class RobotContainer {
     driverJoystick = new Joystick(0);
     intakeBalls = new JoystickButton(driverJoystick, 1);
     storageOverride = new JoystickButton(operatorJoystick, 10);
+    expelBalls = new JoystickButton(operatorJoystick, 1);
     // operatorJoystick = new Joystick(1);
     // Configure the button bindings
     configureButtonBindings();
@@ -65,7 +66,7 @@ public class RobotContainer {
     //drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
     //pivot.whenPressed(new Pivot(intake));
     //intakeBalls.whenPressed(new IntakeBalls(intake)).whenReleased(new StopIntaking(intake));
-    //expelBalls.whenPressed(new ExpelBalls(storage));
+    expelBalls.whenPressed(new ShootFromStorage(storage));
     storage.setDefaultCommand(new ManualOverrideControl(storage, this::getStorageThrottle));
     storageOverride.whenPressed(new SwitchManual(storage));
 
