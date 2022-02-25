@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 // import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -33,10 +34,11 @@ public class Turret extends SubsystemBase {
   private TalonFX turret;
   private Limelight limelight;
   private double area = 0;
-  // private DigitalInput magLimit;
+  private DigitalInput magLimit;
 
   private double targetDegrees;
   private double searchDirection;
+  private double offset;
   // private boolean zeroing;
 
   /** Creates a new Turret. */
@@ -44,31 +46,29 @@ public class Turret extends SubsystemBase {
     this.limelight = limelight;
 
     turret = TalonFactory.createTalonFX(0, true);
-    // magLimit = new DigitalInput(0);
+    magLimit = new DigitalInput(0);
 
     targetDegrees = 0;
     searchDirection = 1;
     // zeroing = false;
 
-    // offset = 0;
+    offset = 0;
 
     state = TurretState.DISABLED;
 
-    turret.config_kP(0, Constants.Turret.kPLarge);
-    turret.config_kI(0, Constants.Turret.kI);
-    turret.config_kD(0, Constants.Turret.kD);
-
-    SmartDashboard.putNumber("turret p", Constants.Turret.kP);
-    SmartDashboard.putNumber("turret i", Constants.Turret.kI);
-    SmartDashboard.putNumber("turret d", Constants.Turret.kD);
-
+    turret.config_kP(0, 0.1);//Constants.Turret.kPLarge);
+    turret.config_kI(0, 0);//Constants.Turret.kI);
+    turret.config_kD(0, 0);//Constants.Turret.kD);
     resetEncoder();
     turret.selectProfileSlot(0, 0);
   }
 
   @Override
   public void periodic() {
-    log();
+    // log();
+
+    turret.set(ControlMode.Position, MathUtils.degreesToTicks(180, 2048, Constants.Turret.kGearRatio));
+    SmartDashboard.putNumber("turret ticks", turret.getSelectedSensorPosition(0));
 
     // unless flipping keep track of the target degrees
     // if(state != TurretState.FLIPPING)
@@ -76,37 +76,29 @@ public class Turret extends SubsystemBase {
 
     // if(state == TurretState.FLIPPING) {
     //   turnDegrees(targetDegrees);
+    // targetDegrees = getCurrentPositionDegrees() + limelight.getHorizontalOffset()+offset;
 
-    double p = SmartDashboard.getNumber("turret p", Constants.Turret.kP);
-    double i = SmartDashboard.getNumber("turret i", Constants.Turret.kI);
-    double d = SmartDashboard.getNumber("turret d", Constants.Turret.kD);
-    // targetDegrees = getCurrentPositionDegrees() + limelight.getHorizontalOffset();
-
-    if(state == TurretState.FLIPPING) {
+    if(false) {//state == TurretState.FLIPPING) {
       turret.set(ControlMode.Position, MathUtils.degreesToTicks(targetDegrees, Constants.Turret.kTicksPerRevolution, Constants.Turret.kGearRatio));
       
-      if(Math.abs(targetDegrees - getCurrentPositionDegrees()) < 1) 
+      if(Math.abs(targetDegrees - getCurrentPositionDegrees()) < 1) { 
         setState(TurretState.TARGETING);
-    } else {
+      }
+    } else if (false) {
       
 
       // turret.set(ControlMode.Position, MathUtils.degreesToTicks(targetDegrees, Constants.Turret.kTicksPerRevolution, Constants.Turret.kGearRatio));
 
-      double error = limelight.getHorizontalOffset() / 30;
+      double error = (limelight.getHorizontalOffset()+offset) / 30;
       double time = Timer.getFPGATimestamp();
-
-      SmartDashboard.putNumber("deriv", (((error - lastError) / (time - lastTime)) * d));
-
-
-      SmartDashboard.putNumber("Error", error);
 
       area+= lastError * (Timer.getFPGATimestamp() - lastTime);
 
-      if(Math.abs(limelight.getHorizontalOffset()) > 1)
+      if(Math.abs((limelight.getHorizontalOffset()+offset)) > 1 && limelight.targetsFound())
         turret.set(ControlMode.PercentOutput, 
-          (p * error)
-          + (i * area) + 
-          (((error - lastError) / (time - lastTime)) * d)
+          (Constants.Turret.kP * error)
+          + (Constants.Turret.kI * area) + 
+          (((error - lastError) / (time - lastTime)) * Constants.Turret.kD)
           );
       else
         turret.set(ControlMode.PercentOutput, 0);
@@ -114,13 +106,13 @@ public class Turret extends SubsystemBase {
       lastError = error;
       lastTime = time;
 
-      if(Math.abs(getCurrentPositionDegrees()) >= Constants.Turret.kMaxAngle) {
+      if(Math.abs(getCurrentPositionDegrees()) >= Constants.Turret.kMaxAngle + 20) {
         // turret.set(ControlMode.PercentOutput, 0);
         setState(TurretState.FLIPPING);
         if(getCurrentPositionDegrees() < 0)
-          targetDegrees = 160;
+          targetDegrees = 180;
         else
-          targetDegrees = -160;
+          targetDegrees = -180;
       }
   }
       
@@ -168,16 +160,16 @@ public class Turret extends SubsystemBase {
     // // }
     
     // // determine if we can shoot if we are within some margin of error
-    // if(Math.abs(limelight.getHorizontalOffset()) <= 5 && state != TurretState.FLIPPING)
+    // if(Math.abs(limelight.getHorizontalOffset()+offset) <= 5 && state != TurretState.FLIPPING)
     //   setState(TurretState.CAN_SHOOT);
     // else if(state != TurretState.FLIPPING)
     //   setState(TurretState.TARGETING);
   }
 
   public void updateTargetDegrees() {
-    if(limelight.targetsFound()) { // && Math.abs(limelight.getHorizontalOffset()) > 2) {
+    if(limelight.targetsFound()) { // && Math.abs(limelight.getHorizontalOffset()+offset) > 2) {
       // find target position by using current position and data from limelight
-      targetDegrees = getCurrentPositionDegrees() + 1.25 * limelight.getHorizontalOffset();
+      targetDegrees = getCurrentPositionDegrees() + 1.25 * (limelight.getHorizontalOffset()+offset);
 
       if(targetDegrees > Constants.Turret.kMaxAngle + 20) {
         setState(TurretState.FLIPPING);
@@ -275,25 +267,25 @@ public class Turret extends SubsystemBase {
    * @return The alignment state (true/false)
    */
   public boolean getMagAligned() {
-    return false;//!magLimit.get();
+    return !magLimit.get();
   }
 
-  // public void setOffset(double _offset)
-  // {
-  //   offset = _offset;
-  // }
+  public void setOffset(double _offset)
+  {
+    offset = _offset;
+  }
 
-  // public double getOffset()
-  // {
-  //   return offset;
-  // }
+  public double getOffset()
+  {
+    return offset;
+  }
 
   /**
    * Logs data about Turret Subsystem to SmartDashboard
    */
   public void log() {
     SmartDashboard.putNumber("Turret Position (Degrees)", getCurrentPositionDegrees());
-    // SmartDashboard.putNumber("Horizontal Error", limelight.getHorizontalOffset()+offset);
+    SmartDashboard.putNumber("Horizontal Error", limelight.getHorizontalOffset()+offset);
     SmartDashboard.putString("Turret State", state.toString());
     SmartDashboard.putNumber("Turret Output", turret.getMotorOutputPercent());
     SmartDashboard.putNumber("Direction", searchDirection);

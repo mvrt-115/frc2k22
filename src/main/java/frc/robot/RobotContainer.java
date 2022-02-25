@@ -17,8 +17,6 @@ import frc.robot.subsystems.Shooter.ShooterState;
 import frc.robot.util.Limelight;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.DisableTurret;
-import frc.robot.commands.JoystickDrive;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.util.RollingAverage;
 
@@ -58,6 +56,7 @@ public class RobotContainer {
   // private JoystickButton storageOverride;
 
   private JoystickButton quickturn;
+  private JoystickButton shoot;
 
   private JoystickButton disableTurret;
   // public JoystickButton turretClockwise;
@@ -68,12 +67,11 @@ public class RobotContainer {
     // Configure the button bindings
     driverJoystick = new Joystick(0);
     operatorJoystick = new Joystick(1);
+    shoot = new JoystickButton(driverJoystick, 2);
 
     // disableTurret = new JoystickButton(operatorJoystick, 1);
     // // turretClockwise = new JoystickButton(driverJoystick, 2);
     // turretCounterclockwise = new JoystickButton(driverJoystick, 3);
-
-    quickturn = new JoystickButton(driverJoystick, 9);
 
  
 
@@ -107,6 +105,7 @@ public class RobotContainer {
     // the :: syntax allows us to pass in methods of a class as variables so that the command can continuously access input values
     drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
 
+    shoot.whenPressed(new SetRPM(shooter, storage, shoot)).whenReleased(new StopShooter(shooter, storage));
     // intakeBalls.whenPressed(new IntakeBalls(intake)).whenReleased(new StopIntaking(intake));
     // expelBalls.whenPressed(new ExpelBalls(storage));
     // alignDrivetrain.whenPressed(new AlignIntakeToBall(drivetrain, true)).whenReleased(new AlignIntakeToBall(drivetrain, false));
@@ -123,6 +122,7 @@ public class RobotContainer {
     //turretCounterclockwise.whenPressed(new TurretManual(turret, 0.5, turretCounterclockwise::get));
 
     turret.setDefaultCommand(new FindTarget(turret));
+    
     
     // disableTurret.whenPressed(new DisableTurret(turret));
   }
@@ -157,7 +157,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
    // Trajectory tr = PathPlanner.loadPath("TryPath", 4, 4);
-    return null;//new AutonPath6(drivetrain);
+    return new TurretSetupAlign(turret);//new AutonPath6(drivetrain);
     //return new DriveTrajectory(drivetrain);
   }
   

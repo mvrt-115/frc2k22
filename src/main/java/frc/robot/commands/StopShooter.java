@@ -6,16 +6,19 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Storage;
 import frc.robot.subsystems.Shooter.ShooterState;
 
 public class StopShooter extends CommandBase {
   Shooter shooter;
+  Storage storage;
 
   /** Creates a new StopShooter. */
-  public StopShooter(Shooter shooter) {
+  public StopShooter(Shooter shooter, Storage storage) {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(shooter);
+    addRequirements(shooter, storage);
     this.shooter = shooter;
+    this.storage = storage;
   }
 
   // Called when the command is initially scheduled.
@@ -27,6 +30,7 @@ public class StopShooter extends CommandBase {
   public void execute() {
     shooter.stopFlywheel();
     shooter.setState(ShooterState.OFF);
+    storage.stopMotor();
   }
 
   // Called once the command ends or is interrupted.
@@ -36,6 +40,6 @@ public class StopShooter extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Storage;
 import frc.robot.subsystems.Shooter.ShooterState;
@@ -15,44 +16,66 @@ public class SetRPM extends CommandBase {
   private Shooter shooter;
   private double rpm;
   private Storage storage;
+  private boolean given;
+  private JoystickButton button;
 
-  public SetRPM(Shooter shooter, Storage storage) {
+  public SetRPM(Shooter shooter, Storage storage, JoystickButton button) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.shooter = shooter;
     this.storage = storage;
+    given = false;
+    this.button = button;
+    addRequirements(shooter, storage);
+  }
+
+  public SetRPM(Shooter shooter, Storage storage, double rpm) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    this.shooter = shooter;
+    this.storage = storage;
+    this.rpm = rpm;
+    given = true;
     addRequirements(shooter, storage);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    double defaultRPM = shooter.getRequiredRPM();
+    if(!given)
+      rpm = shooter.getRequiredRPM();
     // rpm = SmartDashboard.getNumber("new rpm", defaultRPM);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooter.setTargetRPM(shooter.getRequiredRPM());
+    
+    if(given)
+      rpm = shooter.getCurrentRPM();
+    shooter.setTargetRPM(rpm);
     // SmartDashboard.putNumber("new rpm", rpm);
     // SmartDashboard.putBoolean("changing rpm", true);
 
+    if(rpm == 0)
+      storage.stopMotor();
     if(shooter.getState() == ShooterState.ATSPEED)
       storage.runMotor(1);
     else
-       storage.runMotor(0);
+       storage.stopMotor();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     SmartDashboard.putBoolean("changing rpm", false);
+    shooter.setState(ShooterState.OFF);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    if(button != null)
+      return !button.get();
+    return rpm == 0;
   }
 }
 

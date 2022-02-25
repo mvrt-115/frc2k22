@@ -40,7 +40,7 @@ public class Intake extends SubsystemBase {
   public Intake() {
     state = IntakeState.UP;
 
-    limitSwitch = new DigitalInput(0); // put channel in constants later
+    limitSwitch = new DigitalInput(4); // put channel in constants later
     limitConfiguration = new SupplyCurrentLimitConfiguration(true, 40, 40, .5);
 
     intakeMotor = TalonFactory.createTalonSRX(Constants.Intake.kROLLER_ID, true); // change motor IDs from Constants later

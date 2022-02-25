@@ -38,7 +38,7 @@ public class Storage extends SubsystemBase {
   
   public Storage(Joystick button) {
     storageMotor1 = TalonFactory.createTalonSRX(21, true);
-    breakBeamLast = new DigitalInput(0);
+    breakBeamLast = new DigitalInput(3);
     breakBeamFirst = new DigitalInput(1);
     currentState = StorageState.MANUAL;
     balls = 0; // change on day of match
@@ -59,37 +59,37 @@ public class Storage extends SubsystemBase {
     // test this later
    // if(balls == 0) currentState = StorageState.NOT_EXPELLING;
     
-    if(currentState == StorageState.MANUAL){
-      // runMotor(button.getRawAxis(5) * 0.5);
-    }
+    // if(currentState == StorageState.MANUAL){
+    //   // runMotor(button.getRawAxis(5) * 0.5);
+    // }
 
-    if(currentState == StorageState.AUTOMATIC)
-    {
-      if(!breakBeamFirst.get())
-      {
-        SmartDashboard.putBoolean("running motor", true);
-        runMotor();
-      }
+    // if(currentState == StorageState.AUTOMATIC)
+    // {
+    //   if(!breakBeamFirst.get())
+    //   {
+    //     SmartDashboard.putBoolean("running motor", true);
+    //     runMotor();
+    //   }
 
-      if(!breakBeamLast.get()){
-        checkBreakbeams();
-      }
+    //   if(!breakBeamLast.get()){
+    //     checkBreakbeams();
+    //   }
 
-      else if(breakBeamFirst.get())
-      {
-        stopMotor();
-      }
+    //   else if(breakBeamFirst.get())
+    //   {
+    //     stopMotor();
+    //   }
 
-      if(breakBeamLast.get())
-      {
-        secondBreakBeamBroken = false;
-      }
+    //   if(breakBeamLast.get())
+    //   {
+    //     secondBreakBeamBroken = false;
+    //   }
 
-      if(breakBeamFirst.get())
-      {
-        firstBreakBeamBroken = false;
-      }
-    }
+    //   if(breakBeamFirst.get())
+    //   {
+    //     firstBreakBeamBroken = false;
+    //   }
+    // }
 
     SmartDashboard.putString("current state", getCurrentStateAsString());
     SmartDashboard.putNumber("number of balls in hopper", balls);

@@ -139,9 +139,9 @@ public final class Constants {
         public static final double RADIUS = 2;
         public static final double ACCEPTABLE_ERROR = 100;
         public static final double MAX_VOLTAGE_COMPENSATION = 10;
-        public static final double TICKS_PER_REVOLUTION = 4096;
+        public static final double TICKS_PER_REVOLUTION = 2048;
         public static final int NUM_AVG = 5;
-        public static final double GEAR_RATIO = 50.0/36.0; // Can change
+        public static final double GEAR_RATIO = 1; // Can change
     }
 
 

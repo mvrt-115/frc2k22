@@ -214,11 +214,9 @@ public class Shooter extends SubsystemBase {
   public void log()
   {
     SmartDashboard.putNumber("Flywheel RPM", getCurrentRPM());
-    SmartDashboard.putNumber("Flywheel % Out", flywheelLeader.getMotorOutputPercent());
     SmartDashboard.putNumber("RPM Needed", getRequiredRPM());
     SmartDashboard.putString("Shooter State", state.toString());
     SmartDashboard.putNumber("Target RPM", targetRPM);
-    SmartDashboard.putNumber("Flywheel Temp", flywheelLeader.getTemperature());
     // SmartDashboard.putNumber("Hood Angle", getCurrentAngle());
     // SmartDashboard.putNumber("Hood Angle Ticks", hoodMotor.getSelectedSensorPosition());
   }
@@ -231,7 +229,6 @@ public class Shooter extends SubsystemBase {
 
     rpm.updateValue(MathUtils.ticksToRPM(flywheelLeader.getSelectedSensorVelocity(), Constants.Flywheel.TICKS_PER_REVOLUTION, Constants.Flywheel.GEAR_RATIO));
     log();
-    SmartDashboard.putNumber("time", Timer.getFPGATimestamp()); // to debug periodic
     
     // Sets state periodically
     switch(state) {
@@ -242,7 +239,6 @@ public class Shooter extends SubsystemBase {
         flywheelLeader.set(ControlMode.Velocity, MathUtils.rpmToTicks(targetRPM, Constants.Flywheel.TICKS_PER_REVOLUTION, Constants.Flywheel.GEAR_RATIO));
         if(allWithinRPMError(targetRPM)) {
           setState(ShooterState.ATSPEED);
-          SmartDashboard.putNumber("at sppee ", 2);
         }
           
         break;
@@ -304,6 +300,8 @@ public class Shooter extends SubsystemBase {
     */
 
     return 640.55*Math.pow(limelight.getHorizontalDistance(), 0.3468);
+    // double dist = limelight.getHorizontalDistance();
+    // return 1.05*(-0.035*Math.pow(dist, 2) + 19.121*dist + 1591.2);
   }
 
   /**
