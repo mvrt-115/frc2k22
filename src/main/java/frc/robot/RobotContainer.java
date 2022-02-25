@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
-import frc.robot.Constants.Climber.Auton;
 import frc.robot.util.Limelight;
 import frc.robot.util.RollingAverage;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -34,8 +33,9 @@ public class RobotContainer {
   private Joystick operatorJoystick;  
 
   // climber operator manual buttons
-  private JoystickButton pivotButton;
-  private JoystickButton telescopicButton;
+  private JoystickButton forward;
+  private JoystickButton extend;
+  private JoystickButton reverse;
   private JoystickButton startClimb;
   private JoystickButton stopClimb;
 
@@ -56,9 +56,10 @@ public class RobotContainer {
     driverJoystick = new Joystick(1);
     operatorJoystick = new Joystick(0);
 
-    pivotButton = new JoystickButton(operatorJoystick, 3);
-    telescopicButton =  new JoystickButton(operatorJoystick, 4);
-    startClimb = new JoystickButton(operatorJoystick, 8);
+    forward = new JoystickButton(operatorJoystick, 1);
+    extend =  new JoystickButton(operatorJoystick, 4);
+    reverse = new JoystickButton(operatorJoystick, 8);
+    startClimb = new JoystickButton(operatorJoystick, 10);
     stopClimb = new JoystickButton(operatorJoystick, 7);
 
 
@@ -79,29 +80,22 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // the :: syntax allows us to pass in methods of a class as variables so that the command can continuously access input values
-    /*drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
-    intakeBalls.whenPressed(new IntakeBalls(intake)).whenReleased(new StopIntaking(intake));
-    */
-
+    
+    
     /* if the telescopic button extend is pressed then it is checked to see if the top button is pressed for retracting the telescopic arm
     ** and based on that the correct command is called */
-    if(telescopicButton.get()) {
-      if(getReverseManual()) {
-        telescopicButton.whenPressed(new ClimberManual(climber, climber.leftTelescopic, this::getTelescopicReverseManual, Constants.Climber.kTelescopicRetractManualSpeed));
-        System.out.println("This should retract");
-      }
-      else {
-        telescopicButton.whenPressed(new ClimberManual(climber, climber.leftTelescopic, this::getTelescopicArmManual, Constants.Climber.kTelescopicExtendManualSpeed));
-        System.out.println("This should extend");
-      }
+    if(getReverseManual() && getTelescopicArmManual()) {
+      new ClimberManual(climber, climber.leftTelescopic, this::getTelescopicReverseManual, Constants.Climber.kTelescopicRetractManualSpeed);
+    }
+    else if (getTelescopicArmManual()) {
+      new ClimberManual(climber, climber.leftTelescopic, this::getTelescopicArmManual, Constants.Climber.kTelescopicExtendManualSpeed);
     }
 
     /* if the pivot button forward is pressed then it is checked to see if the top button is pressed for pivoting backward for the pivot arm
     ** and based on that the correct command is called */
-    // if(pivotButton.get()) {
-    //   if(getReverseManual()) 
-    //     pivotButton.whenPressed(new ClimberManual(climber, climber.pivot, this::getPivotReverseManual, -Constants.Climber.kApproachRungSpeed));
-    //   else 
+  //   if(getReverseManual()) 
+  //     pivotButton.whenPressed(new ClimberManual(climber, climber.pivot, this::getPivotReverseManual, -Constants.Climber.kApproachRungSpeed));
+  //   else 
     //     pivotButton.whenPressed(new ClimberManual(climber, climber.pivot, this::getPivotArmManual, Constants.Climber.kApproachRungSpeed));
 
     /** If the start climber button is pressed, then the start and stop climber parellel command is called and the instance of the stop climber 
@@ -153,7 +147,7 @@ public class RobotContainer {
    */
   public boolean getPivotArmManual()
   {
-    return pivotButton.get();
+    return forward.get();
   }
 
   /**
@@ -162,7 +156,7 @@ public class RobotContainer {
    */
   public boolean getTelescopicArmManual()
   {
-    return telescopicButton.get();
+    return extend.get();
   }
 
   /**
@@ -170,8 +164,8 @@ public class RobotContainer {
    * @return boolean for state of reverse button
    */
   public boolean getReverseManual() {
-    System.out.println("GET REVERSE HAS BEEN CALLED");
-    return operatorJoystick.getRawAxis(3) >= Constants.Climber.kAxisThreshold;
+   // return operatorJoystick.getRawAxis(3) >= Constants.Climber.kAxisThreshold;
+    return reverse.get();
   }
 
   /** 
@@ -200,7 +194,7 @@ public class RobotContainer {
    * @return buttons' total states (boolean)
    */ 
   public boolean getTelescopicReverseManual() {
-    return getReverseButton(telescopicButton);
+    return getReverseButton(extend);
   }
 
   /**
@@ -208,7 +202,7 @@ public class RobotContainer {
    * @return buttons' total state (boolean)
    */
   public boolean getPivotReverseManual() {
-    return getReverseButton(pivotButton);
+    return getReverseButton(forward);
   }
 
   /**

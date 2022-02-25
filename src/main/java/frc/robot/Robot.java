@@ -4,9 +4,12 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.DebugLog;
 
 /**
@@ -48,6 +51,10 @@ public class Robot extends TimedRobot {
     if (Constants.debugMode) {
       CommandScheduler.getInstance().schedule(new DebugLog());
     }
+
+    SmartDashboard.putBoolean("telescopic",  m_robotContainer.getTelescopicArmManual());
+    SmartDashboard.putBoolean("Reverse", m_robotContainer.getReverseManual());
+    SmartDashboard.putBoolean("Reverse telescopic",  m_robotContainer.getTelescopicReverseManual());
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -85,7 +92,18 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+   /* SmartDashboard.putBoolean("Extend Button", extend.get());
+    SmartDashboard.putNumber("Axis Value", operatorJoystick.getRawAxis(3));
+    SmartDashboard.putBoolean("Axis State", m_robotContainer.getReverseManual());
+    if(extend.get() && retract.get()) {
+      System.out.println("BOTH THE BUTTON AND THE RIGHT TRIGGER");
+    } else if(extend.get()) {
+      System.out.println("JUST THE BUTTON");
+    } else {
+      System.out.println("NONE");
+    }*/
+  }
 
   @Override
   public void testInit() {
