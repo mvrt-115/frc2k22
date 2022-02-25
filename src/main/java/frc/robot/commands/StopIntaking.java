@@ -21,7 +21,7 @@ public class StopIntaking extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    //intake.setPosition(Constants.Intake.kTICKS_TO_BOTTOM);
+    intake.setPosition(Constants.Intake.kTICKS_TO_BOTTOM);
     intake.setState(IntakeState.PIVOTING_UP);
   }
 

@@ -4,22 +4,31 @@
 
 package frc.robot.commands;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Storage;
 
-public class IntakeBalls extends CommandBase {
-  /** Creates a new IntakeBalls. */
-  Intake intake;
-
-  public IntakeBalls(Intake intk) {
+public class ManualOverrideControl extends CommandBase {
+  /** Creates a new ManualOverrideControl. */
+  private Supplier<Double> throttle;
+  private Storage storage;
+  public ManualOverrideControl(Storage storage, Supplier<Double> throttle) {
     // Use addRequirements() here to declare subsystem dependencies.
-
-    intake = intk;
+    this.storage = storage;
+    addRequirements(storage);
+    this.throttle = throttle;
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    if(storage.currentState == Storage.StorageState.MANUAL){
+      if(Math.abs(throttle.get())>0.03){
+        storage.runMotor(throttle.get());
+      }
+    }
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override

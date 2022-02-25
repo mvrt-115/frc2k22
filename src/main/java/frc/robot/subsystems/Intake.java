@@ -7,7 +7,14 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
+
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.util.TalonFactory;
@@ -22,6 +29,9 @@ public class Intake extends SubsystemBase {
   // (decide type of motor later)
   private BaseTalon intakeMotor; 
   private BaseTalon pivotMotor; 
+  SupplyCurrentLimitConfiguration limitConfiguration;
+
+  private DigitalInput limitSwitch;
 
   private double feedForward; // feed forward double needed to pivot for a certain number of ticks
 
@@ -29,15 +39,22 @@ public class Intake extends SubsystemBase {
   public Intake() {
     state = IntakeState.UP;
 
+    limitSwitch = new DigitalInput(4); // put channel in constants later
+    limitConfiguration = new SupplyCurrentLimitConfiguration(true, 40, 40, .5);
+
     intakeMotor = TalonFactory.createTalonSRX(Constants.Intake.kROLLER_ID, true); // change motor IDs from Constants later
-    pivotMotor = TalonFactory.createTalonSRX(Constants.Intake.kPIVOT_ID, false); // change motor IDs from Constants later
-   
-    pivotMotor.setSelectedSensorPosition(0);
+    intakeMotor.configSupplyCurrentLimit(limitConfiguration, 1);
+    intakeMotor.configOpenloopRamp(0.4);
+    pivotMotor = TalonFactory.createTalonFX(Constants.Intake.kPIVOT_ID, true); // change motor IDs from Constants later
+    pivotMotor.setInverted(false); //true == down check if bot is rewired 
+    //pivotMotor.setSelectedSensorPosition(0);
 
     pivotMotor.config_kP(Constants.kPIDIdx, Constants.Intake.kP);
     pivotMotor.config_kI(Constants.kPIDIdx, Constants.Intake.kI);
     pivotMotor.config_kD(Constants.kPIDIdx, Constants.Intake.kD);
     pivotMotor.config_kF(Constants.kPIDIdx, Constants.Intake.kFF);
+    pivotMotor.configOpenloopRamp(0.7);
+    
   }
 
   @Override
@@ -58,6 +75,7 @@ public class Intake extends SubsystemBase {
         pivotDown();
         break;
       case UP:
+         setPosition(0);
         stopPivot(); // to keep the intake up
         break;
     }
@@ -96,9 +114,13 @@ public class Intake extends SubsystemBase {
    */
   public void stopPivot()
   {
-    if(state == IntakeState.INTAKING)
-      pivotMotor.set(ControlMode.PercentOutput, Constants.Intake.kPIVOT_STOP_SPEED_WHEN_DOWN);
-    else if(state == IntakeState.UP)
+    if(state == IntakeState.INTAKING){
+       setPosition(Constants.Intake.kTICKS_TO_BOTTOM);
+      if (!isAtBottom()) {
+        pivotMotor.set(ControlMode.PercentOutput, Constants.Intake.kPIVOT_STOP_SPEED_WHEN_DOWN);
+      }
+    }
+    else if( state == IntakeState.UP)
       pivotMotor.set(ControlMode.PercentOutput, Constants.Intake.kPIVOT_STOP_SPEED_WHEN_UP);
     else 
       pivotMotor.set(ControlMode.PercentOutput, 0);
@@ -117,6 +139,7 @@ public class Intake extends SubsystemBase {
     if(isAtBottom())
     {
       state = IntakeState.INTAKING;
+      setPosition(Constants.Intake.kTICKS_TO_BOTTOM);
     }
     else
     {
@@ -143,6 +166,7 @@ public class Intake extends SubsystemBase {
    */
   public boolean isAtBottom()
   {
+    // return limitSwitch.get();
     return Math.abs(Constants.Intake.kTICKS_TO_BOTTOM - getCurrentPos()) <= Constants.Intake.kMARGIN_OF_ERROR_TICKS;
   }
 
@@ -177,16 +201,18 @@ public class Intake extends SubsystemBase {
   {
     if(isAtTop())
     {
-      System.out.println("yo wassup guys im up");
       state = IntakeState.UP;
+      setPosition(0);
     }
     else
     {
       pivotMotor.set(ControlMode.Position, Constants.Intake.kTICKS_TO_TOP, DemandType.ArbitraryFeedForward, 
       feedForward);
     }
+  }   
+  public void  setPosition(double posTicks){
+    pivotMotor.setSelectedSensorPosition(posTicks);
   }
-
   /**
    * runs the intake so that the wheels move, intaking the ball in
    */
