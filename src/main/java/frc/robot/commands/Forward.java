@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import com.pathplanner.lib.PathPlanner;
 
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Drivetrain;
 
@@ -16,9 +17,12 @@ public class Forward extends SequentialCommandGroup {
   public Forward(Drivetrain dr) {
     // Use addRequirements() here to declare subsystem dependencies.
     drivetrain = dr;
+    
+    Trajectory trajectory = PathPlanner.loadPath("Forward", 3, 3);
+    drivetrain.setOdometry(trajectory.getInitialPose());
 
     addCommands(
-      drivetrain.getRamseteCommand(PathPlanner.loadPath("Forward", 3, 3))
+      drivetrain.getRamseteCommand(trajectory)
     );
   }
 

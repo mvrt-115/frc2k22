@@ -3,6 +3,8 @@
 package frc.robot.commands;
 import java.util.List;
 
+import javax.swing.text.StyleContext.SmallAttributeSet;
+
 import com.pathplanner.lib.PathPlanner;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -11,6 +13,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Drivetrain;
@@ -28,10 +31,10 @@ public class FiveBallAuton extends SequentialCommandGroup {
     drivetrain.setOdometry(new Pose2d(0, 0, new Rotation2d(0)));
 
     addCommands(
-      path6part1()//,
+      path6part1(),
       //new IntakeBalls(intake).withTimeout(2),
       //new ShootBalls(shooter),
-      // quickTurn(drivetrain.getPose().getX(), drivetrain.getPose().getY(), 100), //quickTurn(7.70, 0.68, 100),
+      quickTurn(drivetrain.getPose().getX(), drivetrain.getPose().getY(), 100)//, //quickTurn(7.70, 0.68, 100),
       // path6part2(),
       // //new IntakeBalls(intake).withTimeout(2),
       // //new ShootBalls(shooter),
@@ -41,24 +44,27 @@ public class FiveBallAuton extends SequentialCommandGroup {
       //new ShootBalls(shooter)
     );
   }
-
+  //George coded it
   public Command path6part1()
   {
     Trajectory trajectory = PathPlanner.loadPath("Path6Part1", 1, 1);
-    Transform2d transform2d = new Pose2d(8.09, 2.01, new Rotation2d(0)).minus(trajectory.getInitialPose());
-    trajectory = trajectory.transformBy(transform2d);
+    // Transform2d transform2d = new Pose2d(8.09, 2.01, new Rotation2d(0)).minus(trajectory.getInitialPose());
+    // trajectory = trajectory.transformBy(transform2d);
+    SmartDashboard.putNumber("Heading", trajectory.getInitialPose().getRotation().getDegrees());
+    drivetrain.setOdometry(trajectory.getInitialPose());
     return drivetrain.getRamseteCommand(trajectory);
   }
 
   public Command quickTurn(double x, double y, double angle) //idk if will work
   {
     Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
-      new Pose2d(x, y, new Rotation2d(drivetrain.getGyroAngle().getDegrees())), 
-      List.of( new Translation2d(x, y) ), //same spot
+      new Pose2d(x, y, drivetrain.getGyroAngle()), 
+      List.of(), //same spot
       new Pose2d(x, y, new Rotation2d(drivetrain.getGyroAngle().getDegrees() + angle)),
-      new TrajectoryConfig(3, 4)
+      new TrajectoryConfig(1, 1)
     );
 
+    drivetrain.setOdometry(trajectory.getInitialPose());
     return drivetrain.getRamseteCommand(trajectory);
   }
 

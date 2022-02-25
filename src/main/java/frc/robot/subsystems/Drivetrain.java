@@ -165,11 +165,11 @@ public class Drivetrain extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // differentialDrive.feed();
-        // leftMaster.feed();
-        // rightMaster.feed();
-        // leftFollower.feed();
-        // rightFollower.feed();
+        differentialDrive.feed();
+        leftMaster.feed();
+        rightMaster.feed();
+        leftFollower.feed();
+        rightFollower.feed();
 
         pose = odometry.update(getGyroAngle(), getDistanceTravelled(leftMaster, leftFollower),
                 getDistanceTravelled(rightMaster, rightFollower));
@@ -403,7 +403,7 @@ public class Drivetrain extends SubsystemBase {
      */
     public void setOdometry(Pose2d newPose) {
         resetEncoders();
-        odometry.resetPosition(pose, new Rotation2d(0));
+        odometry.resetPosition(newPose, new Rotation2d(0));
     }
 
     /** 

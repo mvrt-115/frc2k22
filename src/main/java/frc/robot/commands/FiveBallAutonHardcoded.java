@@ -11,7 +11,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Drivetrain;
@@ -52,9 +51,10 @@ public class FiveBallAutonHardcoded extends SequentialCommandGroup {
       new TrajectoryConfig(3, 4) 
     );
 
-    Transform2d transform2d = new Pose2d(8.09, 2.01, new Rotation2d(0)).minus(trajectory.getInitialPose());
-    trajectory = trajectory.transformBy(transform2d);
+    // Transform2d transform2d = new Pose2d(8.09, 2.01, new Rotation2d(0)).minus(trajectory.getInitialPose());
+    // trajectory = trajectory.transformBy(transform2d);
 
+    drivetrain.setOdometry(trajectory.getInitialPose());
     return drivetrain.getRamseteCommand(trajectory);
   }
 

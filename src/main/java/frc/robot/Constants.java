@@ -62,7 +62,7 @@ public final class Constants {
         public static final double kFF = 0;
 
         //values to be determined after the robot is characterized
-        public static final double kS = 0.57954; //0.61702; //units: Volts
+        public static final double kS = 0; //0.57954; //0.61702; //units: Volts
         public static final double kV = 2.856; //2.8581; //units: Volts * Seconds / Meters
         public static final double kA = 0; //0.22684; //0.20282; //units: Volts * Seconds^2 / Meters
     }
