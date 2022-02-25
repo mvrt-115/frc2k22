@@ -17,23 +17,18 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.FiveBallAuton;
-import frc.robot.commands.FiveBallAutonHardcoded;
-import frc.robot.commands.Forward;
+import frc.robot.commands.AlignDrivetrain;
+import frc.robot.commands.ExpelBalls;
 import frc.robot.commands.JoystickDrive;
+import frc.robot.commands.SetRPM;
+import frc.robot.commands.StopIntaking;
+import frc.robot.commands.StopShooter;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Intake;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-//import frc.robot.commands.SetRPM;
-
-import frc.robot.subsystems.*;
-import frc.robot.commands.*;
-import frc.robot.subsystems.Shooter.HoodState;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Shooter.ShooterState;
+import frc.robot.subsystems.Storage;
+import frc.robot.subsystems.Turret;
 import frc.robot.util.Limelight;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.subsystems.Drivetrain;
 import frc.robot.util.RollingAverage;
 
 /**
@@ -129,6 +124,8 @@ public class RobotContainer {
     
     
     // disableTurret.whenPressed(new DisableTurret(turret));
+
+    new JoystickButton(driverJoystick, 3).whenPressed(new AlignDrivetrain(drivetrain, limelight));
   }
 
   /**
