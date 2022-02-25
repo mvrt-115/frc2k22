@@ -4,14 +4,18 @@
 
 package frc.robot.commands;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.Storage;
 
 public class ShootFromStorage extends CommandBase {
   /** Creates a new ShootFromStorage. */
   private Storage storage;
   public ShootFromStorage(Storage storageIn) {
-    // Use addRequirements() here to declare subsystem dependencies.
     storage = storageIn;
+    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(storage);
   }
 
   // Called when the command is initially scheduled.
