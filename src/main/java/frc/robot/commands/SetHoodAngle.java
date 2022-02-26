@@ -28,7 +28,7 @@ public class SetHoodAngle extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooter.setTargetAngle(angle);
+    // shooter.setTargetAngle(angle);
     angle = SmartDashboard.getNumber("Set Hood Angle", angle);
   }
 

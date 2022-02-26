@@ -39,32 +39,6 @@ public class MathUtils {
         return valAfterDeadband;
     }
 
-    /**
-     * Converts ticks to meters.
-     * 
-     * @param ticks              encoder tick values
-     * @param ticksPerRevolution some Constants.java number
-     * @param gearRatio          another Constants.java number
-     * @param wheelCircumference also another Constants.java number
-     * @return the meters the motor(s) have traveled
-     */
-    public static double convertTicksToMeters(double ticks, double ticksPerRotation, double gearRatio,
-            double wheelCircumference) {
-        // Conversion big braining:
-        // You are given ticks
-        // Divide ticks by ticksPerRotation in order to get rotations
-        // Divide rotations by gearRatio (aka gear to wheel ratio) in order to get
-        // wheelRotations
-        // Multiply wheelRotations by wheelCircumference to get meters
-        // Divide by the mass of the sun and the time it takes you to reach school in
-        // degrees Celcius if you want
-        // Return meters and profit
-
-        double rotations = ticks / ticksPerRotation;
-        double wheelRotations = rotations / gearRatio;
-        double meters = wheelRotations * Units.inchesToMeters(wheelCircumference);
-        return meters;
-    }
 
     public static double metersToRadians(double wheelCircumfrence, double meters){
         double rotations = meters / wheelCircumfrence;
@@ -109,19 +83,78 @@ public class MathUtils {
         return ticks / (ticksPerRev * gearRatio) * 360.0;
     }
 
-    public static double inchesToMeters(double inches) {
-        return inches * 0.0254; // no way it's Team 254 :O
-    }
+    
 
     public static double rpmToTicks(double in_rpm, double gear_ratio) {
         return in_rpm / 600 * Constants.Flywheel.TICKS_PER_REVOLUTION * gear_ratio;
     }
 
-    public static double ticksToRPM(double ticks, double ticks_per_rev, double gear_ratio) {
+    
+
+     /** Convert RPM to ticks per hundred milliseconds
+     * @param in_rpm    RPM to convert
+     * @param ticks_per_rev   Number of ticks per revolution (4096 for TalonSRX, 2048 for TalonFX)
+     * @param gear_ratio    Ratio of the gearbox
+     * @return ticks
+     */
+    public static double rpmToTicks(double in_rpm, double ticks_per_rev, double gear_ratio)
+    {
+        return in_rpm / 600 * ticks_per_rev * gear_ratio;
+    }
+
+    
+
+    /**
+     * Convert ticks per hundred milliseconds to RPM
+     * @param ticks     ticks per hundred milliseconds
+     * @param ticks_per_rev     ticks per revolution (4096 for TalonSRX, 2048 for TalonFX)
+     * @param gear_ratio    gear ratio
+     * @return rpm
+     */
+    public static double ticksToRPM(double ticks, double ticks_per_rev, double gear_ratio)
+    {
         return ticks * 600 / ticks_per_rev / gear_ratio;
     }
 
+
+    /**
+     * convert angle to a position in ticks
+     * @param degrees   angle in degrees
+     * @param encoder_ticks ticks per revolution (4096 for TalonSRX, 2048 for TalonFX)
+     * @param gear_ratio    gear ratio
+     * @return ticks
+     */
     public static int degreesToTicks(double degrees, double encoder_ticks, double gear_ratio) {
-        return (int) ((encoder_ticks * gear_ratio) * degrees / 360);
+        return (int) ((encoder_ticks * gear_ratio) * degrees/360);
+    }
+
+    /**
+     * Converts ticks to meters. 
+     * 
+     * @param ticks encoder tick values
+     * @param ticksPerRevolution some Constants.java number
+     * @param gearRatio another Constants.java number
+     * @param wheelCircumference also another Constants.java number
+     * @return the meters the motor(s) have traveled
+     */
+    public static double convertTicksToMeters(double ticks, double ticksPerRotation, double gearRatio, double wheelCircumference) {
+        // Conversion big braining:
+        // You are given ticks
+        // Divide ticks by ticksPerRotation in order to get rotations
+        // Divide rotations by gearRatio (aka gear to wheel ratio) in order to get wheelRotations
+        // Multiply wheelRotations by wheelCircumference to get meters
+        // Divide by the mass of the sun and the time it takes you to reach school in degrees Celcius if you want
+        // Return meters and profit
+
+        double rotations = ticks / ticksPerRotation;
+        double wheelRotations = rotations / gearRatio;
+        double meters = wheelRotations * wheelCircumference;
+        return meters;
+    }
+
+   
+
+    public static double inchesToMeters(double inches) {
+        return inches * 0.0254; //no way it's Team 254 :O
     }
 }

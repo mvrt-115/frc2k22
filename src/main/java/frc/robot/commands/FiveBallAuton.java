@@ -24,7 +24,7 @@ public class FiveBallAuton extends SequentialCommandGroup {
     drivetrain.setOdometry(new Pose2d(0, 0, new Rotation2d(0)));
 
     new ParallelCommandGroup(
-      new IntakeBalls(intake),
+      // new IntakeBalls(intake),
       new SequentialCommandGroup(
         runPath("Path6Path1"),
         //new ShootBalls(), //2 balls

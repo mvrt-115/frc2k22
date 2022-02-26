@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.MathUtils;
+import frc.robot.util.PID;
 
 public class Drivetrain extends SubsystemBase {
     
@@ -128,6 +129,8 @@ public class Drivetrain extends SubsystemBase {
      * @param quickTurn (boolean) status of quickTurnButton
      */
     public void cheesyIshDrive(double throttle, double wheel, boolean quickTurn) {
+        SmartDashboard.putNumber("throttke", throttle);
+        SmartDashboard.putNumber("wheel", wheel);
         throttle = MathUtils.handleDeadband(throttle, Constants.Drivetrain.kThrottleDeadband);
         wheel = MathUtils.handleDeadband(wheel, Constants.Drivetrain.kWheelDeadband);
 
@@ -240,7 +243,9 @@ public class Drivetrain extends SubsystemBase {
     /**
      * Stops the drivetrain.
      */
-    public void stopDrivetrainMotors() {
+    public void stopDrivetrain() {
+        // SmartDashboard.putNumber("Left Voltage: ", leftVoltage);
+        // setDrivetrainMotorSpeed(leftVoltage/Constants.kVoltageComp, rightVoltage/Constants.kVoltageComp);
         setDrivetrainMotorSpeed(0, 0);
     }
 

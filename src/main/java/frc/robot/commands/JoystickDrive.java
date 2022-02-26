@@ -61,7 +61,7 @@ public class JoystickDrive extends CommandBase {
   @Override
   public void end(boolean interrupted) 
   {
-    drivetrain.stopDrivetrainMotors();
+    drivetrain.stopDrivetrain();
   }
 
   // Returns true when the command should end (which is not until the robot command is interrupted)
