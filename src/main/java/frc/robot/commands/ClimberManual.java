@@ -9,6 +9,7 @@ import java.util.function.Supplier;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import frc.robot.subsystems.Climber;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Climber.ClimberState;
 
@@ -53,9 +54,9 @@ public class ClimberManual extends CommandBase {
     @Override
     public boolean isFinished() {
         return !button.get() && ((motor.equals(climber.leftTelescopic) 
-        && ( speed < 0 && Constants.Climber.kTelescopicFullRetract >= climber.getTelescopicPosition()) 
-        || (speed > 0 && Constants.Climber.kTelescopicFullExtend <= climber.getTelescopicPosition())) 
-        || /*( motor.equals(climber.pivot)*/(speed < 0 && Constants.Climber.kPivotMaxForwardPos >= climber.getPivotAngle()) 
-        || (speed > 0 && Constants.Climber.kPivotMaxReversePos <= climber.getPivotAngle()));
+        && ((speed < 0 && Constants.Climber.kTelescopicFullRetract >= climber.getTelescopicPosition()) 
+        || (speed > 0 && Constants.Climber.kTelescopicFullExtend <= climber.getTelescopicPosition()))) 
+        || (RobotContainer.PIVOT_EXISTS && (motor.equals(climber.pivot) && ((speed < 0 && Constants.Climber.kPivotMaxForwardPos >= climber.getPivotAngle()) 
+        || (speed > 0 && Constants.Climber.kPivotMaxReversePos <= climber.getPivotAngle())))));
     }
 }

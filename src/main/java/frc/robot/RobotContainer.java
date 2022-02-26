@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants.Climber.Auton;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.util.Limelight;
@@ -32,9 +33,12 @@ public class RobotContainer {
   private Joystick driverJoystick;
   private Joystick operatorJoystick;  
 
+  public static final boolean PIVOT_EXISTS = false;
+  public static final boolean CLIMBER_TESTING = false && PIVOT_EXISTS;
+
   // climber operator manual buttons
-  private JoystickButton forward;
-  private JoystickButton extend;
+  private JoystickButton pivot;
+  private JoystickButton telescopic;
   private JoystickButton reverse;
   private JoystickButton startClimb;
   private JoystickButton stopClimb;
@@ -56,16 +60,17 @@ public class RobotContainer {
     driverJoystick = new Joystick(1);
     operatorJoystick = new Joystick(0);
 
-    forward = new JoystickButton(operatorJoystick, 1);
-    extend =  new JoystickButton(operatorJoystick, 4);
+    if(PIVOT_EXISTS)
+      pivot = new JoystickButton(operatorJoystick, 1);
+    telescopic =  new JoystickButton(operatorJoystick, 4);
     reverse = new JoystickButton(operatorJoystick, 8);
     startClimb = new JoystickButton(operatorJoystick, 10);
-    stopClimb = new JoystickButton(operatorJoystick, 7);
+    stopClimb = new JoystickButton(operatorJoystick, 9);
 
-
-    manualButtonClimb = new JoystickButton(operatorJoystick, 0);
-    buttonCounter = 0;
-
+    if(CLIMBER_TESTING) {
+      manualButtonClimb = new JoystickButton(operatorJoystick, 0);
+      buttonCounter = 0;
+    }
 
     quickturn = new JoystickButton(driverJoystick, 5); 
     // Configure the button bindings
@@ -93,27 +98,33 @@ public class RobotContainer {
 
     /* if the pivot button forward is pressed then it is checked to see if the top button is pressed for pivoting backward for the pivot arm
     ** and based on that the correct command is called */
-  //   if(getReverseManual()) 
-  //     pivotButton.whenPressed(new ClimberManual(climber, climber.pivot, this::getPivotReverseManual, -Constants.Climber.kApproachRungSpeed));
-  //   else 
-    //     pivotButton.whenPressed(new ClimberManual(climber, climber.pivot, this::getPivotArmManual, Constants.Climber.kApproachRungSpeed));
+    if(PIVOT_EXISTS) {
+      if(getReverseManual()) 
+        pivot.whenPressed(new ClimberManual(climber, climber.pivot, this::getPivotReverseManual, -Constants.Climber.kApproachRungSpeed));
+      else 
+        pivot.whenPressed(new ClimberManual(climber, climber.pivot, this::getPivotArmManual, Constants.Climber.kApproachRungSpeed));
+    }
 
     /** If the start climber button is pressed, then the start and stop climber parellel command is called and the instance of the stop climber 
      *  to help the command choose whether the stop climber or not
      */
-    // if(getStartClimb())
-      // startClimb.whenPressed(new StartStopClimb(this::getStopClimb, climber));
-
-    //if(manualButtonClimb.get() && buttonCounter==1)
-    //  manualOneRungSeqeunceTest();
-    //manualSequenceTest();
-    //manualButtonClimb.whenPressed(new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.kTelescopicFullExtend, climber.leftTelescopicProximity));
+    if(getStartClimb())
+    {
+      if(PIVOT_EXISTS) startClimb.whenPressed(new StartStopClimb(this::getStopClimb, climber));
+      else startClimb.whenPressed(new MidRungClimbWithoutPivot(climber));
+    }
 
     /** the manual sequence method is called and checks the amount of times the button is pressed and runs the commands in that order and the 
      *  state of the button is stored as the past state and is called to check if the button was ever realeased
      */
-    // manualSequenceTest();
-    // manualLastState = manualButtonClimb.get();
+    if(CLIMBER_TESTING)
+    {
+      if(manualButtonClimb.get())
+        manualOneRungSeqeunceTest();
+      //manualSequenceTest();
+      //manualButtonClimb.whenPressed(new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.kTelescopicFullExtend, climber.leftTelescopicProximity));
+      manualLastState = (manualButtonClimb.get());
+    }
   }
 
 
@@ -147,16 +158,16 @@ public class RobotContainer {
    */
   public boolean getPivotArmManual()
   {
-    return forward.get();
+    return pivot.get();
   }
 
   /**
    * Gets the state of the telescopic button
-   * @return boolean for state of telescopic button
+   * @return boolean for state of telescopic button 
    */
   public boolean getTelescopicArmManual()
   {
-    return extend.get();
+    return telescopic.get();
   }
 
   /**
@@ -194,7 +205,7 @@ public class RobotContainer {
    * @return buttons' total states (boolean)
    */ 
   public boolean getTelescopicReverseManual() {
-    return getReverseButton(extend);
+    return getReverseButton(telescopic);
   }
 
   /**
@@ -202,7 +213,7 @@ public class RobotContainer {
    * @return buttons' total state (boolean)
    */
   public boolean getPivotReverseManual() {
-    return getReverseButton(forward);
+    return getReverseButton(pivot);
   }
 
   /**
@@ -235,7 +246,7 @@ public class RobotContainer {
   /** Each time the manual climb button is pressed, the next command in the sequence for the mid rung climb is called and 
    * the number of times the button is called is stored in the buttonCounter variable
    */
-  /*
+  
   public void manualOneRungSeqeunceTest(){
     if(getManualSequenceButton() && buttonCounter == 1)
     {
@@ -262,11 +273,10 @@ public class RobotContainer {
       new ClimberAuton(climber, climber.leftTelescopic, Auton.kExtendPivotHang, climber.pivotProximity);
     }
   }
-  */
+  
   /** Each time the manual climb button is pressed, the next command in the sequence for the traversal climb is called and 
    *  the number of times the button is called is stored in the buttonCounter variable
    */
-  /*
   public void manualSequenceTest() {
     if(getManualSequenceButton() && buttonCounter == 1)
     {
@@ -313,7 +323,7 @@ public class RobotContainer {
       new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.Auton.kExtendPivotHang, climber.pivotProximity);
     }
   }
-  */
+  
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
