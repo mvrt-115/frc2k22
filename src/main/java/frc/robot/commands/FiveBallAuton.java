@@ -23,23 +23,29 @@ public class FiveBallAuton extends SequentialCommandGroup {
 
     drivetrain.setOdometry(new Pose2d(0, 0, new Rotation2d(0)));
 
-    new ParallelCommandGroup(
+    addCommands(
+      // new ParallelCommandGroup(
       // new IntakeBalls(intake),
-      new SequentialCommandGroup(
-        runPath("Path6Path1"),
-        //new ShootBalls(), //2 balls
-        runPath("Path6Part2"),
-        //new ShootBalls(), //1 ball
-        runPath("Path6Part3")
-        //new ShootBalls()  //2 balls
-      )
+        // new SequentialCommandGroup(
+          runPath("Path6Part1"),
+          //new ShootBalls(), //2 balls
+          runPath("Path6Part2"),
+          //new ShootBalls(), //1 ball
+          runPath("Path6Part3")
+          //new ShootBalls()  //2 balls
+        // )
+      // )
     );
+    Trajectory trajectory = PathPlanner.loadPath("Path6Part1", 1, 1);
+    drivetrain.setOdometry(trajectory.getInitialPose());
   }
 
   public Command runPath(String pathName)
   {
     Trajectory trajectory = PathPlanner.loadPath(pathName, 1, 1);
-    drivetrain.setOdometry(trajectory.getInitialPose());
+    // System.out.println(trajectory);
+    // System.out.println(drivetrain);
+    // drivetrain.setOdometry(trajectory.getInitialPose());
     return drivetrain.getRamseteCommand(trajectory);
   }
 

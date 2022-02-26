@@ -31,7 +31,6 @@ import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.MathUtils;
-import frc.robot.util.PID;
 
 public class Drivetrain extends SubsystemBase {
     
@@ -113,7 +112,10 @@ public class Drivetrain extends SubsystemBase {
         leftController = new PIDController(Constants.Drivetrain.kP, Constants.Drivetrain.kI, Constants.Drivetrain.kD);
         rightController = new PIDController(Constants.Drivetrain.kP, Constants.Drivetrain.kI, Constants.Drivetrain.kD);
     
-        resetEncoders(); //resetting all the encoders (aka motor.setSelectedSensorPosition(0))
+        leftMaster.setSelectedSensorPosition(0);
+        leftFollower.setSelectedSensorPosition(0);
+        rightMaster.setSelectedSensorPosition(0);
+        rightFollower.setSelectedSensorPosition(0);
 
         SmartDashboard.putData("field", field);
         
@@ -299,6 +301,7 @@ public class Drivetrain extends SubsystemBase {
      */
     public double getDistanceTravelled(TalonFX m1, TalonFX m2) {
         double ticks = (m1.getSelectedSensorPosition() + m2.getSelectedSensorPosition()) / 2.0;
+        SmartDashboard.putNumber("Ticks", ticks);
 
         // returns the converted values
         return MathUtils.convertTicksToMeters(
@@ -405,7 +408,7 @@ public class Drivetrain extends SubsystemBase {
     public void setOdometry(Pose2d newPose) {
         resetEncoders();
         odometry.resetPosition(newPose, new Rotation2d(0));
-        //odometry.resetPosition(newPose, newPose.getRotation());
+        // odometry.resetPosition(newPose, newPose.getRotation());
     }
 
     /** 

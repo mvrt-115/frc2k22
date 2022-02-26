@@ -40,9 +40,9 @@ public final class Constants {
         public static int kCompRightFollowerId = 4;
        
         public static int kPracLeftMasterId = 2;
-        public static int kPracRightMasterId = 1;
+        public static int kPracRightMasterId = 0;
         public static int kPracLeftFollowerId = 3;
-        public static int kPracRightFollowerId = 0;
+        public static int kPracRightFollowerId = 1;
 
         // constants for joystick drive
         public static final double kSensitivity = 0.90;
@@ -63,7 +63,7 @@ public final class Constants {
         public static final double kFF = 0;
 
         //values to be determined after the robot is characterized
-        public static final double kS = 0; //0.57954; //0.61702; //units: Volts
+        public static final double kS = 0; //0.73556; //0.57954; //0.61702; //units: Volts
         public static final double kV = 1.4; //2.856; //2.8581; //units: Volts * Seconds / Meters
         public static final double kA = 0; //0.22684; //0.20282; //units: Volts * Seconds^2 / Meters
     }

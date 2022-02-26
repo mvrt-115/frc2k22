@@ -10,19 +10,9 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.FiveBallAuton;
-import frc.robot.commands.AlignDrivetrain;
 // import frc.robot.commands.ExpelBalls;
 import frc.robot.commands.JoystickDrive;
-import frc.robot.commands.SetRPM;
-import frc.robot.commands.StopIntaking;
-import frc.robot.commands.StopShooter;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Shooter.ShooterState;
-import frc.robot.subsystems.Storage;
-import frc.robot.subsystems.Turret;
-import frc.robot.util.Limelight;
 import frc.robot.util.RollingAverage;
 
 /**
@@ -49,10 +39,10 @@ public class RobotContainer {
   
   
   private final Drivetrain drivetrain = new Drivetrain();
-  private final Limelight limelight = new Limelight();
-  private final Shooter shooter = new Shooter(limelight);
-  private final Turret turret = new Turret(limelight);
-  private final Storage storage = new Storage(operatorJoystick);
+  // private final Limelight limelight = new Limelight();
+  // private final Shooter shooter = new Shooter(limelight);
+  // private final Turret turret = new Turret(limelight);
+  // private final Storage storage = new Storage(operatorJoystick);
   
   
   // private final StopShooter stopShooter = new StopShooter(shooter);
@@ -173,7 +163,7 @@ public class RobotContainer {
 
     // return new FiveBallAutonHardcoded(drivetrain, new Intake());
     
-    return new FiveBallAuton(drivetrain, new Intake());
+    return new FiveBallAuton(drivetrain, null);
     
     // return new Forward(drivetrain);
             

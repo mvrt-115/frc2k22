@@ -148,7 +148,7 @@ public class MathUtils {
 
         double rotations = ticks / ticksPerRotation;
         double wheelRotations = rotations / gearRatio;
-        double meters = wheelRotations * wheelCircumference;
+        double meters = wheelRotations * Units.inchesToMeters(wheelCircumference);
         return meters;
     }
 
