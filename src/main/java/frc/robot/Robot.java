@@ -51,10 +51,6 @@ public class Robot extends TimedRobot {
     if (Constants.debugMode) {
       CommandScheduler.getInstance().schedule(new DebugLog());
     }
-
-    SmartDashboard.putBoolean("telescopic",  m_robotContainer.getTelescopicArmManual());
-    SmartDashboard.putBoolean("Reverse", m_robotContainer.getReverseManual());
-    SmartDashboard.putBoolean("Reverse telescopic",  m_robotContainer.getTelescopicReverseManual());
   }
 
   /** This function is called once each time the robot enters Disabled mode. */

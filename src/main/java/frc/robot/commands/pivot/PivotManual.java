@@ -2,26 +2,21 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.pivot;
 
 import java.util.function.Supplier;
 
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import frc.robot.subsystems.Climber;
 import frc.robot.Constants;
-import frc.robot.RobotContainer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Climber.ClimberState;
 
-public class ClimberManual extends CommandBase {
+public class PivotManual extends CommandBase {
     public Climber climber;
-    public TalonFX motor;
     public double speed;
     public Supplier<Boolean> button;
     /** Creates a new ClimberManual. */
-    public ClimberManual(Climber climber, TalonFX motor, Supplier<Boolean> buttonState, double speed) {
+    public PivotManual(Climber climber, Supplier<Boolean> buttonState, double speed) {
         // Use addRequirements() here to declare subsystem dependencies.
-        this.motor = motor;
         this.speed = speed;
         this.button = buttonState;
         this.climber = climber;
@@ -37,13 +32,13 @@ public class ClimberManual extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-      climber.setSpeed(motor, speed);
+      climber.setPivotSpeed(speed);
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-      climber.stopMotor(motor);
+      climber.stopPivotMotor();
     }
 
     // Returns true when the command should end.
@@ -53,10 +48,7 @@ public class ClimberManual extends CommandBase {
      */
     @Override
     public boolean isFinished() {
-        return !button.get() && ((motor.equals(climber.leftTelescopic) 
-        && ((speed < 0 && Constants.Climber.kTelescopicFullRetract >= climber.getTelescopicPosition()) 
-        || (speed > 0 && Constants.Climber.kTelescopicFullExtend <= climber.getTelescopicPosition()))) 
-        || (RobotContainer.PIVOT_EXISTS && (motor.equals(climber.pivot) && ((speed < 0 && Constants.Climber.kPivotMaxForwardPos >= climber.getPivotAngle()) 
-        || (speed > 0 && Constants.Climber.kPivotMaxReversePos <= climber.getPivotAngle())))));
+        return !button.get() && (speed < 0 && Constants.Climber.kPivotMaxForwardPos >= climber.getPivotAngle()) 
+        || (speed > 0 && Constants.Climber.kPivotMaxReversePos <= climber.getPivotAngle());
     }
 }

@@ -7,9 +7,12 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.Climber.Auton;
 import frc.robot.commands.*;
+import frc.robot.commands.pivot.PivotAuton;
+import frc.robot.commands.pivot.PivotManual;
+import frc.robot.commands.telescopic.TelescopicAuton;
+import frc.robot.commands.telescopic.TelescopicManual;
 import frc.robot.subsystems.*;
 import frc.robot.util.Limelight;
 import frc.robot.util.RollingAverage;
@@ -37,9 +40,10 @@ public class RobotContainer {
   public static final boolean CLIMBER_TESTING = false && PIVOT_EXISTS;
 
   // climber operator manual buttons
-  private JoystickButton pivot;
-  private JoystickButton telescopic;
-  private JoystickButton reverse;
+  private JoystickButton forward;
+  private JoystickButton extend;
+  private JoystickButton retract;
+  private JoystickButton backward;
   private JoystickButton startClimb;
   private JoystickButton stopClimb;
 
@@ -60,10 +64,12 @@ public class RobotContainer {
     driverJoystick = new Joystick(1);
     operatorJoystick = new Joystick(0);
 
-    if(PIVOT_EXISTS)
-      pivot = new JoystickButton(operatorJoystick, 1);
-    telescopic =  new JoystickButton(operatorJoystick, 4);
-    reverse = new JoystickButton(operatorJoystick, 8);
+    if(PIVOT_EXISTS) {
+      forward = new JoystickButton(operatorJoystick, 1);
+      backward = new JoystickButton(operatorJoystick, 2); // change
+    }
+    extend =  new JoystickButton(operatorJoystick, 4);
+    retract = new JoystickButton(operatorJoystick, 8);
     startClimb = new JoystickButton(operatorJoystick, 10);
     stopClimb = new JoystickButton(operatorJoystick, 9);
 
@@ -89,30 +95,26 @@ public class RobotContainer {
     
     /* if the telescopic button extend is pressed then it is checked to see if the top button is pressed for retracting the telescopic arm
     ** and based on that the correct command is called */
-    if(getReverseManual() && getTelescopicArmManual()) {
-      new ClimberManual(climber, climber.leftTelescopic, this::getTelescopicReverseManual, Constants.Climber.kTelescopicRetractManualSpeed);
-    }
-    else if (getTelescopicArmManual()) {
-      new ClimberManual(climber, climber.leftTelescopic, this::getTelescopicArmManual, Constants.Climber.kTelescopicExtendManualSpeed);
-    }
 
+
+    retract.whenPressed(new TelescopicManual(climber, this::isRetractPressed, Constants.Climber.kTelescopicRetractManualSpeed))
+      .whenReleased(new TelescopicManual(climber, this::isRetractPressed, 0));
+    extend.whenPressed(new TelescopicManual(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed))
+      .whenReleased(new TelescopicManual(climber, this::isExtendPressed, 0));
     /* if the pivot button forward is pressed then it is checked to see if the top button is pressed for pivoting backward for the pivot arm
     ** and based on that the correct command is called */
     if(PIVOT_EXISTS) {
-      if(getReverseManual()) 
-        pivot.whenPressed(new ClimberManual(climber, climber.pivot, this::getPivotReverseManual, -Constants.Climber.kApproachRungSpeed));
-      else 
-        pivot.whenPressed(new ClimberManual(climber, climber.pivot, this::getPivotArmManual, Constants.Climber.kApproachRungSpeed));
+        backward.whenPressed(new PivotManual(climber, this::isBackwardPressed, -Constants.Climber.kApproachRungSpeed))
+          .whenReleased(new PivotManual(climber, this::isBackwardPressed, 0)); 
+        forward.whenPressed(new PivotManual(climber, this::isForwardPressed, Constants.Climber.kApproachRungSpeed))
+           .whenReleased(new PivotManual(climber, this::isForwardPressed, 0));
     }
 
     /** If the start climber button is pressed, then the start and stop climber parellel command is called and the instance of the stop climber 
      *  to help the command choose whether the stop climber or not
      */
-    if(getStartClimb())
-    {
-      if(PIVOT_EXISTS) startClimb.whenPressed(new StartStopClimb(this::getStopClimb, climber));
-      else startClimb.whenPressed(new MidRungClimbWithoutPivot(climber));
-    }
+    if(PIVOT_EXISTS && getStartClimb())
+      startClimb.whenPressed(new StartStopClimb(this::getStopClimb, climber));
 
     /** the manual sequence method is called and checks the amount of times the button is pressed and runs the commands in that order and the 
      *  state of the button is stored as the past state and is called to check if the button was ever realeased
@@ -156,27 +158,28 @@ public class RobotContainer {
    * Gets the state of the pivot button
    * @return all buttons states for buttons passed (boolean)
    */
-  public boolean getPivotArmManual()
-  {
-    return pivot.get();
+  public boolean isForwardPressed() {
+    return forward.get();
+  }
+  
+  /**
+   * Gets the state of the bakcward button
+   * @return state of backward pivot button
+   */
+  public boolean isBackwardPressed() {
+    return backward.get();
   }
 
   /**
    * Gets the state of the telescopic button
    * @return boolean for state of telescopic button 
    */
-  public boolean getTelescopicArmManual()
-  {
-    return telescopic.get();
+  public boolean isExtendPressed() {
+    return extend.get();
   }
 
-  /**
-   * Gets the state of the reverse button
-   * @return boolean for state of reverse button
-   */
-  public boolean getReverseManual() {
-   // return operatorJoystick.getRawAxis(3) >= Constants.Climber.kAxisThreshold;
-    return reverse.get();
+  public boolean isRetractPressed() {
+    return retract.get();
   }
 
   /** 
@@ -189,31 +192,6 @@ public class RobotContainer {
     for(int i = 0; i < buttons.length; i++)
       if(!buttons[i].get()) totalButtonState = false;
     return totalButtonState;
-  }
-
-  /**
-   * Gets the collective state of the reverse trigger and the given button
-   * @param button button that needs to be checked in conjunction with the trigger
-   * @return boolean representing the collective state of the button and trigger
-    */
-  public boolean getReverseButton(JoystickButton button) {
-    return button.get() && getReverseManual();
-  }
-
-  /** 
-   * Gets the states of the telescopic and reverse buttons for running the telescopic in reverse
-   * @return buttons' total states (boolean)
-   */ 
-  public boolean getTelescopicReverseManual() {
-    return getReverseButton(telescopic);
-  }
-
-  /**
-   * Gets the states of the pivot and reverse buttons for running the pivot arm in reverse
-   * @return buttons' total state (boolean)
-   */
-  public boolean getPivotReverseManual() {
-    return getReverseButton(pivot);
   }
 
   /**
@@ -232,11 +210,10 @@ public class RobotContainer {
     return stopClimb.get();
   }
 
-  /* Gets the state of the manual sequence button and checks to see if the last button state was released and 
+  /** Gets the state of the manual sequence button and checks to see if the last button state was released and 
      then the button counter is incremented to show that the button was pressed */
   public boolean getManualSequenceButton(){
-    if(manualButtonClimb.get() != manualLastState && manualButtonClimb.get())
-    {
+    if(manualButtonClimb.get() != manualLastState && manualButtonClimb.get()) {
       buttonCounter++;
       return manualButtonClimb.get();
     }
@@ -247,30 +224,30 @@ public class RobotContainer {
    * the number of times the button is called is stored in the buttonCounter variable
    */
   
-  public void manualOneRungSeqeunceTest(){
-    if(getManualSequenceButton() && buttonCounter == 1)
-    {
-      new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.kTelescopicFullExtend, climber.leftTelescopicLimit);
-    }
-    if(getManualSequenceButton() && buttonCounter == 2)
-    {
-      new ClimberAuton(climber, climber.pivot, Auton.kPivotPivotingBack);
-    }
-    if(getManualSequenceButton() && buttonCounter == 3)
-    {
-      new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.Auton.kHookHighRungTele, climber.leftTelescopicProximity);
-    }
-    if(getManualSequenceButton() && buttonCounter == 4)
-    {
-      new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.kTelescopicFullRetract);
-    }
-    if(getManualSequenceButton() && buttonCounter == 5)
-    {
-      new ClimberAuton(climber, climber.pivot, Auton.kRotateToHighRungPivot, climber.pivotLimit);
-    }
-    if(getManualSequenceButton() && buttonCounter == 6)
-    {
-      new ClimberAuton(climber, climber.leftTelescopic, Auton.kExtendPivotHang, climber.pivotProximity);
+  public void manualOneRungSeqeunceTest() {
+    if(getManualSequenceButton()) {
+      switch(buttonCounter) {
+        case 1:
+          manualButtonClimb.whenPressed(new TelescopicAuton(climber, Constants.Climber.kTelescopicFullExtend, climber.leftTelescopicLimit));
+          break;
+        case 2:
+          manualButtonClimb.whenPressed(new PivotAuton(climber, Auton.kPivotPivotingBack));
+          break;
+        case 3:
+          manualButtonClimb.whenPressed(new TelescopicAuton(climber, Constants.Climber.Auton.kHookHighRungTele, climber.leftTelescopicProximity));
+          break;
+        case 4:
+          manualButtonClimb.whenPressed(new TelescopicAuton(climber, Constants.Climber.kTelescopicFullRetract));
+          break;
+        case 5:
+          manualButtonClimb.whenPressed(new PivotAuton(climber, Auton.kRotateToHighRungPivot, climber.pivotLimit));
+          break;
+        case 6:
+          manualButtonClimb.whenPressed(new TelescopicAuton(climber, Auton.kExtendPivotHang, climber.pivotProximity));
+          break;
+        default:
+          return;
+      }
     }
   }
   
@@ -278,49 +255,43 @@ public class RobotContainer {
    *  the number of times the button is called is stored in the buttonCounter variable
    */
   public void manualSequenceTest() {
-    if(getManualSequenceButton() && buttonCounter == 1)
-    {
-      new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.Auton.kLiftOffRungTele);
-    }
-    else if(getManualSequenceButton() && buttonCounter == 2)
-    {
-      new ClimberAuton(climber, climber.pivot, Constants.Climber.Auton.kPivotTeleBack);
-    }
-    else if(getManualSequenceButton() && buttonCounter == 3)
-    {
-      new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.kTelescopicFullExtend);
-    }
-    else if(getManualSequenceButton() && buttonCounter == 4)
-    {
-      new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.Auton.kRotateToHighRungTele, climber.leftTelescopicLimit);
-    }
-    else if(getManualSequenceButton() && buttonCounter == 5)
-    {
-      new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.Auton.kHookHighRungTele, climber.leftTelescopicProximity);
-    }
-    else if(getManualSequenceButton() && buttonCounter == 6)
-    {
-      new ClimberAuton(climber, climber.pivot, Constants.Climber.Auton.kShiftWeight);
-    }
-    else if(getManualSequenceButton() && buttonCounter == 7)
-    {
-      new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.Auton.kRetractPivotLiftOff);
-    }
-    else if(getManualSequenceButton() && buttonCounter == 8)
-    {
-      new ClimberAuton(climber, climber.pivot, Constants.Climber.Auton.kPivotPivotingBack);
-    }
-    else if(getManualSequenceButton() && buttonCounter == 9)
-    {
-      new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.kTelescopicFullRetract);
-    }
-    else if(getManualSequenceButton() && buttonCounter == 10)
-    {
-      new ClimberAuton(climber, climber.pivot, Constants.Climber.Auton.kRotateToHighRungPivot, climber.pivotLimit);
-    }
-    else if(getManualSequenceButton() && buttonCounter == 11)
-    {
-      new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.Auton.kExtendPivotHang, climber.pivotProximity);
+    if(getManualSequenceButton()) {
+      switch(buttonCounter) {
+        case 1:
+          manualButtonClimb.whenPressed(new TelescopicAuton(climber , Constants.Climber.Auton.kLiftOffRungTele));
+          break;
+        case 2:
+          manualButtonClimb.whenPressed(new PivotAuton(climber, Constants.Climber.Auton.kPivotTeleBack));
+          break;
+        case 3:
+          manualButtonClimb.whenPressed(new TelescopicAuton(climber, Constants.Climber.kTelescopicFullExtend));
+          break;
+        case 4:
+          manualButtonClimb.whenPressed(new TelescopicAuton(climber, Constants.Climber.Auton.kRotateToHighRungTele, climber.leftTelescopicLimit));
+          break;
+        case 5:
+          manualButtonClimb.whenPressed(new TelescopicAuton(climber, Constants.Climber.Auton.kHookHighRungTele, climber.leftTelescopicProximity));
+          break;
+        case 6:
+          manualButtonClimb.whenPressed(new PivotAuton(climber, Constants.Climber.Auton.kShiftWeight));
+          break;
+        case 7:
+          manualButtonClimb.whenPressed(new TelescopicAuton(climber, Constants.Climber.Auton.kRetractPivotLiftOff));
+          return;
+        case 8:
+          manualButtonClimb.whenPressed(new PivotAuton(climber, Constants.Climber.Auton.kPivotPivotingBack));
+          break;
+        case 9:
+          manualButtonClimb.whenPressed(new TelescopicAuton(climber, Constants.Climber.kTelescopicFullRetract));
+          break;
+        case 10: 
+          manualButtonClimb.whenPressed(new PivotAuton(climber, Constants.Climber.Auton.kRotateToHighRungPivot, climber.pivotLimit));
+          break;
+        case 11:
+          manualButtonClimb.whenPressed(new TelescopicAuton(climber, Constants.Climber.Auton.kExtendPivotHang, climber.pivotProximity));
+          break;
+        default: return;
+      }
     }
   }
   

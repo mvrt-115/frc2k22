@@ -2,26 +2,29 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.pivot;
 
-import java.util.function.Supplier;
-
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.subsystems.Climber;
 
-public class StopClimb extends CommandBase {
-  /** Creates a new StopClimb. */
+public class PivotPID extends CommandBase {
   public Climber climber;
-  public Supplier<Boolean> getStopState;
-  public StopClimb(Climber climber, Supplier<Boolean> getStopState) {
-    this.climber = climber;
-    this.getStopState = getStopState;
+  public DigitalInput[] sensor;
+  /** Creates a new ClimberCompensatePIDError. */
+  public PivotPID(Climber climber,DigitalInput[] sensor) {
     // Use addRequirements() here to declare subsystem dependencies.
+    this.climber = climber;
+    this.sensor = sensor;
+    addRequirements(climber);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    climber.setPivotSpeed(Constants.Climber.kApproachRungSpeed);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -30,13 +33,12 @@ public class StopClimb extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    //stops all motors
-    climber.stopAllMotors();
+    climber.stopPivotMotor();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return getStopState.get(); //checks if stop button is pressed
+    return climber.detectAllSensors(sensor);
   }
 }

@@ -29,9 +29,9 @@ public class RunClimber extends SequentialCommandGroup {
       new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.Auton.kTelescopicFullRetractTicks),
       new ClimberAuton(climber, climber.pivot, Constants.Climber.Auton.kRotateToHighRungPivot, climber.pivotLimit),
       new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.Auton.kExtendPivotHang, climber.pivotProximity),*/
-      new ClimbMidRungAutonSequence(climber),
-      new ClimberTraversalAutonSequence(climber),
-      new ClimberTraversalAutonSequence(climber)
+      new MidRungAuton(climber),
+      new TraversalAuton(climber),
+      new TraversalAuton(climber)
     );
   }
 }
