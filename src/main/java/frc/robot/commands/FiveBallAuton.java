@@ -9,6 +9,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 
@@ -29,9 +30,15 @@ public class FiveBallAuton extends SequentialCommandGroup {
         // new SequentialCommandGroup(
           runPath("Path6Part1"),
           //new ShootBalls(), //2 balls
+          runPath("Path6Part1.5"),
+          //new WaitCommand(3),
+          runPath("Path6Part1EndTurn"),//.andThen(new WaitCommand(1)),
+          //runPath("Path6Part1EndTurn"),
           runPath("Path6Part2"),
           //new ShootBalls(), //1 ball
-          runPath("Path6Part3")
+          runPath("Path6Part2EndTurn"),//.andThen(new WaitCommand(1)),
+          runPath("Path6Part3"),
+          runPath("Path6Part4")
           //new ShootBalls()  //2 balls
         // )
       // )
@@ -42,7 +49,10 @@ public class FiveBallAuton extends SequentialCommandGroup {
 
   public Command runPath(String pathName)
   {
-    Trajectory trajectory = PathPlanner.loadPath(pathName, 1, 1);
+    boolean reversed = pathName.equals("Path6Part1.5");
+
+    Trajectory trajectory = PathPlanner.loadPath(pathName, 1, 1, reversed);
+      
     // System.out.println(trajectory);
     // System.out.println(drivetrain);
     // drivetrain.setOdometry(trajectory.getInitialPose());
