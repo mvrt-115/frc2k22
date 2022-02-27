@@ -7,7 +7,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Drivetrain;
@@ -18,11 +17,9 @@ import frc.robot.subsystems.Storage;
 public class FiveBallAuton extends SequentialCommandGroup {
   
   private Drivetrain drivetrain;
-  private Intake intake;
 
   public FiveBallAuton(Drivetrain dr, Intake in, Shooter shooter, Storage storage) {
     drivetrain = dr;
-    intake = in;
 
     drivetrain.setOdometry(new Pose2d(0, 0, new Rotation2d(0)));
 
@@ -31,16 +28,19 @@ public class FiveBallAuton extends SequentialCommandGroup {
       // new IntakeBalls(intake),
         // new SequentialCommandGroup(
           runPath("Path6Part1"),
-          runPath("Path6Part1.5"),
           //new WaitCommand(3),
-          runPath("Path6Part1EndTurn"),//.andThen(new WaitCommand(1)),
+          // runPath("Path6Part1EndTurn"),//.andThen(new WaitCommand(1)),
           //runPath("Path6Part1EndTurn"),
-          new SetRPM(shooter, storage).withTimeout(4),
+          new TurnDegrees(drivetrain, 180),
+          new SetRPM(shooter, storage).withTimeout(4), // 2 balls
+          new TurnDegrees(drivetrain, 180),
+          runPath("Path6Part1.5"),
           runPath("Path6Part2"),
-          //new ShootBalls(), //1 ball
-          runPath("Path6Part2EndTurn"),//.andThen(new WaitCommand(1)),
-          new SetRPM(shooter, storage).withTimeout(4),
+          // runPath("Path6Part2EndTurn"),//.andThen(new WaitCommand(1)),
+          new TurnDegrees(drivetrain, 180),
+          new SetRPM(shooter, storage).withTimeout(4), // 1 ball
           runPath("Path6Part3"),
+          new WaitCommand(1),
           runPath("Path6Part4"),
           new SetRPM(shooter, storage).withTimeout(4)
           //new ShootBalls()  //2 balls
