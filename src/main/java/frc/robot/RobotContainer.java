@@ -45,7 +45,7 @@ public class RobotContainer {
   private final Limelight limelight = new Limelight();
   private final Shooter shooter = new Shooter(limelight);
   private final Turret turret = new Turret(limelight);
-  // private final StopShooter stopShooter = new StopShooter(shooter);
+  // private final StopShooter stopShooter = new StopShooter(//paarth was hereshooter);
 
   // private final Turret turret = new Turret(limelight);
 
@@ -107,7 +107,7 @@ public class RobotContainer {
     // the :: syntax allows us to pass in methods of a class as variables so that the command can continuously access input values
     drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
 
-   // shoot.whenPressed(new SetRPM(shooter, storage, shoot)).whenReleased(new StopShooter(shooter, storage));
+   shoot.whenPressed(new SetRPM(shooter, storage, shoot)).whenReleased(new StopShooter(shooter, storage));
     intakeBalls.whenPressed(new IntakeBalls(intake)).whenReleased(new StopIntaking(intake));
     // expelBalls.whenPressed(new ExpelBalls(storage));
     // alignDrivetrain.whenPressed(new AlignIntakeToBall(drivetrain, true)).whenReleased(new AlignIntakeToBall(drivetrain, false));
@@ -158,9 +158,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-   // Trajectory tr = PathPlanner.loadPath("TryPath", 4, 4);
-    return null;//new TurretSetupAlign(turret);//new AutonPath6(drivetrain);
-    //return new DriveTrajectory(drivetrain);
+    return new FiveBallAuton(drivetrain, null, shooter, storage);
+
   }
   
   /**

@@ -35,7 +35,7 @@ public class Storage extends SubsystemBase  {
     breakbeamBott = new DigitalInput(3);
     prevStateTop = prevStateBott = true; // true is unbroken
     motor = TalonFactory.createTalonSRX(39, true);
-    balls = 0;
+    balls = 1;
     overriden = false;
     lastTime = Timer.getFPGATimestamp();
     lastTopChanged = Timer.getFPGATimestamp();
@@ -71,7 +71,7 @@ public class Storage extends SubsystemBase  {
   }
 
   public void runMotor()  {
-    /*if(balls == 1)  {
+    if(balls == 1)  {
       if(!breakbeamBott.get())
         motor.set(ControlMode.PercentOutput, 1);
 
@@ -93,8 +93,8 @@ public class Storage extends SubsystemBase  {
 
     else{
       motor.set(ControlMode.PercentOutput,0);
-    }*/
-    motor.set(ControlMode.PercentOutput,1);
+    }
+    // motor.set(ControlMode.PercentOutput, 1);
 
     
   }

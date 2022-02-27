@@ -31,7 +31,6 @@ import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.MathUtils;
-import frc.robot.util.PID;
 
 public class Drivetrain extends SubsystemBase {
     
@@ -95,11 +94,11 @@ public class Drivetrain extends SubsystemBase {
         rightFollower.follow(rightMaster);
         leftFollower.follow(leftMaster);
 
+        //hmmmmmm
         rightMaster.setSafetyEnabled(false);
         rightFollower.setSafetyEnabled(false);
         leftMaster.setSafetyEnabled(false);
         leftFollower.setSafetyEnabled(false);
-
         differentialDrive = new DifferentialDrive(leftMaster, rightMaster);
 
         pose = new Pose2d();
@@ -117,7 +116,9 @@ public class Drivetrain extends SubsystemBase {
         leftFollower.setSelectedSensorPosition(0);
         rightMaster.setSelectedSensorPosition(0);
         rightFollower.setSelectedSensorPosition(0);
+
         SmartDashboard.putData("field", field);
+        
         gyro.reset();
     }
 
@@ -166,6 +167,7 @@ public class Drivetrain extends SubsystemBase {
 
     @Override
     public void periodic() {
+        //hmmmmmmmmmmmm (imo it doesn't really make a difference, idk)
         differentialDrive.feed();
         leftMaster.feed();
         rightMaster.feed();
@@ -237,7 +239,6 @@ public class Drivetrain extends SubsystemBase {
      */
     public void setOutputVoltage(double leftVoltage, double rightVoltage) {
         SmartDashboard.putNumber("Left Voltage: ", leftVoltage);
-        // differentialDrive
         setDrivetrainMotorSpeed(leftVoltage/Constants.kVoltageComp, rightVoltage/Constants.kVoltageComp);
     }
 
@@ -300,6 +301,7 @@ public class Drivetrain extends SubsystemBase {
      */
     public double getDistanceTravelled(TalonFX m1, TalonFX m2) {
         double ticks = (m1.getSelectedSensorPosition() + m2.getSelectedSensorPosition()) / 2.0;
+        SmartDashboard.putNumber("Ticks", ticks);
 
         // returns the converted values
         return MathUtils.convertTicksToMeters(
@@ -307,7 +309,7 @@ public class Drivetrain extends SubsystemBase {
                 Constants.Drivetrain.kTicksPerRevolution,
                 Constants.Drivetrain.kGearRatio,
                 Constants.Drivetrain.kwheelCircumference
-            );
+        );
     }
 
     /**
@@ -358,7 +360,6 @@ public class Drivetrain extends SubsystemBase {
      * @return kinematics
      */
     public DifferentialDriveKinematics getKinematics() {
-    
         return kinematics;
     }
 
@@ -407,6 +408,7 @@ public class Drivetrain extends SubsystemBase {
     public void setOdometry(Pose2d newPose) {
         resetEncoders();
         odometry.resetPosition(newPose, new Rotation2d(0));
+        // odometry.resetPosition(newPose, newPose.getRotation());
     }
 
     /** 
@@ -418,6 +420,4 @@ public class Drivetrain extends SubsystemBase {
         rightMaster.setSelectedSensorPosition(0);
         rightFollower.setSelectedSensorPosition(0);
     }
-
-
 }

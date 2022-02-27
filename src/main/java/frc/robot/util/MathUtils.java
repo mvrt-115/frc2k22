@@ -6,6 +6,7 @@ import edu.wpi.first.math.util.Units;
 import frc.robot.Constants;
 
 public class MathUtils {
+
     /**
      * Calculates the new input by the joystick after taking into account deadband
      * 
@@ -148,7 +149,7 @@ public class MathUtils {
 
         double rotations = ticks / ticksPerRotation;
         double wheelRotations = rotations / gearRatio;
-        double meters = wheelRotations * wheelCircumference;
+        double meters = wheelRotations * Units.inchesToMeters(wheelCircumference);
         return meters;
     }
 

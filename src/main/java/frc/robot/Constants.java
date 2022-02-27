@@ -31,7 +31,7 @@ public final class Constants {
         
         // physical constants get from mech once drivetrain is done
         public static final double kTrackScrubFactor = 1.0469745223;
-        public static final double kTrackWidthInches = 24.85;
+        public static final double kTrackWidthInches = 27.125; //24.85;
 
         // ids get from pheonix tuner once drivetrain is done
         public static int kCompLeftMasterId = 1;
@@ -50,29 +50,22 @@ public final class Constants {
         public static final double kThrottleDeadband = 0.02;
         public static final double kWheelGain = 0.05;
         public static final double kWheelNonlinearity = 0.05;
-
-        //constants for aligning to ball from the camera
-        public static final double kThrottle  = 0.0; // change value later
-        public static final double kMaxPixelError = 1.0; // change value later
         
         //constants for getting distance traveled by motors
-        public static final double kTicksPerRevolution = 2048;
+        public static final double kTicksPerRevolution = 2048; 
         public static final double kGearRatio = 12.78;
-        public static final double kwheelCircumference = 6*Math.PI; // inches
+        
+        public static final double kwheelCircumference = 6*Math.PI;  //INCHES
 
-        public static final double kP = 1.6498;
+        public static final double kP = 0; //3.2364;
         public static final double kI = 0;
         public static final double kD = 0;
         public static final double kFF = 0;
 
         //values to be determined after the robot is characterized
-        public static final double kS = 0.5985; //units: Volts
-        public static final double kV = 2.8888; //units: Volts * Seconds / Meters
-        public static final double kA = 0.14018; //units: Volts * Seconds^2 / Meters
-
-        //change values later
-        public static final int kAcceptableError = 10;
-        public static final double kDrivetrainMotorSpeed = 0.3;
+        public static final double kS = 0; //0.73556; //0.57954; //0.61702; //units: Volts
+        public static final double kV = 1.4; //2.856; //2.8581; //units: Volts * Seconds / Meters
+        public static final double kA = 0; //0.22684; //0.20282; //units: Volts * Seconds^2 / Meters
     }
     
     public static class Intake{
@@ -86,7 +79,7 @@ public final class Constants {
         public static final int kROLLER_ID = 21; // change later
 
 
-        public static final double kWHEELS_SPEED = -.6;
+        public static final double kWHEELS_SPEED = -.7;
 
         //public static final double kPIVOT_SPEED = -0.4; // speed of intake when going up or down
         public static final double kPIVOT_STOP_SPEED_WHEN_UP = 0; // speed of intake to keep it up
@@ -172,8 +165,8 @@ public final class Constants {
     public static class Turret {
         public static final double kGearRatio = 47.142857;
         public static final double kTicksPerRevolution = 2048;
-        public static final double kMinAngle = -180; // degrees
-        public static final double kMaxAngle = 180; // degrees
+        public static final double kMinAngle = -85; // degrees
+        public static final double kMaxAngle = 60; // degrees
         public static final double kLimelightOffset = 40; // degrees
 
         public static final double kEThreshold = 60;

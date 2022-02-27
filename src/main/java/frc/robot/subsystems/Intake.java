@@ -54,24 +54,26 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    feedForward = Constants.Intake.kFF * Math.cos(Math.toRadians(getAngle()));
-    switch(state)
-    {
-      case INTAKING: // intake is deployed and starts running
-        stopPivot();
-        startIntake();
-        break;
-      case PIVOTING_UP: // intake goes back up and stops intaking
-        stopIntake();
-        pivotUp();
-        break;
-      case PIVOTING_DOWN:
-        pivotDown();
-        break;
-      case UP:
-        stopPivot(); // to keep the intake up
-        break;
-    }
+    // feedForward = Constants.Intake.kFF * Math.cos(Math.toRadians(getAngle()));
+    // switch(state)
+    // {
+    //   case INTAKING: // intake is deployed and starts running
+    //     stopPivot();
+    //     startIntake();
+    //     break;
+    //   case PIVOTING_UP: // intake goes back up and stops intaking
+    //     stopIntake();
+    //     pivotUp();
+    //     break;
+    //   case PIVOTING_DOWN:
+    //     pivotDown();
+    //     break;
+    //   case UP:
+    //     stopPivot(); // to keep the intake up
+    //     break;
+    // }
+
+      startIntake();
 
     SmartDashboard.putString("current state of intake", getCurrentStateAsString());
     SmartDashboard.putNumber("power voltage on pivot motor", pivotMotor.getMotorOutputPercent());

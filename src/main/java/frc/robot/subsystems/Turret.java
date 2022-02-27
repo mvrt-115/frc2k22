@@ -65,7 +65,7 @@ public class Turret extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // log();
+    log();
 
     // turret.set(ControlMode.Position, MathUtils.degreesToTicks(180, 2048, Constants.Turret.kGearRatio));
     // SmartDashboard.putNumber("turret ticks", turret.getSelectedSensorPosition(0));
@@ -76,15 +76,7 @@ public class Turret extends SubsystemBase {
 
     // if(state == TurretState.FLIPPING) {
     //   turnDegrees(targetDegrees);
-    // targetDegrees = getCurrentPositionDegrees() + limelight.getHorizontalOffset()+offset;
-
-    if(false) {//state == TurretState.FLIPPING) {
-      turret.set(ControlMode.Position, MathUtils.degreesToTicks(targetDegrees, Constants.Turret.kTicksPerRevolution, Constants.Turret.kGearRatio));
-      
-      if(Math.abs(targetDegrees - getCurrentPositionDegrees()) < 1) { 
-        setState(TurretState.TARGETING);
-      }
-    } else if (false) {
+    // targetDegrees = getCurrentPositionDegrees()
       
 
       // turret.set(ControlMode.Position, MathUtils.degreesToTicks(targetDegrees, Constants.Turret.kTicksPerRevolution, Constants.Turret.kGearRatio));
@@ -94,12 +86,19 @@ public class Turret extends SubsystemBase {
 
       area+= lastError * (Timer.getFPGATimestamp() - lastTime);
 
-      if(Math.abs((limelight.getHorizontalOffset()+offset)) > 1 && limelight.targetsFound())
-        turret.set(ControlMode.PercentOutput, 
-          (Constants.Turret.kP * error)
-          + (Constants.Turret.kI * area) + 
-          (((error - lastError) / (time - lastTime)) * Constants.Turret.kD)
-          );
+      double output = (Constants.Turret.kP * error)
+      + (Constants.Turret.kI * area) + 
+      (((error - lastError) / (time - lastTime)) * Constants.Turret.kD);
+
+      if(Math.abs((limelight.getHorizontalOffset()+offset)) > 1 && limelight.targetsFound()){
+
+        if(output < 0 && getCurrentPositionDegrees() < Constants.Turret.kMinAngle)
+          output = 0;
+        else if(output > 0 && getCurrentPositionDegrees() > Constants.Turret.kMaxAngle)
+          output = 0;
+        turret.set(ControlMode.PercentOutput,output);
+      }
+        
       else
         turret.set(ControlMode.PercentOutput, 0);
       
@@ -114,7 +113,6 @@ public class Turret extends SubsystemBase {
         else
           targetDegrees = -180;
       }
-  }
       
       
 

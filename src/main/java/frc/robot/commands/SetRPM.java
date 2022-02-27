@@ -19,6 +19,12 @@ public class SetRPM extends CommandBase {
   private boolean given;
   private JoystickButton button;
 
+  public SetRPM(Shooter shooter, Storage storage) {
+    this.shooter = shooter;
+    this.storage = storage;
+    addRequirements(shooter, storage);
+  }
+
   public SetRPM(Shooter shooter, Storage storage, JoystickButton button) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.shooter = shooter;
