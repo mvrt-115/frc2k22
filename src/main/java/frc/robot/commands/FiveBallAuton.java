@@ -31,13 +31,13 @@ public class FiveBallAuton extends SequentialCommandGroup {
           //new WaitCommand(3),
           // runPath("Path6Part1EndTurn"),//.andThen(new WaitCommand(1)),
           //runPath("Path6Part1EndTurn"),
-          new TurnDegrees(drivetrain, 180),
+          // new TurnDegrees(drivetrain, 180),
           new SetRPM(shooter, storage).withTimeout(4), // 2 balls
-          new TurnDegrees(drivetrain, 180),
+          // new TurnDegrees(drivetrain, 180),
           runPath("Path6Part1.5"),
           runPath("Path6Part2"),
           // runPath("Path6Part2EndTurn"),//.andThen(new WaitCommand(1)),
-          new TurnDegrees(drivetrain, 180),
+          // new TurnDegrees(drivetrain, 180),
           new SetRPM(shooter, storage).withTimeout(4), // 1 ball
           runPath("Path6Part3"),
           new WaitCommand(1),
