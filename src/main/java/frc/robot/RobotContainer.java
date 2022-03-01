@@ -36,8 +36,8 @@ public class RobotContainer {
   private Joystick driverJoystick;
   private Joystick operatorJoystick;  
 
-  public static final boolean PIVOT_EXISTS = false;
-  public static final boolean CLIMBER_TESTING = false && PIVOT_EXISTS;
+  //public static final boolean PIVOT_EXISTS = false;
+  //public static final boolean CLIMBER_TESTING = false && PIVOT_EXISTS;
 
   // climber operator manual buttons
   private JoystickButton forward;
@@ -64,19 +64,21 @@ public class RobotContainer {
     driverJoystick = new Joystick(1);
     operatorJoystick = new Joystick(0);
 
-    if(PIVOT_EXISTS) {
+    // if the pivot arm exists then the pivot buttons are declared otherwise the rest of the buttons are declared
+    //if(PIVOT_EXISTS) {
       forward = new JoystickButton(operatorJoystick, 1);
       backward = new JoystickButton(operatorJoystick, 2); // change
-    }
+    //}
     extend =  new JoystickButton(operatorJoystick, 4);
     retract = new JoystickButton(operatorJoystick, 8);
     startClimb = new JoystickButton(operatorJoystick, 10);
     stopClimb = new JoystickButton(operatorJoystick, 9);
 
-    if(CLIMBER_TESTING) {
+    // if all the arms exist then the manual button climb is called
+   // if(CLIMBER_TESTING) {
       manualButtonClimb = new JoystickButton(operatorJoystick, 0);
       buttonCounter = 0;
-    }
+   // }
 
     quickturn = new JoystickButton(driverJoystick, 5); 
     // Configure the button bindings
@@ -93,8 +95,7 @@ public class RobotContainer {
     // the :: syntax allows us to pass in methods of a class as variables so that the command can continuously access input values
     
     
-    /* if the telescopic button extend is pressed then it is checked to see if the top button is pressed for retracting the telescopic arm
-    ** and based on that the correct command is called */
+    /*  */
 
 
     retract.whenPressed(new TelescopicManual(climber, this::isRetractPressed, Constants.Climber.kTelescopicRetractManualSpeed))
@@ -103,30 +104,30 @@ public class RobotContainer {
       .whenReleased(new TelescopicManual(climber, this::isExtendPressed, 0));
     /* if the pivot button forward is pressed then it is checked to see if the top button is pressed for pivoting backward for the pivot arm
     ** and based on that the correct command is called */
-    if(PIVOT_EXISTS) {
+  //  if(PIVOT_EXISTS) {
         backward.whenPressed(new PivotManual(climber, this::isBackwardPressed, -Constants.Climber.kApproachRungSpeed))
           .whenReleased(new PivotManual(climber, this::isBackwardPressed, 0)); 
         forward.whenPressed(new PivotManual(climber, this::isForwardPressed, Constants.Climber.kApproachRungSpeed))
            .whenReleased(new PivotManual(climber, this::isForwardPressed, 0));
-    }
+  //  }
 
     /** If the start climber button is pressed, then the start and stop climber parellel command is called and the instance of the stop climber 
      *  to help the command choose whether the stop climber or not
      */
-    if(PIVOT_EXISTS && getStartClimb())
+   // if(PIVOT_EXISTS && getStartClimb())
       startClimb.whenPressed(new StartStopClimb(this::getStopClimb, climber));
 
     /** the manual sequence method is called and checks the amount of times the button is pressed and runs the commands in that order and the 
      *  state of the button is stored as the past state and is called to check if the button was ever realeased
      */
-    if(CLIMBER_TESTING)
-    {
+    //if(CLIMBER_TESTING)
+   // {
       if(manualButtonClimb.get())
         manualOneRungSeqeunceTest();
       //manualSequenceTest();
       //manualButtonClimb.whenPressed(new ClimberAuton(climber, climber.leftTelescopic, Constants.Climber.kTelescopicFullExtend, climber.leftTelescopicProximity));
       manualLastState = (manualButtonClimb.get());
-    }
+   // }
   }
 
 

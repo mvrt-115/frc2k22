@@ -41,6 +41,7 @@ public class Climber extends SubsystemBase {
     /**
      * Initializes all objects and reconfigures all motors to requirements
      */
+
     public Climber() {
         // initializes all motors and sensors
         // pivot = TalonFactory.createTalonFX(Constants.Climber.kLeftTelescopicID, TalonFXInvertType.Clockwise);
@@ -53,25 +54,25 @@ public class Climber extends SubsystemBase {
         leftServo = new Servo(Constants.Climber.kLeftServoID);
         rightServo = new Servo(Constants.Climber.kRightServoID); 
 
-        if(RobotContainer.PIVOT_EXISTS)
-            pivotProximity = new DigitalInput(Constants.Climber.kPivotProximityChannel);
+      //  if(RobotContainer.PIVOT_EXISTS)
+        pivotProximity = new DigitalInput(Constants.Climber.kPivotProximityChannel);
         leftTelescopicProximity = new DigitalInput(Constants.Climber.kLeftTelescopicProximityChannel);
         rightTelescopicProximity = new DigitalInput(Constants.Climber.kRightTelescopicProximityChannel);
 
-        if(RobotContainer.PIVOT_EXISTS)
-            pivotLimit = new DigitalInput(Constants.Climber.kPivotLimitSwitch);
+        //if(RobotContainer.PIVOT_EXISTS)
+        pivotLimit = new DigitalInput(Constants.Climber.kPivotLimitSwitch);
         leftTelescopicLimit = new DigitalInput(Constants.Climber.kLeftTelescopicLimitSwitch);
         rightTelescopicLimit = new DigitalInput(Constants.Climber.kRightTelescopicLimitSwitch);
-
+//no pivoting pls
         // reconfiguring all motors with PID constants
         rightTelescopic.follow(leftTelescopic);
         
-        if(RobotContainer.PIVOT_EXISTS) {
-            pivot.config_kP(Constants.kPIDIdx, Constants.Climber.kPivotkP);
-            pivot.config_kI(Constants.kPIDIdx, Constants.Climber.kPivotkI);
-            pivot.config_kD(Constants.kPIDIdx, Constants.Climber.kPivotkD);
-            pivot.config_kF(Constants.kPIDIdx, Constants.Climber.kPivotkF);
-        }
+       // if(RobotContainer.PIVOT_EXISTS) { 
+        pivot.config_kP(Constants.kPIDIdx, Constants.Climber.kPivotkP);
+        pivot.config_kI(Constants.kPIDIdx, Constants.Climber.kPivotkI);
+        pivot.config_kD(Constants.kPIDIdx, Constants.Climber.kPivotkD);
+        pivot.config_kF(Constants.kPIDIdx, Constants.Climber.kPivotkF);
+     //   }
 
         leftTelescopic.config_kP(Constants.kPIDIdx, Constants.Climber.kTelekP);
         leftTelescopic.config_kI(Constants.kPIDIdx, Constants.Climber.kTelekI);
