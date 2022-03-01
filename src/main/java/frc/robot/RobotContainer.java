@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -32,6 +33,7 @@ public class RobotContainer {
 
   private Joystick driverJoystick; //Joysticks
   private Joystick operatorJoystick;  
+  private String alliance = DriverStation.getAlliance().toString();
   
   private JoystickButton intakeBalls; //buttons
   // private JoystickButton alignDrivetrain;
@@ -104,6 +106,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    storage.setDefaultCommand(new TrackBalls(storage, shooter, alliance));
     // the :: syntax allows us to pass in methods of a class as variables so that the command can continuously access input values
     drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
 

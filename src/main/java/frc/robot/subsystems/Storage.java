@@ -4,18 +4,15 @@
 
 package frc.robot.subsystems;
 
-import javax.lang.model.util.ElementScanner6;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.commands.SetRPM;
 import frc.robot.util.TalonFactory;
 
@@ -28,6 +25,10 @@ public class Storage extends SubsystemBase  {
   private boolean overriden;
   private double lastTime;
   private Shooter shooter;
+  private boolean readyShoot = false;
+  private final I2C.Port i2cPort = I2C.Port.kOnboard;
+  public final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
+
 
   public Storage(Shooter shooter)  {
     this.shooter = shooter;
@@ -84,7 +85,7 @@ public class Storage extends SubsystemBase  {
       }
       else motor.set(ControlMode.PercentOutput, 0);
     }
-    else if(balls==3){
+    else if(balls>=3){
       new SetRPM(shooter, this, 50);
     }
     else if(balls == 0){
@@ -107,4 +108,26 @@ public class Storage extends SubsystemBase  {
   }
 
   public int getBalls() { return balls; }
-}
+
+  public void setReadyShoot(boolean newShooting){
+    readyShoot = newShooting;
+  }
+  public boolean getShooting() {
+    return readyShoot;
+  }
+  public String getBallColor(){
+    if(colorSensor.isConnected() && colorSensor.getProximity() > 300){
+
+      if(colorSensor.getBlue() > 2 * colorSensor.getRed())
+        return "Blue";
+      else if(colorSensor.getRed() > 2 * colorSensor.getBlue())
+        return "Red";
+      
+      return "No Ball";
+    }
+    return "No Ball";
+
+    }
+  }
+  
+

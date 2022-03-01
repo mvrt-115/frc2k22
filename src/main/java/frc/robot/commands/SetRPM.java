@@ -18,6 +18,7 @@ public class SetRPM extends CommandBase {
   private Storage storage;
   private boolean given;
   private JoystickButton button;
+  private String alliance;
 
   public SetRPM(Shooter shooter, Storage storage) {
     this.shooter = shooter;
@@ -49,6 +50,7 @@ public class SetRPM extends CommandBase {
     if(!given)
       rpm = shooter.getRequiredRPM();
     // rpm = SmartDashboard.getNumber("new rpm", defaultRPM);
+    storage.setReadyShoot(true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -58,6 +60,7 @@ public class SetRPM extends CommandBase {
     if(given)
       rpm = shooter.getCurrentRPM();
     shooter.setTargetRPM(rpm);
+
     // SmartDashboard.putNumber("new rpm", rpm);
     // SmartDashboard.putBoolean("changing rpm", true);
 
@@ -74,6 +77,7 @@ public class SetRPM extends CommandBase {
   public void end(boolean interrupted) {
     SmartDashboard.putBoolean("changing rpm", false);
     shooter.setState(ShooterState.OFF);
+    storage.setReadyShoot(false);
   }
 
   // Returns true when the command should end.
