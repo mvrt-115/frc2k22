@@ -27,39 +27,46 @@ public class Turret extends SubsystemBase {
     TARGETING, FLIPPING, SEARCHING, CAN_SHOOT, DISABLED
   }
 
-  private TurretState state;
-  private double lastError = 0;
-  private double lastTime = 0;
-
   private TalonFX turret;
   private Limelight limelight;
-  private double area = 0;
   private DigitalInput magLimit;
 
-  private double targetDegrees;
+  private TurretState state;
+
+  private double lastError;
+  private double lastTime;
+  private double area;
+
+  // private double targetDegrees;
   private double searchDirection;
+  private boolean searchFlipping;
+
   private double offset;
-  // private boolean zeroing;
 
   /** Creates a new Turret. */
   public Turret(Limelight limelight) {
-    this.limelight = limelight;
-
     turret = TalonFactory.createTalonFX(5, true);
+    this.limelight = limelight;
     magLimit = new DigitalInput(9);
 
-    targetDegrees = 0;
+    state = TurretState.DISABLED;
+
+    lastError = 0;
+    lastTime = 0;
+    area = 0;
+
+    // targetDegrees = 0;
     searchDirection = 1;
-    // zeroing = false;
+    searchFlipping = false;
 
     offset = 0;
-
-    state = TurretState.DISABLED;
 
     turret.config_kP(0, 0.1);//Constants.Turret.kPLarge);
     turret.config_kI(0, 0);//Constants.Turret.kI);
     turret.config_kD(0, 0);//Constants.Turret.kD);
+
     resetEncoder();
+
     turret.selectProfileSlot(0, 0);
   }
 
@@ -81,42 +88,34 @@ public class Turret extends SubsystemBase {
 
       // turret.set(ControlMode.Position, MathUtils.degreesToTicks(targetDegrees, Constants.Turret.kTicksPerRevolution, Constants.Turret.kGearRatio));
 
-      double error = (limelight.getHorizontalOffset()+offset) / 30;
-      double time = Timer.getFPGATimestamp();
 
-      area+= lastError * (Timer.getFPGATimestamp() - lastTime);
+      // ------------------------------FLIPPING CODE---------------------------------------------
+      // don't want to have this flipping code when searching because it uses pid to get to the other end
+      // if(state != TurretState.SEARCHING && 
+      //   (Math.abs(getCurrentPositionDegrees()) >= Constants.Turret.kMaxAngle + 20 || 
+      //   Math.abs(getCurrentPositionDegrees()) <= Constants.Turret.kMinAngle - 20)) {
+      //   // turret.set(ControlMode.PercentOutput, 0);
+      //   setState(TurretState.FLIPPING);
 
-      double output = (Constants.Turret.kP * error)
-      + (Constants.Turret.kI * area) + 
-      (((error - lastError) / (time - lastTime)) * Constants.Turret.kD);
+      //   if(getCurrentPositionDegrees() < 0)
+      //     turnDegrees(180);
+      //   else
+      //     turnDegrees(-180);
+      // }
+      // -----------------------------------------------------------------------------------------
 
-      if(Math.abs((limelight.getHorizontalOffset()+offset)) > 1 && limelight.targetsFound()){
-
-        if(output < 0 && getCurrentPositionDegrees() < Constants.Turret.kMinAngle)
-          output = 0;
-        else if(output > 0 && getCurrentPositionDegrees() > Constants.Turret.kMaxAngle)
-          output = 0;
-        turret.set(ControlMode.PercentOutput,output);
+      switch(state) {
+        case TARGETING:
+          target();
+        case FLIPPING:
+          flip();
+        case SEARCHING:
+          search();      
       }
-        
-      else
-        turret.set(ControlMode.PercentOutput, 0);
-      
-      lastError = error;
-      lastTime = time;
 
-      if(Math.abs(getCurrentPositionDegrees()) >= Constants.Turret.kMaxAngle + 20) {
-        // turret.set(ControlMode.PercentOutput, 0);
-        setState(TurretState.FLIPPING);
-        if(getCurrentPositionDegrees() < 0)
-          targetDegrees = 180;
-        else
-          targetDegrees = -180;
-      }
-      
-      
+      updateLastVariables();
 
-    lastTime = Timer.getFPGATimestamp();
+      // lastTime = Timer.getFPGATimestamp();
       
       // once flipped to a point when target not in view, begin targetting again
     //   if(!limelight.targetsFound()) {
@@ -162,37 +161,106 @@ public class Turret extends SubsystemBase {
     //   setState(TurretState.CAN_SHOOT);
     // else if(state != TurretState.FLIPPING)
     //   setState(TurretState.TARGETING);
+
+    // insiah kizilibash is 
   }
 
-  public void updateTargetDegrees() {
-    if(limelight.targetsFound()) { // && Math.abs(limelight.getHorizontalOffset()+offset) > 2) {
-      // find target position by using current position and data from limelight
-      targetDegrees = getCurrentPositionDegrees() + 1.25 * (limelight.getHorizontalOffset()+offset);
+  // public void updateTargetDegrees() {
+  //   if(limelight.targetsFound()) { // && Math.abs(limelight.getHorizontalOffset()+offset) > 2) {
+  //     // find target position by using current position and data from limelight
+  //     targetDegrees = getCurrentPositionDegrees() + 1.25 * (limelight.getHorizontalOffset() + offset);
 
-      if(targetDegrees > Constants.Turret.kMaxAngle + 20) {
-        setState(TurretState.FLIPPING);
+  //     if(targetDegrees > Constants.Turret.kMaxAngle + 20) {
+  //       setState(TurretState.FLIPPING);
 
-        targetDegrees = Constants.Turret.kMinAngle + targetDegrees - Constants.Turret.kMaxAngle;
-      } else if(targetDegrees < Constants.Turret.kMinAngle - 20) {
-        setState(TurretState.FLIPPING);
+  //       targetDegrees = Constants.Turret.kMinAngle + targetDegrees - Constants.Turret.kMaxAngle;
+  //     } else if(targetDegrees < Constants.Turret.kMinAngle - 20) {
+  //       setState(TurretState.FLIPPING);
 
-        targetDegrees = Constants.Turret.kMaxAngle + targetDegrees - Constants.Turret.kMinAngle;
-      }
+  //       targetDegrees = Constants.Turret.kMaxAngle + targetDegrees - Constants.Turret.kMinAngle;
+  //     }
+  //   }
+  // }
+
+  // /**
+  //  * Moves the turret to lock onto the target. If a target has been found, the turret will move there. Otherwise,
+  //  * the turret will turn until it does see something.
+  //  */
+  // public void target() {
+  //   if(limelight.targetsFound()) {
+  //     state = TurretState.TARGETING;
+
+  //     turnDegrees(targetDegrees);
+  //   } else {
+  //     // state = TurretState.SEARCHING;
+  //   }
+  // }
+
+  /**
+   * Targets using a pid on the limelight error
+   */
+  public void target() {
+    double error = (limelight.getHorizontalOffset() + offset) / 30;
+    double time = Timer.getFPGATimestamp();
+
+    area += lastError * (Timer.getFPGATimestamp() - lastTime);
+
+    double output = (Constants.Turret.kP * error) +
+      (Constants.Turret.kI * area) + 
+      (((error - lastError) / (time - lastTime)) * Constants.Turret.kD);
+
+    if(Math.abs((limelight.getHorizontalOffset() + offset)) > 1 && limelight.targetsFound()) {
+      if(output < 0 && getCurrentPositionDegrees() < Constants.Turret.kMinAngle)
+        output = 0;
+      else if(output > 0 && getCurrentPositionDegrees() > Constants.Turret.kMaxAngle)
+        output = 0;
+
+      turret.set(ControlMode.PercentOutput, output);
+    } else {
+      turret.set(ControlMode.PercentOutput, 0);
+
+      area = 0;
+      error = 0;
     }
   }
 
   /**
-   * Moves the turret to lock onto the target. If a target has been found, the turret will move there. Otherwise,
-   * the turret will turn until it does see something.
+   * Checks for if the turret should go back to targeting
    */
-  public void target() {
-    if(limelight.targetsFound()) {
-      state = TurretState.TARGETING;
+  public void flip() {
+    if(Math.abs(getCurrentPositionDegrees()) >= 10)
+      setState(TurretState.TARGETING);
+  }
 
-      turnDegrees(targetDegrees);
-    } else {
-      // state = TurretState.SEARCHING;
+  /**
+   * Searches for a target by going from the min to the max degrees
+   */
+  public void search() {
+    if(searchDirection == 1)
+      setPercentOutput(0.5);
+    else
+      setPercentOutput(-0.5);
+
+    if(!searchFlipping && (turret.getSelectedSensorPosition() >= Constants.Turret.kMaxAngle || 
+      turret.getSelectedSensorPosition() <= Constants.Turret.kMinAngle)) {
+
+      searchFlipping = true;
+      searchDirection *= -1;
     }
+
+    if(searchFlipping && Math.abs(getCurrentPositionDegrees()) <= 10)
+      searchFlipping = false;
+
+    if(limelight.targetsFound())
+      setState(TurretState.TARGETING);
+  }
+
+  /**
+   * Updates the lastError and lastTime variables that are used for pid
+   */
+  private void updateLastVariables() {
+    lastError = (limelight.getHorizontalOffset() + offset) / 30;
+    lastTime = Timer.getFPGATimestamp();
   }
 
   /**
@@ -241,11 +309,8 @@ public class Turret extends SubsystemBase {
     this.state = state;
   }
 
-  /**
-   * @return The current state of the turret
-   */
-  public TurretState getTurretState() {
-    return state;
+  public void setOffset(double offset) {
+    this.offset = offset;
   }
 
   /** 
@@ -261,6 +326,13 @@ public class Turret extends SubsystemBase {
   }
 
   /**
+   * @return The current state of the turret
+   */
+  public TurretState getTurretState() {
+    return state;
+  }
+
+  /**
    * Gets if the mag limit switch is aligned
    * @return The alignment state (true/false)
    */
@@ -268,14 +340,12 @@ public class Turret extends SubsystemBase {
     return !magLimit.get();
   }
 
-  public void setOffset(double _offset)
-  {
-    offset = _offset;
+  public double getOffset() {
+    return offset;
   }
 
-  public double getOffset()
-  {
-    return offset;
+  public BaseTalon getMotor() {
+    return turret;
   }
 
   /**
@@ -287,11 +357,7 @@ public class Turret extends SubsystemBase {
     SmartDashboard.putString("Turret State", state.toString());
     SmartDashboard.putNumber("Turret Output", turret.getMotorOutputPercent());
     SmartDashboard.putNumber("Direction", searchDirection);
-    SmartDashboard.putNumber("Target Degrees", targetDegrees);
+    // SmartDashboard.putNumber("Target Degrees", targetDegrees);
     // SmartDashboard.putBoolean("Is Aligned", getMagAligned());
-  }
-
-  public BaseTalon getMotor() {
-    return turret;
   }
 }

@@ -123,7 +123,7 @@ public class RobotContainer {
     //turretClockwise.whenPressed(new TurretManual(turret, -0.5, turretClockwise::get));
     //turretCounterclockwise.whenPressed(new TurretManual(turret, 0.5, turretCounterclockwise::get));
 
-    // turret.setDefaultCommand(new FindTarget(turret));
+    turret.setDefaultCommand(new FindTarget(turret));
     
     
     // disableTurret.whenPressed(new DisableTurret(turret));
