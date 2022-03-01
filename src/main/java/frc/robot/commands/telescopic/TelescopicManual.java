@@ -43,8 +43,7 @@ public class TelescopicManual extends CommandBase {
 
     // Returns true when the command should end.
     /* checks to see if the button has been released and the arms based on whichever button is being released, those arms
-     * have not reached their limits whether it be the full extract/retract for the telescopic arms and the full pivot
-     * forward/backward for the pivot arms. 
+     * have not reached their limits whether it be the full extract/retract for the telescopic arms
      */
     @Override
     public boolean isFinished() {
