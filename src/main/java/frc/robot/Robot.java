@@ -89,16 +89,6 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-   /* SmartDashboard.putBoolean("Extend Button", extend.get());
-    SmartDashboard.putNumber("Axis Value", operatorJoystick.getRawAxis(3));
-    SmartDashboard.putBoolean("Axis State", m_robotContainer.getReverseManual());
-    if(extend.get() && retract.get()) {
-      System.out.println("BOTH THE BUTTON AND THE RIGHT TRIGGER");
-    } else if(extend.get()) {
-      System.out.println("JUST THE BUTTON");
-    } else {
-      System.out.println("NONE");
-    }*/
   }
 
   @Override

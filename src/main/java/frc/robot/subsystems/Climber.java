@@ -13,37 +13,35 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.RobotContainer;
 import frc.robot.util.MathUtils;
 import frc.robot.util.TalonFactory;
 
 public class Climber extends SubsystemBase {
 
-    public TalonFX pivot; // motor for both pivoting arms
-    public TalonFX leftTelescopic, rightTelescopic; // motors for each telescopic arm, controlling extending and
+    public TalonFX leftTelescopic, rightTelescopic, pivot; // motors for each telescopic arm, controlling extending and
                                                     // collapsing motions
     public Servo leftServo, rightServo; // servos that act as ratchets
-    public DigitalInput pivotProximity, leftTelescopicProximity, rightTelescopicProximity; // inductive proximity
+    public DigitalInput leftTelescopicProximity, rightTelescopicProximity, pivotProximity; // inductive proximity
                                                                                            // sensors
     // for detecting whether robot is hooked on rungs or not for each type of arm
-    public DigitalInput pivotLimit, leftTelescopicLimit, rightTelescopicLimit; // inductive proximity sensors
+    public DigitalInput leftTelescopicLimit, rightTelescopicLimit, pivotLimit; // inductive proximity sensors
     // for detecting whether robot is hooked on rungs or not for each type of arm
 
     public enum ClimberState {
-        NONE, PIVOT_LIMIT, TELESCOPIC_LIMIT, PIVOT_PROXIMITY, TELESCOPIC_PROXIMITY
+        NONE, TELESCOPIC_LIMIT, TELESCOPIC_PROXIMITY, PIVOT_LIMIT, PIVOT_PROXIMITY
         // proximity state is triggerd when both limit switch and proximity sensors are
         // triggered
     }
 
-    private ClimberState pivotState = ClimberState.NONE;
+    // sets the telescopic climber state to nothing
     private ClimberState telescopicState = ClimberState.NONE;
+   // private ClimberState pivotState = ClimberState.NONE;
 
     /**
      * Initializes all objects and reconfigures all motors to requirements
      */
+
     public Climber() {
-        // initializes all motors and sensors
-        // pivot = TalonFactory.createTalonFX(Constants.Climber.kLeftTelescopicID, TalonFXInvertType.Clockwise);
         leftTelescopic = TalonFactory.createTalonFX(Constants.Climber.kLeftTelescopicID, false);
         rightTelescopic = TalonFactory.createTalonFX(Constants.Climber.kRightTelescopicID, false);
 
@@ -53,21 +51,19 @@ public class Climber extends SubsystemBase {
         leftServo = new Servo(Constants.Climber.kLeftServoID);
         rightServo = new Servo(Constants.Climber.kRightServoID); 
 
-        pivotProximity = new DigitalInput(Constants.Climber.kPivotProximityChannel);
         leftTelescopicProximity = new DigitalInput(Constants.Climber.kLeftTelescopicProximityChannel);
         rightTelescopicProximity = new DigitalInput(Constants.Climber.kRightTelescopicProximityChannel);
 
-        pivotLimit = new DigitalInput(Constants.Climber.kPivotLimitSwitch);
+        pivotProximity = new DigitalInput(Constants.Climber.kPivotProximityChannel);
+
         leftTelescopicLimit = new DigitalInput(Constants.Climber.kLeftTelescopicLimitSwitch);
         rightTelescopicLimit = new DigitalInput(Constants.Climber.kRightTelescopicLimitSwitch);
+
+        pivotLimit = new DigitalInput(Constants.Climber.kPivotLimitSwitch);
 
         // reconfiguring all motors with PID constants
         rightTelescopic.follow(leftTelescopic);
         
-        pivot.config_kP(Constants.kPIDIdx, Constants.Climber.kPivotkP);
-        pivot.config_kI(Constants.kPIDIdx, Constants.Climber.kPivotkI);
-        pivot.config_kD(Constants.kPIDIdx, Constants.Climber.kPivotkD);
-        pivot.config_kF(Constants.kPIDIdx, Constants.Climber.kPivotkF);
 
         leftTelescopic.config_kP(Constants.kPIDIdx, Constants.Climber.kTelekP);
         leftTelescopic.config_kI(Constants.kPIDIdx, Constants.Climber.kTelekI);
@@ -79,12 +75,17 @@ public class Climber extends SubsystemBase {
         rightTelescopic.config_kD(Constants.kPIDIdx, Constants.Climber.kTelekD);
         rightTelescopic.config_kF(Constants.kPIDIdx, Constants.Climber.kTelekF);
 
+        pivot.config_kP(Constants.kPIDIdx, Constants.Climber.kTelekP);
+        pivot.config_kI(Constants.kPIDIdx, Constants.Climber.kTelekI);
+        pivot.config_kD(Constants.kPIDIdx, Constants.Climber.kTelekD);
+        pivot.config_kF(Constants.kPIDIdx, Constants.Climber.kTelekF);
+
         leftServo.setZeroLatch();
         rightServo.setZeroLatch();
     }
 
     /**
-     * Sets speed to given motor
+     * Sets speed to the telescopic motors
      * 
      * @param motor the motor that needs to be run
      * @param speed speed at which the motor needs to be run
@@ -94,7 +95,17 @@ public class Climber extends SubsystemBase {
     }
 
     /**
-     * Stops motors
+     * Sets speed to given motor
+     * 
+     * @param motor the motor that needs to be run
+     * @param speed speed at which the motor needs to be run
+     */
+    public void setPivotSpeed(double speed) {
+        leftTelescopic.set(ControlMode.PercentOutput, speed);
+    }
+
+    /**
+     * Stops telescopic motors
      * 
      * @param motor the motor that needs to be stopped
      */
@@ -103,13 +114,9 @@ public class Climber extends SubsystemBase {
     }
 
     /**
-     @param speed the Speed to set the motor to
-     */
-    public void setPivotSpeed(double speed) {
-        pivot.set(ControlMode.PercentOutput, speed);
-    }
-    /**
-     * Stops the pivot motor
+     * Stops pivot motor
+     * 
+     * @param motor the motor that needs to be stopped
      */
     public void stopPivotMotor() {
         setPivotSpeed(0);
@@ -126,22 +133,13 @@ public class Climber extends SubsystemBase {
     }
 
     /**
-     * Sets position of telescopic motor
+     * Sets position of pivot motor
      * 
      * @param finalPosition final position of the motor
      * @param feedForward The feed forward
      */
-    public void setPivotPosition(double finalPosition, double feedForward) {
+    public void setPivotMotor(double finalPosition, double feedForward) {
         pivot.set(ControlMode.Position, finalPosition, DemandType.ArbitraryFeedForward, feedForward);
-    }
-
-    /**
-     * Get the encoder value of the pivot motor
-     * 
-     * @return the number of ticks motor has rotated
-     */
-    public double getPivotEncoderValue() {
-        return pivot.getSelectedSensorPosition();
     }
 
     /**
@@ -164,6 +162,15 @@ public class Climber extends SubsystemBase {
     }
 
     /**
+     * Get the encoder value of the pivot motor
+     * 
+     * @return the number of ticks motor has rotated
+     */
+    public double getPivotEncoderValue() {
+        return pivot.getSelectedSensorPosition();
+    }
+
+    /**
      * Gives the position of the telescopic arms through values given by encoder
      * 
      * @return The inches the encoders have rotated
@@ -171,13 +178,6 @@ public class Climber extends SubsystemBase {
     public double getTelescopicPosition() {
         double average = (getLeftTelescopicEncoderValue() + getRightTelescopicEncoderValue()) / 2;
         return MathUtils.ticksToInches(average);
-    }
-
-    /**
-     * @return The pivot angle that the rotating arm is at (using encoders)
-     */
-    public double getPivotAngle() {
-        return MathUtils.ticksToDegrees(getPivotEncoderValue());
     }
 
     /**
@@ -209,13 +209,6 @@ public class Climber extends SubsystemBase {
         return true;
     }
 
-    /* sets the pivot state to the state given through the parameter
-     * @param state of the climber at the moment 
-     */
-    public void setPivotState(ClimberState state) {
-        pivotState = state;
-    }
-
     /* sets the telescopic state to the state given through the parameter
      * @param state of the climber at the moment 
      */
@@ -223,16 +216,16 @@ public class Climber extends SubsystemBase {
         telescopicState = state;
     }
 
+    /* sets the pivot state to the state given through the parameter
+     * @param state of the climber at the moment 
+     
+    public void setPivotState(ClimberState state) {
+        pivotState = state;
+    }*/
+
     /** stops all the motors */
     public void stopAllMotors() {
         stopTelescopicMotor();
-        stopPivotMotor();
-    }
-    /** gets the pivot state of the climber 
-     * @return pivot state of the climber
-     */
-    public ClimberState getPivotState() {
-        return pivotState;
     }
 
     /** gets the telescopic state of the climber 

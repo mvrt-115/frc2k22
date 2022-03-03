@@ -86,16 +86,15 @@ public class RobotContainer {
     // the :: syntax allows us to pass in methods of a class as variables so that the command can continuously access input values
     
     
-    /* if the telescopic button extend is pressed then it is checked to see if the top button is pressed for retracting the telescopic arm
-    ** and based on that the correct command is called */
-
-
+    /* based on if the extend or retract button are pressed, then the telescopic motors are given a speed and then telescopic 
+       manual command is called */
     retract.whenPressed(new TelescopicManual(climber, this::isRetractPressed, Constants.Climber.kTelescopicRetractManualSpeed))
       .whenReleased(new TelescopicManual(climber, this::isRetractPressed, 0));
     extend.whenPressed(new TelescopicManual(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed))
       .whenReleased(new TelescopicManual(climber, this::isExtendPressed, 0));
-    /* if the pivot button forward is pressed then it is checked to see if the top button is pressed for pivoting backward for the pivot arm
-    ** and based on that the correct command is called */
+    
+    /* if the pivot button forward or backward are pressed then the pivot manual command is called and the given speed is 
+       sent to the command*/
     backward.whenPressed(new PivotManual(climber, this::isBackwardPressed, -Constants.Climber.kApproachRungSpeed))
       .whenReleased(new PivotManual(climber, this::isBackwardPressed, 0)); 
     forward.whenPressed(new PivotManual(climber, this::isForwardPressed, Constants.Climber.kApproachRungSpeed))
@@ -104,7 +103,6 @@ public class RobotContainer {
     /** If the start climber button is pressed, then the start and stop climber parellel command is called and the instance of the stop climber 
      *  to help the command choose whether the stop climber or not
      */
-   // if(PIVOT_EXISTS && getStartClimb())
       startClimb.whenPressed(new StartStopClimb(this::getStopClimb, climber));
 
     /** the manual sequence method is called and checks the amount of times the button is pressed and runs the commands in that order and the 
