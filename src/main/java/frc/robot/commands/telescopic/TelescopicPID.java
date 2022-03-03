@@ -22,6 +22,7 @@ public class TelescopicPID extends CommandBase {
   }
 
   // Called when the command is initially scheduled.
+  // sets the speed of the telescopic arm to a slower on as the arm reaches the rung
   @Override
   public void initialize() {
     climber.setTelescopicSpeed(Constants.Climber.kApproachRungSpeed);
@@ -32,12 +33,14 @@ public class TelescopicPID extends CommandBase {
   public void execute() {}
 
   // Called once the command ends or is interrupted.
+  // stops the telescopic motors
   @Override
   public void end(boolean interrupted) {
     climber.stopTelescopicMotor();
   }
 
   // Returns true when the command should end.
+  // if all the sensors on the arms have been detected then the command is finished
   @Override
   public boolean isFinished() {
     return climber.detectAllSensors(sensor);

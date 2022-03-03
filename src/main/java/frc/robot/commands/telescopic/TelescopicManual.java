@@ -11,7 +11,7 @@ import frc.robot.Constants;
 import frc.robot.subsystems.Climber;
 
 public class TelescopicManual extends CommandBase {
-  public Climber climber;
+    public Climber climber;
     public double speed;
     public Supplier<Boolean> button;
     /** Creates a new ClimberManual. */
@@ -30,20 +30,22 @@ public class TelescopicManual extends CommandBase {
     }
 
     // Called every time the scheduler runs while the command is scheduled.
+    // sets the speed of the telescopic motors to the speed given 
     @Override
     public void execute() {
       climber.setTelescopicSpeed(speed);
     }
 
     // Called once the command ends or is interrupted.
+    // stops the telescopic motors 
     @Override
     public void end(boolean interrupted) {
       climber.stopTelescopicMotor();
     }
 
     // Returns true when the command should end.
-    /* checks to see if the button has been released and the arms based on whichever button is being released, those arms
-     * have not reached their limits whether it be the full extract/retract for the telescopic arms
+    /* checks to see if the button has been released  and that the arms have not 
+     *  reached their limits whether it be the full extract/retract for the telescopic arms
      */
     @Override
     public boolean isFinished() {

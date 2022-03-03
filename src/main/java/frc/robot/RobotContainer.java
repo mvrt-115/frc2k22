@@ -7,8 +7,6 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.Constants.Climber.Auton;
-import frc.robot.commands.*;
 import frc.robot.commands.telescopic.TelescopicManual;
 import frc.robot.subsystems.*;
 import frc.robot.util.Limelight;
@@ -32,9 +30,6 @@ public class RobotContainer {
 
   private Joystick driverJoystick;
   private Joystick operatorJoystick;  
-
-  //public static final boolean PIVOT_EXISTS = false;
-  //public static final boolean CLIMBER_TESTING = false && PIVOT_EXISTS;
 
   // climber operator manual buttons
   private JoystickButton extend;
@@ -67,7 +62,8 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // the :: syntax allows us to pass in methods of a class as variables so that the command can continuously access input values
-
+    /* when the retract and extend buttons are pressed then the telescopic manual command is called accordingly with 
+       the given value */
     retract.whenPressed(new TelescopicManual(climber, this::isRetractPressed, Constants.Climber.kTelescopicRetractManualSpeed))
       .whenReleased(new TelescopicManual(climber, this::isRetractPressed, 0));
     extend.whenPressed(new TelescopicManual(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed))
