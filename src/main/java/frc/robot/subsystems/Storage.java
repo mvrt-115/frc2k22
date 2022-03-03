@@ -89,7 +89,7 @@ public class Storage extends SubsystemBase  {
       new SetRPM(shooter, this, 50);
     }
     else if(balls == 0){
-      motor.set(ControlMode.PercentOutput, 1);
+      // motor.set(ControlMode.PercentOutput, 1);
     }
 
     else{

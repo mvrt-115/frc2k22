@@ -68,6 +68,10 @@ public class Turret extends SubsystemBase {
     resetEncoder();
 
     turret.selectProfileSlot(0, 0);
+
+    SmartDashboard.putNumber("p", Constants.Turret.kP);
+    SmartDashboard.putNumber("i", Constants.Turret.kI);
+    SmartDashboard.putNumber("d", Constants.Turret.kD);
   }
 
   @Override
@@ -104,14 +108,16 @@ public class Turret extends SubsystemBase {
       // }
       // -----------------------------------------------------------------------------------------
 
-      switch(state) {
-        case TARGETING:
-          target();
-        case FLIPPING:
-          flip();
-        case SEARCHING:
-          search();      
-      }
+      // switch(state) {
+      //   case TARGETING:
+      //     target();
+      //   case FLIPPING:
+      //     flip();
+      //   case SEARCHING:
+      //     search();      
+      // }
+
+        target();
 
       updateLastVariables();
 
@@ -200,6 +206,10 @@ public class Turret extends SubsystemBase {
    * Targets using a pid on the limelight error
    */
   public void target() {
+
+    double p = SmartDashboard.getNumber("p", Constants.Turret.kP);
+    double i = SmartDashboard.getNumber("i", Constants.Turret.kP);
+    double d = SmartDashboard.getNumber("d", Constants.Turret.kP);
     double error = (limelight.getHorizontalOffset() + offset) / 30;
     double time = Timer.getFPGATimestamp();
 
@@ -209,7 +219,7 @@ public class Turret extends SubsystemBase {
       (Constants.Turret.kI * area) + 
       (((error - lastError) / (time - lastTime)) * Constants.Turret.kD);
 
-    if(Math.abs((limelight.getHorizontalOffset() + offset)) > 1 && limelight.targetsFound()) {
+    if(Math.abs((limelight.getHorizontalOffset() + offset)) > 2 && limelight.targetsFound()) {
       if(output < 0 && getCurrentPositionDegrees() < Constants.Turret.kMinAngle)
         output = 0;
       else if(output > 0 && getCurrentPositionDegrees() > Constants.Turret.kMaxAngle)
@@ -218,10 +228,10 @@ public class Turret extends SubsystemBase {
       turret.set(ControlMode.PercentOutput, output);
     } else {
       turret.set(ControlMode.PercentOutput, 0);
-
-      area = 0;
-      error = 0;
     }
+
+    SmartDashboard.putNumber("Error", error);
+    SmartDashboard.putNumber("Output", output);
   }
 
   /**

@@ -49,7 +49,6 @@ public class RobotContainer {
   private final Turret turret = new Turret(limelight);
   // private final StopShooter stopShooter = new StopShooter(//paarth was hereshooter);
 
-  // private final Turret turret = new Turret(limelight);
 
   public RollingAverage throttle, wheel;
 
@@ -106,7 +105,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    storage.setDefaultCommand(new TrackBalls(storage, shooter, alliance));
+    // storage.setDefaultCommand(new TrackBalls(storage, shooter, alliance));
     // the :: syntax allows us to pass in methods of a class as variables so that the command can continuously access input values
     drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
 
