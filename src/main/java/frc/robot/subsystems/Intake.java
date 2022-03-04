@@ -73,7 +73,7 @@ public class Intake extends SubsystemBase {
     //     break;
     // }
 
-      startIntake();
+      // startIntake();
 
     SmartDashboard.putString("current state of intake", getCurrentStateAsString());
     SmartDashboard.putNumber("power voltage on pivot motor", pivotMotor.getMotorOutputPercent());
