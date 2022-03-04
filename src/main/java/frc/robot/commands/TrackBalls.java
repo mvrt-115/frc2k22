@@ -31,7 +31,7 @@ public class TrackBalls extends CommandBase {
     if(!storage.getShooting()){
       if(!storage.getBallColor().equals("No Ball")){
         if(!storage.getBallColor().equals(alliance)){
-          new SetRPM(shooter, storage, 200);
+          new SetRPM(shooter, storage, 200).withTimeout(.5).schedule();
         }
       }
     }
