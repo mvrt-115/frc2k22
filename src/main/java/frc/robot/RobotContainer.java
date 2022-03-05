@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.sql.Driver;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
@@ -80,13 +82,12 @@ public class RobotContainer {
 
     // Configure the button bindings
     
-    driverJoystick = new Joystick(0);
-
-    intakeBalls = new JoystickButton(driverJoystick, 6);
+// 
+    intakeBalls = new JoystickButton(driverJoystick, 3);
     // alignDrivetrain = new JoystickButton(operatorJoystick, 0);
     // expelBalls = new JoystickButton(operatorJoystick, 0);
 
-    quickturn = new JoystickButton(driverJoystick, 1);
+    quickturn = new JoystickButton(driverJoystick, 5);
     drivetrain = new Drivetrain();
     throttle = new RollingAverage(50);
     wheel = new RollingAverage(15);
@@ -109,7 +110,8 @@ public class RobotContainer {
     // the :: syntax allows us to pass in methods of a class as variables so that the command can continuously access input values
     drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
 
-   shoot.whenPressed(new SetRPM(shooter, storage, shoot)).whenReleased(new StopShooter(shooter, storage));
+    storage.setDefaultCommand(new TrackBalls(storage, shooter, DriverStation.getAlliance().toString()));
+    shoot.whenPressed(new SetRPM(shooter, storage, shoot)).whenReleased(new StopShooter(shooter, storage));
     intakeBalls.whenPressed(new IntakeBalls(intake)).whenReleased(new StopIntaking(intake));
     // expelBalls.whenPressed(new ExpelBalls(storage));
     // alignDrivetrain.whenPressed(new AlignIntakeToBall(drivetrain, true)).whenReleased(new AlignIntakeToBall(drivetrain, false));
@@ -126,8 +128,7 @@ public class RobotContainer {
     //turretCounterclockwise.whenPressed(new TurretManual(turret, 0.5, turretCounterclockwise::get));
 
     turret.setDefaultCommand(new FindTarget(turret));
-    
-    
+  
     // disableTurret.whenPressed(new DisableTurret(turret));
   }
 
@@ -138,7 +139,7 @@ public class RobotContainer {
    * @return value from [-1, 1] that is used for input for the the robot forward or backwards movement
    */
   public double getThrottle() {
-    throttle.updateValue(-driverJoystick.getRawAxis(5) * .7);
+    throttle.updateValue(-driverJoystick.getRawAxis(5) * 1);
     return throttle.getAverage();
   }
   

@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Storage;
@@ -13,12 +15,14 @@ public class TrackBalls extends CommandBase {
   Storage storage;
   Shooter shooter;
   String alliance;
+  boolean stopExp = false;
   /** Creates a new TrackBalls. */
   public TrackBalls(Storage st, Shooter shoot, String alli) {
     storage = st;
     shooter = shoot;
     alliance = alli;
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(storage, shooter);
   }
 
   // Called when the command is initially scheduled.
@@ -29,11 +33,17 @@ public class TrackBalls extends CommandBase {
   @Override
   public void execute() {
     if(!storage.getShooting()){
-      if(!storage.getBallColor().equals("No Ball")){
-        if(!storage.getBallColor().equals(alliance)){
-          new SetRPM(shooter, storage, 200).withTimeout(.5).schedule();
+        if(!storage.getBallColor().trim().equals("No Ball") && !storage.getBallColor().trim().equals(alliance)){
+          SmartDashboard.putBoolean("pooping", true);
+          shooter.setTargetRPM(100);
+          storage.runMotor(1);
+          stopExp = true;
+        } else if (stopExp) {
+          SmartDashboard.putBoolean("pooping", false);
+          shooter.setTargetRPM(0);
+          storage.runMotor(0);
+          stopExp = false; 
         }
-      }
     }
   }
 

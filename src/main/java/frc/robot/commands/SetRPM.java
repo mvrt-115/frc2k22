@@ -17,6 +17,7 @@ public class SetRPM extends CommandBase {
   private double rpm;
   private Storage storage;
   private boolean given;
+  private int prevBalls; // amt of balls in prev timestep
   private JoystickButton button;
   private String alliance;
 
@@ -26,13 +27,16 @@ public class SetRPM extends CommandBase {
     addRequirements(shooter, storage);
   }
 
+
   public SetRPM(Shooter shooter, Storage storage, JoystickButton button) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.shooter = shooter;
     this.storage = storage;
     given = false;
     this.button = button;
+    alliance = "Blue";
     addRequirements(shooter, storage);
+    
   }
 
   public SetRPM(Shooter shooter, Storage storage, double rpm) {
@@ -59,8 +63,14 @@ public class SetRPM extends CommandBase {
     
     if(given)
       rpm = shooter.getCurrentRPM();
-    shooter.setTargetRPM(rpm);
+    // shooter.setTargetRPM(rpm);
+    if(!storage.getBallColor().trim().equals(alliance)){
+      shooter.setTargetRPM(100);
+    }
+    else {
 
+      shooter.setTargetRPM(1000);
+    }
     // SmartDashboard.putNumber("new rpm", rpm);
     // SmartDashboard.putBoolean("changing rpm", true);
 

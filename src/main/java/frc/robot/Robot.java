@@ -28,6 +28,7 @@ public class Robot extends TimedRobot {
   private RobotContainer m_robotContainer;
   TalonSRX motor = new TalonSRX(39);
   TalonSRX intakeMotor = new TalonSRX(21);
+  TalonFX tur = new TalonFX(5);
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -36,7 +37,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
-    // m_robotContainer = new RobotContainer();
+    m_robotContainer = new RobotContainer();
     
   }
 
@@ -95,8 +96,9 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    motor.set(ControlMode.PercentOutput, -1);
-    intakeMotor.set(ControlMode.PercentOutput, 1);
+   // motor.set(ControlMode.PercentOutput, -1);
+   intakeMotor.set(ControlMode.PercentOutput, -0.5);
+  //  tur.set(ControlMode.PercentOutput, -0.1);
   }
 
   @Override

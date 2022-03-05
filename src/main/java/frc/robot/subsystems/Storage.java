@@ -36,10 +36,12 @@ public class Storage extends SubsystemBase  {
     breakbeamBott = new DigitalInput(3);
     prevStateTop = prevStateBott = true; // true is unbroken
     motor = TalonFactory.createTalonSRX(39, true);
-    balls = 1;
+    balls = 0;
     overriden = false;
     lastTime = Timer.getFPGATimestamp();
     lastTopChanged = Timer.getFPGATimestamp();
+    SmartDashboard.putNumber("Thresh", 80);
+
   }
 
   @Override
@@ -48,16 +50,26 @@ public class Storage extends SubsystemBase  {
     SmartDashboard.putBoolean("bottom breakbeam broken", !breakbeamBott.get());
     SmartDashboard.putNumber("number of balls", balls);
     SmartDashboard.putBoolean("overriden", overriden);
+    SmartDashboard.putString("Color", getBallColor());
+    SmartDashboard.putNumber("Red", colorSensor.getRed());
+    SmartDashboard.putNumber("Blue", colorSensor.getBlue());
+    SmartDashboard.putNumber("Prox", colorSensor.getProximity());
+    SmartDashboard.putBoolean("beans", readyShoot);
+
    
-    if(prevStateBott && !breakbeamBott.get() && Timer.getFPGATimestamp() - lastTopChanged > 0.3) {
+    if(prevStateBott && !breakbeamBott.get() && Timer.getFPGATimestamp() - lastTopChanged > 0.5) {
       balls++;
       lastTopChanged = Timer.getFPGATimestamp();
     }
 
-    else if(!prevStateTop && breakbeamTop.get()&& Timer.getFPGATimestamp() - lastTime > 0.3)  {
+    else if(!prevStateTop && breakbeamTop.get()&& Timer.getFPGATimestamp() - lastTime > 0.5)  {
       balls--;
       lastTime = Timer.getFPGATimestamp();
     }
+
+    if(balls < 0) balls = 0;
+
+    if(balls >= 3) balls = 2;
 
     
     prevStateBott = breakbeamBott.get();
@@ -89,11 +101,11 @@ public class Storage extends SubsystemBase  {
       new SetRPM(shooter, this, 50);
     }
     else if(balls == 0){
-      // motor.set(ControlMode.PercentOutput, 1);
+      motor.set(ControlMode.PercentOutput, 1);
     }
 
     else{
-      motor.set(ControlMode.PercentOutput,0);
+      motor.set(ControlMode.PercentOutput,1);
     }
     // motor.set(ControlMode.PercentOutput, 1);
 
@@ -116,17 +128,19 @@ public class Storage extends SubsystemBase  {
     return readyShoot;
   }
   public String getBallColor(){
-    if(colorSensor.isConnected() && colorSensor.getProximity() > 300){
-
-      if(colorSensor.getBlue() > 2 * colorSensor.getRed())
-        return "Blue";
-      else if(colorSensor.getRed() > 2 * colorSensor.getBlue())
-        return "Red";
-      
-      return "No Ball";
+    if(colorSensor.isConnected() && !breakbeamTop.get()){
+     return getColor(colorSensor.getBlue(), colorSensor.getRed());
     }
     return "No Ball";
 
+    }
+
+    public String getColor( double blue, double red){
+      if(colorSensor.getBlue() > colorSensor.getRed())
+        return "Blue";
+      else if(colorSensor.getRed() > colorSensor.getBlue())
+        return "Red";
+      return "No Ball";
     }
   }
   

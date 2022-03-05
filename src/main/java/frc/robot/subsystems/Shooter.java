@@ -196,18 +196,6 @@ public class Shooter extends SubsystemBase {
       return state;
   }
 
-  // /**
-  //  * Sets the state of the Hood
-  //  * Sets the target angle to 0 if state is OFF
-  //  * @param _state
-  //  */
-  // public void setHoodState(HoodState _state) {
-  //   this.hoodState = _state;
-
-  //   if (_state == HoodState.OFF)
-  //     targetAng = 0;
-  // }
-
   /**
    * Log Shooter values to SmartDashboard
    */
@@ -339,7 +327,9 @@ public class Shooter extends SubsystemBase {
    * @param acceptableError -- the acceptable +- error range
    * @return boolean whether the RPM is within the acceptable error or not
    */
-  private boolean allWithinRPMError(double targetSpeed) {
+  private boolean 
+  
+  allWithinRPMError(double targetSpeed) {
     return Math.abs(rpm.getAverage() - targetSpeed) <= Constants.Flywheel.ACCEPTABLE_ERROR;
   }
 
