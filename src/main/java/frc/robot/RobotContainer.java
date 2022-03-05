@@ -7,7 +7,10 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.commands.RatchetRetract;
+import frc.robot.commands.UnratchetExtend;
 import frc.robot.commands.telescopic.TelescopicManual;
+import frc.robot.commands.telescopic.TelescopicRatchet;
 import frc.robot.subsystems.*;
 import frc.robot.util.Limelight;
 import frc.robot.util.RollingAverage;
@@ -64,10 +67,12 @@ public class RobotContainer {
     // the :: syntax allows us to pass in methods of a class as variables so that the command can continuously access input values
     /* when the retract and extend buttons are pressed then the telescopic manual command is called accordingly with 
        the given value */
-    retract.whenPressed(new TelescopicManual(climber, this::isRetractPressed, Constants.Climber.kTelescopicRetractManualSpeed))
-      .whenReleased(new TelescopicManual(climber, this::isRetractPressed, 0));
-    extend.whenPressed(new TelescopicManual(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed))
-      .whenReleased(new TelescopicManual(climber, this::isExtendPressed, 0));
+    retract.whenPressed(new RatchetRetract(climber, this::isRetractPressed, Constants.Climber.kTelescopicRetractManualSpeed))
+      //.whenReleased(new TelecopicRatchet(climber, this::isRetractPressed));
+      .whenReleased(new TelescopicRatchet(climber));
+    extend.whenPressed(new UnratchetExtend(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed))
+      //.whenReleased(new TelescopicRatchet(climber, this::isExtendPressed));
+      .whenReleased(new TelescopicRatchet(climber));
   }
 
 
@@ -112,10 +117,10 @@ public class RobotContainer {
    * @return all buttons states for buttons passed (boolean)
    */
   public boolean getAllButtonStates(JoystickButton[] buttons) {
-    boolean totalButtonState = true;
     for(int i = 0; i < buttons.length; i++)
-      if(!buttons[i].get()) totalButtonState = false;
-    return totalButtonState;
+      if(!buttons[i].get()) return false;
+
+    return true;
   }
 
   /**

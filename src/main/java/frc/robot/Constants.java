@@ -143,8 +143,8 @@ public final class Constants {
 
         //manual position constants
         public static final double kTelescopicFullExtend = 0; //inches
-        public static final double kTelescopicFullRetract = -32; //inches
-        public static final double kPivotStowingPos = 0; //degrees
+        public static final double kTelescopicFullRetract = 0; //inches
+        public static final double kPivotStowingPos = 32; //degrees
         public static final double kPivotMaxForwardPos = 30; //degrees
         public static final double kPivotMaxReversePos = -3; //degrees
         public static final double kApproachRungSpeed = 0.05; //PercentOutput
