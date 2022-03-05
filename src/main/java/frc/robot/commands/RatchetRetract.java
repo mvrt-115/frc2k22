@@ -7,9 +7,7 @@ package frc.robot.commands;
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants;
 import frc.robot.commands.telescopic.TelescopicManual;
-import frc.robot.commands.telescopic.TelescopicRatchet;
 import frc.robot.subsystems.Climber;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -26,9 +24,11 @@ public class RatchetRetract extends SequentialCommandGroup {
     this.speed = speed;
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
+
+    // this just allows the telescopic arms to retract and then ratchet
     addCommands(
-      new TelescopicManual(climber, buttonState, Constants.Climber.kTelescopicRetractManualSpeed),
-      new TelescopicRatchet(climber)
+      new TelescopicManual(climber, buttonState,speed)
+       //new TelescopicRatchet(climber)
     );
   }
 }

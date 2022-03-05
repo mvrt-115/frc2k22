@@ -141,6 +141,10 @@ public final class Constants {
         public static final double kTelescopicExtendManualSpeed = 0.20;
         public static final double kPivotManualSpeed = 0.1;
 
+        // servo ratchet and unratchet values
+        public static final double kServoRatchet = 0;
+        public static final double kServoUnRatchet = 1;
+
         //manual position constants
         public static final double kTelescopicFullExtend = 0; //inches
         public static final double kTelescopicFullRetract = 0; //inches

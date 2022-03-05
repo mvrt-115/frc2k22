@@ -22,6 +22,8 @@ public class TelescopicRatchet extends CommandBase {
   public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
+
+  // ratchets both the servos
   @Override
   public void execute() {
     climber.rightServo.set(Constants.Climber.kServoRatchet);
