@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.MathUtils;
@@ -33,20 +34,23 @@ public class Climber extends SubsystemBase {
         // triggered
     }
 
-    // sets the telescopic climber state to nothing
     private ClimberState telescopicState = ClimberState.NONE;
-   // private ClimberState pivotState = ClimberState.NONE;
+    //private ClimberState pivotState = ClimberState.NONE;
 
     /**
      * Initializes all objects and reconfigures all motors to requirements
      */
 
     public Climber() {
+        // initializes all motors and sensors
+        pivot = TalonFactory.createTalonFX(Constants.Climber.kLeftTelescopicID, false);
         leftTelescopic = TalonFactory.createTalonFX(Constants.Climber.kLeftTelescopicID, false);
         rightTelescopic = TalonFactory.createTalonFX(Constants.Climber.kRightTelescopicID, false);
 
         leftTelescopic.setInverted(TalonFXInvertType.Clockwise);
         rightTelescopic.setInverted(TalonFXInvertType.CounterClockwise);
+
+        pivot.setInverted(TalonFXInvertType.Clockwise); // change 
 
         leftServo = new Servo(Constants.Climber.kLeftServoID);
         rightServo = new Servo(Constants.Climber.kRightServoID); 
@@ -95,17 +99,17 @@ public class Climber extends SubsystemBase {
     }
 
     /**
-     * Sets speed to given motor
+     * Sets speed to the pivot motor
      * 
      * @param motor the motor that needs to be run
      * @param speed speed at which the motor needs to be run
      */
     public void setPivotSpeed(double speed) {
-        leftTelescopic.set(ControlMode.PercentOutput, speed);
+        pivot.set(ControlMode.PercentOutput, speed);
     }
 
     /**
-     * Stops telescopic motors
+     * Stops telelscopic motors
      * 
      * @param motor the motor that needs to be stopped
      */
@@ -138,7 +142,7 @@ public class Climber extends SubsystemBase {
      * @param finalPosition final position of the motor
      * @param feedForward The feed forward
      */
-    public void setPivotMotor(double finalPosition, double feedForward) {
+    public void setPivotPosition(double finalPosition, double feedForward) {
         pivot.set(ControlMode.Position, finalPosition, DemandType.ArbitraryFeedForward, feedForward);
     }
 
@@ -166,7 +170,7 @@ public class Climber extends SubsystemBase {
      * 
      * @return the number of ticks motor has rotated
      */
-    public double getPivotEncoderValue() {
+    public double getPivotAngle() {
         return pivot.getSelectedSensorPosition();
     }
 
@@ -216,13 +220,6 @@ public class Climber extends SubsystemBase {
         telescopicState = state;
     }
 
-    /* sets the pivot state to the state given through the parameter
-     * @param state of the climber at the moment 
-     
-    public void setPivotState(ClimberState state) {
-        pivotState = state;
-    }*/
-
     /** stops all the motors */
     public void stopAllMotors() {
         stopTelescopicMotor();
@@ -234,6 +231,13 @@ public class Climber extends SubsystemBase {
     public ClimberState getTelescopicState() {
         return telescopicState;
     }
+
+    /** gets the pivot state of the climber 
+     * @return telescopic state of the climber
+     
+    public ClimberState getPivotState() {
+        return pivotState;
+    }*/
 
     // This method will be called once per scheduler run
     @Override

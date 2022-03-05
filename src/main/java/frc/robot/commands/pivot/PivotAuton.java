@@ -51,7 +51,7 @@ public class PivotAuton extends CommandBase {
    */
   @Override
   public boolean isFinished() {
-    if(climber.getPivotEncoderValue() >= position - Constants.Climber.Auton.kAcceptablePIDError) { // if within acceptable error from constant position
+    if(climber.getPivotAngle() >= position - Constants.Climber.Auton.kAcceptablePIDError) { // if within acceptable error from constant position
       if(sensor.length >= 1) { //if sensor is needed to be detected
         if(climber.detectAllSensors(sensor)) //if the necessary sensor is activated, end command
           return true;
