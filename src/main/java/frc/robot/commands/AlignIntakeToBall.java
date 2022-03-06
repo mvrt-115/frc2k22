@@ -4,6 +4,12 @@
 
 package frc.robot.commands;
 
+import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonUtils;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drivetrain;
 
@@ -13,6 +19,21 @@ public class AlignIntakeToBall extends CommandBase {
   private boolean notStopping;
   private Drivetrain drivetrain;
 
+  // Camera Info:
+  final double CAMERA_HEIGHT_METERS = Units.inchesToMeters(24);
+  final double TARGET_HEIGHT_METERS = Units.feetToMeters(5);
+  // Angle between horizontal and the camera.
+  final double CAMERA_PITCH_RADIANS = Units.degreesToRadians(0);
+  // How far from the target we want to be
+  final double GOAL_RANGE_METERS = Units.feetToMeters(3);
+
+  // Change this to match the name of your camera
+  PhotonCamera camera = new PhotonCamera("photonvision");
+
+  //create PID controller
+  PIDController throttlePID = new PIDController(0.1, 0.0, 0.0);
+  PIDController turnPID = new PIDController(0.1, 0.0, 0.0);
+  
   public AlignIntakeToBall(Drivetrain drivetrain2, boolean _notStopping) 
   {
     drivetrain = drivetrain2;
@@ -22,12 +43,33 @@ public class AlignIntakeToBall extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    if(DriverStation.getAlliance().toString().equals("Red")) {
+      camera.setPipelineIndex(0); //red pipeline
+    } else {
+      camera.setPipelineIndex(1); //blue pipeline
+    }
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    //drivetrain.alignToBall();
+    double forward = 0;
+    double turn = 0;
+
+    var results = camera.getLatestResult();
+    if (results.hasTargets()) {
+      double range = PhotonUtils.calculateDistanceToTargetMeters(
+                      CAMERA_HEIGHT_METERS,
+                      TARGET_HEIGHT_METERS,
+                      CAMERA_PITCH_RADIANS,
+                      Units.degreesToRadians(results.getBestTarget().getPitch()));
+
+      forward = throttlePID.calculate(range, GOAL_RANGE_METERS);
+      turn = turnPID.calculate(results.getBestTarget().getYaw(), 0);
+      
+    }
+    drivetrain.setDrivetrainMotorSpeed(forward+turn, forward-turn);
   }
 
   // Called once the command ends or is interrupted.
