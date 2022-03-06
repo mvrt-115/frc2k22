@@ -90,8 +90,8 @@ public final class Constants {
         //NEED TO BE CHANGED WHEN FULLY WIRED OR TESTING
         //motors
         //public static final int kPivotID = 0; // 22
-        public static final int kRightTelescopicID = 11;
-        public static final int kLeftTelescopicID = 4;
+        public static final int kRightTelescopicID = 1;
+        public static final int kLeftTelescopicID = 0;
 
         // Servo Contants
         public static final int kRightServoID = 1; //Check (analog input)
@@ -142,8 +142,8 @@ public final class Constants {
         public static final double kPivotManualSpeed = 0.1;
 
         // servo ratchet and unratchet values
-        public static final double kServoRatchet = 0;
-        public static final double kServoUnRatchet = 1;
+        public static final double kServoRatchet = 0; // check
+        public static final double kServoUnRatchet = 1; // check
 
         //manual position constants
         public static final double kTelescopicFullExtend = 0; //inches

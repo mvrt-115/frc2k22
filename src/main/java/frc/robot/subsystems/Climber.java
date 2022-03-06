@@ -31,7 +31,7 @@ public class Climber extends SubsystemBase {
         NONE, TELESCOPIC_LIMIT, TELESCOPIC_PROXIMITY
         // proximity state is triggerd when both limit switch and proximity sensors are
         // triggered
-    }
+  }
 
     private ClimberState telescopicState = ClimberState.NONE;
 
@@ -48,15 +48,15 @@ public class Climber extends SubsystemBase {
         leftTelescopic.setInverted(TalonFXInvertType.Clockwise);
         rightTelescopic.setInverted(TalonFXInvertType.CounterClockwise);
 
-        leftServo = new Servo(Constants.Climber.kLeftServoID);
-        rightServo = new Servo(Constants.Climber.kRightServoID); 
+       // leftServo = new Servo(Constants.Climber.kLeftServoID);
+       // rightServo = new Servo(Constants.Climber.kRightServoID); 
 
-        leftTelescopicProximity = new DigitalInput(Constants.Climber.kLeftTelescopicProximityChannel);
-        rightTelescopicProximity = new DigitalInput(Constants.Climber.kRightTelescopicProximityChannel);
+       // leftTelescopicProximity = new DigitalInput(Constants.Climber.kLeftTelescopicProximityChannel);
+      //  rightTelescopicProximity = new DigitalInput(Constants.Climber.kRightTelescopicProximityChannel);
 
 
-        leftTelescopicLimit = new DigitalInput(Constants.Climber.kLeftTelescopicLimitSwitch);
-        rightTelescopicLimit = new DigitalInput(Constants.Climber.kRightTelescopicLimitSwitch);
+      //  leftTelescopicLimit = new DigitalInput(Constants.Climber.kLeftTelescopicLimitSwitch);
+      //  rightTelescopicLimit = new DigitalInput(Constants.Climber.kRightTelescopicLimitSwitch);
 
         // reconfiguring all motors with PID constants
         rightTelescopic.follow(leftTelescopic);
@@ -72,8 +72,8 @@ public class Climber extends SubsystemBase {
         rightTelescopic.config_kD(Constants.kPIDIdx, Constants.Climber.kTelekD);
         rightTelescopic.config_kF(Constants.kPIDIdx, Constants.Climber.kTelekF);
 
-        leftServo.setZeroLatch();
-        rightServo.setZeroLatch();
+       // leftServo.setZeroLatch();
+      //  rightServo.setZeroLatch();
     }
 
     /**

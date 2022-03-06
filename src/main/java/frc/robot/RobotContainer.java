@@ -67,16 +67,14 @@ public class RobotContainer {
     // the :: syntax allows us to pass in methods of a class as variables so that the command can continuously access input values
     /* when the retract and extend buttons are pressed then the telescopic manual command is called accordingly with 
        the given value */
-       
-    retract.whenPressed(new RatchetRetract(climber, this::isRetractPressed, Constants.Climber.kTelescopicRetractManualSpeed))
-      .whenReleased(new TelescopicManual(climber, this::isRetractPressed, 0));
-      //.whenReleased(new TelecopicRatchet(climber, this::isRetractPressed));
-     // .whenReleased(new TelescopicRatchet(climber));
 
-    extend.whenPressed(new UnratchetExtend(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed))
+    //retract.whenPressed(new TelescopicManual(climber, this::isRetractPressed, Constants.Climber.kTelescopicRetractManualSpeed))
+    retract.whenPressed(new UnratchetExtend(climber, this::isRetractPressed, Constants.Climber.kTelescopicRetractManualSpeed))
+      .whenReleased(new TelescopicManual(climber, this::isRetractPressed, 0));
+
+    //extend.whenPressed(new TelescopicManual(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed))
+    extend.whenPressed(new RatchetRetract(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed))
       .whenReleased(new TelescopicManual(climber, this::isExtendPressed, 0));
-      //.whenReleased(new TelescopicRatchet(climber, this::isExtendPressed));
-      //.whenReleased(new TelescopicRatchet(climber));
   }
 
 
