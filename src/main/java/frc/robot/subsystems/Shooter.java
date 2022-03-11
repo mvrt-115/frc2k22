@@ -219,30 +219,30 @@ public class Shooter extends SubsystemBase {
     log();
     
     // Sets state periodically
-    switch(state) {
-      case OFF:
-        stopFlywheel();
-        break;
-      case SPEEDING:
-        flywheelLeader.set(ControlMode.Velocity, MathUtils.rpmToTicks(targetRPM, Constants.Flywheel.TICKS_PER_REVOLUTION, Constants.Flywheel.GEAR_RATIO));
-        if(allWithinRPMError(targetRPM)) {
-          setState(ShooterState.ATSPEED);
-        }
+     switch(state) {
+       case OFF:
+         stopFlywheel();
+         break;
+       case SPEEDING:
+         flywheelLeader.set(ControlMode.Velocity, MathUtils.rpmToTicks(targetRPM, Constants.Flywheel.TICKS_PER_REVOLUTION, Constants.Flywheel.GEAR_RATIO));
+         if(allWithinRPMError(targetRPM)) {
+           setState(ShooterState.ATSPEED);
+         }
           
-        break;
-      case ATSPEED:
-        // flywheelLeader.set(ControlMode.Velocity, MathUtils.rpmToTicks(targetRPM, Constants.Flywheel.TICKS_PER_REVOLUTION, Constants.Flywheel.GEAR_RATIO));
-        if(!allWithinRPMError(targetRPM))
-          setState(ShooterState.SPEEDING);
-        break;
-    }
+         break;
+       case ATSPEED:
+         // flywheelLeader.set(ControlMode.Velocity, MathUtils.rpmToTicks(targetRPM, Constants.Flywheel.TICKS_PER_REVOLUTION, Constants.Flywheel.GEAR_RATIO));
+         if(!allWithinRPMError(targetRPM))
+           setState(ShooterState.SPEEDING);
+         break;
+     }
 
     /*switch(hoodState) {
       case OFF:
         stopHood();
         break;
       case ADJUSTING:
-        // hoodMotor.set(ControlMode.Position, degreesToTicks(targetAng));
+        // oodMotor.set(ControlMode.Position, degreesToTicks(targetAng));
 
         // leftActuator.setPositionFromAngle(targetAng);
         // rightActuator.setPositionFromAngle(targetAng);
@@ -262,6 +262,8 @@ public class Shooter extends SubsystemBase {
 
     // Adjusts turret to correct offset
     // moveAlign();
+
+    // flywheelLeader.set(ControlMode.PercentOutput, 0.4);
   }
 
   /**

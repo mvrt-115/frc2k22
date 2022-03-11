@@ -21,45 +21,39 @@ public class FiveBallAuton extends SequentialCommandGroup {
   public FiveBallAuton(Drivetrain dr, Intake in, Shooter shooter, Storage storage) {
     drivetrain = dr;
 
-    drivetrain.setOdometry(new Pose2d(0, 0, new Rotation2d(0)));
+    // drivetrain.setOdometry(new Pose2d(0, 0, new Rotation2d(0)));
 
     addCommands(
       // new ParallelCommandGroup(
       // new IntakeBalls(intake),
         // new SequentialCommandGroup(
           runPath("Path6Part1"),
-          //new WaitCommand(3),
-          // runPath("Path6Part1EndTurn"),//.andThen(new WaitCommand(1)),
-          //runPath("Path6Part1EndTurn"),
-          // new TurnDegrees(drivetrain, 180),
-          new SetRPM(shooter, storage).withTimeout(4), // 2 balls
-          // new TurnDegrees(drivetrain, 180),
-          runPath("Path6Part1.5"),
-          runPath("Path6Part2"),
-          // runPath("Path6Part2EndTurn"),//.andThen(new WaitCommand(1)),
-          // new TurnDegrees(drivetrain, 180),
-          new SetRPM(shooter, storage).withTimeout(4), // 1 ball
-          runPath("Path6Part3"),
-          new WaitCommand(1),
-          runPath("Path6Part4"),
-          new SetRPM(shooter, storage).withTimeout(4)
-          //new ShootBalls()  //2 balls
+          new AlignIntakeToBall(drivetrain, true).withTimeout(2),
+          //need to intake here
+          //new SetRPM(shooter, storage).withTimeout(4), //shoot 2 balls
+          runPath("Path6Part1.5"), //going back
+          runPath("Path6Part2"), //going to get other ball
+          new AlignIntakeToBall(drivetrain, true).withTimeout(2),
+          //need to intake here
+          //new SetRPM(shooter, storage).withTimeout(4), //intake 1 ball
+          //new AlignToBall(),
+          runPath("Path6Part3"), //going to terminal
+          new AlignIntakeToBall(drivetrain, true).withTimeout(2),
+          runPath("Path6Part4") //going back to shoot
+          //new SetRPM(shooter, storage).withTimeout(4) //shoot 2 balls
         // )
       // )
     );
+    
     Trajectory trajectory = PathPlanner.loadPath("Path6Part1", 1, 1);
     drivetrain.setOdometry(trajectory.getInitialPose());
   }
 
   public Command runPath(String pathName)
   {
-    boolean reversed = pathName.equals("Path6Part1.5");
+    boolean reversed = pathName.equals("Path6Part1.5") || pathName.equals("Path6Part4");
 
     Trajectory trajectory = PathPlanner.loadPath(pathName, 1, 1, reversed);
-      
-    // System.out.println(trajectory);
-    // System.out.println(drivetrain);
-    // drivetrain.setOdometry(trajectory.getInitialPose());
     return drivetrain.getRamseteCommand(trajectory);
   }
 

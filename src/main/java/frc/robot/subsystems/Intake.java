@@ -73,7 +73,7 @@ public class Intake extends SubsystemBase {
     //     break;
     // }
 
-      // startIntake();
+      startIntake();
 
     SmartDashboard.putString("current state of intake", getCurrentStateAsString());
     SmartDashboard.putNumber("power voltage on pivot motor", pivotMotor.getMotorOutputPercent());
@@ -81,6 +81,7 @@ public class Intake extends SubsystemBase {
     SmartDashboard.putBoolean("is at top", Math.abs(getCurrentPos()) <= Constants.Intake.kMARGIN_OF_ERROR_TICKS);
     SmartDashboard.putBoolean("is at bottom", Math.abs(getCurrentPos() - Constants.Intake.kTICKS_TO_BOTTOM) <= Constants.Intake.kMARGIN_OF_ERROR_TICKS);
 
+    
   }
     
   public String getCurrentStateAsString()

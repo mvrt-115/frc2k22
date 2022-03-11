@@ -65,11 +65,11 @@ public class SetRPM extends CommandBase {
       rpm = shooter.getCurrentRPM();
     // shooter.setTargetRPM(rpm);
     if(!storage.getBallColor().trim().equals(alliance)){
-      shooter.setTargetRPM(100);
+      shooter.setTargetRPM(500);
     }
     else {
 
-      shooter.setTargetRPM(1000);
+      shooter.setTargetRPM(500);
     }
     // SmartDashboard.putNumber("new rpm", rpm);
     // SmartDashboard.putBoolean("changing rpm", true);

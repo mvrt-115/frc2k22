@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.AlignIntakeToBall;
 import frc.robot.commands.DebugLog;
 import frc.robot.subsystems.Shooter.ShooterState;
 
@@ -29,6 +30,7 @@ public class Robot extends TimedRobot {
   TalonSRX motor = new TalonSRX(39);
   TalonSRX intakeMotor = new TalonSRX(21);
   TalonFX tur = new TalonFX(5);
+  TalonFX shooter = new TalonFX(12);
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -75,12 +77,15 @@ public class Robot extends TimedRobot {
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
+     // shooter.set(ControlMode.PercentOutput, 0.4);
     }
   }
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+    
+  }
 
   @Override
   public void teleopInit() {
@@ -91,14 +96,22 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    // new AlignIntakeToBall(m_robotContainer.drivetrain, true).schedule();;
+    intakeMotor.set(ControlMode.PercentOutput, -0.7);
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
    // motor.set(ControlMode.PercentOutput, -1);
-   intakeMotor.set(ControlMode.PercentOutput, -0.5);
+  //  intakeMotor.set(ControlMode.PercentOutput, -0.5);
   //  tur.set(ControlMode.PercentOutput, -0.1);
+    if (m_robotContainer.getintake()) {
+      intakeMotor.set(ControlMode.PercentOutput, -0.8);
+    }
+    else{
+      intakeMotor.set(ControlMode.PercentOutput, 0);
+    }
   }
 
   @Override

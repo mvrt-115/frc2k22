@@ -41,7 +41,7 @@ public class RobotContainer {
   // private JoystickButton alignDrivetrain;
   // private JoystickButton expelBalls;
 
-  private Drivetrain drivetrain;
+  public Drivetrain drivetrain;
 
 
   // private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
@@ -110,9 +110,10 @@ public class RobotContainer {
     // the :: syntax allows us to pass in methods of a class as variables so that the command can continuously access input values
     drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
 
-    storage.setDefaultCommand(new TrackBalls(storage, shooter, DriverStation.getAlliance().toString()));
+   // storage.setDefaultCommand(new TrackBalls(storage, shooter, DriverStation.getAlliance().toString()));
     shoot.whenPressed(new SetRPM(shooter, storage, shoot)).whenReleased(new StopShooter(shooter, storage));
-    intakeBalls.whenPressed(new IntakeBalls(intake)).whenReleased(new StopIntaking(intake));
+    // intakeBalls.whenPressed(new IntakeBalls(intake)).whenReleased(new StopIntaking(intake));
+    
     // expelBalls.whenPressed(new ExpelBalls(storage));
     // alignDrivetrain.whenPressed(new AlignIntakeToBall(drivetrain, true)).whenReleased(new AlignIntakeToBall(drivetrain, false));
     /*
@@ -127,8 +128,7 @@ public class RobotContainer {
     //turretClockwise.whenPressed(new TurretManual(turret, -0.5, turretClockwise::get));
     //turretCounterclockwise.whenPressed(new TurretManual(turret, 0.5, turretCounterclockwise::get));
 
-    turret.setDefaultCommand(new FindTarget(turret));
-  
+    // turret.setDefaultCommand(new FindTarget(turret));
     // disableTurret.whenPressed(new DisableTurret(turret));
   }
 
@@ -154,6 +154,11 @@ public class RobotContainer {
     return wheel.getAverage();
 
   }
+
+  public boolean getintake(){
+    return intakeBalls.get();
+  }
+
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
