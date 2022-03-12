@@ -4,18 +4,13 @@
 
 package frc.robot;
 
-import java.sql.Driver;
-
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 //import frc.robot.commands.SetRPM;
 
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
-import frc.robot.subsystems.Shooter.HoodState;
 import frc.robot.subsystems.Shooter.ShooterState;
 import frc.robot.util.Limelight;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -34,69 +29,42 @@ public class RobotContainer {
  // private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
   private Joystick driverJoystick; //Joysticks
-  private Joystick operatorJoystick;  
-  private String alliance = DriverStation.getAlliance().toString();
+  private Joystick operatorJoystick;
   
   private JoystickButton intakeBalls; //buttons
-  // private JoystickButton alignDrivetrain;
-  // private JoystickButton expelBalls;
+  private JoystickButton alignDrivetrain;
 
-  public Drivetrain drivetrain;
-
-
-  // private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
-
+  public final Drivetrain drivetrain = new Drivetrain();
   private final Limelight limelight = new Limelight();
   private final Shooter shooter = new Shooter(limelight);
   private final Turret turret = new Turret(limelight);
-  // private final StopShooter stopShooter = new StopShooter(//paarth was hereshooter);
 
 
   public RollingAverage throttle, wheel;
 
-  private final Storage storage = new Storage(shooter);
+  private final Storage storage = new Storage();
 
   private final Intake intake = new Intake();
 
-  // private JoystickButton storageOverride;
-
   private JoystickButton quickturn;
   private JoystickButton shoot;
-
-  private JoystickButton disableTurret;
-  // public JoystickButton turretClockwise;
-  // public JoystickButton turretCounterclockwise;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
     driverJoystick = new Joystick(0);
     operatorJoystick = new Joystick(1);
+
     shoot = new JoystickButton(driverJoystick, 2);
-
-    // disableTurret = new JoystickButton(operatorJoystick, 1);
-    // // turretClockwise = new JoystickButton(driverJoystick, 2);
-    // turretCounterclockwise = new JoystickButton(driverJoystick, 3);
-
- 
-
-    // Configure the button bindings
-    
-// 
     intakeBalls = new JoystickButton(driverJoystick, 3);
-    // alignDrivetrain = new JoystickButton(operatorJoystick, 0);
-    // expelBalls = new JoystickButton(operatorJoystick, 0);
+    alignDrivetrain = new JoystickButton(driverJoystick, 6);
 
     quickturn = new JoystickButton(driverJoystick, 5);
-    drivetrain = new Drivetrain();
     throttle = new RollingAverage(50);
     wheel = new RollingAverage(15);
 
     
     configureButtonBindings();
-
-    // SmartDashboard.putData("Run Flywheel", new SetRPM(shooter));
-    // SmartDashboard.putData("Change Angle", new SetHoodAngle(shooter));
   }
 
   /**
@@ -110,26 +78,12 @@ public class RobotContainer {
     // the :: syntax allows us to pass in methods of a class as variables so that the command can continuously access input values
     drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
 
-   // storage.setDefaultCommand(new TrackBalls(storage, shooter, DriverStation.getAlliance().toString()));
-    shoot.whenPressed(new SetRPM(shooter, storage, shoot)).whenReleased(new StopShooter(shooter, storage));
-    // intakeBalls.whenPressed(new IntakeBalls(intake)).whenReleased(new StopIntaking(intake));
+    storage.setDefaultCommand(new TrackBalls(storage, shooter));
+    turret.setDefaultCommand(new FindTarget(turret));
     
-    // expelBalls.whenPressed(new ExpelBalls(storage));
-    // alignDrivetrain.whenPressed(new AlignIntakeToBall(drivetrain, true)).whenReleased(new AlignIntakeToBall(drivetrain, false));
-    /*
-      Shoot: 4
-      Intake: 5
-      Expell Balls: <find>
-      Climb: <find for operator>
-      Turret Manual: ????
-      Align To ball: 0
-    */
-
-    //turretClockwise.whenPressed(new TurretManual(turret, -0.5, turretClockwise::get));
-    //turretCounterclockwise.whenPressed(new TurretManual(turret, 0.5, turretCounterclockwise::get));
-
-    // turret.setDefaultCommand(new FindTarget(turret));
-    // disableTurret.whenPressed(new DisableTurret(turret));
+    shoot.whenPressed(new SetRPM(shooter, storage, shoot)).whenReleased(new StopShooter(shooter, storage));
+    intakeBalls.whenPressed(new IntakeBalls(intake, storage)).whenReleased(new StopIntaking(intake, storage));
+    alignDrivetrain.whenPressed(new AlignIntakeToBall(drivetrain, true)).whenReleased(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
   }
 
   /**
@@ -166,7 +120,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new FiveBallAuton(drivetrain, null, shooter, storage);
+    return new FiveBallAuton(drivetrain, intake, shooter, storage, turret);
 
   }
   

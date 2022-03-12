@@ -5,7 +5,6 @@
 package frc.robot.util;
 
 import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -88,13 +87,7 @@ public class Limelight extends SubsystemBase {
    * @param rollingAvg  The rolling average to update (ty or tx)
    */
   private void updateEntry(String key, RollingAverage rollingAvg) {
-    double val = limelight.getEntry(key).getDouble(0);
-    // if (targetsFound() && Math.abs(val - tx.getAverage()) < 2) 
-      // System.out.println("got value: " + key + " " +limelight.);
-      rollingAvg.updateValue((limelight.getEntry(key).getDouble(0)));
-    //  System.out.println(limelight.getEntry(key).getDouble(0));
-    // }
-      
+    rollingAvg.updateValue((limelight.getEntry(key).getDouble(0)));      
   }
 
   /**

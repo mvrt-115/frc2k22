@@ -4,7 +4,7 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Shooter;
@@ -14,13 +14,12 @@ public class TrackBalls extends CommandBase {
 
   Storage storage;
   Shooter shooter;
-  String alliance;
+  String alliance = DriverStation.getAlliance().toString();
   boolean stopExp = false;
   /** Creates a new TrackBalls. */
-  public TrackBalls(Storage st, Shooter shoot, String alli) {
+  public TrackBalls(Storage st, Shooter shoot) {
     storage = st;
     shooter = shoot;
-    alliance = alli;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(storage, shooter);
   }

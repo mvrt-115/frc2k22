@@ -9,7 +9,6 @@ import org.photonvision.PhotonUtils;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drivetrain;
@@ -45,11 +44,6 @@ public class AlignIntakeToBall extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    // if(DriverStation.getAlliance().toString().equals("Red")) {
-    //   camera.setPipelineIndex(0); //red pipeline
-    // } else {
-    //   camera.setPipelineIndex(1); //blue pipeline
-    // }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -68,7 +62,6 @@ public class AlignIntakeToBall extends CommandBase {
                       Units.degreesToRadians(results.getBestTarget().getPitch()));
       SmartDashboard.putNumber("Range", range);
       forward = throttlePID.calculate(range, GOAL_RANGE_METERS);
-      // forward=-0.2;
       turn = turnPID.calculate(results.getBestTarget().getYaw(), 0);
       
     }

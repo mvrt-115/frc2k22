@@ -5,14 +5,17 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Storage;
 import frc.robot.subsystems.Intake.IntakeState;
 
 public class IntakeBalls extends CommandBase {
   /** Creates a new RunIntake. */
   private Intake intake;
-  public IntakeBalls(Intake intakeIn) {
+  private Storage storage;
+  public IntakeBalls(Intake intakeIn, Storage storageIn) {
     // Use addRequirements() here to declare subsystem dependencies.
     intake = intakeIn;
+    storage = storageIn;
     addRequirements(intake);
   }
 
@@ -20,6 +23,7 @@ public class IntakeBalls extends CommandBase {
   @Override
   public void initialize() {
       intake.setState(IntakeState.PIVOTING_DOWN);
+      storage.setIntaking(true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

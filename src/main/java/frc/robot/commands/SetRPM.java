@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Storage;
+import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Shooter.ShooterState;
 
 public class SetRPM extends CommandBase {
@@ -17,13 +18,13 @@ public class SetRPM extends CommandBase {
   private double rpm;
   private Storage storage;
   private boolean given;
-  private int prevBalls; // amt of balls in prev timestep
   private JoystickButton button;
-  private String alliance;
+  private Turret turret;
 
-  public SetRPM(Shooter shooter, Storage storage) {
+  public SetRPM(Shooter shooter, Storage storage, Turret turret) {
     this.shooter = shooter;
     this.storage = storage;
+    this.turret = turret;
     addRequirements(shooter, storage);
   }
 
@@ -34,7 +35,6 @@ public class SetRPM extends CommandBase {
     this.storage = storage;
     given = false;
     this.button = button;
-    alliance = "Blue";
     addRequirements(shooter, storage);
     
   }
@@ -64,22 +64,22 @@ public class SetRPM extends CommandBase {
     if(given)
       rpm = shooter.getCurrentRPM();
     // shooter.setTargetRPM(rpm);
-    if(!storage.getBallColor().trim().equals(alliance)){
-      shooter.setTargetRPM(500);
-    }
-    else {
-
-      shooter.setTargetRPM(500);
-    }
+    // if(!storage.getBallColor().trim().equals(alliance)){
+    //   shooter.setTargetRPM(600);
+    // }
+    // else {
+    shooter.setTargetRPM(rpm);
+    // }
+    shooter.runMotor(0.5);
     // SmartDashboard.putNumber("new rpm", rpm);
     // SmartDashboard.putBoolean("changing rpm", true);
 
     if(rpm == 0)
-      storage.runMotor(0);
-    if(shooter.getState() == ShooterState.ATSPEED)
-      storage.runMotor(1);
-    else
        storage.runMotor(0);
+    if(shooter.getState() == ShooterState.ATSPEED && turret.canShoot()) {
+      storage.runMotor(1);
+    } else
+      storage.runMotor(0);
   }
 
   // Called once the command ends or is interrupted.

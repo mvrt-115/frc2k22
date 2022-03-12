@@ -37,7 +37,7 @@ public class Turret extends SubsystemBase {
   private double lastTime;
   private double area;
 
-  // private double targetDegrees;
+  private double targetDegrees;
   private double searchDirection;
   private boolean searchFlipping;
 
@@ -55,7 +55,7 @@ public class Turret extends SubsystemBase {
     lastTime = 0;
     area = 0;
 
-    // targetDegrees = 0;
+    targetDegrees = 0;
     searchDirection = 1;
     searchFlipping = false;
 
@@ -78,138 +78,35 @@ public class Turret extends SubsystemBase {
   public void periodic() {
     log();
 
-    // turret.set(ControlMode.Position, MathUtils.degreesToTicks(180, 2048, Constants.Turret.kGearRatio));
-    // SmartDashboard.putNumber("turret ticks", turret.getSelectedSensorPosition(0));
+    if(getCurrentPositionDegrees() >= Constants.Turret.kMaxAngle) {
+      targetDegrees = Constants.Turret.kMinAngle + 20;
+      setState(TurretState.FLIPPING);
+    } else if(getCurrentPositionDegrees() <= Constants.Turret.kMinAngle) {
+      targetDegrees = Constants.Turret.kMaxAngle - 20;
+      setState(TurretState.FLIPPING);
+    }
 
-    // unless flipping keep track of the target degrees
-    // if(state != TurretState.FLIPPING)
-    //   updateTargetDegrees();
-
-    // if(state == TurretState.FLIPPING) {
-    //   turnDegrees(targetDegrees);
-    // targetDegrees = getCurrentPositionDegrees()
-      
-
-      // turret.set(ControlMode.Position, MathUtils.degreesToTicks(targetDegrees, Constants.Turret.kTicksPerRevolution, Constants.Turret.kGearRatio));
-
-
-      // ------------------------------FLIPPING CODE---------------------------------------------
-      // don't want to have this flipping code when searching because it uses pid to get to the other end
-      // if(state != TurretState.SEARCHING && 
-      //   (Math.abs(getCurrentPositionDegrees()) >= Constants.Turret.kMaxAngle + 20 || 
-      //   Math.abs(getCurrentPositionDegrees()) <= Constants.Turret.kMinAngle - 20)) {
-      //   // turret.set(ControlMode.PercentOutput, 0);
-      //   setState(TurretState.FLIPPING);
-
-      //   if(getCurrentPositionDegrees() < 0)
-      //     turnDegrees(180);
-      //   else
-      //     turnDegrees(-180);
-      // }
-      // -----------------------------------------------------------------------------------------
-
-      // switch(state) {
-      //   case TARGETING:
-      //     target();
-      //   case FLIPPING:
-      //     flip();
-      //   case SEARCHING:
-      //     search();      
-      // }
-
-        target();
-
-      updateLastVariables();
-
-      // lastTime = Timer.getFPGATimestamp();
-      
-      // once flipped to a point when target not in view, begin targetting again
-    //   if(!limelight.targetsFound()) {
-    //     setState(TurretState.TARGETING);
-    //     updateTargetDegrees();
-    //   }
-        
-    // }
-    // if(state == TurretState.TARGETING) {
-    //   target();
-    // } else if(state != TurretState.FLIPPING){ 
-    //   if(limelight.targetsFound())
-    //     setPercentOutput(0);
-    // }
-
-    // // if(state == TurretState.SEARCHING) {
-    // //   double pos = getCurrentPositionDegrees();
-    // //   // // if(Math.abs(pos - Constants.Turret.kMa) < Constants.Turret.kEThreshold) 
-    // //   // //   zeroing = false;//true;
-    // //   // // if(Math.abs(pos) < Constants.Turret.kEThreshold)
-    // //   // //   zeroing = false;
-    // //   // if(Math.abs(pos) >= Constants.Turret.kMaxAngle) 
-    // //   //   searchDirection *= -1;
-
-    // //   // // if(zeroing) 
-    // //   // //   turnDegrees(0);
-    // //   // // else
-    // //   if(Math.abs(pos - Constants.Turret.kMinAngle) < Constants.Turret.kEThreshold) 
-    // //     zeroing = true;
-    // //   if(Math.abs(pos) < Constants.Turret.kEThreshold)
-    // //     zeroing = false;
-    // //   else if(Math.abs(Math.abs(pos) - Constants.Turret.kMinAngle) < Constants.Turret.kEThreshold) 
-    // //     searchDirection *= -1;
-
-    // //   if(zeroing) 
-    // //     turnDegrees(0);
-    // //   else
-    // //     setPercentOutput(searchDirection * Constants.Turret.kTurnSpeed);
-    // // }
-    
-    // // determine if we can shoot if we are within some margin of error
-    // if(Math.abs(limelight.getHorizontalOffset()+offset) <= 5 && state != TurretState.FLIPPING)
-    //   setState(TurretState.CAN_SHOOT);
-    // else if(state != TurretState.FLIPPING)
-    //   setState(TurretState.TARGETING);
-
-    // insiah kizilibash is 
+     switch(state) {
+       case DISABLED:
+         break;
+       case FLIPPING:
+         flip();
+         break;
+       case SEARCHING:
+         search();
+         break;
+       case CAN_SHOOT:
+       case TARGETING:
+         target();
+         updateLastVariables();
+         break;
+     }      
   }
-
-  // public void updateTargetDegrees() {
-  //   if(limelight.targetsFound()) { // && Math.abs(limelight.getHorizontalOffset()+offset) > 2) {
-  //     // find target position by using current position and data from limelight
-  //     targetDegrees = getCurrentPositionDegrees() + 1.25 * (limelight.getHorizontalOffset() + offset);
-
-  //     if(targetDegrees > Constants.Turret.kMaxAngle + 20) {
-  //       setState(TurretState.FLIPPING);
-
-  //       targetDegrees = Constants.Turret.kMinAngle + targetDegrees - Constants.Turret.kMaxAngle;
-  //     } else if(targetDegrees < Constants.Turret.kMinAngle - 20) {
-  //       setState(TurretState.FLIPPING);
-
-  //       targetDegrees = Constants.Turret.kMaxAngle + targetDegrees - Constants.Turret.kMinAngle;
-  //     }
-  //   }
-  // }
-
-  // /**
-  //  * Moves the turret to lock onto the target. If a target has been found, the turret will move there. Otherwise,
-  //  * the turret will turn until it does see something.
-  //  */
-  // public void target() {
-  //   if(limelight.targetsFound()) {
-  //     state = TurretState.TARGETING;
-
-  //     turnDegrees(targetDegrees);
-  //   } else {
-  //     // state = TurretState.SEARCHING;
-  //   }
-  // }
 
   /**
    * Targets using a pid on the limelight error
    */
   public void target() {
-
-    double p = SmartDashboard.getNumber("p", Constants.Turret.kP);
-    double i = SmartDashboard.getNumber("i", Constants.Turret.kP);
-    double d = SmartDashboard.getNumber("d", Constants.Turret.kP);
     double error = (limelight.getHorizontalOffset() + offset) / 30;
     double time = Timer.getFPGATimestamp();
 
@@ -219,27 +116,29 @@ public class Turret extends SubsystemBase {
       (Constants.Turret.kI * area) + 
       (((error - lastError) / (time - lastTime)) * Constants.Turret.kD);
 
-    if(Math.abs((limelight.getHorizontalOffset() + offset)) > 2 && limelight.targetsFound()) {
+    if(Math.abs((limelight.getHorizontalOffset() + offset)) > 4 && limelight.targetsFound()) {
       if(output < 0 && getCurrentPositionDegrees() < Constants.Turret.kMinAngle)
-        output = 0;
+        setState(TurretState.FLIPPING);
       else if(output > 0 && getCurrentPositionDegrees() > Constants.Turret.kMaxAngle)
-        output = 0;
+        setState(TurretState.FLIPPING);
 
       turret.set(ControlMode.PercentOutput, output);
     } else {
       turret.set(ControlMode.PercentOutput, 0);
+      setState(TurretState.CAN_SHOOT);
     }
-
-    SmartDashboard.putNumber("Error", error);
-    SmartDashboard.putNumber("Output", output);
   }
 
   /**
    * Checks for if the turret should go back to targeting
    */
   public void flip() {
-    if(Math.abs(getCurrentPositionDegrees()) >= 10)
+    if(Math.abs(getCurrentPositionDegrees() - targetDegrees) < 5) {
       setState(TurretState.TARGETING);
+      turret.set(ControlMode.PercentOutput, 0);
+    } else {
+      turnDegrees(targetDegrees);
+    }
   }
 
   /**
@@ -277,7 +176,7 @@ public class Turret extends SubsystemBase {
    * Turns to the desired degrees
    * @param degrees the desired degrees
    */
-  private void turnDegrees(double degrees) {
+  public void turnDegrees(double degrees) {
     turret.set(
       ControlMode.Position,
       MathUtils.degreesToTicks(
@@ -367,7 +266,5 @@ public class Turret extends SubsystemBase {
     SmartDashboard.putString("Turret State", state.toString());
     SmartDashboard.putNumber("Turret Output", turret.getMotorOutputPercent());
     SmartDashboard.putNumber("Direction", searchDirection);
-    // SmartDashboard.putNumber("Target Degrees", targetDegrees);
-    // SmartDashboard.putBoolean("Is Aligned", getMagAligned());
   }
 }

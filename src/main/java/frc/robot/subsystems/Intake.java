@@ -7,18 +7,11 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-import edu.wpi.first.util.sendable.Sendable;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.RobotContainer;
 import frc.robot.util.TalonFactory;
 
 public class Intake extends SubsystemBase {
@@ -54,24 +47,24 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    // feedForward = Constants.Intake.kFF * Math.cos(Math.toRadians(getAngle()));
-    // switch(state)
-    // {
-    //   case INTAKING: // intake is deployed and starts running
-    //     stopPivot();
-    //     startIntake();
-    //     break;
-    //   case PIVOTING_UP: // intake goes back up and stops intaking
-    //     stopIntake();
-    //     pivotUp();
-    //     break;
-    //   case PIVOTING_DOWN:
-    //     pivotDown();
-    //     break;
-    //   case UP:
-    //     stopPivot(); // to keep the intake up
-    //     break;
-    // }
+    feedForward = Constants.Intake.kFF * Math.cos(Math.toRadians(getAngle()));
+    switch(state)
+    {
+      case INTAKING: // intake is deployed and starts running
+        stopPivot();
+        startIntake();
+        break;
+      case PIVOTING_UP: // intake goes back up and stops intaking
+        stopIntake();
+        pivotUp();
+        break;
+      case PIVOTING_DOWN:
+        pivotDown();
+        break;
+      case UP:
+        stopPivot(); // to keep the intake up
+        break;
+    }
 
       startIntake();
 

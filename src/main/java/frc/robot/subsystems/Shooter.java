@@ -13,7 +13,6 @@ import frc.robot.util.RollingAverage;
 import frc.robot.util.TalonFactory;
 import frc.robot.Constants;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -107,6 +106,10 @@ public class Shooter extends SubsystemBase {
     // hoodState = HoodState.OFF;
     rpm = new RollingAverage(Constants.Flywheel.NUM_AVG);
   }
+
+  public void runMotor(double out ){
+    flywheelLeader.set(ControlMode.PercentOutput, out);
+  } 
 
   /**
    * Stops Shooter

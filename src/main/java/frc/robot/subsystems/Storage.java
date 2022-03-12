@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.commands.SetRPM;
 import frc.robot.util.TalonFactory;
 
 public class Storage extends SubsystemBase  {
@@ -24,24 +23,30 @@ public class Storage extends SubsystemBase  {
   private BaseTalon motor;
   private boolean overriden;
   private double lastTime;
-  private Shooter shooter;
   private boolean readyShoot = false;
+  private boolean intaking = false;
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
   public final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
+  private double stopIntakeTime = 0;
 
 
-  public Storage(Shooter shooter)  {
-    this.shooter = shooter;
+  public Storage()  {
     breakbeamTop = new DigitalInput(0);
     breakbeamBott = new DigitalInput(3);
     prevStateTop = prevStateBott = true; // true is unbroken
     motor = TalonFactory.createTalonSRX(39, true);
-    balls = 0;
+    balls = -1;
     overriden = false;
     lastTime = Timer.getFPGATimestamp();
     lastTopChanged = Timer.getFPGATimestamp();
-    SmartDashboard.putNumber("Thresh", 80);
+    intaking = false;
+  }
 
+  public void setIntaking(boolean intaking) {
+    if(!intaking)
+      stopIntakeTime = Timer.getFPGATimestamp();
+    else
+      intaking = true;
   }
 
   @Override
@@ -50,11 +55,6 @@ public class Storage extends SubsystemBase  {
     SmartDashboard.putBoolean("bottom breakbeam broken", !breakbeamBott.get());
     SmartDashboard.putNumber("number of balls", balls);
     SmartDashboard.putBoolean("overriden", overriden);
-    SmartDashboard.putString("Color", getBallColor());
-    SmartDashboard.putNumber("Red", colorSensor.getRed());
-    SmartDashboard.putNumber("Blue", colorSensor.getBlue());
-    SmartDashboard.putNumber("Prox", colorSensor.getProximity());
-    SmartDashboard.putBoolean("beans", readyShoot);
 
    
     if(prevStateBott && !breakbeamBott.get() && Timer.getFPGATimestamp() - lastTopChanged > 0.5) {
@@ -75,7 +75,7 @@ public class Storage extends SubsystemBase  {
     prevStateBott = breakbeamBott.get();
     prevStateTop = breakbeamTop.get();
     if(!overriden)  {
-      runMotor();
+      autoStorage();
     }
   }
 
@@ -83,7 +83,7 @@ public class Storage extends SubsystemBase  {
     overriden = state;
   }
 
-  public void runMotor()  {
+  public void autoStorage()  {
     if(balls == 1)  {
       if(!breakbeamBott.get())
         motor.set(ControlMode.PercentOutput, 1);
@@ -97,19 +97,20 @@ public class Storage extends SubsystemBase  {
       }
       else motor.set(ControlMode.PercentOutput, 0);
     }
-    else if(balls>=3){
-      new SetRPM(shooter, this, 50);
-    }
     else if(balls == 0){
       motor.set(ControlMode.PercentOutput, 1);
     }
 
-    else{
-      motor.set(ControlMode.PercentOutput,1);
+    else if(intaking) {
+        motor.set(ControlMode.PercentOutput,1);
+        if(stopIntakeTime != -1 && Timer.getFPGATimestamp() - stopIntakeTime > 0.5) {
+          motor.set(ControlMode.PercentOutput, 0);
+          intaking = false;
+          stopIntakeTime = -1;
+        }
+    } else {
+      motor.set(ControlMode.PercentOutput, 0);
     }
-    // motor.set(ControlMode.PercentOutput, 1);
-
-    
   }
 
 
