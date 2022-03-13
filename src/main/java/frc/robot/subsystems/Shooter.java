@@ -5,9 +5,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-// import edu.wpi.first.wpilibj.Servo;
 import frc.robot.util.Limelight;
-// import frc.robot.util.LinearActuator;
 import frc.robot.util.MathUtils;
 import frc.robot.util.RollingAverage;
 import frc.robot.util.TalonFactory;
@@ -31,29 +29,14 @@ public class Shooter extends SubsystemBase {
   }
 
   private final double MAX_RPM = 8000;
-  // private final double MAX_ANGLE = 40;
 
   private final int LEADER_ID = 12;
-  // private final int HOOD_ID = 22; //0
-
-  // Linear Actuator IDs (random rn)
-  // private final int LEFT_HOOD_ID = 100; // left actuator
-  // private final int RIGHT_HOOD_ID = 100; // right actuator
 
   private BaseTalon flywheelLeader;
-  // private BaseTalon hoodMotor;
-
-  // ACtuators
-  // private LinearActuator leftActuator;  // left actuator
-  // private LinearActuator rightActuator;  // right actuator
 
   // Attributes of flywheel
   private ShooterState state;
-  // private HoodState hoodState;
   private double targetRPM = 0;
-
-  // Target Angle in radians
-  // private double targetAng = 0;
 
   private RollingAverage rpm;
   private Limelight limelight;
@@ -62,28 +45,6 @@ public class Shooter extends SubsystemBase {
   public Shooter(Limelight limelight/*, Drivetrain drivetrain, Turret turret*/) {
     // Mind Bending Test aon the Reality of our Situation
     flywheelLeader = TalonFactory.createTalonFX(LEADER_ID, true);
-    // hoodMotor = TalonFactory.createTalonFX(HOOD_ID, false);
-
-    // hoodMotor.setSelectedSensorPosition(0);
-    // flywheelFollower.follow(flywheelLeader);
-
-
-    // Creating Actuators and setting up initial conditions
-    // leftActuator = new LinearActuator(new Servo(LEFT_HOOD_ID), 
-    //                                   Constants.Hood.HOOD_RADIUS, Constants.Actuator.DIST_FROM_BASE,
-    //                                   Constants.Actuator.ACT_HEIGHT, Constants.Actuator.MAX_HEIGHT,
-    //                                   Constants.Actuator.DEGREES_FROM_HORIZONTAL);
-    // rightActuator = new LinearActuator(new Servo(RIGHT_HOOD_ID), 
-    //                                   Constants.Hood.HOOD_RADIUS, Constants.Actuator.DIST_FROM_BASE,
-    //                                   Constants.Actuator.ACT_HEIGHT, Constants.Actuator.MAX_HEIGHT,
-    //                                   Constants.Actuator.DEGREES_FROM_HORIZONTAL);
-
-    // Initializing them at their min height
-    // leftActuator.setPosition(0);
-    // rightActuator.setPosition(0);
-
-    //leadActuator.getTalon().setNeutralMode(NeutralMode.Brake);
-    //followActuator.getTalon().setNeutralMode(NeutralMode.Brake);
 
 
     // Sets up PIDF
@@ -91,14 +52,6 @@ public class Shooter extends SubsystemBase {
     flywheelLeader.config_kI(Constants.kPIDIdx, Constants.Flywheel.I);
     flywheelLeader.config_kD(Constants.kPIDIdx, Constants.Flywheel.D);
     flywheelLeader.config_kF(Constants.kPIDIdx, Constants.Flywheel.F);
-
-    /*hoodMotor.config_kP(Constants.kPIDIdx, Constants.Hood.P);
-    hoodMotor.config_kI(Constants.kPIDIdx, Constants.Hood.I);
-    hoodMotor.config_kD(Constants.kPIDIdx, Constants.Hood.D);
-
-    adjjustFF = Constants.Hood.kFF * Math.cos(hoodMotor.getSelectedSensorPosition());
-
-    hoodMotor.setNeutralMode(NeutralMode.Brake);*/
 
     this.limelight = limelight;
 
@@ -119,37 +72,11 @@ public class Shooter extends SubsystemBase {
   }
 
   /**
-   * Stops Hood position change
-   */
-  public void stopHood() {
-    // hoodMotor.set(ControlMode.PercentOutput, 0);
-
-    // servos don't need a method like this
-  }
-
-  /**
-   * Puts hood back to original state
-   */
-  public void resetHood() {
-    // leftActuator.setPosition(0);
-  }
-
-  /**
    * Get the current flywheel rpm
    * @return rpm
    */
   public double getCurrentRPM() {
     return rpm.getAverage();
-  }
-
-  /**
-   * Gets the current hood angle
-   * @return angle
-   */
-  public double getCurrentAngle() {
-    return 0;
-
-    // return (leftActuator.getHoodAngle()+rightActuator.getHoodAngle())/2;
   }
 
   /**
@@ -166,18 +93,6 @@ public class Shooter extends SubsystemBase {
     else
       setState(ShooterState.ATSPEED);
   }
-
-  // /**
-  //  * Set shooter hood angle
-  //  * @param angle (in degrees)
-  //  */
-  // public void setTargetAngle(double angle) {
-  //   targetAng = Math.min(angle, MAX_ANGLE);
-  //   if (angle == 0)
-  //     setHoodState(HoodState.OFF);
-  //   else
-  //     setHoodState(HoodState.ADJUSTING);
-  // }
 
   /**
    * Sets the state of the Flywheel
@@ -208,13 +123,20 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("RPM Needed", getRequiredRPM());
     SmartDashboard.putString("Shooter State", state.toString());
     SmartDashboard.putNumber("Target RPM", targetRPM);
-    // SmartDashboard.putNumber("Hood Angle", getCurrentAngle());
-    // SmartDashboard.putNumber("Hood Angle Ticks", hoodMotor.getSelectedSensorPosition());
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
+    // debug pid values
+    final double kP = SmartDashboard.getNumber("kP Shooter", Constants.Flywheel.P);
+    final double kI = SmartDashboard.getNumber("kI Shooter", Constants.Flywheel.I);
+    final double kD = SmartDashboard.getNumber("kD Shooter", Constants.Flywheel.D);
+
+    flywheelLeader.config_kP(Constants.kPIDIdx, kP);
+    flywheelLeader.config_kI(Constants.kPIDIdx, kI);
+    flywheelLeader.config_kD(Constants.kPIDIdx, kD);
   
     // With servos all this is kinda unnecessary but idt it matters so we can keep it
 
@@ -239,34 +161,6 @@ public class Shooter extends SubsystemBase {
            setState(ShooterState.SPEEDING);
          break;
      }
-
-    /*switch(hoodState) {
-      case OFF:
-        stopHood();
-        break;
-      case ADJUSTING:
-        // oodMotor.set(ControlMode.Position, degreesToTicks(targetAng));
-
-        // leftActuator.setPositionFromAngle(targetAng);
-        // rightActuator.setPositionFromAngle(targetAng);
-
-        if(allWithinPositionError(targetAng))
-        {
-          setHoodState(HoodState.ATPOSITION);
-        }
-        break;
-      case ATPOSITION:
-        if(!allWithinPositionError(targetRPM))
-        {
-          setHoodState(HoodState.ADJUSTING);
-        }
-        break;
-    }*/
-
-    // Adjusts turret to correct offset
-    // moveAlign();
-
-    // flywheelLeader.set(ControlMode.PercentOutput, 0.4);
   }
 
   /**
@@ -274,27 +168,8 @@ public class Shooter extends SubsystemBase {
    * @return required rpm for shooter
    */
   public double getRequiredRPM() {
-    /*
-    // metric values will be used until return
-    double distance = Units.inchesToMeters(limelight.getHorizontalDistance());
-
-    // distance from center of hub
-    double dx = distance + Units.inchesToMeters(24);
-
-    // function to get velocity value given shooter height is 3ft. from the ground
-    double vel_proj = 0;
-
-    if(dx<=1.72)
-      vel_proj = -12.186 * Math.pow(dx, 3) + 54.736 * Math.pow(dx, 2) - 81.631 * dx + 48.166;
-    else
-      vel_proj = 0.2546 * Math.pow(dx, 2) - 0.0295 * dx + 7.0226;
-    
-    return 1.8*(Units.metersToInches(60) * vel_proj / (Constants.Flywheel.RADIUS * 2 * Math.PI));
-    */
-
+    // power series regression from testing data
     return 640.55*Math.pow(limelight.getHorizontalDistance(), 0.3468);
-    // double dist = limelight.getHorizontalDistance();
-    // return 1.05*(-0.035*Math.pow(dist, 2) + 19.121*dist + 1591.2);
   }
 
   /**
@@ -337,22 +212,6 @@ public class Shooter extends SubsystemBase {
   allWithinRPMError(double targetSpeed) {
     return Math.abs(rpm.getAverage() - targetSpeed) <= Constants.Flywheel.ACCEPTABLE_ERROR;
   }
-
-  /*private boolean allWithinPositionError(double targetAngle) {
-    if (hoodMotor != null)
-    {
-      return Math.abs(getCurrentAngle() - targetAngle) <= Constants.Hood.ACCEPTABLE_ERROR;
-    }
-
-    if (leftActuator != null)
-    {
-        //return Math.abs(leftActuator.getHoodAngle() - targetAngle) <= Constants.Hood.ACCEPTABLE_ERROR;
-
-        return true; // we aren't able to test the hood rn so have this always return true
-    }
-
-    return true;
-  }*/
 
   /**
    * Adjusts the turret to the correct offset

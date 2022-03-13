@@ -8,10 +8,9 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 //import frc.robot.commands.SetRPM;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
-import frc.robot.subsystems.Shooter.ShooterState;
 import frc.robot.util.Limelight;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -78,10 +77,13 @@ public class RobotContainer {
     // the :: syntax allows us to pass in methods of a class as variables so that the command can continuously access input values
     //drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
 
-    // storage.setDefaultCommand(new TrackBalls(storage, shooter));
+    storage.setDefaultCommand(new TrackBalls(storage, shooter));
     // turret.setDefaultCommand(new FindTarget(turret));
     
     // shoot.whenPressed(new SetRPM(shooter, storage, shoot)).whenReleased(new StopShooter(shooter, storage));
+
+    SmartDashboard.putData("Testing Shooter", new SetRPM(shooter, storage, true));
+
     intakeBalls.whenPressed(new IntakeBalls(intake, storage)).whenReleased(new StopIntaking(intake, storage));
     alignDrivetrain.whenPressed(new AlignIntakeToBall(drivetrain, true)).whenReleased(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
     shooter.setDefaultCommand(new SetRPM(shooter, storage, (Turret)(null)));
@@ -124,14 +126,6 @@ public class RobotContainer {
     return null;
     // return new FiveBallAuton(drivetrain, intake, shooter, storage, null);
 
-  }
-  
-  /**
-   * Use this to declare subsystem disabled behavior
-   */
-  public void disabledPeriodic() {
-    // shooter.setState(ShooterState.OFF);
-    // shooter.setHoodState(HoodState.OFF);
   }
 
   public double getStorageThrottle(){

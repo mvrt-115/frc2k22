@@ -68,15 +68,11 @@ public class Turret extends SubsystemBase {
     resetEncoder();
 
     turret.selectProfileSlot(0, 0);
-
-    SmartDashboard.putNumber("p", Constants.Turret.kP);
-    SmartDashboard.putNumber("i", Constants.Turret.kI);
-    SmartDashboard.putNumber("d", Constants.Turret.kD);
   }
 
   @Override
   public void periodic() {
-    log();
+    // log();
 
     if(getCurrentPositionDegrees() >= Constants.Turret.kMaxAngle) {
       targetDegrees = Constants.Turret.kMinAngle + 20;

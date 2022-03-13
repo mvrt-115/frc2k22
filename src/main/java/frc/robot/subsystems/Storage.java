@@ -27,7 +27,7 @@ public class Storage extends SubsystemBase  {
   private boolean intaking = false;
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
   public final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
-  private double stopIntakeTime = 0;
+  private double stopIntakeTime = -1;
 
 
   public Storage()  {
@@ -67,6 +67,11 @@ public class Storage extends SubsystemBase  {
       lastTime = Timer.getFPGATimestamp();
     }
 
+    if(stopIntakeTime != -1 && Timer.getFPGATimestamp() - stopIntakeTime > 0.5) {
+      intaking = false;
+      stopIntakeTime = -1;
+    }
+
     if(balls < 0) balls = 0;
 
     if(balls >= 3) balls = 2;
@@ -84,31 +89,27 @@ public class Storage extends SubsystemBase  {
   }
 
   public void autoStorage()  {
-    if(balls == 1)  {
-      if(!breakbeamBott.get())
-        motor.set(ControlMode.PercentOutput, 0.5);
-
-      else motor.set(ControlMode.PercentOutput, 0);
-    }
-
-    else if(balls == 2) {
-      if(breakbeamTop.get())  {
-        motor.set(ControlMode.PercentOutput, 0.5);
-      }
-      else motor.set(ControlMode.PercentOutput, 0);
-    }
-    else if(balls == 0){
-      motor.set(ControlMode.PercentOutput, 0.5);
-    // if(intaking) {
-    //     motor.set(ControlMode.PercentOutput, 0.5);
-    //     if(stopIntakeTime != -1 && Timer.getFPGATimestamp() - stopIntakeTime > 0.5) {
-    //       motor.set(ControlMode.PercentOutput, 0);
-    //       intaking = false;
-    //       stopIntakeTime = -1;
-    //     }
-    //   } else {
-    //     motor.set(ControlMode.PercentOutput, 0);
-    //   }
+    switch (balls) {
+      // when there is one ball run until it passes first breakbeam
+      case 1:
+        if(!breakbeamBott.get())
+          runMotor(0.7);
+        else 
+          runMotor(0);
+        break;
+      case 2:
+        if(breakbeamTop.get())
+          runMotor(0.7);
+        else 
+          runMotor(0);
+        break;
+      case 0: 
+        if(intaking)
+          runMotor(0.7);
+        else
+          runMotor(0);
+      default:
+        break;
     }
   }
 

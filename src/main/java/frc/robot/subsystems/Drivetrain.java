@@ -131,8 +131,6 @@ public class Drivetrain extends SubsystemBase {
      * @param quickTurn (boolean) status of quickTurnButton
      */
     public void cheesyIshDrive(double throttle, double wheel, boolean quickTurn) {
-        SmartDashboard.putNumber("throttke", throttle);
-        SmartDashboard.putNumber("wheel", wheel);
         throttle = MathUtils.handleDeadband(throttle, Constants.Drivetrain.kThrottleDeadband);
         wheel = MathUtils.handleDeadband(wheel, Constants.Drivetrain.kWheelDeadband);
 
@@ -177,24 +175,24 @@ public class Drivetrain extends SubsystemBase {
         pose = odometry.update(getGyroAngle(), getDistanceTravelled(leftMaster, leftFollower),
                 getDistanceTravelled(rightMaster, rightFollower));
         field.setRobotPose(odometry.getPoseMeters());
-        log();
+        // log();
     }
 
     /**
      * Logs data about the drivetrain subystem to SmartDashboard
      */
     public void log() {
-        // SmartDashboard.putNumber("Left Encoder:", leftMaster.getSelectedSensorPosition());
-        // SmartDashboard.putNumber("Right Encoder:", rightMaster.getSelectedSensorPosition());
-        // SmartDashboard.putNumber("Left Output", leftFollower.getMotorOutputPercent());
-        // SmartDashboard.putNumber("Right Output", rightFollower.getMotorOutputPercent());
-        // SmartDashboard.putNumber("Gyro Angle:", -gyro.getAngle());
-        // SmartDashboard.putNumber("Pose Gyro Angle", pose.getRotation().getDegrees());
-        // SmartDashboard.putNumber("Left Distance Traveled", getDistanceTravelled(leftMaster, leftFollower));
-        // SmartDashboard.putNumber("Right Distance Traveled", getDistanceTravelled(rightMaster, rightFollower));
-        // SmartDashboard.putNumber("X value", pose.getX());
-        // SmartDashboard.putNumber("Y value", pose.getY());
-        // SmartDashboard.putData("SD Field", field);
+        SmartDashboard.putNumber("Left Encoder:", leftMaster.getSelectedSensorPosition());
+        SmartDashboard.putNumber("Right Encoder:", rightMaster.getSelectedSensorPosition());
+        SmartDashboard.putNumber("Left Output", leftFollower.getMotorOutputPercent());
+        SmartDashboard.putNumber("Right Output", rightFollower.getMotorOutputPercent());
+        SmartDashboard.putNumber("Gyro Angle:", -gyro.getAngle());
+        SmartDashboard.putNumber("Pose Gyro Angle", pose.getRotation().getDegrees());
+        SmartDashboard.putNumber("Left Distance Traveled", getDistanceTravelled(leftMaster, leftFollower));
+        SmartDashboard.putNumber("Right Distance Traveled", getDistanceTravelled(rightMaster, rightFollower));
+        SmartDashboard.putNumber("X value", pose.getX());
+        SmartDashboard.putNumber("Y value", pose.getY());
+        SmartDashboard.putData("SD Field", field);
     }
 
     /* GETTERS AND SETTERS (AND RESETTERS) */
@@ -238,7 +236,6 @@ public class Drivetrain extends SubsystemBase {
      * @param rightVoltage  voltage to the right motors
      */
     public void setOutputVoltage(double leftVoltage, double rightVoltage) {
-        SmartDashboard.putNumber("Left Voltage: ", leftVoltage);
         setDrivetrainMotorSpeed(leftVoltage/Constants.kVoltageComp, rightVoltage/Constants.kVoltageComp);
     }
 
@@ -246,8 +243,6 @@ public class Drivetrain extends SubsystemBase {
      * Stops the drivetrain.
      */
     public void stopDrivetrain() {
-        // SmartDashboard.putNumber("Left Voltage: ", leftVoltage);
-        // setDrivetrainMotorSpeed(leftVoltage/Constants.kVoltageComp, rightVoltage/Constants.kVoltageComp);
         setDrivetrainMotorSpeed(0, 0);
     }
 
@@ -301,7 +296,6 @@ public class Drivetrain extends SubsystemBase {
      */
     public double getDistanceTravelled(TalonFX m1, TalonFX m2) {
         double ticks = (m1.getSelectedSensorPosition() + m2.getSelectedSensorPosition()) / 2.0;
-        SmartDashboard.putNumber("Ticks", ticks);
 
         // returns the converted values
         return MathUtils.convertTicksToMeters(

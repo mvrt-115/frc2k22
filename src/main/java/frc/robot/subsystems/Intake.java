@@ -70,28 +70,18 @@ public class Intake extends SubsystemBase {
         break;
     }
 
-     // startIntake();
-
-    // SmartDashboard.putString("current state of intake", getCurrentStateAsString());
-    // SmartDashboard.putNumber("power voltage on pivot motor", pivotMotor.getMotorOutputPercent());
-    // SmartDashboard.putNumber("Ticks", getCurrentPos());
-    // SmartDashboard.putBoolean("is at top", Math.abs(getCurrentPos()) <= Constants.Intake.kMARGIN_OF_ERROR_TICKS);
-    // SmartDashboard.putBoolean("is at bottom", Math.abs(getCurrentPos() - Constants.Intake.kTICKS_TO_BOTTOM) <= Constants.Intake.kMARGIN_OF_ERROR_TICKS);
-    // SmartDashboard.putNumber("pivot error", pivotMotor.getSelectedSensorPosition() - )
-
-    
+    // log();
   }
-    
-  public String getCurrentStateAsString()
-  {
-    switch(state)
-    {
-      case UP: return "Up";
-      case PIVOTING_DOWN: return "Pivoting down";
-      case PIVOTING_UP: return "pivoting up";
-      case INTAKING: return "intaking";
-      default: return "";
-    }
+
+  /**
+   * Logs debugging data to Smart Dashboard
+   */
+  public void log() {
+    SmartDashboard.putString("current state of intake", state.toString());
+    SmartDashboard.putNumber("power voltage on pivot motor", pivotMotor.getMotorOutputPercent());
+    SmartDashboard.putNumber("Ticks", getCurrentPos());
+    SmartDashboard.putBoolean("is at top", Math.abs(getCurrentPos()) <= Constants.Intake.kMARGIN_OF_ERROR_TICKS);
+    SmartDashboard.putBoolean("is at bottom", Math.abs(getCurrentPos() - Constants.Intake.kTICKS_TO_BOTTOM) <= Constants.Intake.kMARGIN_OF_ERROR_TICKS);
   }
   
   /**
