@@ -253,7 +253,10 @@ public final class Constants {
 
         // servo ratchet and unratchet values
         public static final double kServoRatchet = 0; // check
-        public static final double kServoUnRatchet = 1; // check
+        public static final double kServoUnRatchet = 0.5; // check
+        public static final double kServoError = 0.05; // check
+        public static final double kMotorInitialUnratchetSpeed = 0.03; //test
+        public static final double kMotorDownTime = 0.1; //seconds
 
         //manual position constants
         public static final double kTelescopicFullExtend = 0; //inches
