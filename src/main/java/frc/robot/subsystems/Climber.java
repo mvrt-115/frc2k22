@@ -48,17 +48,17 @@ public class Climber extends SubsystemBase {
         leftTelescopic.setInverted(TalonFXInvertType.Clockwise);
         rightTelescopic.setInverted(TalonFXInvertType.CounterClockwise);
 
-       // leftServo = new Servo(Constants.Climber.kLeftServoID);
-       // rightServo = new Servo(Constants.Climber.kRightServoID); 
+        leftServo = new Servo(Constants.Climber.kLeftServoID);
+        rightServo = new Servo(Constants.Climber.kRightServoID); 
 
-       // leftTelescopicProximity = new DigitalInput(Constants.Climber.kLeftTelescopicProximityChannel);
-      //  rightTelescopicProximity = new DigitalInput(Constants.Climber.kRightTelescopicProximityChannel);
+        leftTelescopicProximity = new DigitalInput(Constants.Climber.kLeftTelescopicProximityChannel);
+        rightTelescopicProximity = new DigitalInput(Constants.Climber.kRightTelescopicProximityChannel);
 
 
-      //  leftTelescopicLimit = new DigitalInput(Constants.Climber.kLeftTelescopicLimitSwitch);
-      //  rightTelescopicLimit = new DigitalInput(Constants.Climber.kRightTelescopicLimitSwitch);
+        leftTelescopicLimit = new DigitalInput(Constants.Climber.kLeftTelescopicLimitSwitch);
+        rightTelescopicLimit = new DigitalInput(Constants.Climber.kRightTelescopicLimitSwitch);
 
-        // reconfiguring all motors with PID constants
+        //reconfiguring all motors with PID constants
         rightTelescopic.follow(leftTelescopic);
         
 
@@ -180,6 +180,11 @@ public class Climber extends SubsystemBase {
      */
     public ClimberState getTelescopicState() {
         return telescopicState;
+    }
+
+    public void setServoTurn(double turn) {
+        leftServo.set(turn);
+        rightServo.set(turn);
     }
 
     // This method will be called once per scheduler run

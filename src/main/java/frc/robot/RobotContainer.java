@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.RatchetRetract;
 import frc.robot.commands.UnratchetExtend;
 import frc.robot.commands.telescopic.TelescopicManual;
-import frc.robot.commands.telescopic.TelescopicRatchet;
 import frc.robot.subsystems.*;
 import frc.robot.util.Limelight;
 import frc.robot.util.RollingAverage;
@@ -46,8 +45,8 @@ public class RobotContainer {
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    driverJoystick = new Joystick(1);
-    operatorJoystick = new Joystick(0);
+    driverJoystick = new Joystick(0);
+    operatorJoystick = new Joystick(1);
 
     extend =  new JoystickButton(operatorJoystick, 4);
     retract = new JoystickButton(operatorJoystick, 8);
