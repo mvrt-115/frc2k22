@@ -15,14 +15,10 @@ public class MathUtils {
      * @return finalInput input by the joystick after calculating deadband
      */
     public static double handleDeadband(double input, double inputDeadband) {
-        double finalInput = 0;
-
         if (Math.abs(input) < inputDeadband)
-            finalInput = 0;
+            return 0;
         else
-            finalInput = calculateDeadband(input, inputDeadband);
-
-        return finalInput;
+            return calculateDeadband(input, inputDeadband);
     }
 
     /**
@@ -158,4 +154,66 @@ public class MathUtils {
     public static double inchesToMeters(double inches) {
         return inches * 0.0254; //no way it's Team 254 :O
     }
+    /**
+   * Converts degrees to ticks
+   * @param degrees an angle in degrees
+   * @return        the amount of ticks in that angle
+   */
+  public static double degreesToTicks(double degrees) {
+    return (degrees / 360) * Constants.Climber.kTicksPerRotation * Constants.Climber.kPivotGearRatio;
+  }
+
+  /**
+   * Convert the ticks to degrees
+   *@param ticks the amount of ticks rotated
+   *@return The amount of degrees in ticks
+   ticks * rotation/ticks * rotation motor/rotation arm * degrees/rotation = degrees of arm
+   Follow this calculation
+   */
+  public static double ticksToDegrees(double ticks) {
+    return (ticks / Constants.Climber.kTicksPerRotation / Constants.Climber.kPivotGearRatio) * 360;
+  }
+
+  /**
+   * Converts ticks to meters
+   * @param ticks The ticks to convert
+   * @return The tick value converted to meters 
+   */
+  public static double ticksToMeters(double ticks) {
+    return ticks;
+  }
+
+  /**
+   * Converts meters to ticks
+   * @param meters a distance in meters
+   * @return        the amount of ticks in that distance
+   */
+  public static double metersToTicks(double meters) {
+    return meters;
+  }
+
+  /**
+   * Converts inches to meters
+   * @param inches a distance inches
+   * @return        the amount of meters in that distance
+   */
+  public static double metersToInches(double meters)
+  {
+    return meters / 100 * 2.54;
+  }
+
+  /**
+   * Converts inches to meters
+   * @param inches a distance inches
+   * @return        the amount of meters in that distance
+   */
+  public static double inchesToTicks(double inches)
+  {
+    return metersToTicks(inchesToMeters(inches));
+  }
+
+  public static double ticksToInches(double ticks)
+  {
+    return metersToInches(ticksToMeters(ticks));
+  }
 }

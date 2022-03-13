@@ -1,6 +1,7 @@
 package frc.robot.util;
 
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
+import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.TalonSRXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -16,6 +17,26 @@ public class TalonFactory {
      * @return          the generated TalonFX object
      */
     public static TalonFX createTalonFX(int id, boolean inversion) {
+        TalonFX talon = new TalonFX(id);
+        talon.configFactoryDefault();
+        talon.configSupplyCurrentLimit(Constants.kCurrentLimit, Constants.kTimeoutMs);
+        talon.configOpenloopRamp(0.4, Constants.kTimeoutMs);
+        talon.setInverted(inversion);
+        talon.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx, Constants.kTimeoutMs);
+        talon.configVoltageCompSaturation(Constants.kVoltageComp, Constants.kTimeoutMs);
+        talon.enableVoltageCompensation(true);       
+        
+        return talon;
+    }
+
+    /**
+     * Creates a basic TalonFX with basic configurations
+     * 
+     * @param id        the id of the Falcon on the robot (get from PheonixTuner)
+     * @param inversion the inversion of the TalonFX (false to spin forward, true to spin backwards)
+     * @return          the generated TalonFX object
+     */
+    public static TalonFX createTalonFX(int id, TalonFXInvertType inversion) {
         TalonFX talon = new TalonFX(id);
         talon.configFactoryDefault();
         talon.configSupplyCurrentLimit(Constants.kCurrentLimit, Constants.kTimeoutMs);

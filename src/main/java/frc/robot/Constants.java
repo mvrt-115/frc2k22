@@ -6,6 +6,8 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 
+import frc.robot.util.MathUtils;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -188,6 +190,107 @@ public final class Constants {
         public static final double kI = 0;
         public static final double kD = 0.4;//-0.05;//16;
         public static final double kTurnSpeed = 0.3;
+    }
+
+    public static class Climber {
+        //constants for the climber arms 
+        // change values later
+
+        //IDs/channels for sensors and motors
+        //NEED TO BE CHANGED WHEN FULLY WIRED OR TESTING
+        //motors
+        //public static final int kPivotID = 0; // 22
+        public static final int kRightTelescopicID = 6;
+        public static final int kLeftTelescopicID = 7;
+
+        // Servo Contants
+        public static final int kRightServoID = 1; //Check (analog input)
+        public static final int kLeftServoID = 2; // Check (analog input)
+
+        public static final double kServoTurn = 90;
+        public static final double kServoOnThreshold = 0.001;
+        public static final double kInitialServoAngle = 0;
+
+        //inductive proximity sensors
+        public static final int kPivotProximityChannel = 0;
+        public static final int kLeftTelescopicProximityChannel = 1;
+        public static final int kRightTelescopicProximityChannel = 3;
+        
+        //limit switch panels
+        public static final int kPivotLimitSwitch = 4;
+        public static final int kLeftTelescopicLimitSwitch = 6;
+        public static final int kRightTelescopicLimitSwitch = 7;
+
+        //Constants for potentiometer
+        public static final int kPotentiometerPivotChannel = 0;
+        public static final double kPotentiometerRange = 0;
+        public static final double kPotentiometerInitialOffset = 0;
+
+        //Math constants for calculating positions
+        public static final double kTicksPerRotation = 0;
+        public static final double kPivotGearRatio = 0;
+        public static final double kTelescopicGearRatio = 0;
+        
+        //PID constants for each motor
+        //telescopic arm extension/retraction PID constants
+        public static final double kTelekP = 0;
+        public static final double kTelekI = 0;
+        public static final double kTelekD = 0;
+        public static final double kTelekF = 0;
+        public static final double kFeedForwardTele = 0;
+        
+        //pivoting arm rotation PID constants
+        public static final double kPivotkP = 0;
+        public static final double kPivotkI = 0;
+        public static final double kPivotkD = 0;
+        public static final double kPivotkF = 0;
+        public static final double kFeedForwardPivot = 0;
+
+        //speeds for manual climbing
+        public static final double kTelescopicRetractManualSpeed = -0.25;
+        public static final double kTelescopicExtendManualSpeed = 0.20;
+        public static final double kPivotManualSpeed = 0.1;
+
+        // servo ratchet and unratchet values
+        public static final double kServoRatchet = 0; // check
+        public static final double kServoUnRatchet = 1; // check
+
+        //manual position constants
+        public static final double kTelescopicFullExtend = 0; //inches
+        public static final double kTelescopicFullRetract = 0; //inches
+        public static final double kPivotStowingPos = 32; //degrees
+        public static final double kPivotMaxForwardPos = 30; //degrees
+        public static final double kPivotMaxReversePos = -3; //degrees
+        public static final double kApproachRungSpeed = 0.05; //PercentOutput
+
+        //button constants
+        public static final double kAxisThreshold = 0.2;
+
+        //31" in height of pivot arm
+        //30" min 62" max of telescopic 
+        public static class Auton {
+            //positions that arms move to during the climb (all pivots are in degrees, 
+                //all telescopics are in meters
+            // 0" on telescopic is 30"
+            // 0 degrees on pivot is 90 degrees from the chassis (measured from the 14 in side of the chassis)
+
+            // 62.64 degrees between lower and higher rung
+
+            public static final double kTelescopicFullExtendTicks = MathUtils.inchesToTicks(kTelescopicFullExtend);
+            public static final double kTelescopicFullRetractTicks = MathUtils.inchesToTicks(kTelescopicFullRetract);
+            public static final double kLiftOffRungTele = MathUtils.inchesToTicks(50); // 50" (< 52.22in and > 33in)
+            public static final double kPivotTeleBack = MathUtils.degreesToTicks(65); // 65 degrees
+            public static final double kRotateToHighRungTele = MathUtils.degreesToTicks(62.5); // 62.5 degrees
+            public static final double kHookHighRungTele = MathUtils.inchesToTicks(53); // 53" (52.22 + 0.83 (radius of rung))
+            public static final double kShiftWeight = 0; //Test values??? degrees
+            public static final double kRetractPivotLiftOff = MathUtils.inchesToTicks(49.15); // 49.15" (53-3.9)
+            public static final double kPivotPivotingBack = MathUtils.degreesToTicks(-2); // -2 degrees
+            public static final double kPivotToRung = MathUtils.degreesToTicks(2); // 2 degrees
+            public static final double kRotateToHighRungPivot = MathUtils.degreesToTicks(0); // 0 degrees
+            public static final double kExtendPivotHang = MathUtils.inchesToTicks(1);  // 1" 
+
+            public static final double kAcceptablePIDError = 10; //ticks
+        }
     }
 }
 
