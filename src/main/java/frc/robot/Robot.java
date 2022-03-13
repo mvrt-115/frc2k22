@@ -110,9 +110,6 @@ public class Robot extends TimedRobot {
     //   intakeMotor.set(ControlMode.PercentOutput, -0.8);
     // else
     //   intakeMotor.set(ControlMode.PercentOutput, 0);
-
-    if(Math.abs(robotContainer.getOperatorRightAxisMagnitude()) >= 0.1)
-      new TurretManual(robotContainer.getTurret(), robotContainer.getOperatorRightAxisAngle()).schedule();
   }
 
   @Override

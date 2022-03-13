@@ -290,7 +290,7 @@ public class Turret extends SubsystemBase {
    * Turns to the desired degrees (absolute position)
    * @param degrees the desired degrees
    */
-  public void turnDegrees(double degrees) {
+  public void turnToDegrees(double degrees) {
     turret.set(
       ControlMode.Position,
       MathUtils.degreesToTicks(
@@ -354,7 +354,7 @@ public class Turret extends SubsystemBase {
   /**
    * @return The current state of the turret
    */
-  public TurretState getTurretState() {
+  public TurretState getState() {
     return state;
   }
 

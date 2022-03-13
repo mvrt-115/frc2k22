@@ -56,8 +56,7 @@ public class RobotContainer {
   // private final StopShooter stopShooter;
 
   private JoystickButton disableTurret;
-  // public JoystickButton turretClockwise;
-  // public JoystickButton turretCounterclockwise;
+  private JoystickButton allowTurretManual;
 
   public RollingAverage throttle, wheel;
 
@@ -73,7 +72,9 @@ public class RobotContainer {
     quickturn = new JoystickButton(driverJoystick, 5);
 
     // expelBalls = new JoystickButton(operatorJoystick, 0);
-    // disableTurret = new JoystickButton(operatorJoystick, 1);
+
+    disableTurret = new JoystickButton(operatorJoystick, 1);
+    allowTurretManual = new JoystickButton(operatorJoystick, 5);
 
     throttle = new RollingAverage(50);
     wheel = new RollingAverage(15);
@@ -105,6 +106,7 @@ public class RobotContainer {
     // intakeBalls.whenPressed(new IntakeBalls(intake)).whenReleased(new StopIntaking(intake));
 
     // disableTurret.whenPressed(new DisableTurret(turret));
+    allowTurretManual.whileHeld(new TurretManual(turret, this::getOperatorRightAxisAngle, this::getOperatorRightAxisMagnitude));
   }
 
   /**
