@@ -37,7 +37,7 @@ public class RobotContainer {
   public final Drivetrain drivetrain = new Drivetrain();
   private final Limelight limelight = new Limelight();
   private final Shooter shooter = new Shooter(limelight);
-  private final Turret turret = new Turret(limelight);
+  // private final Turret turret = new Turret(limelight);
 
 
   public RollingAverage throttle, wheel;
@@ -76,14 +76,15 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // storage.setDefaultCommand(new TrackBalls(storage, shooter, alliance));
     // the :: syntax allows us to pass in methods of a class as variables so that the command can continuously access input values
-    drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
+    //drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
 
-    storage.setDefaultCommand(new TrackBalls(storage, shooter));
-    turret.setDefaultCommand(new FindTarget(turret));
+    // storage.setDefaultCommand(new TrackBalls(storage, shooter));
+    // turret.setDefaultCommand(new FindTarget(turret));
     
-    shoot.whenPressed(new SetRPM(shooter, storage, shoot)).whenReleased(new StopShooter(shooter, storage));
+    // shoot.whenPressed(new SetRPM(shooter, storage, shoot)).whenReleased(new StopShooter(shooter, storage));
     intakeBalls.whenPressed(new IntakeBalls(intake, storage)).whenReleased(new StopIntaking(intake, storage));
     alignDrivetrain.whenPressed(new AlignIntakeToBall(drivetrain, true)).whenReleased(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
+    shooter.setDefaultCommand(new SetRPM(shooter, storage, (Turret)(null)));
   }
 
   /**
@@ -120,7 +121,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new FiveBallAuton(drivetrain, intake, shooter, storage, turret);
+    return null;
+    // return new FiveBallAuton(drivetrain, intake, shooter, storage, null);
 
   }
   
@@ -128,7 +130,7 @@ public class RobotContainer {
    * Use this to declare subsystem disabled behavior
    */
   public void disabledPeriodic() {
-    shooter.setState(ShooterState.OFF);
+    // shooter.setState(ShooterState.OFF);
     // shooter.setHoodState(HoodState.OFF);
   }
 

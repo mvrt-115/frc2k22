@@ -23,7 +23,7 @@ public class Intake extends SubsystemBase {
   // motors for the intake --> currently BaseTalon, may change 
   // (decide type of motor later)
   private BaseTalon intakeMotor; 
-  private BaseTalon pivotMotor; 
+  public BaseTalon pivotMotor; 
 
   private double feedForward; // feed forward double needed to pivot for a certain number of ticks
 
@@ -33,10 +33,12 @@ public class Intake extends SubsystemBase {
 
     intakeMotor = TalonFactory.createTalonSRX(Constants.Intake.kROLLER_ID, true); // change motor IDs from Constants later
 
-    pivotMotor = TalonFactory.createTalonFX(Constants.Intake.kPIVOT_ID, false); // change motor IDs from Constants later
+    pivotMotor = TalonFactory.createTalonFX(Constants.Intake.kPIVOT_ID, true); // change motor IDs from Constants later
     //pivotMotor.setInverted(true);
 
     pivotMotor.setSelectedSensorPosition(0);
+
+    pivotMotor.setNeutralMode(NeutralMode.Brake);
 
     pivotMotor.config_kP(Constants.kPIDIdx, Constants.Intake.kP);
     pivotMotor.config_kI(Constants.kPIDIdx, Constants.Intake.kI);
@@ -55,6 +57,7 @@ public class Intake extends SubsystemBase {
         startIntake();
         break;
       case PIVOTING_UP: // intake goes back up and stops intaking
+        
         stopIntake();
         pivotUp();
         break;
@@ -63,16 +66,18 @@ public class Intake extends SubsystemBase {
         break;
       case UP:
         stopPivot(); // to keep the intake up
+        stopIntake();
         break;
     }
 
-      startIntake();
+     // startIntake();
 
-    SmartDashboard.putString("current state of intake", getCurrentStateAsString());
-    SmartDashboard.putNumber("power voltage on pivot motor", pivotMotor.getMotorOutputPercent());
-    SmartDashboard.putNumber("Ticks", getCurrentPos());
-    SmartDashboard.putBoolean("is at top", Math.abs(getCurrentPos()) <= Constants.Intake.kMARGIN_OF_ERROR_TICKS);
-    SmartDashboard.putBoolean("is at bottom", Math.abs(getCurrentPos() - Constants.Intake.kTICKS_TO_BOTTOM) <= Constants.Intake.kMARGIN_OF_ERROR_TICKS);
+    // SmartDashboard.putString("current state of intake", getCurrentStateAsString());
+    // SmartDashboard.putNumber("power voltage on pivot motor", pivotMotor.getMotorOutputPercent());
+    // SmartDashboard.putNumber("Ticks", getCurrentPos());
+    // SmartDashboard.putBoolean("is at top", Math.abs(getCurrentPos()) <= Constants.Intake.kMARGIN_OF_ERROR_TICKS);
+    // SmartDashboard.putBoolean("is at bottom", Math.abs(getCurrentPos() - Constants.Intake.kTICKS_TO_BOTTOM) <= Constants.Intake.kMARGIN_OF_ERROR_TICKS);
+    // SmartDashboard.putNumber("pivot error", pivotMotor.getSelectedSensorPosition() - )
 
     
   }
@@ -94,7 +99,7 @@ public class Intake extends SubsystemBase {
    */
   public void stopIntake()
   {
-    pivotMotor.setNeutralMode(NeutralMode.Coast);
+   // pivotMotor.setNeutralMode(NeutralMode.Coast);
     intakeMotor.set(ControlMode.PercentOutput, 0);
    // uncomment when  intake motor is added
   }
@@ -111,6 +116,7 @@ public class Intake extends SubsystemBase {
     else 
       pivotMotor.set(ControlMode.PercentOutput, 0);
   }
+  
 
   /**
    * moves the intake down. if it is already at the bottom, then it sets
@@ -125,7 +131,7 @@ public class Intake extends SubsystemBase {
     if(isAtBottom())
     {
       state = IntakeState.INTAKING;
-     pivotMotor.setSelectedSensorPosition(Constants.Intake.kTICKS_TO_BOTTOM);
+     pivotMotor.setSelectedSensorPosition(0);
     }
     else
     {
@@ -201,7 +207,7 @@ public class Intake extends SubsystemBase {
    */
   public void startIntake()
   {
-    pivotMotor.setNeutralMode(NeutralMode.Brake);
+ //   pivotMotor.setNeutralMode(NeutralMode.Brake);
     intakeMotor.set(ControlMode.PercentOutput, Constants.Intake.kWHEELS_SPEED);
     // uncomment when intake motor is added
   }
@@ -210,6 +216,6 @@ public class Intake extends SubsystemBase {
    * @return The current angle of the pivot motor
    */
   public double getAngle() {
-    return 90 + (getCurrentPos() / 1000 * 100);
+    return 90 + (getCurrentPos() / 15000 * 100);
   }
 }

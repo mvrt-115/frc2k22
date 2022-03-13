@@ -31,8 +31,8 @@ public class Storage extends SubsystemBase  {
 
 
   public Storage()  {
-    breakbeamTop = new DigitalInput(0);
-    breakbeamBott = new DigitalInput(3);
+    breakbeamTop = new DigitalInput(1);
+    breakbeamBott = new DigitalInput(2);
     prevStateTop = prevStateBott = true; // true is unbroken
     motor = TalonFactory.createTalonSRX(39, true);
     balls = -1;
@@ -86,30 +86,29 @@ public class Storage extends SubsystemBase  {
   public void autoStorage()  {
     if(balls == 1)  {
       if(!breakbeamBott.get())
-        motor.set(ControlMode.PercentOutput, 1);
+        motor.set(ControlMode.PercentOutput, 0.5);
 
       else motor.set(ControlMode.PercentOutput, 0);
     }
 
     else if(balls == 2) {
       if(breakbeamTop.get())  {
-        motor.set(ControlMode.PercentOutput, 1);
+        motor.set(ControlMode.PercentOutput, 0.5);
       }
       else motor.set(ControlMode.PercentOutput, 0);
     }
     else if(balls == 0){
-      motor.set(ControlMode.PercentOutput, 1);
-    }
-
-    else if(intaking) {
-        motor.set(ControlMode.PercentOutput,1);
-        if(stopIntakeTime != -1 && Timer.getFPGATimestamp() - stopIntakeTime > 0.5) {
-          motor.set(ControlMode.PercentOutput, 0);
-          intaking = false;
-          stopIntakeTime = -1;
-        }
-    } else {
-      motor.set(ControlMode.PercentOutput, 0);
+      motor.set(ControlMode.PercentOutput, 0.5);
+    // if(intaking) {
+    //     motor.set(ControlMode.PercentOutput, 0.5);
+    //     if(stopIntakeTime != -1 && Timer.getFPGATimestamp() - stopIntakeTime > 0.5) {
+    //       motor.set(ControlMode.PercentOutput, 0);
+    //       intaking = false;
+    //       stopIntakeTime = -1;
+    //     }
+    //   } else {
+    //     motor.set(ControlMode.PercentOutput, 0);
+    //   }
     }
   }
 

@@ -184,16 +184,16 @@ public class Drivetrain extends SubsystemBase {
      * Logs data about the drivetrain subystem to SmartDashboard
      */
     public void log() {
-        SmartDashboard.putNumber("Left Encoder:", leftMaster.getSelectedSensorPosition());
-        SmartDashboard.putNumber("Right Encoder:", rightMaster.getSelectedSensorPosition());
-        SmartDashboard.putNumber("Left Output", leftFollower.getMotorOutputPercent());
-        SmartDashboard.putNumber("Right Output", rightFollower.getMotorOutputPercent());
-        SmartDashboard.putNumber("Gyro Angle:", -gyro.getAngle());
-        SmartDashboard.putNumber("Pose Gyro Angle", pose.getRotation().getDegrees());
-        SmartDashboard.putNumber("Left Distance Traveled", getDistanceTravelled(leftMaster, leftFollower));
-        SmartDashboard.putNumber("Right Distance Traveled", getDistanceTravelled(rightMaster, rightFollower));
-        SmartDashboard.putNumber("X value", pose.getX());
-        SmartDashboard.putNumber("Y value", pose.getY());
+        // SmartDashboard.putNumber("Left Encoder:", leftMaster.getSelectedSensorPosition());
+        // SmartDashboard.putNumber("Right Encoder:", rightMaster.getSelectedSensorPosition());
+        // SmartDashboard.putNumber("Left Output", leftFollower.getMotorOutputPercent());
+        // SmartDashboard.putNumber("Right Output", rightFollower.getMotorOutputPercent());
+        // SmartDashboard.putNumber("Gyro Angle:", -gyro.getAngle());
+        // SmartDashboard.putNumber("Pose Gyro Angle", pose.getRotation().getDegrees());
+        // SmartDashboard.putNumber("Left Distance Traveled", getDistanceTravelled(leftMaster, leftFollower));
+        // SmartDashboard.putNumber("Right Distance Traveled", getDistanceTravelled(rightMaster, rightFollower));
+        // SmartDashboard.putNumber("X value", pose.getX());
+        // SmartDashboard.putNumber("Y value", pose.getY());
         // SmartDashboard.putData("SD Field", field);
     }
 

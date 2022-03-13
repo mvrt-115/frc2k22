@@ -74,16 +74,16 @@ public final class Constants {
     
     public static class Intake{
 
-        public static final double kTICKS_TO_BOTTOM = 14000;
+        public static final double kTICKS_TO_BOTTOM = 15000;
         // the # of ticks it takes to be at the bottom when pivoting
-        public static final double kTICKS_TO_TOP = -14000; // the # of ticks it takes to be at the top when pivoting
+        public static final double kTICKS_TO_TOP = -17000; // the # of ticks it takes to be at the top when pivoting
 
 
         public static final int kPIVOT_ID = 10; // change later
         public static final int kROLLER_ID = 21; // change later
 
 
-        public static final double kWHEELS_SPEED = -.7;
+        public static final double kWHEELS_SPEED = .9;
 
         //public static final double kPIVOT_SPEED = -0.4; // speed of intake when going up or down
         public static final double kPIVOT_STOP_SPEED_WHEN_UP = 0; // speed of intake to keep it up
@@ -91,14 +91,14 @@ public final class Constants {
         public static final double kPIVOT_STOP_SPEED_WHEN_DOWN = 0.0    ; // speed of intake to keep it down
         //change later after testing
 
-        public static final double kMARGIN_OF_ERROR_TICKS = 3000; // constant
+        public static final double kMARGIN_OF_ERROR_TICKS = 1500; // constant
 
 
-        public static final double kP = 0.08;
+        public static final double kP = 0.03;
         public static final double kI = 0.0;
-        public static final double kD = 0.01;//0.001;
+        public static final double kD = 0.0;//0.001;
 
-        public static final double kFF = .001;
+        public static final double kFF = .005;
         ;//-0.001;
     }
 

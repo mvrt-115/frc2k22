@@ -23,6 +23,7 @@ public class StopIntaking extends CommandBase {
   @Override
   public void initialize() {
     intake.setState(IntakeState.PIVOTING_UP);
+    // intake.pivotMotor.setSelectedSensorPosition(0);
     storage.setIntaking(false);
   }
 
