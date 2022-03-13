@@ -6,12 +6,13 @@ package frc.robot;
 
 import java.sql.Driver;
 
+import com.fasterxml.jackson.databind.node.DoubleNode;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-//import frc.robot.commands.SetRPM;
 
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
@@ -31,68 +32,52 @@ import frc.robot.util.RollingAverage;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
- // private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
   private Joystick driverJoystick; //Joysticks
   private Joystick operatorJoystick;  
-  private String alliance = DriverStation.getAlliance().toString();
-  
-  private JoystickButton intakeBalls; //buttons
-  // private JoystickButton alignDrivetrain;
-  // private JoystickButton expelBalls;
-
-  public Drivetrain drivetrain;
-
-
-  // private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
 
   private final Limelight limelight = new Limelight();
+
+  public final Drivetrain drivetrain = new Drivetrain();
   private final Shooter shooter = new Shooter(limelight);
   private final Turret turret = new Turret(limelight);
-  // private final StopShooter stopShooter = new StopShooter(//paarth was hereshooter);
-
-
-  public RollingAverage throttle, wheel;
-
   private final Storage storage = new Storage(shooter);
-
   private final Intake intake = new Intake();
+
+  private JoystickButton quickturn;
+  // private JoystickButton alignDrivetrain;
+
+  private JoystickButton intakeBalls;
 
   // private JoystickButton storageOverride;
 
-  private JoystickButton quickturn;
   private JoystickButton shoot;
+  // private JoystickButton expelBalls;
+  // private final StopShooter stopShooter;
 
   private JoystickButton disableTurret;
   // public JoystickButton turretClockwise;
   // public JoystickButton turretCounterclockwise;
+
+  public RollingAverage throttle, wheel;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
     driverJoystick = new Joystick(0);
     operatorJoystick = new Joystick(1);
-    shoot = new JoystickButton(driverJoystick, 2);
 
-    // disableTurret = new JoystickButton(operatorJoystick, 1);
-    // // turretClockwise = new JoystickButton(driverJoystick, 2);
-    // turretCounterclockwise = new JoystickButton(driverJoystick, 3);
-
- 
-
-    // Configure the button bindings
-    
-// 
-    intakeBalls = new JoystickButton(driverJoystick, 3);
     // alignDrivetrain = new JoystickButton(operatorJoystick, 0);
-    // expelBalls = new JoystickButton(operatorJoystick, 0);
-
+    shoot = new JoystickButton(driverJoystick, 2);
+    intakeBalls = new JoystickButton(driverJoystick, 3);
     quickturn = new JoystickButton(driverJoystick, 5);
-    drivetrain = new Drivetrain();
+
+    // expelBalls = new JoystickButton(operatorJoystick, 0);
+    // disableTurret = new JoystickButton(operatorJoystick, 1);
+
     throttle = new RollingAverage(50);
     wheel = new RollingAverage(15);
 
-    
     configureButtonBindings();
 
     // SmartDashboard.putData("Run Flywheel", new SetRPM(shooter));
@@ -106,29 +91,19 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    // storage.setDefaultCommand(new TrackBalls(storage, shooter, alliance));
     // the :: syntax allows us to pass in methods of a class as variables so that the command can continuously access input values
+
     drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
-
-   // storage.setDefaultCommand(new TrackBalls(storage, shooter, DriverStation.getAlliance().toString()));
-    shoot.whenPressed(new SetRPM(shooter, storage, shoot)).whenReleased(new StopShooter(shooter, storage));
-    // intakeBalls.whenPressed(new IntakeBalls(intake)).whenReleased(new StopIntaking(intake));
-    
-    // expelBalls.whenPressed(new ExpelBalls(storage));
-    // alignDrivetrain.whenPressed(new AlignIntakeToBall(drivetrain, true)).whenReleased(new AlignIntakeToBall(drivetrain, false));
-    /*
-      Shoot: 4
-      Intake: 5
-      Expell Balls: <find>
-      Climb: <find for operator>
-      Turret Manual: ????
-      Align To ball: 0
-    */
-
-    //turretClockwise.whenPressed(new TurretManual(turret, -0.5, turretClockwise::get));
-    //turretCounterclockwise.whenPressed(new TurretManual(turret, 0.5, turretCounterclockwise::get));
-
+    // storage.setDefaultCommand(new TrackBalls(storage, shooter, DriverStation.getAlliance().toString()));
     // turret.setDefaultCommand(new FindTarget(turret));
+
+    // alignDrivetrain.whenPressed(new AlignIntakeToBall(drivetrain, true)).whenReleased(new AlignIntakeToBall(drivetrain, false));
+
+    shoot.whenPressed(new SetRPM(shooter, storage, shoot)).whenReleased(new StopShooter(shooter, storage));
+    // expelBalls.whenPressed(new ExpelBalls(storage));
+
+    // intakeBalls.whenPressed(new IntakeBalls(intake)).whenReleased(new StopIntaking(intake));
+
     // disableTurret.whenPressed(new DisableTurret(turret));
   }
 
@@ -155,10 +130,36 @@ public class RobotContainer {
 
   }
 
-  public boolean getintake(){
-    return intakeBalls.get();
+  /**
+   * Gets the ange of the right axis for the operator joystick
+   * @return The angle from [-180, 180] where 0 degrees is the top and the right side represents
+   * positive angles
+   */
+  public double getOperatorRightAxisAngle() {
+    double x = operatorJoystick.getRawAxis(4);
+    double y = -operatorJoystick.getRawAxis(5);
+
+    double angle = Math.atan2(y, x);
+
+    if(x < 0)
+      angle += Math.PI;
+
+    angle -= Math.PI / 2;
+    angle *= -1;
+
+    return angle * 180 / Math.PI;
   }
 
+  /**
+   * Gets the magnitude of the right axis for the operator joystick
+   * @return The distance moved from the middle of the axis
+   */
+  public double getOperatorRightAxisMagnitude() {
+    double x = operatorJoystick.getRawAxis(4);
+    double y = operatorJoystick.getRawAxis(5);
+
+    return Math.sqrt(x * x + y * y);
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -167,18 +168,25 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return new FiveBallAuton(drivetrain, null, shooter, storage);
+  }
 
+  /**
+   * Gets whether the intake button has been pressed
+   * @return Value of the button
+   */
+  public boolean getintake() {
+    return intakeBalls.get();
   }
   
+  public Turret getTurret() {
+    return turret;
+  }
+
   /**
    * Use this to declare subsystem disabled behavior
    */
   public void disabledPeriodic() {
     shooter.setState(ShooterState.OFF);
     // shooter.setHoodState(HoodState.OFF);
-  }
-
-  public double getStorageThrottle(){
-    return 0.4* operatorJoystick.getRawAxis(5);
   }
 }

@@ -4,25 +4,30 @@
 
 package frc.robot.commands;
 
-import java.util.function.Supplier;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Turret.TurretState;
 
 public class TurretManual extends CommandBase {
   private Turret turret;
 
-  private double percentOut;
-  private Supplier<Boolean> isFinished;
+  private double angle;
 
-  /** Creates a new TurnTurret. */
-  public TurretManual(Turret turret, double percentOut, Supplier<Boolean> isFinished) {
+  private TurretState prevState;
+
+  /** 
+   * Creates a new TurnTurret
+   * @param turret The turret subsystem
+   * @param angle The angle to turn; should be bounded by -180 to 180 degrees
+   */
+  public TurretManual(Turret turret, double angle) {
     this.turret = turret;
 
-    this.percentOut = percentOut;
-    this.isFinished = isFinished;
+    this.angle = angle;
+
+    prevState = turret.getTurretState();
 
     addRequirements(turret);
   }
@@ -30,29 +35,33 @@ public class TurretManual extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    turret.setState(TurretState.DISABLED);
+    if(angle > Constants.Turret.kMaxAngle)
+      angle = Constants.Turret.kMaxAngle;
+    else if(angle < Constants.Turret.kMinAngle)
+      angle = Constants.Turret.kMinAngle;
 
-    SmartDashboard.putNumber("manual", percentOut);
+    SmartDashboard.putNumber("Turret Manual Degrees", angle);
+
+    turret.setState(TurretState.DISABLED);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    turret.setPercentOutput(percentOut);
-
-    SmartDashboard.putNumber("manual", percentOut);
+    turret.turnDegrees(angle);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    SmartDashboard.putNumber("interrupted", percentOut);
     turret.setPercentOutput(0);
+
+    turret.setState(prevState);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return isFinished.get();
+    return Math.abs(turret.getCurrentPositionDegrees() - angle) <= 2;
   }
 }

@@ -108,16 +108,16 @@ public class Turret extends SubsystemBase {
       // }
       // -----------------------------------------------------------------------------------------
 
-      // switch(state) {
-      //   case TARGETING:
-      //     target();
-      //   case FLIPPING:
-      //     flip();
-      //   case SEARCHING:
-      //     search();      
-      // }
+      switch(state) {
+        case TARGETING:
+          target();
+        // case FLIPPING:
+        //   flip();
+        // case SEARCHING:
+        //   search();      
+      }
 
-        target();
+      // target();
 
       updateLastVariables();
 
@@ -274,10 +274,10 @@ public class Turret extends SubsystemBase {
   }
 
   /**
-   * Turns to the desired degrees
+   * Turns to the desired degrees (absolute position)
    * @param degrees the desired degrees
    */
-  private void turnDegrees(double degrees) {
+  public void turnDegrees(double degrees) {
     turret.set(
       ControlMode.Position,
       MathUtils.degreesToTicks(
