@@ -70,6 +70,13 @@ public class Turret extends SubsystemBase {
 
     turret.selectProfileSlot(0, 0);
 
+    // ------------------------------SOFT LIMITS---------------------------------------------
+    // turret.configForwardSoftLimitThreshold(MathUtils.degreesToTicks(Constants.Turret.kMaxAngle, Constants.Turret.kTicksPerRevolution, Constants.Turret.kGearRatio), 0);
+    // turret.configReverseSoftLimitThreshold(MathUtils.degreesToTicks(Constants.Turret.kMinAngle, Constants.Turret.kTicksPerRevolution, Constants.Turret.kGearRatio), 0);
+    // turret.configForwardSoftLimitEnable(true, 0);
+    // turret.configReverseSoftLimitEnable(true, 0);
+    // --------------------------------------------------------------------------------------
+
     SmartDashboard.putNumber("p", Constants.Turret.kP);
     SmartDashboard.putNumber("i", Constants.Turret.kI);
     SmartDashboard.putNumber("d", Constants.Turret.kD);
