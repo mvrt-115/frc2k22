@@ -40,6 +40,7 @@ public class Turret extends SubsystemBase {
   // private double targetDegrees;
   private double searchDirection;
   private boolean searchFlipping;
+  private double noTargetStartTime;
 
   private double offset;
 
@@ -55,9 +56,9 @@ public class Turret extends SubsystemBase {
     lastTime = 0;
     area = 0;
 
-    // targetDegrees = 0;
     searchDirection = 1;
     searchFlipping = false;
+    noTargetStartTime = Timer.getFPGATimestamp();
 
     offset = 0;
 
@@ -206,10 +207,13 @@ public class Turret extends SubsystemBase {
    * Targets using a pid on the limelight error
    */
   public void target() {
+    if(!limelight.targetsFound()) {
+      if(Math.abs(Timer.getFPGATimestamp() - noTargetStartTime) >= Constants.Turret.kSearchingSecondsThreshold)
+        setState(TurretState.SEARCHING);
+      
+      return;
+    }
 
-    double p = SmartDashboard.getNumber("p", Constants.Turret.kP);
-    double i = SmartDashboard.getNumber("i", Constants.Turret.kP);
-    double d = SmartDashboard.getNumber("d", Constants.Turret.kP);
     double error = (limelight.getHorizontalOffset() + offset) / 30;
     double time = Timer.getFPGATimestamp();
 
@@ -217,7 +221,7 @@ public class Turret extends SubsystemBase {
 
     double output = (Constants.Turret.kP * error) +
       (Constants.Turret.kI * area) + 
-      (((error - lastError) / (time - lastTime)) * Constants.Turret.kD);
+      (Constants.Turret.kD * ((error - lastError) / (time - lastTime)));
 
     if(Math.abs((limelight.getHorizontalOffset() + offset)) > 2 && limelight.targetsFound()) {
       if(output < 0 && getCurrentPositionDegrees() < Constants.Turret.kMinAngle)
@@ -232,6 +236,8 @@ public class Turret extends SubsystemBase {
 
     SmartDashboard.putNumber("Error", error);
     SmartDashboard.putNumber("Output", output);
+
+    noTargetStartTime = Timer.getFPGATimestamp();
   }
 
   /**
@@ -247,9 +253,9 @@ public class Turret extends SubsystemBase {
    */
   public void search() {
     if(searchDirection == 1)
-      setPercentOutput(0.5);
+      setPercentOutput(Constants.Turret.kSearchTurnSpeed);
     else
-      setPercentOutput(-0.5);
+      setPercentOutput(-Constants.Turret.kSearchTurnSpeed);
 
     if(!searchFlipping && (turret.getSelectedSensorPosition() >= Constants.Turret.kMaxAngle || 
       turret.getSelectedSensorPosition() <= Constants.Turret.kMinAngle)) {
@@ -266,7 +272,7 @@ public class Turret extends SubsystemBase {
   }
 
   /**
-   * Updates the lastError and lastTime variables that are used for pid
+   * Updates variables that need to always be updated
    */
   private void updateLastVariables() {
     lastError = (limelight.getHorizontalOffset() + offset) / 30;
@@ -317,6 +323,9 @@ public class Turret extends SubsystemBase {
    */
   public void setState(TurretState state) {
     this.state = state;
+
+    if(state == TurretState.TARGETING)
+      noTargetStartTime = Timer.getFPGATimestamp();
   }
 
   public void setOffset(double offset) {
