@@ -24,7 +24,7 @@ public class Storage extends SubsystemBase  {
   private boolean overriden;
   private double lastTime;
   private boolean readyShoot = false;
-  private boolean intaking = false;
+  private boolean intaking = true;
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
   public final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
   private double stopIntakeTime = -1;
@@ -39,7 +39,7 @@ public class Storage extends SubsystemBase  {
     overriden = false;
     lastTime = Timer.getFPGATimestamp();
     lastTopChanged = Timer.getFPGATimestamp();
-    intaking = false;
+    // intaking = false;
   }
 
   public void setIntaking(boolean intaking) {
@@ -55,6 +55,7 @@ public class Storage extends SubsystemBase  {
     SmartDashboard.putBoolean("bottom breakbeam broken", !breakbeamBott.get());
     SmartDashboard.putNumber("number of balls", balls);
     SmartDashboard.putBoolean("overriden", overriden);
+    SmartDashboard.putString("Ball color", getBallColor());
 
    
     if(prevStateBott && !breakbeamBott.get() && Timer.getFPGATimestamp() - lastTopChanged > 0.5) {
@@ -93,13 +94,13 @@ public class Storage extends SubsystemBase  {
       // when there is one ball run until it passes first breakbeam
       case 1:
         if(!breakbeamBott.get())
-          runMotor(0.7);
+          runMotor(0.9);
         else 
           runMotor(0);
         break;
       case 2:
         if(breakbeamTop.get())
-          runMotor(0.7);
+          runMotor(0.9);
         else 
           runMotor(0);
         break;

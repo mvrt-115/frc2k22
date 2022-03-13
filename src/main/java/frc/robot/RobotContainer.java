@@ -95,7 +95,6 @@ public class RobotContainer {
 
     intakeBalls.whenPressed(new IntakeBalls(intake, storage)).whenReleased(new StopIntaking(intake, storage));
     alignDrivetrain.whenPressed(new AlignIntakeToBall(drivetrain, true)).whenReleased(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
-    shooter.setDefaultCommand(new SetRPM(shooter, storage, (Turret)(null)));
     /* when the retract and extend buttons are pressed then the telescopic manual command is called accordingly with 
        the given value */
 
