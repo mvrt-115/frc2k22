@@ -24,8 +24,8 @@ public class TelescopicRatchet extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    climber.setTelescopicSpeed(Constants.Climber.kMotorInitialUnratchetSpeed);
-    Timer.delay(Constants.Climber.kMotorDownTime);
+    //climber.setTelescopicSpeed(Constants.Climber.kMotorInitialUnratchetSpeed);
+   // Timer.delay(Constants.Climber.kMotorDownTime);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

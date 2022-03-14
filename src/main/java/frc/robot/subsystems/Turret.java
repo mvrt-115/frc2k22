@@ -68,20 +68,23 @@ public class Turret extends SubsystemBase {
     resetEncoder();
 
     turret.selectProfileSlot(0, 0);
+
+    // turret.configForwardSoftLimitEnable(true, 0);
+    // turret.configReverseSoftLimitEnable(true, 0);
   }
 
   @Override
   public void periodic() {
     // log();
 
-    if(getCurrentPositionDegrees() >= Constants.Turret.kMaxAngle) {
-      targetDegrees = Constants.Turret.kMinAngle + 20;
-      setState(TurretState.FLIPPING);
-    } else if(getCurrentPositionDegrees() <= Constants.Turret.kMinAngle) {
-      targetDegrees = Constants.Turret.kMaxAngle - 20;
-      setState(TurretState.FLIPPING);
-    }
-
+    // if(getCurrentPositionDegrees() >= Constants.Turret.kMaxAngle) {
+    //   targetDegrees = Constants.Turret.kMinAngle + 20;
+    //   setState(TurretState.FLIPPING);
+    // } else if(getCurrentPositionDegrees() <= Constants.Turret.kMinAngle) {
+    //   targetDegrees = Constants.Turret.kMaxAngle - 20;
+    //   setState(TurretState.FLIPPING);
+    // }
+    
      switch(state) {
        case DISABLED:
          break;
@@ -97,6 +100,16 @@ public class Turret extends SubsystemBase {
          updateLastVariables();
          break;
      }      
+
+     if(getCurrentPositionDegrees() < Constants.Turret.kMinAngle - 20 && turret.getMotorOutputPercent() < 0) {
+       turret.set(ControlMode.PercentOutput, 0);
+     } else if(getCurrentPositionDegrees() > Constants.Turret.kMinAngle + 20 && turret.getMotorOutputPercent() > 0) {
+      turret.set(ControlMode.PercentOutput, 0);
+     }
+
+    // target();
+
+    SmartDashboard.putString("Turret State", state.toString());
   }
 
   /**

@@ -24,7 +24,7 @@ public class Climber extends SubsystemBase {
     public DigitalInput leftTelescopicProximity, rightTelescopicProximity; // inductive proximity
                                                                                            // sensors
     // for detecting whether robot is hooked on rungs or not for each type of arm
-    public DigitalInput leftTelescopicLimit, rightTelescopicLimit; // inductive proximity sensors
+    // public DigitalInput leftTelescopicLimit, rightTelescopicLimit; // inductive proximity sensors
     // for detecting whether robot is hooked on rungs or not for each type of arm
 
     public enum ClimberState {
@@ -45,18 +45,12 @@ public class Climber extends SubsystemBase {
         leftTelescopic = TalonFactory.createTalonFX(Constants.Climber.kLeftTelescopicID, false);
         rightTelescopic = TalonFactory.createTalonFX(Constants.Climber.kRightTelescopicID, false);
 
-        leftTelescopic.setInverted(TalonFXInvertType.CounterClockwise);
-        rightTelescopic.setInverted(TalonFXInvertType.CounterClockwise);
+        leftTelescopic.setInverted(TalonFXInvertType.Clockwise);
+        rightTelescopic.setInverted(TalonFXInvertType.Clockwise);
 
         leftServo = new Servo(Constants.Climber.kLeftServoID);
         rightServo = new Servo(Constants.Climber.kRightServoID); 
 
-        leftTelescopicProximity = new DigitalInput(Constants.Climber.kLeftTelescopicProximityChannel);
-        rightTelescopicProximity = new DigitalInput(Constants.Climber.kRightTelescopicProximityChannel);
-
-
-        leftTelescopicLimit = new DigitalInput(Constants.Climber.kLeftTelescopicLimitSwitch);
-        rightTelescopicLimit = new DigitalInput(Constants.Climber.kRightTelescopicLimitSwitch);
 
         //reconfiguring all motors with PID constants
         rightTelescopic.follow(leftTelescopic);
@@ -183,8 +177,8 @@ public class Climber extends SubsystemBase {
     }
 
     public void setServoTurn(double turn) {
-        leftServo.set(turn);
-        rightServo.set(turn);
+        leftServo.setAngle(turn);
+        rightServo.setAngle(turn);
     }
 
     // This method will be called once per scheduler run

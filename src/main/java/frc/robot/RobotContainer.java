@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
 import frc.robot.commands.telescopic.TelescopicManual;
+import frc.robot.commands.telescopic.TelescopicRatchet;
 import frc.robot.util.Limelight;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -38,7 +39,7 @@ public class RobotContainer {
   private final Limelight limelight = new Limelight();
   private final Shooter shooter = new Shooter(limelight);
   private final Climber climber = new Climber();
-  // private final Turret turret = new Turret(limelight);
+  private final Turret turret = new Turret(limelight);
 
   // climber operator manual buttons
   private JoystickButton extend;
@@ -86,8 +87,8 @@ public class RobotContainer {
     // the :: syntax allows us to pass in methods of a class as variables so that the command can continuously access input values
     //drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
 
-    storage.setDefaultCommand(new TrackBalls(storage, shooter));
-    // turret.setDefaultCommand(new FindTarget(turret));
+    // storage.setDefaultCommand(new TrackBalls(storage, shooter));
+    turret.setDefaultCommand(new FindTarget(turret));
     
     // shoot.whenPressed(new SetRPM(shooter, storage, shoot)).whenReleased(new StopShooter(shooter, storage));
 
@@ -100,12 +101,11 @@ public class RobotContainer {
 
     //retract.whenPressed(new TelescopicManual(climber, this::isRetractPressed, Constants.Climber.kTelescopicRetractManualSpeed))
     retract.whenPressed(new UnratchetExtend(climber, this::isRetractPressed, Constants.Climber.kTelescopicRetractManualSpeed))
-      .whenReleased(new TelescopicManual(climber, this::isRetractPressed, 0));
+      .whenReleased(new TelescopicManual(climber, this::isRetractPressed, 0).alongWith(new TelescopicRatchet(climber, Constants.Climber.kServoRatchet)));
 
     //extend.whenPressed(new TelescopicManual(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed))
     extend.whenPressed(new RatchetRetract(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed))
-      .whenReleased(new TelescopicManual(climber, this::isExtendPressed, 0));
-  }
+    .whenReleased(new TelescopicManual(climber, this::isRetractPressed, 0).alongWith(new TelescopicRatchet(climber, Constants.Climber.kServoRatchet)));  }
 
 
   /////////////////////////////////////////////////GETTERS//////////////////////////////////////////////

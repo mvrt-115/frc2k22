@@ -186,7 +186,7 @@ public final class Constants {
         // public static final double kP = 0.05;
         // public static final double kI = 0;
         // public static final double kD = 0.03;  // try with 0.007
-        public static final double kP = 0.4;
+        public static final double kP = 0.2;
         public static final double kI = 0;
         public static final double kD = 0.4;//-0.05;//16;
         public static final double kTurnSpeed = 0.3;
@@ -204,12 +204,8 @@ public final class Constants {
         public static final int kLeftTelescopicID = 7;
 
         // Servo Contants
-        public static final int kRightServoID = 1; //Check (analog input)
-        public static final int kLeftServoID = 2; // Check (analog input)
-
-        public static final double kServoTurn = 90;
-        public static final double kServoOnThreshold = 0.001;
-        public static final double kInitialServoAngle = 0;
+        public static final int kRightServoID = 9; //Check (analog input)
+        public static final int kLeftServoID = 8; // Check (analog input)
 
         //inductive proximity sensors
         public static final int kPivotProximityChannel = 0;
@@ -252,8 +248,8 @@ public final class Constants {
         public static final double kPivotManualSpeed = 0.1;
 
         // servo ratchet and unratchet values
-        public static final double kServoRatchet = 0; // check
-        public static final double kServoUnRatchet = 0.5; // check
+        public static final double kServoRatchet = 90; // check
+        public static final double kServoUnRatchet = 145; // check
         public static final double kServoError = 0.05; // check
         public static final double kMotorInitialUnratchetSpeed = 0.03; //test
         public static final double kMotorDownTime = 0.1; //seconds
