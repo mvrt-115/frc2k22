@@ -24,8 +24,8 @@ public class TelescopicRatchet extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    //climber.setTelescopicSpeed(Constants.Climber.kMotorInitialUnratchetSpeed);
-   // Timer.delay(Constants.Climber.kMotorDownTime);
+    climber.setTelescopicSpeed(Constants.Climber.kMotorInitialUnratchetSpeed);
+    Timer.delay(Constants.Climber.kMotorDownTime);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -34,7 +34,7 @@ public class TelescopicRatchet extends CommandBase {
   @Override
   public void execute() {
     climber.setServoTurn(servoTurn);
-    climber.stopTelescopicMotor();
+   // climber.stopTelescopicMotor();
   }
 
   // Called once the command ends or is interrupted.
@@ -44,6 +44,6 @@ public class TelescopicRatchet extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(climber.leftServo.getAngle() - servoTurn) <= Constants.Climber.kServoError;
+    return Math.abs(climber.leftServo.getPosition() - servoTurn) <= Constants.Climber.kServoError;
   }
 }

@@ -101,13 +101,13 @@ public class RobotContainer {
        the given value */
 
     //retract.whenPressed(new TelescopicManual(climber, this::isRetractPressed, Constants.Climber.kTelescopicRetractManualSpeed))
-    retract.whenPressed(new UnratchetExtend(climber, this::isRetractPressed, Constants.Climber.kTelescopicRetractManualSpeed))
+    retract.whenPressed(new RatchetRetract(climber, this::isRetractPressed, Constants.Climber.kTelescopicRetractManualSpeed))
       .whenReleased(new TelescopicManual(climber, this::isRetractPressed, 0).alongWith(new TelescopicRatchet(climber, Constants.Climber.kServoRatchet)));
 
     //extend.whenPressed(new TelescopicManual(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed))
-    extend.whenPressed(new RatchetRetract(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed))
-    .whenReleased(new TelescopicManual(climber, this::isRetractPressed, 0).alongWith(new TelescopicRatchet(climber, Constants.Climber.kServoRatchet)));  }
-
+    extend.whenPressed(new UnratchetExtend(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed))
+    .whenReleased(new TelescopicManual(climber, this::isRetractPressed, 0).alongWith(new TelescopicRatchet(climber, Constants.Climber.kServoRatchet)));  
+  }
 
   /////////////////////////////////////////////////GETTERS//////////////////////////////////////////////
 

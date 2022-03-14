@@ -200,12 +200,12 @@ public final class Constants {
         //NEED TO BE CHANGED WHEN FULLY WIRED OR TESTING
         //motors
         //public static final int kPivotID = 0; // 22
-        public static final int kRightTelescopicID = 6;
-        public static final int kLeftTelescopicID = 7;
+        public static final int kRightTelescopicID = 42; // 6
+        public static final int kLeftTelescopicID = 40; // 7
 
         // Servo Contants
-        public static final int kRightServoID = 9; //Check (analog input)
-        public static final int kLeftServoID = 8; // Check (analog input)
+        public static final int kRightServoID = 6; //Check (analog input) 9
+        public static final int kLeftServoID = 7; // Check (analog input) 8 
 
         //inductive proximity sensors
         public static final int kPivotProximityChannel = 0;
@@ -243,13 +243,14 @@ public final class Constants {
         public static final double kFeedForwardPivot = 0;
 
         //speeds for manual climbing
-        public static final double kTelescopicRetractManualSpeed = -0.25;
-        public static final double kTelescopicExtendManualSpeed = 0.20;
+        public static final double kTelescopicRetractManualSpeed = -0.1; // 0.25
+        public static final double kTelescopicExtendManualSpeed = 0.1; // 0.2
         public static final double kPivotManualSpeed = 0.1;
 
         // servo ratchet and unratchet values
-        public static final double kServoRatchet = 90; // check
-        public static final double kServoUnRatchet = 145; // check
+        public static final double kServoRatchet = 0; // check
+        public static final double kServoUnRatchet = 0.15; // check
+        public static final double kOffsetError = 0.05; // check
         public static final double kServoError = 0.05; // check
         public static final double kMotorInitialUnratchetSpeed = 0.03; //test
         public static final double kMotorDownTime = 0.1; //seconds

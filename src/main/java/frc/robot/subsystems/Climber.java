@@ -177,8 +177,16 @@ public class Climber extends SubsystemBase {
     }
 
     public void setServoTurn(double turn) {
-        leftServo.setAngle(turn);
-        rightServo.setAngle(turn);
+        leftServo.setPosition(turn+Constants.Climber.kOffsetError);
+        rightServo.setPosition(turn);
+    }
+
+    public double getServoAngle() {
+        return leftServo.getPosition();
+    }
+
+    public double getOffsetServoAngle() {
+        return rightServo.getPosition();
     }
 
     // This method will be called once per scheduler run
