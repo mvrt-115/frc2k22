@@ -53,6 +53,8 @@ public class RobotContainer {
 
   private JoystickButton quickturn;
   private JoystickButton shoot;
+  
+  private int timesIntakePressed; // to allow one button to be pressed for different commands
 
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -71,6 +73,8 @@ public class RobotContainer {
 
     extend =  new JoystickButton(operatorJoystick, 4);
     retract = new JoystickButton(operatorJoystick, 8);
+    
+    timesIntakePressed = 0;
     
     // Configure the button bindings
     configureButtonBindings();
@@ -94,7 +98,12 @@ public class RobotContainer {
 
     SmartDashboard.putData("Testing Shooter", new SetRPM(shooter, storage, true));
 
-    intakeBalls.whenPressed(new IntakeBalls(intake, storage)).whenReleased(new StopIntaking(intake, storage));
+    if(timesIntakePressed % 2 == 0) intakeBalls.whenPressed(new IntakeBalls(intake, storage));
+    
+    else if(timesIntakePressed % 2 == 1) intakeBalls.whenPressed(new StopIntaking(intake, storage)); // dont need else if, just else is necessary, but being rlly careful
+    
+    if(intakeBalls.get()) timesIntakePressed++;
+    
     alignDrivetrain.whenPressed(new AlignIntakeToBall(drivetrain, true)).whenReleased(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
     /* when the retract and extend buttons are pressed then the telescopic manual command is called accordingly with 
        the given value */
