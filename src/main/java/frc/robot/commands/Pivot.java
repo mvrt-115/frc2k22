@@ -9,35 +9,38 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Storage;
 import frc.robot.subsystems.Intake.IntakeState;
 
-public class StopIntaking extends CommandBase {
-  /** Creates a new StopIntaking. */
+public class Pivot extends CommandBase {
+  /** Creates a new Pivot. */
   private Intake intake;
   private Storage storage;
-  public StopIntaking(Intake intakeIn, Storage storageIn) {
-    intake = intakeIn;
-    storage = storageIn;
-    addRequirements(intake);
+  public Pivot(Intake intake, Storage storage) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    this.intake = intake;
+    this.storage=  storage;
+    addRequirements(intake, storage);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    intake.setState(IntakeState.PIVOTING_UP);
-    // intake.pivotMotor.setSelectedSensorPosition(0);
-    storage.setIntaking(false);
+    if(intake.getPivotState()){
+      intake.setState(IntakeState.PIVOTING_DOWN);
+      storage.setIntaking(true);
+    }
+    else{
+      intake.setState(IntakeState.PIVOTING_UP);
+      storage.setIntaking(false);
+    }
+    intake.setPivotState(!intake.getPivotState());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    // don't modify this command!
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override

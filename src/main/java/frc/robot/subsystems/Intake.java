@@ -23,12 +23,14 @@ public class Intake extends SubsystemBase {
   // motors for the intake --> currently BaseTalon, may change 
   // (decide type of motor later)
   private BaseTalon intakeMotor; 
+  private boolean pivotState;
   public BaseTalon pivotMotor; 
 
   private double feedForward; // feed forward double needed to pivot for a certain number of ticks
 
 
   public Intake() {
+    pivotState = true;
     state = IntakeState.UP;
 
     intakeMotor = TalonFactory.createTalonSRX(Constants.Intake.kROLLER_ID, true); // change motor IDs from Constants later
@@ -82,6 +84,7 @@ public class Intake extends SubsystemBase {
     SmartDashboard.putNumber("Ticks", getCurrentPos());
     SmartDashboard.putBoolean("is at top", Math.abs(getCurrentPos()) <= Constants.Intake.kMARGIN_OF_ERROR_TICKS);
     SmartDashboard.putBoolean("is at bottom", Math.abs(getCurrentPos() - Constants.Intake.kTICKS_TO_BOTTOM) <= Constants.Intake.kMARGIN_OF_ERROR_TICKS);
+    SmartDashboard.putBoolean("pivotState", pivotState);
   }
   
   /**
@@ -106,7 +109,8 @@ public class Intake extends SubsystemBase {
     else 
       pivotMotor.set(ControlMode.PercentOutput, 0);
   }
-  
+  public boolean getPivotState() { return pivotState;}
+  public void setPivotState(boolean changed){ pivotState = changed;}
 
   /**
    * moves the intake down. if it is already at the bottom, then it sets

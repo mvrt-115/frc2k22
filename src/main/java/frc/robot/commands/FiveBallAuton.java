@@ -38,7 +38,7 @@ public class FiveBallAuton extends ParallelCommandGroup {
           runPath("Path6Part4"), //going back to shoot
           new SetRPM(shooter, storage, turret).withTimeout(2) //shoot 2 balls
       ),
-      new IntakeBalls(in, storage)
+      new Pivot(in, storage)
     );
     
     Trajectory trajectory = PathPlanner.loadPath("Path6Part1", 1, 1);

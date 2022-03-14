@@ -32,7 +32,7 @@ public class RobotContainer {
   private Joystick driverJoystick; //Joysticks
   private Joystick operatorJoystick;
   
-  private JoystickButton intakeBalls; //buttons
+  private JoystickButton pivot; //buttons
   private JoystickButton alignDrivetrain;
 
   public final Drivetrain drivetrain = new Drivetrain();
@@ -53,8 +53,7 @@ public class RobotContainer {
 
   private JoystickButton quickturn;
   private JoystickButton shoot;
-  
-  private int timesIntakePressed; // to allow one button to be pressed for different commands
+
 
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -64,7 +63,7 @@ public class RobotContainer {
     operatorJoystick = new Joystick(1);
 
     shoot = new JoystickButton(driverJoystick, 2);
-    intakeBalls = new JoystickButton(driverJoystick, 3);
+    pivot = new JoystickButton(driverJoystick, 3);
     alignDrivetrain = new JoystickButton(driverJoystick, 6);
 
     quickturn = new JoystickButton(driverJoystick, 5);
@@ -73,8 +72,6 @@ public class RobotContainer {
 
     extend =  new JoystickButton(operatorJoystick, 4);
     retract = new JoystickButton(operatorJoystick, 8);
-    
-    timesIntakePressed = 0;
     
     // Configure the button bindings
     configureButtonBindings();
@@ -97,12 +94,7 @@ public class RobotContainer {
     // shoot.whenPressed(new SetRPM(shooter, storage, shoot)).whenReleased(new StopShooter(shooter, storage));
 
     SmartDashboard.putData("Testing Shooter", new SetRPM(shooter, storage, true));
-
-    if(timesIntakePressed % 2 == 0) intakeBalls.whenPressed(new IntakeBalls(intake, storage));
-    
-    else if(timesIntakePressed % 2 == 1) intakeBalls.whenPressed(new StopIntaking(intake, storage)); // dont need else if, just else is necessary, but being rlly careful
-    
-    if(intakeBalls.get()) timesIntakePressed++;
+    pivot.whenPressed(new Pivot(intake,storage));
     
     alignDrivetrain.whenPressed(new AlignIntakeToBall(drivetrain, true)).whenReleased(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
     /* when the retract and extend buttons are pressed then the telescopic manual command is called accordingly with 
@@ -140,10 +132,6 @@ public class RobotContainer {
     wheel.updateValue(driverJoystick.getRawAxis(0) * .8);
     return wheel.getAverage();
 
-  }
-
-  public boolean getintake(){
-    return intakeBalls.get();
   }
   /**
    * Gets the state of the telescopic button
