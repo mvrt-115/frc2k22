@@ -28,7 +28,7 @@ public class Shooter extends SubsystemBase {
     OFF, ADJUSTING, ATPOSITION;
   }
 
-  private final double MAX_RPM = 8000;
+  private final double MAX_RPM = 5240;
 
   private final int LEADER_ID = 12;
 
@@ -44,7 +44,7 @@ public class Shooter extends SubsystemBase {
   /** Creates a new Shooter. */
   public Shooter(Limelight limelight/*, Drivetrain drivetrain, Turret turret*/) {
     // Mind Bending Test aon the Reality of our Situation
-    flywheelLeader = TalonFactory.createTalonFX(LEADER_ID, true);
+    flywheelLeader = TalonFactory.createTalonFX(LEADER_ID, false);
 
 
     // Sets up PIDF
@@ -119,6 +119,7 @@ public class Shooter extends SubsystemBase {
    */
   public void log()
   {
+    SmartDashboard.putNumber("Output", flywheelLeader.getMotorOutputPercent());
     SmartDashboard.putNumber("Flywheel RPM", getCurrentRPM());
     SmartDashboard.putNumber("RPM Needed", getRequiredRPM());
     SmartDashboard.putString("Shooter State", state.toString());
@@ -128,15 +129,6 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-
-    // debug pid values
-    final double kP = SmartDashboard.getNumber("kP Shooter", Constants.Flywheel.P);
-    final double kI = SmartDashboard.getNumber("kI Shooter", Constants.Flywheel.I);
-    final double kD = SmartDashboard.getNumber("kD Shooter", Constants.Flywheel.D);
-
-    flywheelLeader.config_kP(Constants.kPIDIdx, kP);
-    flywheelLeader.config_kI(Constants.kPIDIdx, kI);
-    flywheelLeader.config_kD(Constants.kPIDIdx, kD);
   
     // With servos all this is kinda unnecessary but idt it matters so we can keep it
 
@@ -169,7 +161,7 @@ public class Shooter extends SubsystemBase {
    */
   public double getRequiredRPM() {
     // power series regression from testing data
-    return 640.55*Math.pow(limelight.getHorizontalDistance(), 0.3468);
+    return 616.24*Math.pow(limelight.getHorizontalDistance(), 0.471);
   }
 
   /**

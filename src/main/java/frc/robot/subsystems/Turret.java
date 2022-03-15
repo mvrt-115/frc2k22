@@ -61,9 +61,9 @@ public class Turret extends SubsystemBase {
 
     offset = 0;
 
-    turret.config_kP(0, 0.1);//Constants.Turret.kPLarge);
-    turret.config_kI(0, 0);//Constants.Turret.kI);
-    turret.config_kD(0, 0);//Constants.Turret.kD);
+    turret.config_kP(0, Constants.Turret.kP);
+    turret.config_kI(0, Constants.Turret.kI);
+    turret.config_kD(0, Constants.Turret.kD);
 
     resetEncoder();
 
@@ -84,7 +84,7 @@ public class Turret extends SubsystemBase {
     //   targetDegrees = Constants.Turret.kMaxAngle - 20;
     //   setState(TurretState.FLIPPING);
     // }
-    
+        
      switch(state) {
        case DISABLED:
          break;
@@ -97,9 +97,10 @@ public class Turret extends SubsystemBase {
        case CAN_SHOOT:
        case TARGETING:
          target();
-         updateLastVariables();
          break;
-     }      
+     }
+     
+     updateLastVariables();
 
      if(getCurrentPositionDegrees() < Constants.Turret.kMinAngle - 20 && turret.getMotorOutputPercent() < 0) {
        turret.set(ControlMode.PercentOutput, 0);
@@ -127,9 +128,11 @@ public class Turret extends SubsystemBase {
 
     if(Math.abs((limelight.getHorizontalOffset() + offset)) > 4 && limelight.targetsFound()) {
       if(output < 0 && getCurrentPositionDegrees() < Constants.Turret.kMinAngle)
-        setState(TurretState.FLIPPING);
+        // setState(TurretState.FLIPPING);
+        output = 0;
       else if(output > 0 && getCurrentPositionDegrees() > Constants.Turret.kMaxAngle)
-        setState(TurretState.FLIPPING);
+        // setState(TurretState.FLIPPING);
+        output = 0;
 
       turret.set(ControlMode.PercentOutput, output);
     } else {

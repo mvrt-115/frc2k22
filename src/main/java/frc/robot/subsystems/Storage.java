@@ -24,7 +24,7 @@ public class Storage extends SubsystemBase  {
   private boolean overriden;
   private double lastTime;
   private boolean readyShoot = false;
-  private boolean intaking = false;
+  private boolean intaking = true;
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
   public final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
   private double stopIntakeTime = -1;
@@ -94,19 +94,19 @@ public class Storage extends SubsystemBase  {
       // when there is one ball run until it passes first breakbeam
       case 1:
         if(!breakbeamBott.get())
-          runMotor(0.9);
+          runMotor(0.6);
         else 
           runMotor(0);
         break;
       case 2:
         if(breakbeamTop.get())
-          runMotor(0.9);
+          runMotor(0.6);
         else 
           runMotor(0);
         break;
       case 0: 
         if(intaking)
-          runMotor(0.7);
+          runMotor(0.6);
         else
           runMotor(0);
       default:
@@ -115,7 +115,6 @@ public class Storage extends SubsystemBase  {
   }
 
 
-  public BaseTalon getMotor(){ return motor; }
 
   public void runMotor(double out) {
     motor.set(ControlMode.PercentOutput, out);

@@ -34,7 +34,7 @@ public class TrackBalls extends CommandBase {
     if(!storage.getShooting()){
         if(!storage.getBallColor().trim().equals("No Ball") && !storage.getBallColor().trim().equals(alliance)){
           SmartDashboard.putBoolean("pooping", true);
-          shooter.setTargetRPM(100);
+          shooter.setTargetRPM(1000);
           storage.runMotor(1);
           stopExp = true;
         } else if (stopExp) {
