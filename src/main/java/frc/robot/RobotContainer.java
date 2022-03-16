@@ -53,6 +53,7 @@ public class RobotContainer {
   private JoystickButton shoot;
 
   public JoystickButton disableTurret;
+  public JoystickButton zeroTurret;
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -71,7 +72,8 @@ public class RobotContainer {
     extend =  new JoystickButton(operatorJoystick, 4);
     retract = new JoystickButton(operatorJoystick, 8);
 
-    disableTurret = new JoystickButton(driverJoystick, 2);
+    disableTurret = new JoystickButton(operatorJoystick, 2);
+    zeroTurret = new JoystickButton(operatorJoystick, 3);
     
     // Configure the button bindings
     configureButtonBindings();
@@ -110,6 +112,7 @@ public class RobotContainer {
     .whenReleased(new TelescopicManual(climber, this::isRetractPressed, 0).alongWith(new TelescopicRatchet(climber, Constants.Climber.kServoRatchet))); 
 
     disableTurret.whenPressed(new DisableTurret(turret)).whenReleased(new FindTarget(turret));
+    zeroTurret.whenPressed(new ZeroTurret(turret)).whenReleased(new FindTarget(turret));
   }
   
   /////////////////////////////////////////////////GETTERS//////////////////////////////////////////////

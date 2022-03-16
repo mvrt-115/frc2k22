@@ -4,30 +4,29 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Turret.TurretState;
 
-public class FindTarget extends CommandBase {
-  private Turret turret;
-
-  /** Creates a new FindTarget. */
-  public FindTarget(Turret turret) {
+public class ZeroTurret extends CommandBase {
+  Turret turret;
+  /** Creates a new ZeroTurret. */
+  public ZeroTurret(Turret turret) {
+    // Use addRequirements() here to declare subsystem dependencies.
     this.turret = turret;
-
     addRequirements(turret);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    turret.setState(TurretState.TARGETING);
+    turret.setState(TurretState.DISABLED);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    turret.zero();
   }
 
   // Called once the command ends or is interrupted.

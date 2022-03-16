@@ -60,9 +60,9 @@ public class Turret extends SubsystemBase {
 
     offset = 0;
 
-    turret.config_kP(0, Constants.Turret.kP);
-    turret.config_kI(0, Constants.Turret.kI);
-    turret.config_kD(0, Constants.Turret.kD);
+    turret.config_kP(0, 0.05);
+    turret.config_kI(0, 0);
+    turret.config_kD(0, 0.1);
 
     resetEncoder();
 
@@ -267,5 +267,9 @@ public class Turret extends SubsystemBase {
     SmartDashboard.putString("Turret State", state.toString());
     SmartDashboard.putNumber("Turret Output", turret.getMotorOutputPercent());
     SmartDashboard.putNumber("Direction", searchDirection);
+  }
+
+  public void zero() {
+    turret.set(ControlMode.Position, 0);
   }
 }
