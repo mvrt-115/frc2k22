@@ -24,7 +24,7 @@ public class Storage extends SubsystemBase  {
   private boolean overriden;
   private double lastTime;
   private boolean readyShoot = false;
-  private boolean intaking = true;
+  private boolean intaking = false;
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
   public final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
   private double stopIntakeTime = -1;

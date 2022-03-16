@@ -28,6 +28,7 @@ public class DisableTurret extends CommandBase {
   @Override
   public void execute() {
     turret.setState(TurretState.DISABLED);
+    turret.setPercentOutput(0);
   }
 
   // Called once the command ends or is interrupted.

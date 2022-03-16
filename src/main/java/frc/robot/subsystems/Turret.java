@@ -42,7 +42,6 @@ public class Turret extends SubsystemBase {
   private boolean searchFlipping;
 
   private double offset;
-
   /** Creates a new Turret. */
   public Turret(Limelight limelight) {
     turret = TalonFactory.createTalonFX(5, true);
@@ -68,14 +67,11 @@ public class Turret extends SubsystemBase {
     resetEncoder();
 
     turret.selectProfileSlot(0, 0);
-
-    // turret.configForwardSoftLimitEnable(true, 0);
-    // turret.configReverseSoftLimitEnable(true, 0);
   }
 
   @Override
   public void periodic() {
-    // log();
+    log();
 
     // if(getCurrentPositionDegrees() >= Constants.Turret.kMaxAngle) {
     //   targetDegrees = Constants.Turret.kMinAngle + 20;
@@ -87,7 +83,8 @@ public class Turret extends SubsystemBase {
         
      switch(state) {
        case DISABLED:
-         break;
+         turret.set(ControlMode.PercentOutput, 0);
+         return;
        case FLIPPING:
          flip();
          break;
@@ -101,16 +98,6 @@ public class Turret extends SubsystemBase {
      }
      
      updateLastVariables();
-
-     if(getCurrentPositionDegrees() < Constants.Turret.kMinAngle - 20 && turret.getMotorOutputPercent() < 0) {
-       turret.set(ControlMode.PercentOutput, 0);
-     } else if(getCurrentPositionDegrees() > Constants.Turret.kMinAngle + 20 && turret.getMotorOutputPercent() > 0) {
-      turret.set(ControlMode.PercentOutput, 0);
-     }
-
-    // target();
-
-    SmartDashboard.putString("Turret State", state.toString());
   }
 
   /**
@@ -126,7 +113,7 @@ public class Turret extends SubsystemBase {
       (Constants.Turret.kI * area) + 
       (((error - lastError) / (time - lastTime)) * Constants.Turret.kD);
 
-    if(Math.abs((limelight.getHorizontalOffset() + offset)) > 4 && limelight.targetsFound()) {
+    if(Math.abs((limelight.getHorizontalOffset() + offset)) > 7 && limelight.targetsFound()) {
       if(output < 0 && getCurrentPositionDegrees() < Constants.Turret.kMinAngle)
         // setState(TurretState.FLIPPING);
         output = 0;
@@ -134,11 +121,13 @@ public class Turret extends SubsystemBase {
         // setState(TurretState.FLIPPING);
         output = 0;
 
-      turret.set(ControlMode.PercentOutput, output);
-    } else {
-      turret.set(ControlMode.PercentOutput, 0);
-      setState(TurretState.CAN_SHOOT);
-    }
+      output = Math.min(1, Math.max(-1, output));
+      
+      setPercentOutput(output);
+    } else 
+      setPercentOutput(0);
+      
+    
   }
 
   /**

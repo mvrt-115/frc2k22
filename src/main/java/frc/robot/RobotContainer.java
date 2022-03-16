@@ -7,16 +7,12 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-//import frc.robot.commands.SetRPM;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
 import frc.robot.commands.telescopic.TelescopicManual;
 import frc.robot.commands.telescopic.TelescopicRatchet;
 import frc.robot.util.Limelight;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.util.RollingAverage;
@@ -113,7 +109,7 @@ public class RobotContainer {
     extend.whenPressed(new UnratchetExtend(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed))
     .whenReleased(new TelescopicManual(climber, this::isRetractPressed, 0).alongWith(new TelescopicRatchet(climber, Constants.Climber.kServoRatchet))); 
 
-    disableTurret.whenPressed(new DisableTurret(turret));
+    disableTurret.whenPressed(new DisableTurret(turret)).whenReleased(new FindTarget(turret));
   }
   
   /////////////////////////////////////////////////GETTERS//////////////////////////////////////////////
