@@ -59,7 +59,7 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     driverJoystick = new Joystick(0);
-    operatorJoystick = new Joystick(1);
+    operatorJoystick = new Joystick(1); //MAKE SURE IT IS ON D MODE (so that the right trigger acts as a button)
 
     shoot = new JoystickButton(driverJoystick, 8);
     pivot = new JoystickButton(driverJoystick, 6);
@@ -105,7 +105,7 @@ public class RobotContainer {
 
     //retract.whenPressed(new TelescopicManual(climber, this::isRetractPressed, Constants.Climber.kTelescopicRetractManualSpeed))
     retract.whenPressed(new RatchetRetract(climber, this::isRetractPressed, Constants.Climber.kTelescopicRetractManualSpeed))
-      .whenReleased(new TelescopicManual(climber, this::isRetractPressed, 0).alongWith(new TelescopicRatchet(climber, Constants.Climber.kServoRatchet)));
+      .whenReleased(new TelescopicManual(climber, this::isRetractPressed, 0));
 
     //extend.whenPressed(new TelescopicManual(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed))
     extend.whenPressed(new UnratchetExtend(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed))

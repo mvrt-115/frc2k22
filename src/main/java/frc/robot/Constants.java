@@ -200,12 +200,12 @@ public final class Constants {
         //NEED TO BE CHANGED WHEN FULLY WIRED OR TESTING
         //motors
         //public static final int kPivotID = 0; // 22
-        public static final int kRightTelescopicID = 42; // 6
-        public static final int kLeftTelescopicID = 40; // 7
+        public static final int kRightTelescopicID = 6; // 6
+        public static final int kLeftTelescopicID = 7; // 7
 
         // Servo Contants
-        public static final int kRightServoID = 6; //Check (analog input) 9
-        public static final int kLeftServoID = 7; // Check (analog input) 8 
+        public static final int kRightServoID = 8; //Check (analog input) 9
+        public static final int kLeftServoID = 9; // Check (analog input) 8 
 
         //inductive proximity sensors
         public static final int kPivotProximityChannel = 0;
@@ -223,9 +223,9 @@ public final class Constants {
         public static final double kPotentiometerInitialOffset = 0;
 
         //Math constants for calculating positions
-        public static final double kTicksPerRotation = 0;
+        public static final double kTicksPerRotation = 2048;
         public static final double kPivotGearRatio = 0;
-        public static final double kTelescopicGearRatio = 0;
+        public static final double kTelescopicGearRatio = 12 * 0.709677; //CHECK IF THIS WORKS!!!!!!!!!!!!!!!!!
         
         //PID constants for each motor
         //telescopic arm extension/retraction PID constants
@@ -243,28 +243,29 @@ public final class Constants {
         public static final double kFeedForwardPivot = 0;
 
         //speeds for manual climbing
-        public static final double kTelescopicRetractManualSpeed = -0.1; // 0.25
-        public static final double kTelescopicExtendManualSpeed = 0.1; // 0.2
+        public static final double kTelescopicRetractManualSpeed = -0.4; // 0.25
+        public static final double kTelescopicExtendManualSpeed = 0.6; // 0.2
         public static final double kPivotManualSpeed = 0.1;
 
         // servo ratchet and unratchet values
         public static final double kServoRatchet = 0; // check
         public static final double kServoUnRatchet = 0.15; // check
         public static final double kOffsetError = 0.05; // check
-        public static final double kServoError = 0.05; // check
+        public static final double kServoError = 0.1; // check
         public static final double kMotorInitialUnratchetSpeed = 0.03; //test
         public static final double kMotorDownTime = 0.1; //seconds
 
         //manual position constants
-        public static final double kTelescopicFullExtend = 0; //inches
-        public static final double kTelescopicFullRetract = 0; //inches
+        public static final double kTelescopicFullExtend = 62; //inches
+        public static final double kTelescopicFullRetract = 1; //inches
+        public static final double kTelescopicDownwardLimit = 50; //inches
+        public static final double kTelescopicDownwardLimitTicks = MathUtils.inchesToTicks(kTelescopicDownwardLimit); //inches
         public static final double kPivotStowingPos = 32; //degrees
         public static final double kPivotMaxForwardPos = 30; //degrees
         public static final double kPivotMaxReversePos = -3; //degrees
         public static final double kApproachRungSpeed = 0.05; //PercentOutput
 
-        //button constants
-        public static final double kAxisThreshold = 0.2;
+        //public static final double kClimberDisableTime = 30; //seconds
 
         //31" in height of pivot arm
         //30" min 62" max of telescopic 
