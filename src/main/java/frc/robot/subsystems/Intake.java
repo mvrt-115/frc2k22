@@ -67,12 +67,13 @@ public class Intake extends SubsystemBase {
         pivotDown();
         break;
       case UP:
-        stopPivot(); // to keep the intake up
+        // stopPivot(); // to keep the intake up
+        pivotUp();
         stopIntake();
         break;
     }
 
-    // log();
+    log();
   }
 
   /**
@@ -128,8 +129,7 @@ public class Intake extends SubsystemBase {
     }
     else
     {
-      pivotMotor.set(ControlMode.Position, Constants.Intake.kTICKS_TO_BOTTOM, DemandType.ArbitraryFeedForward, 
-      feedForward);
+      pivotMotor.set(ControlMode.Position, Constants.Intake.kTICKS_TO_BOTTOM, DemandType.ArbitraryFeedForward, -0.1);
     }
   }
 
@@ -189,8 +189,7 @@ public class Intake extends SubsystemBase {
     }
     else
     {
-      pivotMotor.set(ControlMode.Position, Constants.Intake.kTICKS_TO_TOP, DemandType.ArbitraryFeedForward, 
-      feedForward);
+      pivotMotor.set(ControlMode.Position, Constants.Intake.kTICKS_TO_TOP, DemandType.ArbitraryFeedForward, -0.1);
     }
   }
 
@@ -208,6 +207,6 @@ public class Intake extends SubsystemBase {
    * @return The current angle of the pivot motor
    */
   public double getAngle() {
-    return 90 + (getCurrentPos() / 15000 * 100);
+    return 90 + (getCurrentPos() / (2048 * 50));
   }
 }
