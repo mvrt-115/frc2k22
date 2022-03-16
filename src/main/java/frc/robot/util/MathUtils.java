@@ -180,7 +180,7 @@ public class MathUtils {
    * @return The tick value converted to meters 
    */
   public static double ticksToMeters(double ticks) {
-    return ticks;
+    return ticks / Constants.Climber.kTicksPerRotation * Constants.Climber.kTelescopicGearRatio;
   }
 
   /**
@@ -189,7 +189,7 @@ public class MathUtils {
    * @return        the amount of ticks in that distance
    */
   public static double metersToTicks(double meters) {
-    return meters;
+    return meters / Constants.Climber.kTelescopicGearRatio * Constants.Climber.kTicksPerRotation;
   }
 
   /**

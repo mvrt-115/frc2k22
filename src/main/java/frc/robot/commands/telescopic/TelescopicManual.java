@@ -6,6 +6,7 @@ package frc.robot.commands.telescopic;
 
 import java.util.function.Supplier;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Climber;
@@ -34,6 +35,7 @@ public class TelescopicManual extends CommandBase {
     @Override
     public void execute() {
       climber.setTelescopicSpeed(speed);
+      SmartDashboard.putNumber("climber pos", climber.getTelescopicPosition());
     }
 
     // Called once the command ends or is interrupted.
@@ -49,7 +51,7 @@ public class TelescopicManual extends CommandBase {
      */
     @Override
     public boolean isFinished() {
-        return !button.get() && ((speed < 0 && Constants.Climber.kTelescopicFullRetract >= climber.getTelescopicPosition()) 
-        || (speed > 0 && Constants.Climber.kTelescopicFullExtend <= climber.getTelescopicPosition()));
+        return !button.get() || ((speed < 0 && climber.getTelescopicPosition() <= Constants.Climber.kTelescopicDownwardLimit) 
+        || (speed > 0 && climber.getTelescopicPosition() >= Constants.Climber.kTelescopicFullExtend));
     }
 }

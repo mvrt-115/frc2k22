@@ -45,11 +45,15 @@ public class Climber extends SubsystemBase {
         leftTelescopic = TalonFactory.createTalonFX(Constants.Climber.kLeftTelescopicID, false);
         rightTelescopic = TalonFactory.createTalonFX(Constants.Climber.kRightTelescopicID, false);
 
+        resetTelescopicEncoder();
+
         leftTelescopic.setInverted(TalonFXInvertType.Clockwise);
         rightTelescopic.setInverted(TalonFXInvertType.Clockwise);
 
         leftServo = new Servo(Constants.Climber.kLeftServoID);
         rightServo = new Servo(Constants.Climber.kRightServoID); 
+
+        setServoTurn(0);
 
 
         //reconfiguring all motors with PID constants
@@ -77,7 +81,8 @@ public class Climber extends SubsystemBase {
      * @param speed speed at which the motor needs to be run
      */
     public void setTelescopicSpeed(double speed) {
-        leftTelescopic.set(ControlMode.PercentOutput, speed);
+        if(!(getTelescopicPosition() >= Constants.Climber.kTelescopicFullRetract && speed < 0))
+            leftTelescopic.set(ControlMode.PercentOutput, speed);
     }
 
     /**
@@ -125,7 +130,13 @@ public class Climber extends SubsystemBase {
      */
     public double getTelescopicPosition() {
         double average = (getLeftTelescopicEncoderValue() + getRightTelescopicEncoderValue()) / 2;
-        return MathUtils.ticksToInches(average);
+        return average;
+    }
+
+    public void resetTelescopicEncoder()
+    {
+        leftTelescopic.setSelectedSensorPosition(0);
+        rightTelescopic.setSelectedSensorPosition(0);
     }
 
     /**
