@@ -85,7 +85,7 @@ public final class Constants {
         public static final int kROLLER_ID = 21; // change later
 
 
-        public static final double kWHEELS_SPEED = 0;//.7;
+        public static final double kWHEELS_SPEED = .7;
 
         //public static final double kPIVOT_SPEED = -0.4; // speed of intake when going up or down
         public static final double kPIVOT_STOP_SPEED_WHEN_UP = 0; // speed of intake to keep it up
