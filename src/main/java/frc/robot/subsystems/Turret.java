@@ -42,7 +42,6 @@ public class Turret extends SubsystemBase {
   private boolean searchFlipping;
 
   private double offset;
-
   /** Creates a new Turret. */
   public Turret(Limelight limelight) {
     turret = TalonFactory.createTalonFX(5, true);
@@ -61,21 +60,18 @@ public class Turret extends SubsystemBase {
 
     offset = 0;
 
-    turret.config_kP(0, 0.1);//Constants.Turret.kPLarge);
-    turret.config_kI(0, 0);//Constants.Turret.kI);
-    turret.config_kD(0, 0);//Constants.Turret.kD);
+    turret.config_kP(0, Constants.Turret.kP);
+    turret.config_kI(0, Constants.Turret.kI);
+    turret.config_kD(0, Constants.Turret.kD);
 
     resetEncoder();
 
     turret.selectProfileSlot(0, 0);
-
-    // turret.configForwardSoftLimitEnable(true, 0);
-    // turret.configReverseSoftLimitEnable(true, 0);
   }
 
   @Override
   public void periodic() {
-    // log();
+    log();
 
     // if(getCurrentPositionDegrees() >= Constants.Turret.kMaxAngle) {
     //   targetDegrees = Constants.Turret.kMinAngle + 20;
@@ -84,10 +80,11 @@ public class Turret extends SubsystemBase {
     //   targetDegrees = Constants.Turret.kMaxAngle - 20;
     //   setState(TurretState.FLIPPING);
     // }
-    
+        
      switch(state) {
        case DISABLED:
-         break;
+         turret.set(ControlMode.PercentOutput, 0);
+         return;
        case FLIPPING:
          flip();
          break;
@@ -97,19 +94,10 @@ public class Turret extends SubsystemBase {
        case CAN_SHOOT:
        case TARGETING:
          target();
-         updateLastVariables();
          break;
-     }      
-
-     if(getCurrentPositionDegrees() < Constants.Turret.kMinAngle - 20 && turret.getMotorOutputPercent() < 0) {
-       turret.set(ControlMode.PercentOutput, 0);
-     } else if(getCurrentPositionDegrees() > Constants.Turret.kMinAngle + 20 && turret.getMotorOutputPercent() > 0) {
-      turret.set(ControlMode.PercentOutput, 0);
      }
-
-    // target();
-
-    SmartDashboard.putString("Turret State", state.toString());
+     
+     updateLastVariables();
   }
 
   /**
@@ -125,17 +113,21 @@ public class Turret extends SubsystemBase {
       (Constants.Turret.kI * area) + 
       (((error - lastError) / (time - lastTime)) * Constants.Turret.kD);
 
-    if(Math.abs((limelight.getHorizontalOffset() + offset)) > 4 && limelight.targetsFound()) {
+    if(Math.abs((limelight.getHorizontalOffset() + offset)) > 7 && limelight.targetsFound()) {
       if(output < 0 && getCurrentPositionDegrees() < Constants.Turret.kMinAngle)
-        setState(TurretState.FLIPPING);
+        // setState(TurretState.FLIPPING);
+        output = 0;
       else if(output > 0 && getCurrentPositionDegrees() > Constants.Turret.kMaxAngle)
-        setState(TurretState.FLIPPING);
+        // setState(TurretState.FLIPPING);
+        output = 0;
 
-      turret.set(ControlMode.PercentOutput, output);
-    } else {
-      turret.set(ControlMode.PercentOutput, 0);
-      setState(TurretState.CAN_SHOOT);
-    }
+      output = Math.min(1, Math.max(-1, output));
+      
+      setPercentOutput(output);
+    } else 
+      setPercentOutput(0);
+      
+    
   }
 
   /**

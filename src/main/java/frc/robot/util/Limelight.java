@@ -35,7 +35,7 @@ public class Limelight extends SubsystemBase {
   public Limelight() {
     
     limelight = NetworkTableInstance.getDefault().getTable("limelight");
-    tx = new RollingAverage(50);
+    tx = new RollingAverage(5);
     ty = new RollingAverage(5);
     
     setLED(LED_STATE.DEFAULT);

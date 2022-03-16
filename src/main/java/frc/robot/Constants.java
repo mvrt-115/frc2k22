@@ -78,14 +78,14 @@ public final class Constants {
 
         public static final double kTICKS_TO_BOTTOM = 15000;
         // the # of ticks it takes to be at the bottom when pivoting
-        public static final double kTICKS_TO_TOP = -17000; // the # of ticks it takes to be at the top when pivoting
+        public static final double kTICKS_TO_TOP = 0; // the # of ticks it takes to be at the top when pivoting
 
 
         public static final int kPIVOT_ID = 10; // change later
         public static final int kROLLER_ID = 21; // change later
 
 
-        public static final double kWHEELS_SPEED = .9;
+        public static final double kWHEELS_SPEED = .7;
 
         //public static final double kPIVOT_SPEED = -0.4; // speed of intake when going up or down
         public static final double kPIVOT_STOP_SPEED_WHEN_UP = 0; // speed of intake to keep it up
@@ -136,11 +136,11 @@ public final class Constants {
         public static final double DHood = 6.9;
         public static final double FHood = 0.058;
         public static final double RADIUS = 2;
-        public static final double ACCEPTABLE_ERROR = 50; //100;
+        public static final double ACCEPTABLE_ERROR = 100; //100;
         public static final double MAX_VOLTAGE_COMPENSATION = 10;
         public static final double TICKS_PER_REVOLUTION = 2048;
         public static final int NUM_AVG = 5;
-        public static final double GEAR_RATIO = 1; // Can change
+        public static final double GEAR_RATIO = 25 / 16;
     }
 
 
@@ -186,13 +186,13 @@ public final class Constants {
         // public static final double kP = 0.05;
         // public static final double kI = 0;
         // public static final double kD = 0.03;  // try with 0.007
-        public static final double kP = 0.2;
+        public static final double kP = 1;
         public static final double kI = 0;
-        public static final double kD = 0.4;//-0.05;//16;
+        public static final double kD = 1.75;//-0.05;//16;
         public static final double kTurnSpeed = 0.3;
     }
 
-    public static class Climber {
+        public static class Climber {
         //constants for the climber arms 
         // change values later
 

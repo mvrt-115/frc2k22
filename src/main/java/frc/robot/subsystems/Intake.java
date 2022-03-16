@@ -125,7 +125,6 @@ public class Intake extends SubsystemBase {
     if(isAtBottom())
     {
       state = IntakeState.INTAKING;
-     pivotMotor.setSelectedSensorPosition(0);
     }
     else
     {
@@ -187,7 +186,6 @@ public class Intake extends SubsystemBase {
     if(isAtTop())
     {
       state = IntakeState.UP;
-      pivotMotor.setSelectedSensorPosition(0);
     }
     else
     {

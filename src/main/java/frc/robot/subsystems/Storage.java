@@ -94,19 +94,19 @@ public class Storage extends SubsystemBase  {
       // when there is one ball run until it passes first breakbeam
       case 1:
         if(!breakbeamBott.get())
-          runMotor(0.9);
+          runMotor(0.6);
         else 
           runMotor(0);
         break;
       case 2:
         if(breakbeamTop.get())
-          runMotor(0.9);
+          runMotor(0.6);
         else 
           runMotor(0);
         break;
       case 0: 
         if(intaking)
-          runMotor(0.7);
+          runMotor(0.6);
         else
           runMotor(0);
       default:
@@ -115,7 +115,6 @@ public class Storage extends SubsystemBase  {
   }
 
 
-  public BaseTalon getMotor(){ return motor; }
 
   public void runMotor(double out) {
     motor.set(ControlMode.PercentOutput, out);

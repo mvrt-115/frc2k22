@@ -7,8 +7,6 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-//import frc.robot.commands.SetRPM;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
 import frc.robot.commands.telescopic.TelescopicManual;
@@ -32,7 +30,7 @@ public class RobotContainer {
   private Joystick driverJoystick; //Joysticks
   private Joystick operatorJoystick;
   
-  private JoystickButton pivot; //buttons
+  private JoystickButton  pivot; //buttons
   private JoystickButton alignDrivetrain;
 
   public final Drivetrain drivetrain = new Drivetrain();
@@ -54,7 +52,7 @@ public class RobotContainer {
   private JoystickButton quickturn;
   private JoystickButton shoot;
 
-
+  public JoystickButton disableTurret;
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -62,8 +60,8 @@ public class RobotContainer {
     driverJoystick = new Joystick(0);
     operatorJoystick = new Joystick(1); //MAKE SURE IT IS ON D MODE (so that the right trigger acts as a button)
 
-    shoot = new JoystickButton(driverJoystick, 2);
-    pivot = new JoystickButton(driverJoystick, 3);
+    shoot = new JoystickButton(driverJoystick, 8);
+    pivot = new JoystickButton(driverJoystick, 6);
     alignDrivetrain = new JoystickButton(driverJoystick, 6);
 
     quickturn = new JoystickButton(driverJoystick, 5);
@@ -72,6 +70,8 @@ public class RobotContainer {
 
     extend =  new JoystickButton(operatorJoystick, 4);
     retract = new JoystickButton(operatorJoystick, 8);
+
+    disableTurret = new JoystickButton(driverJoystick, 2);
     
     // Configure the button bindings
     configureButtonBindings();
@@ -86,17 +86,18 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // storage.setDefaultCommand(new TrackBalls(storage, shooter, alliance));
     // the :: syntax allows us to pass in methods of a class as variables so that the command can continuously access input values
-    //drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
+    
+    drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
 
     // storage.setDefaultCommand(new TrackBalls(storage, shooter));
     turret.setDefaultCommand(new FindTarget(turret));
     
-    // shoot.whenPressed(new SetRPM(shooter, storage, shoot)).whenReleased(new StopShooter(shooter, storage));
+    shoot.whenPressed(new SetRPM(shooter, storage, shoot)).whenReleased(new StopShooter(shooter, storage));
 
-    SmartDashboard.putData("Testing Shooter", new SetRPM(shooter, storage, true));
+    // SmartDashboard.putData("Testing Shooter", new SetRPM(shooter, storage, true));
     pivot.whenPressed(new Pivot(intake,storage));
     
-    alignDrivetrain.whenPressed(new AlignIntakeToBall(drivetrain, true)).whenReleased(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
+    // alignDrivetrain.whenPressed(new AlignIntakeToBall(drivetrain, true)).whenReleased(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
     /* when the retract and extend buttons are pressed then the telescopic manual command is called accordingly with 
        the given value */
 
@@ -106,9 +107,11 @@ public class RobotContainer {
 
     //extend.whenPressed(new TelescopicManual(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed))
     extend.whenPressed(new UnratchetExtend(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed))
-    .whenReleased(new TelescopicManual(climber, this::isRetractPressed, 0).alongWith(new TelescopicRatchet(climber, Constants.Climber.kServoRatchet)));  
-  }
+    .whenReleased(new TelescopicManual(climber, this::isRetractPressed, 0).alongWith(new TelescopicRatchet(climber, Constants.Climber.kServoRatchet))); 
 
+    disableTurret.whenPressed(new DisableTurret(turret)).whenReleased(new FindTarget(turret));
+  }
+  
   /////////////////////////////////////////////////GETTERS//////////////////////////////////////////////
 
   /**
@@ -118,7 +121,7 @@ public class RobotContainer {
    * @return value from [-1, 1] that is used for input for the the robot forward or backwards movement
    */
   public double getThrottle() {
-    throttle.updateValue(-driverJoystick.getRawAxis(5) * 1);
+    throttle.updateValue(-driverJoystick.getRawAxis(3) * 1);
     return throttle.getAverage();
   }
   
