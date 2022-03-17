@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.MathUtils;
@@ -203,44 +204,6 @@ public class Climber extends SubsystemBase {
     // This method will be called once per scheduler run
     @Override
     public void periodic() {
-    //     // checks to see if the pivot limit switch has been contacted and then sets the state to the pivot limit state
-    //     if(RobotContainer.PIVOT_EXISTS)
-    //     if (getLimitSwitch(pivotLimit)) 
-    //         setPivotState(ClimberState.PIVOT_LIMIT);
-            
-    //     // checks to see if the telescopic limit swtiches have been constacted and then sets the state to the telescopic limit state
-    //     if (getLimitSwitch(rightTelescopicLimit) && getLimitSwitch(leftTelescopicLimit))
-    //         setTelescopicState(ClimberState.TELESCOPIC_LIMIT);
-
-    //     /* check to see if the telescopic proximity sense the rung and checks to make sure that telescopic limit swtiches are touched
-    //      *  and then sets the telescopic state to the telescopic proximity (telescopic amrs on rung) */
-    //     if (getProximity(leftTelescopicProximity) && getProximity(rightTelescopicProximity) && getPivotState() == ClimberState.TELESCOPIC_LIMIT) 
-    //         setTelescopicState(ClimberState.TELESCOPIC_PROXIMITY);
-
-    //     /* checks to see if the pivot proximity sense the rung and then checks to see if the previous state is set to the pivot limit switch
-    //      * being contacted and then the pivot proximity state is set (pivot arms on rung) */
-    //     if(RobotContainer.PIVOT_EXISTS && (pivotProximity.get()) && getPivotState() == ClimberState.PIVOT_LIMIT) 
-    //       setPivotState(ClimberState.PIVOT_PROXIMITY);
-
-    //     /* if the pivot proximity has not sensed the rung and the pivot state is the proximity state then the pivot state is set as none 
-    //      * (pivot not on rung) */
-    //     if(RobotContainer.PIVOT_EXISTS &&!getProximity(pivotProximity) && getPivotState() == ClimberState.PIVOT_PROXIMITY) 
-    //         setPivotState(ClimberState.NONE);
-            
-    //     /* if the telescopic proximity sensors have not sensed the rung and the telescopic state is the proximity state then the 
-    //      *  telescopic state is set to none (telescopic not on rung)
-    //     */
-    //     if(!getProximity(rightTelescopicProximity) &&!getProximity(leftTelescopicProximity) 
-    //         && getPivotState() == ClimberState.TELESCOPIC_PROXIMITY) 
-    //           setTelescopicState(ClimberState.NONE);
-
-    //     if(Math.abs(leftTelescopic.getMotorOutputPercent()) <= Constants.Climber.kServoOnThreshold){
-    //         leftServo.setAngle(Constants.Climber.kInitialServoAngle);
-    //         rightServo.setAngle(Constants.Climber.kInitialServoAngle);
-    //     }
-    //     else {
-    //         leftServo.setAngle(Constants.Climber.kServoTurn);
-    //         rightServo.setAngle(Constants.Climber.kServoTurn);
-    //     }
+        SmartDashboard.getNumber("max height of arms (ticks)", getLeftTelescopicEncoderValue());
     }
 }
