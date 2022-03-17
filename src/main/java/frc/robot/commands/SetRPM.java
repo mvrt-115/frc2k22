@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -30,10 +31,11 @@ public class SetRPM extends CommandBase {
   }
 
 
-  public SetRPM(Shooter shooter, Storage storage, JoystickButton button) {
+  public SetRPM(Shooter shooter, Storage storage, Turret turret, JoystickButton button) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.shooter = shooter;
     this.storage = storage;
+    this.turret = turret;
     given = false;
     this.button = button;
     addRequirements(shooter, storage);
@@ -84,15 +86,16 @@ public class SetRPM extends CommandBase {
     if(given)
       rpm = shooter.getCurrentRPM();
     // shooter.setTargetRPM(rpm);
-    // if(!storage.getBallColor().trim().equals(alliance)){
+    // if(!storage.getBallColor().trim().equals(DriverStation.getAlliance().toString()) && storage.isTopBreakbeamBroken()){
     //   shooter.setTargetRPM(600);
     // }
     // else {
     shooter.setTargetRPM(rpm);
+    // }
 
     if(rpm == 0)
        storage.runMotor(0);
-    if(shooter.getState() == ShooterState.ATSPEED && turret.canShoot()) {
+    if(shooter.getState() == ShooterState.ATSPEED) {
       storage.runMotor(1);
     } else
       storage.runMotor(0);

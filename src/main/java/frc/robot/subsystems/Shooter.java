@@ -28,7 +28,7 @@ public class Shooter extends SubsystemBase {
     OFF, ADJUSTING, ATPOSITION;
   }
 
-  private final double MAX_RPM = 5240;
+  private final double MAX_RPM = 5200;
 
   private final int LEADER_ID = 12;
 

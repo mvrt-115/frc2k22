@@ -42,6 +42,10 @@ public class Storage extends SubsystemBase  {
     // intaking = false;
   }
 
+  public boolean isTopBreakbeamBroken() {
+    return !breakbeamTop.get();
+  }
+
   public void setIntaking(boolean intaking) {
     if(!intaking)
       stopIntakeTime = Timer.getFPGATimestamp();
@@ -105,10 +109,10 @@ public class Storage extends SubsystemBase  {
           runMotor(0);
         break;
       case 0: 
-        if(intaking)
+        // if(intaking)
           runMotor(0.6);
-        else
-          runMotor(0);
+        // else
+        //   runMotor(0);
       default:
         break;
     }

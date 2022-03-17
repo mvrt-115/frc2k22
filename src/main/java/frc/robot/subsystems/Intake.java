@@ -33,7 +33,7 @@ public class Intake extends SubsystemBase {
     pivotState = true;
     state = IntakeState.UP;
 
-    intakeMotor = TalonFactory.createTalonSRX(Constants.Intake.kROLLER_ID, true); // change motor IDs from Constants later
+    intakeMotor = TalonFactory.createTalonSRX(Constants.Intake.kROLLER_ID, false); // change motor IDs from Constants later
 
     pivotMotor = TalonFactory.createTalonFX(Constants.Intake.kPIVOT_ID, true); // change motor IDs from Constants later
     //pivotMotor.setInverted(true);
@@ -129,7 +129,7 @@ public class Intake extends SubsystemBase {
     }
     else
     {
-      pivotMotor.set(ControlMode.Position, Constants.Intake.kTICKS_TO_BOTTOM, DemandType.ArbitraryFeedForward, -0.1);
+      pivotMotor.set(ControlMode.Position, Constants.Intake.kTICKS_TO_BOTTOM, DemandType.ArbitraryFeedForward, 0);
     }
   }
 

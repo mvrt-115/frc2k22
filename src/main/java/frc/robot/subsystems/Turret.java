@@ -13,8 +13,10 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 // import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.commands.ZeroTurret;
 import frc.robot.util.Limelight;
 import frc.robot.util.MathUtils;
 import frc.robot.util.TalonFactory;
@@ -30,6 +32,8 @@ public class Turret extends SubsystemBase {
   private TalonFX turret;
   private Limelight limelight;
   private DigitalInput magLimit;
+  private boolean atEdgeRight = false;
+  private boolean atEdgeLeft = false;
 
   private TurretState state;
 
@@ -96,6 +100,9 @@ public class Turret extends SubsystemBase {
          target();
          break;
      }
+
+     SmartDashboard.putBoolean("Left Edge Turret", atEdgeLeft);
+     SmartDashboard.putBoolean("Right Edge Turret", atEdgeRight);
      
      updateLastVariables();
   }
@@ -114,18 +121,29 @@ public class Turret extends SubsystemBase {
       (((error - lastError) / (time - lastTime)) * Constants.Turret.kD);
 
     if(Math.abs((limelight.getHorizontalOffset() + offset)) > 7 && limelight.targetsFound()) {
-      if(output < 0 && getCurrentPositionDegrees() < Constants.Turret.kMinAngle)
-        // setState(TurretState.FLIPPING);
+      if(output < 0 && getCurrentPositionDegrees() < Constants.Turret.kMinAngle) {
         output = 0;
-      else if(output > 0 && getCurrentPositionDegrees() > Constants.Turret.kMaxAngle)
+        atEdgeRight = true;
+      }
         // setState(TurretState.FLIPPING);
-        output = 0;
+        
+      else if(output > 0 && getCurrentPositionDegrees() > Constants.Turret.kMaxAngle) {
+         output = 0;
+         atEdgeLeft = true;
+      } else
+        atEdgeRight = false;
+        atEdgeLeft = false;
+        // setState(TurretState.FLIPPING);
+       
 
       output = Math.min(1, Math.max(-1, output));
       
       setPercentOutput(output);
-    } else 
-      setPercentOutput(0);
+    } else {
+
+      // setPercentOutput(0);
+      CommandScheduler.getInstance().schedule(new ZeroTurret(this));
+    }
       
     
   }

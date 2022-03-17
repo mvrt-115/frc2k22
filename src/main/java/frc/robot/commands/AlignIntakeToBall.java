@@ -31,7 +31,7 @@ public class AlignIntakeToBall extends CommandBase {
   PhotonCamera camera = new PhotonCamera("gloworm");
 
   //create PID controller
-  PIDController throttlePID = new PIDController(0.8, 0.0, 0.0);
+  PIDController throttlePID = new PIDController(1, 0.0, 0.0);
   PIDController turnPID = new PIDController(0.008, 0.0, 0.0);
   
   public AlignIntakeToBall(Drivetrain drivetrain2, boolean _notStopping) 

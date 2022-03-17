@@ -9,11 +9,11 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Storage;
 import frc.robot.subsystems.Intake.IntakeState;
 
-public class Pivot extends CommandBase {
+public class PivotUp extends CommandBase {
   /** Creates a new Pivot. */
   private Intake intake;
   private Storage storage;
-  public Pivot(Intake intake, Storage storage) {
+  public PivotUp(Intake intake, Storage storage) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.intake = intake;
     this.storage=  storage;
@@ -23,8 +23,8 @@ public class Pivot extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    intake.setState(IntakeState.PIVOTING_DOWN);
-    storage.setIntaking(true);
+    intake.setState(IntakeState.PIVOTING_UP);
+    storage.setIntaking(false);
     // if(intake.getPivotState()){
     //   intake.setState(IntakeState.PIVOTING_DOWN);
     //   storage.setIntaking(true);

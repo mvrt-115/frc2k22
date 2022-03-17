@@ -171,8 +171,8 @@ public final class Constants {
     public static class Turret {
         public static final double kGearRatio = 47.142857;
         public static final double kTicksPerRevolution = 2048;
-        public static final double kMinAngle = -200; // degrees
-        public static final double kMaxAngle = 200; // degrees
+        public static final double kMinAngle = -90; // degrees
+        public static final double kMaxAngle = 90; // degrees
         public static final double kLimelightOffset = 40; // degrees
 
         public static final double kEThreshold = 60;
