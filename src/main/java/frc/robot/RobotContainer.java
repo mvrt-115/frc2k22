@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
@@ -115,9 +114,9 @@ public class RobotContainer {
 
     // SmartDashboard.putData("Testing Shooter", new SetRPM(shooter, storage, true));
     pivot.whenPressed(new Pivot(intake,storage)).whenReleased(new PivotUp(intake, storage));
-
-    upManualStorage.whenPressed(new ManualStorage(storage, true, getButton(upManualStorage)));  // true for up
-    downManualStorage.whenPressed(new ManualStorage(storage, false, getButton(downManualStorage))); // false for down
+      
+    upManualStorage.whenPressed(new ManualStorage(storage, true, upManualStorage::get));  // true for up
+    downManualStorage.whenPressed(new ManualStorage(storage, false, downManualStorage::get)); // false for down
     
     // alignDrivetrain.whenPressed(new AlignIntakeToBall(drivetrain, true)).whenReleased(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
     /* when the retract and extend buttons are pressed then the telescopic manual command is called accordingly with 
@@ -146,10 +145,6 @@ public class RobotContainer {
   public double getThrottle() {
     throttle.updateValue(-driverJoystick.getRawAxis(3) * 1);
     return throttle.getAverage();
-  }
-
-  public Supplier<Boolean> getButton (JoystickButton jb) {
-    return jb::get;
   }
   
   /**
