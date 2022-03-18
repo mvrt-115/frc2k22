@@ -28,15 +28,15 @@ public class RunDrive extends CommandBase {
     storage = stor;
     this.shooter = shooter;
     this.turret = turret;
-    new Pivot(in, stor).schedule();
-
+    
   }
-
+  
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     SmartDashboard.putBoolean("running", false);
     start = Timer.getFPGATimestamp();
+    new Pivot(intake, storage).schedule();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
