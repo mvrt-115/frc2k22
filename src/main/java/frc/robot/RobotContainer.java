@@ -10,25 +10,9 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.DisableTurret;
-import frc.robot.commands.FindTarget;
-import frc.robot.commands.ManualStorage;
-import frc.robot.commands.Pivot;
-import frc.robot.commands.PivotUp;
-import frc.robot.commands.RatchetRetract;
-import frc.robot.commands.RunDrive;
-import frc.robot.commands.SetRPM;
-import frc.robot.commands.StopShooter;
-import frc.robot.commands.UnratchetExtend;
-import frc.robot.commands.ZeroTurret;
-import frc.robot.commands.telescopic.TelescopicManual;
-import frc.robot.commands.telescopic.TelescopicRatchet;
-import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Storage;
-import frc.robot.subsystems.Turret;
+import frc.robot.commands.*;
+import frc.robot.commands.telescopic.*;
+import frc.robot.subsystems.*;
 import frc.robot.util.Limelight;
 import frc.robot.util.RollingAverage;
 
@@ -135,7 +119,7 @@ public class RobotContainer {
     // storage.setDefaultCommand(new TrackBalls(storage, shooter, alliance));
     // the :: syntax allows us to pass in methods of a class as variables so that the command can continuously access input values
     // alignDrivetrain.whenPressed(new AlignIntakeToBall(drivetrain, true)).whenReleased(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
-    // drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
+    drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
 
     // storage.setDefaultCommand(new TrackBalls(storage, shooter));
     turret.setDefaultCommand(findTarget);
