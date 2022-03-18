@@ -48,6 +48,6 @@ public class ManualStorage extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return button.get();
+    return !button.get();
   }
 }

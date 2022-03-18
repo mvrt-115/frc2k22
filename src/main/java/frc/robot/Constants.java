@@ -76,7 +76,7 @@ public final class Constants {
     
     public static class Intake{
 
-        public static final double kTICKS_TO_BOTTOM = 11000;
+        public static final double kTICKS_TO_BOTTOM = 21950;
         // the # of ticks it takes to be at the bottom when pivoting
         public static final double kTICKS_TO_TOP = -2000; // the # of ticks it takes to be at the top when pivoting
 

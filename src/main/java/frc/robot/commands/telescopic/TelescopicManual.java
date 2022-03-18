@@ -51,7 +51,6 @@ public class TelescopicManual extends CommandBase {
      */
     @Override
     public boolean isFinished() {
-        return !button.get() || ((speed < 0 && climber.getTelescopicPosition() <= Constants.Climber.kTelescopicDownwardLimit) 
-        || (speed > 0 && climber.getTelescopicPosition() >= Constants.Climber.kTelescopicFullExtend));
+        return !button.get();
     }
 }

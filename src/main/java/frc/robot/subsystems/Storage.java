@@ -36,7 +36,7 @@ public class Storage extends SubsystemBase  {
     prevStateTop = prevStateBott = true; // true is unbroken
     motor = TalonFactory.createTalonSRX(39, true);
     balls = -1;
-    overriden = false;
+    overriden = true;
     lastTime = Timer.getFPGATimestamp();
     lastTopChanged = Timer.getFPGATimestamp();
     // intaking = false;
@@ -55,6 +55,7 @@ public class Storage extends SubsystemBase  {
 
   @Override
   public void periodic()  {
+    runMotor(0.0);
     SmartDashboard.putBoolean("top breakbeam broken", !breakbeamTop.get());
     SmartDashboard.putBoolean("bottom breakbeam broken", !breakbeamBott.get());
     SmartDashboard.putNumber("number of balls", balls);
@@ -125,6 +126,7 @@ public class Storage extends SubsystemBase  {
   }
 
   public int getBalls() { return balls; }
+  public void setBalls(int balls) { this.balls = balls; }
 
   public void setReadyShoot(boolean newShooting){
     readyShoot = newShooting;
