@@ -82,8 +82,9 @@ public class Climber extends SubsystemBase {
      * @param speed speed at which the motor needs to be run
      */
     public void setTelescopicSpeed(double speed) {
-        if(!(getTelescopicPosition() >= Constants.Climber.kTelescopicFullRetract && speed < 0))
+        // if(!(getTelescopicPosition() >= Constants.Climber.kTelescopicFullRetract && speed < 0))
             leftTelescopic.set(ControlMode.PercentOutput, speed);
+            rightTelescopic.set(ControlMode.PercentOutput, speed);
     }
 
     /**

@@ -12,13 +12,17 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.DisableTurret;
 import frc.robot.commands.FindTarget;
-import frc.robot.commands.JoystickDrive;
 import frc.robot.commands.ManualStorage;
 import frc.robot.commands.Pivot;
 import frc.robot.commands.PivotUp;
+import frc.robot.commands.RatchetRetract;
+import frc.robot.commands.RunDrive;
 import frc.robot.commands.SetRPM;
 import frc.robot.commands.StopShooter;
+import frc.robot.commands.UnratchetExtend;
 import frc.robot.commands.ZeroTurret;
+import frc.robot.commands.telescopic.TelescopicManual;
+import frc.robot.commands.telescopic.TelescopicRatchet;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
@@ -83,8 +87,8 @@ public class RobotContainer {
     throttle = new RollingAverage(50);
     wheel = new RollingAverage(15);
 
-    extend =  new JoystickButton(operatorJoystick, 9);
-    retract = new JoystickButton(operatorJoystick, 10);
+    extend =  new JoystickButton(operatorJoystick, 4);
+    retract = new JoystickButton(operatorJoystick, 8);
 
     disableTurret = new JoystickButton(operatorJoystick, 2);
     zeroTurret = new JoystickButton(operatorJoystick, 3);
@@ -105,7 +109,7 @@ public class RobotContainer {
     // storage.setDefaultCommand(new TrackBalls(storage, shooter, alliance));
     // the :: syntax allows us to pass in methods of a class as variables so that the command can continuously access input values
     // alignDrivetrain.whenPressed(new AlignIntakeToBall(drivetrain, true)).whenReleased(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
-    drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
+    // drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
 
     // storage.setDefaultCommand(new TrackBalls(storage, shooter));
     turret.setDefaultCommand(new FindTarget(turret));
@@ -122,13 +126,13 @@ public class RobotContainer {
     /* when the retract and extend buttons are pressed then the telescopic manual command is called accordingly with 
        the given value */
 
-    //retract.whenPressed(new TelescopicManual(climber, this::isRetractPressed, Constants.Climber.kTelescopicRetractManualSpeed))
-    // retract.whenPressed(new RatchetRetract(climber, this::isRetractPressed, Constants.Climber.kTelescopicRetractManualSpeed))
-    //   .whenReleased(new TelescopicManual(climber, this::isRetractPressed, 0));
+    // retract.whenPressed(new TelescopicManual(climber, this::isRetractPressed, Constants.Climber.kTelescopicRetractManualSpeed))
+    retract.whenPressed(new RatchetRetract(climber, this::isRetractPressed, Constants.Climber.kTelescopicRetractManualSpeed))
+      .whenReleased(new TelescopicManual(climber, this::isRetractPressed, 0));
 
-    // //extend.whenPressed(new TelescopicManual(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed))
-    // extend.whenPressed(new UnratchetExtend(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed))
-    // .whenReleased(new TelescopicManual(climber, this::isRetractPressed, 0).alongWith(new TelescopicRatchet(climber, Constants.Climber.kServoRatchet))); 
+    //extend.whenPressed(new TelescopicManual(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed))
+    extend.whenPressed(new UnratchetExtend(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed))
+    .whenReleased(new TelescopicManual(climber, this::isRetractPressed, 0).alongWith(new TelescopicRatchet(climber, Constants.Climber.kServoRatchet))); 
 
     disableTurret.whenPressed(new DisableTurret(turret)).whenReleased(new FindTarget(turret));
     zeroTurret.whenPressed(new ZeroTurret(turret)).whenReleased(new FindTarget(turret));
@@ -189,8 +193,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return null;
-    // return new FiveBallAuton(drivetrain, intake, shooter, storage, null);
+    return new RunDrive(drivetrain, intake, storage, shooter, turret).andThen(new SetRPM(shooter, storage, 3000));
+    // return new Five
 
   }
 
