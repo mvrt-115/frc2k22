@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.AligningAuton;
 import frc.robot.commands.DisableTurret;
 import frc.robot.commands.FindTarget;
 import frc.robot.commands.ManualStorage;
@@ -87,8 +88,8 @@ public class RobotContainer {
     throttle = new RollingAverage(50);
     wheel = new RollingAverage(15);
 
-    extend =  new JoystickButton(operatorJoystick, 4);
-    retract = new JoystickButton(operatorJoystick, 8);
+    extend =  new JoystickButton(operatorJoystick, 9);
+    retract = new JoystickButton(operatorJoystick, 10);
 
     disableTurret = new JoystickButton(operatorJoystick, 2);
     zeroTurret = new JoystickButton(operatorJoystick, 3);
@@ -193,7 +194,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new RunDrive(drivetrain, intake, storage, shooter, turret).andThen(new SetRPM(shooter, storage, 3000));
+    return new AligningAuton(drivetrain, storage, turret, shooter);
 
   }
 
