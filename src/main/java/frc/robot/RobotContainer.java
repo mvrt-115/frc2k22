@@ -54,6 +54,7 @@ public class RobotContainer {
   private final Climber climber = new Climber();
   private final Turret turret = new Turret(limelight);
 
+  
   // climber operator manual buttons
   private JoystickButton extend;
   private JoystickButton retract;
@@ -72,6 +73,18 @@ public class RobotContainer {
 
   public JoystickButton disableTurret;
   public JoystickButton zeroTurret;
+
+  private FindTarget findTarget;
+  private SetRPM setRPM;
+  private StopShooter stopShooter;
+  private Pivot pivotDown;
+  private PivotUp pivotUp;
+  private ManualStorage manualStorageUp;
+  private ManualStorage manualStorageDown;
+  private UnratchetExtend telescopeUp;
+  private RatchetRetract telescopeDown;
+  private TelescopicManual stopClimber;
+  private Command twoBallAuto;
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -94,6 +107,19 @@ public class RobotContainer {
     zeroTurret = new JoystickButton(operatorJoystick, 3);
     upManualStorage = new JoystickButton(operatorJoystick, 5);
     downManualStorage = new JoystickButton(operatorJoystick, 6);
+
+    findTarget = new FindTarget(turret);
+    setRPM = new SetRPM(shooter, storage, turret, shoot);
+    stopShooter = new StopShooter(shooter, storage);
+    pivotDown = new Pivot(intake, storage);
+    pivotUp = new PivotUp(intake, storage);
+    manualStorageUp = new ManualStorage(storage, true, upManualStorage::get);
+    manualStorageDown = new ManualStorage(storage, false, downManualStorage::get);
+    telescopeDown = new RatchetRetract(climber, this::isRetractPressed, Constants.Climber.kTelescopicRetractManualSpeed);
+    telescopeUp = new UnratchetExtend(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed);
+    stopClimber = new TelescopicManual(climber, this::isRetractPressed, 0);
+
+    twoBallAuto = (new RunDrive(drivetrain, 4).andThen(setRPM)).alongWith(pivotDown);
     
     // Configure the button bindings
     configureButtonBindings();
@@ -112,30 +138,30 @@ public class RobotContainer {
     // drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
 
     // storage.setDefaultCommand(new TrackBalls(storage, shooter));
-    turret.setDefaultCommand(new FindTarget(turret));
+    turret.setDefaultCommand(findTarget);
     
-    shoot.whenPressed(new SetRPM(shooter, storage, turret, shoot)).whenReleased(new StopShooter(shooter, storage));
+    shoot.whenPressed(setRPM).whenReleased(stopShooter);
 
     // SmartDashboard.putData("Testing Shooter", new SetRPM(shooter, storage, true));
-    pivot.whenPressed(new Pivot(intake,storage)).whenReleased(new PivotUp(intake, storage));
+    pivot.whenPressed(pivotDown).whenReleased(pivotUp);
       
-    upManualStorage.whenPressed(new ManualStorage(storage, true, upManualStorage::get));  // true for up
-    downManualStorage.whenPressed(new ManualStorage(storage, false, downManualStorage::get)); // false for down
+    upManualStorage.whenPressed(manualStorageUp);  // true for up
+    downManualStorage.whenPressed(manualStorageDown); // false for down
     
     // alignDrivetrain.whenPressed(new AlignIntakeToBall(drivetrain, true)).whenReleased(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
     /* when the retract and extend buttons are pressed then the telescopic manual command is called accordingly with 
        the given value */
 
     // retract.whenPressed(new TelescopicManual(climber, this::isRetractPressed, Constants.Climber.kTelescopicRetractManualSpeed))
-    retract.whenPressed(new RatchetRetract(climber, this::isRetractPressed, Constants.Climber.kTelescopicRetractManualSpeed))
-      .whenReleased(new TelescopicManual(climber, this::isRetractPressed, 0));
+    retract.whenPressed(telescopeDown)
+      .whenReleased(stopClimber);
 
     //extend.whenPressed(new TelescopicManual(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed))
-    extend.whenPressed(new UnratchetExtend(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed))
-    .whenReleased(new TelescopicManual(climber, this::isRetractPressed, 0).alongWith(new TelescopicRatchet(climber, Constants.Climber.kServoRatchet))); 
+    extend.whenPressed(telescopeUp)
+    .whenReleased(stopClimber); 
 
-    disableTurret.whenPressed(new DisableTurret(turret)).whenReleased(new FindTarget(turret));
-    zeroTurret.whenPressed(new ZeroTurret(turret)).whenReleased(new FindTarget(turret));
+    disableTurret.whenPressed(new DisableTurret(turret)).whenReleased(findTarget);
+    zeroTurret.whenPressed(new ZeroTurret(turret)).whenReleased(findTarget);
   }
   
   /////////////////////////////////////////////////GETTERS//////////////////////////////////////////////
@@ -193,8 +219,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new RunDrive(drivetrain, intake, storage, shooter, turret).andThen(new SetRPM(shooter, storage, 3000));
-    // return new Five
+    return twoBallAuto;
 
   }
 

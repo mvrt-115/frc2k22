@@ -28,8 +28,9 @@ public class RatchetRetract extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
 
     // this just allows the telescopic arms to retract and then ratchet
-    // addCommands(
-      new TelescopicManual(climber, buttonState, speed).schedule();
-    // );
+    addCommands(
+      new TelescopicRatchet(climber, Constants.Climber.kServoRatchet).withTimeout(1),
+      new TelescopicManual(climber, buttonState, speed)
+    );
   }
 }

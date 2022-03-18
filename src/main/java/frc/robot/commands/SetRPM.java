@@ -96,6 +96,12 @@ public class SetRPM extends CommandBase {
     if(rpm == 0)
        storage.runMotor(0);
     if(shooter.getState() == ShooterState.ATSPEED) {
+      if(DriverStation.isAutonomous() && !turret.canShoot()) {
+        storage.runMotor(0);
+      }
+      else {
+        storage.runMotor(1);
+      }
       storage.runMotor(1);
     } else
       storage.runMotor(0);

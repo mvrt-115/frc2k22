@@ -8,28 +8,16 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Storage;
-import frc.robot.subsystems.Turret;
 
 public class RunDrive extends CommandBase {
   Drivetrain drivetrain;
-  Intake intake;
-  Storage storage;
-  Timer time;
-  Shooter shooter;
-  Turret turret;
   double start;
+  double time;
   /** Creates a new RunDrive. */
-  public RunDrive(Drivetrain dt, Intake in, Storage stor, Shooter shooter, Turret turret){
+  public RunDrive(Drivetrain dt, double time){
     drivetrain = dt;
-    intake = in;
-    storage = stor;
-    this.shooter = shooter;
-    this.turret = turret;
-    new Pivot(in, stor).schedule();
-
+    this.time = time;
+    addRequirements(drivetrain);
   }
 
   // Called when the command is initially scheduled.
@@ -50,17 +38,13 @@ public class RunDrive extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    SmartDashboard.putBoolean("running", false);
-    new PivotUp(intake, storage).schedule();
     drivetrain.stopDrivetrain();
-    new SetRPM(shooter, storage, 3000).schedule();
 
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(start - Timer.getFPGATimestamp()) > 4;
-    // return false;
+    return Math.abs(start - Timer.getFPGATimestamp()) > time;
   }
 }
