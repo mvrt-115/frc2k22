@@ -58,6 +58,9 @@ public class RobotContainer {
   public JoystickButton disableTurret;
   public JoystickButton zeroTurret;
   private Command twoBallAuto;
+
+  private JoystickButton adjustConstantIncrement;
+  private JoystickButton adjustConstantDecrement;
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -79,6 +82,10 @@ public class RobotContainer {
     zeroTurret = new JoystickButton(operatorJoystick, 3);
     upManualStorage = new JoystickButton(operatorJoystick, 7);
     downManualStorage = new JoystickButton(operatorJoystick, 8);
+
+    adjustConstantIncrement = new JoystickButton(operatorJoystick, 5);
+    adjustConstantDecrement = new JoystickButton(operatorJoystick, 4);
+
 
     twoBallAuto = new ParallelCommandGroup(
       new SequentialCommandGroup(
@@ -132,6 +139,9 @@ public class RobotContainer {
 
     disableTurret.whenPressed(new DisableTurret(turret)).whenReleased(new FindTarget(turret));
     zeroTurret.whenPressed(new ZeroTurret(turret)).whenReleased(new FindTarget(turret));
+
+    adjustConstantIncrement.whenPressed(new AdjustShooterConstant(-0.3));
+    adjustConstantDecrement.whenPressed(new AdjustShooterConstant(0.3));
   }
   
   

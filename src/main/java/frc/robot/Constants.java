@@ -141,7 +141,7 @@ public final class Constants {
         public static final double TICKS_PER_REVOLUTION = 2048;
         public static final int NUM_AVG = 5;
         public static final double GEAR_RATIO = 25 / 16;
-        public static final double LIN_CONST = 0;
+        public static double LIN_CONST = 0;
     }
 
 
