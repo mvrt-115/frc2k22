@@ -27,6 +27,7 @@ public class FindTarget extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    turret.setState(TurretState.TARGETING);
   }
 
   // Called once the command ends or is interrupted.

@@ -17,7 +17,7 @@ public class Pivot extends CommandBase {
     // Use addRequirements() here to declare subsystem dependencies.
     this.intake = intake;
     this.storage=  storage;
-    addRequirements(intake, storage);
+    addRequirements(intake);
   }
 
   // Called when the command is initially scheduled.

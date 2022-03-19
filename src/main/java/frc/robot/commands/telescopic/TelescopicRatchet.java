@@ -13,6 +13,7 @@ public class TelescopicRatchet extends CommandBase {
   
   public Climber climber;
   public double servoTurn;
+  double startTime;
 
   /** Creates a new TelescopicRatchet. */
   public TelescopicRatchet(Climber climber, double servoTurn) {
@@ -24,8 +25,7 @@ public class TelescopicRatchet extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    climber.setTelescopicSpeed(Constants.Climber.kMotorInitialUnratchetSpeed);
-    Timer.delay(Constants.Climber.kMotorDownTime);
+    startTime = Timer.getFPGATimestamp();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -33,13 +33,7 @@ public class TelescopicRatchet extends CommandBase {
   // ratchets both the servos
   @Override
   public void execute() {
-    if((servoTurn == Constants.Climber.kServoUnRatchet && 
-      Constants.Climber.kTelescopicFullExtend <= climber.getTelescopicPosition())) {
-        isFinished();
-    }
-    else {
-      climber.setServoTurn(servoTurn);
-    }
+    climber.setServoTurn(servoTurn);
   }
 
   // Called once the command ends or is interrupted.
@@ -51,8 +45,6 @@ public class TelescopicRatchet extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(climber.leftServo.getPosition() - servoTurn) <= Constants.Climber.kServoError ||
-      (servoTurn == Constants.Climber.kServoUnRatchet && 
-      Constants.Climber.kTelescopicFullExtend <= climber.getTelescopicPosition());
+    return Math.abs(Timer.getFPGATimestamp() - startTime) > 1.5;
   }
 }

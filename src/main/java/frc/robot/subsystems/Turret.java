@@ -10,6 +10,7 @@ import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 // import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -84,6 +85,8 @@ public class Turret extends SubsystemBase {
     //   targetDegrees = Constants.Turret.kMaxAngle - 20;
     //   setState(TurretState.FLIPPING);
     // }
+
+    // if(DriverStation)
         
      switch(state) {
        case DISABLED:
@@ -140,9 +143,7 @@ public class Turret extends SubsystemBase {
       
       setPercentOutput(output);
     } else {
-
-      // setPercentOutput(0);
-      CommandScheduler.getInstance().schedule(new ZeroTurret(this));
+      setPercentOutput(0);
     }
       
     

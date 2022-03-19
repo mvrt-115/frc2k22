@@ -27,7 +27,6 @@ public class DisableTurret extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    turret.setState(TurretState.DISABLED);
     turret.setPercentOutput(0);
   }
 

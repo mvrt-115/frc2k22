@@ -161,7 +161,7 @@ public class Shooter extends SubsystemBase {
    */
   public double getRequiredRPM() {
     // power series regression from testing data
-    return 616.24*Math.pow(limelight.getHorizontalDistance(), 0.471);
+    return 616.24*Math.pow(limelight.getHorizontalDistance() * 1.2 , 0.471);
   }
 
   /**

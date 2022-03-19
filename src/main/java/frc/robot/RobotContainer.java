@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.*;
 import frc.robot.commands.telescopic.*;
@@ -84,13 +86,13 @@ public class RobotContainer {
     throttle = new RollingAverage(50);
     wheel = new RollingAverage(15);
 
-    extend =  new JoystickButton(operatorJoystick, 4);
-    retract = new JoystickButton(operatorJoystick, 8);
+    extend =  new JoystickButton(operatorJoystick, 9);
+    retract = new JoystickButton(operatorJoystick, 10);
 
     disableTurret = new JoystickButton(operatorJoystick, 2);
     zeroTurret = new JoystickButton(operatorJoystick, 3);
-    upManualStorage = new JoystickButton(operatorJoystick, 5);
-    downManualStorage = new JoystickButton(operatorJoystick, 6);
+    upManualStorage = new JoystickButton(operatorJoystick, 7);
+    downManualStorage = new JoystickButton(operatorJoystick, 8);
 
     findTarget = new FindTarget(turret);
     setRPM = new SetRPM(shooter, storage, turret, shoot);
@@ -103,7 +105,13 @@ public class RobotContainer {
     telescopeUp = new UnratchetExtend(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed);
     stopClimber = new TelescopicManual(climber, this::isRetractPressed, 0);
 
-    twoBallAuto = (new RunDrive(drivetrain, 4).andThen(setRPM)).alongWith(pivotDown);
+    twoBallAuto = new ParallelCommandGroup(
+      new SequentialCommandGroup(
+        new RunDrive(drivetrain, 1.5).withTimeout(1.5),
+        new SetRPM(shooter, storage, turret)
+      ),
+      new Pivot(intake, storage)
+    );
     
     // Configure the button bindings
     configureButtonBindings();
@@ -119,10 +127,11 @@ public class RobotContainer {
     // storage.setDefaultCommand(new TrackBalls(storage, shooter, alliance));
     // the :: syntax allows us to pass in methods of a class as variables so that the command can continuously access input values
     // alignDrivetrain.whenPressed(new AlignIntakeToBall(drivetrain, true)).whenReleased(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
-    drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
+    drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, intake, 
+    this::getThrottle, this::getWheel, quickturn::get));
 
-    // storage.setDefaultCommand(new TrackBalls(storage, shooter));
-    turret.setDefaultCommand(findTarget);
+    storage.setDefaultCommand(new TrackBalls(storage, shooter));
+    turret.setDefaultCommand(new FindTarget(turret));
     
     shoot.whenPressed(setRPM).whenReleased(stopShooter);
 
@@ -144,9 +153,10 @@ public class RobotContainer {
     extend.whenPressed(telescopeUp)
     .whenReleased(stopClimber); 
 
-    disableTurret.whenPressed(new DisableTurret(turret)).whenReleased(findTarget);
-    zeroTurret.whenPressed(new ZeroTurret(turret)).whenReleased(findTarget);
+    disableTurret.whenPressed(new DisableTurret(turret)).whenReleased(new FindTarget(turret));
+    zeroTurret.whenPressed(new ZeroTurret(turret)).whenReleased(new FindTarget(turret));
   }
+  
   
   /////////////////////////////////////////////////GETTERS//////////////////////////////////////////////
 

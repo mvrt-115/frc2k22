@@ -24,7 +24,7 @@ public class Storage extends SubsystemBase  {
   private boolean overriden;
   private double lastTime;
   private boolean readyShoot = false;
-  private boolean intaking = false;
+  private boolean intaking = true;
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
   public final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
   private double stopIntakeTime = -1;
@@ -32,11 +32,11 @@ public class Storage extends SubsystemBase  {
 
   public Storage()  {
     breakbeamTop = new DigitalInput(1);
-    breakbeamBott = new DigitalInput(2);
+    breakbeamBott = new DigitalInput(3);
     prevStateTop = prevStateBott = true; // true is unbroken
     motor = TalonFactory.createTalonSRX(39, true);
-    balls = -1;
-    overriden = true;
+    balls = 1;
+    overriden = false;
     lastTime = Timer.getFPGATimestamp();
     lastTopChanged = Timer.getFPGATimestamp();
     // intaking = false;
@@ -55,7 +55,6 @@ public class Storage extends SubsystemBase  {
 
   @Override
   public void periodic()  {
-    runMotor(0.0);
     SmartDashboard.putBoolean("top breakbeam broken", !breakbeamTop.get());
     SmartDashboard.putBoolean("bottom breakbeam broken", !breakbeamBott.get());
     SmartDashboard.putNumber("number of balls", balls);
@@ -94,24 +93,24 @@ public class Storage extends SubsystemBase  {
     overriden = state;
   }
 
-  public void autoStorage()  {
+  public void autoStorage() {
     switch (balls) {
       // when there is one ball run until it passes first breakbeam
       case 1:
         if(!breakbeamBott.get())
-          runMotor(0.6);
+          runMotor(0.8);
         else 
           runMotor(0);
         break;
       case 2:
         if(breakbeamTop.get())
-          runMotor(0.6);
+          runMotor(0.8);
         else 
           runMotor(0);
         break;
       case 0: 
         // if(intaking)
-          runMotor(0.6);
+           runMotor(0.8);
         // else
         //   runMotor(0);
       default:

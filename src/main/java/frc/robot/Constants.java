@@ -171,8 +171,8 @@ public final class Constants {
     public static class Turret {
         public static final double kGearRatio = 47.142857;
         public static final double kTicksPerRevolution = 2048;
-        public static final double kMinAngle = -90; // degrees
-        public static final double kMaxAngle = 90; // degrees
+        public static final double kMinAngle = -180; // degrees
+        public static final double kMaxAngle = 180; // degrees
         public static final double kLimelightOffset = 40; // degrees
 
         public static final double kEThreshold = 60;
@@ -186,9 +186,9 @@ public final class Constants {
         // public static final double kP = 0.05;
         // public static final double kI = 0;
         // public static final double kD = 0.03;  // try with 0.007
-        public static final double kP = 1;
+        public static final double kP = 0.4;
         public static final double kI = 0;
-        public static final double kD = 1.75;//-0.05;//16;
+        public static final double kD = 0.15;//-0.05;//16;
         public static final double kTurnSpeed = 0.3;
     }
 
@@ -243,15 +243,15 @@ public final class Constants {
         public static final double kFeedForwardPivot = 0;
 
         //speeds for manual climbing
-        public static final double kTelescopicRetractManualSpeed = -0.4; // 0.25
-        public static final double kTelescopicExtendManualSpeed = 0.6; // 0.2
+        public static final double kTelescopicRetractManualSpeed = -0.25; // 0.25
+        public static final double kTelescopicExtendManualSpeed = 0.5; // 0.2
         public static final double kPivotManualSpeed = 0.1;
 
         // servo ratchet and unratchet values
         public static final double kServoRatchet = 0; // check
         public static final double kServoUnRatchet = 0.15; // check
-        public static final double kOffsetError = 0.05; // check
-        public static final double kServoError = 0.1; // check
+        public static final double kOffsetError = 0.0; // check
+        public static final double kServoError = 0.0; // check
         public static final double kMotorInitialUnratchetSpeed = 0.03; //test
         public static final double kMotorDownTime = 0.1; //seconds
 

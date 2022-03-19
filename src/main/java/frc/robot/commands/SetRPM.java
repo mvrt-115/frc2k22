@@ -72,7 +72,8 @@ public class SetRPM extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(dash) {
+      rpm = shooter.getRequiredRPM();
+      if(dash) {
       rpm = SmartDashboard.getNumber("new rpm", 0);
       
       shooter.setTargetRPM(rpm);
@@ -84,25 +85,19 @@ public class SetRPM extends CommandBase {
     }
     
     if(given)
-      rpm = shooter.getCurrentRPM();
+      rpm = shooter.getRequiredRPM();
     // shooter.setTargetRPM(rpm);
-    // if(!storage.getBallColor().trim().equals(DriverStation.getAlliance().toString()) && storage.isTopBreakbeamBroken()){
-    //   shooter.setTargetRPM(600);
-    // }
-    // else {
-    shooter.setTargetRPM(rpm);
-    // }
+    if(!storage.getBallColor().trim().equals(DriverStation.getAlliance().toString()) && storage.isTopBreakbeamBroken()){
+      shooter.setTargetRPM(1000);
+    }
+    else {
+      shooter.setTargetRPM(rpm);
+    }
 
     if(rpm == 0)
        storage.runMotor(0);
     if(shooter.getState() == ShooterState.ATSPEED) {
-      if(DriverStation.isAutonomous() && !turret.canShoot()) {
-        storage.runMotor(0);
-      }
-      else {
         storage.runMotor(1);
-      }
-      storage.runMotor(1);
     } else
       storage.runMotor(0);
   }

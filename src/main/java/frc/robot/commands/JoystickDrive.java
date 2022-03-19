@@ -5,7 +5,9 @@ import java.util.function.Supplier;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Drivetrain.DrivetrainState;
+import frc.robot.subsystems.Intake.IntakeState;
 
 /**
  * A command that runs throughout the teleoperated period, and constantly
@@ -17,11 +19,12 @@ public class JoystickDrive extends CommandBase {
   Supplier<Double> throttle;
   Supplier<Double> wheel;
   Supplier<Boolean> quickturn;
+  Intake intake;
   /**
    * Makes sure that the Drivetrain.java subsystem object exists for use in the
    * command
    */
-  public JoystickDrive(Drivetrain drivetrain, Supplier<Double> throttle, Supplier<Double> wheel, Supplier<Boolean> quickturn) {
+  public JoystickDrive(Drivetrain drivetrain, Intake intake, Supplier<Double> throttle, Supplier<Double> wheel, Supplier<Boolean> quickturn) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
 
@@ -29,6 +32,7 @@ public class JoystickDrive extends CommandBase {
     this.throttle = throttle;
     this.wheel = wheel;
     this.quickturn = quickturn;
+    this.intake = intake;
   }
 
   // Called when the command is initially scheduled.
@@ -45,7 +49,10 @@ public class JoystickDrive extends CommandBase {
   @Override
   public void execute() 
   {
-    drivetrain.cheesyIshDrive(throttle.get(), wheel.get(), quickturn.get());
+    double fwd = throttle.get();
+    if(intake.getState() == IntakeState.INTAKING)
+      fwd = 0.7*fwd;
+    drivetrain.cheesyIshDrive(fwd, wheel.get(), quickturn.get());
 
     SmartDashboard.putNumber("Throttle", throttle.get());
     SmartDashboard.putNumber("Wheel", wheel.get());
