@@ -13,10 +13,12 @@ public class RunDrive extends CommandBase {
   Drivetrain drivetrain;
   double start;
   double time;
+  double out;
   /** Creates a new RunDrive. */
-  public RunDrive(Drivetrain dt, double time){
+  public RunDrive(Drivetrain dt, double time, double out){
     drivetrain = dt;
     this.time = time;
+    this.out = out;
     addRequirements(drivetrain);
   }
 
@@ -31,7 +33,7 @@ public class RunDrive extends CommandBase {
   @Override
   public void execute() {
     // drivetrain.cheesyIshDrive(.3, 0, false);
-    drivetrain.setDrivetrainMotorSpeed(0.2, 0.2);
+    drivetrain.setDrivetrainMotorSpeed(out, out);
     SmartDashboard.putBoolean("running", true);
   }
 

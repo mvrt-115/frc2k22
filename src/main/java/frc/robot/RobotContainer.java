@@ -12,29 +12,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.AligningAuton;
-import frc.robot.commands.DisableTurret;
-import frc.robot.commands.FindTarget;
-import frc.robot.commands.FiveBallAuton;
-import frc.robot.commands.JoystickDrive;
-import frc.robot.commands.ManualStorage;
-import frc.robot.commands.Pivot;
-import frc.robot.commands.PivotUp;
-import frc.robot.commands.RatchetRetract;
-import frc.robot.commands.RunDrive;
-import frc.robot.commands.SetRPM;
-import frc.robot.commands.StopShooter;
-import frc.robot.commands.TrackBalls;
-import frc.robot.commands.UnratchetExtend;
-import frc.robot.commands.ZeroTurret;
-import frc.robot.commands.telescopic.TelescopicManual;
-import frc.robot.commands.telescopic.TelescopicRatchet;
-import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Storage;
-import frc.robot.subsystems.Turret;
+import frc.robot.commands.*;
+import frc.robot.commands.telescopic.*;
+import frc.robot.subsystems.*;
 import frc.robot.util.Limelight;
 import frc.robot.util.RollingAverage;
 
@@ -52,7 +32,6 @@ public class RobotContainer {
   private Joystick operatorJoystick;
   
   private JoystickButton  pivot; //buttons
-  private JoystickButton alignDrivetrain;
 
   public final Drivetrain drivetrain = new Drivetrain();
   private final Limelight limelight = new Limelight();
@@ -78,17 +57,7 @@ public class RobotContainer {
 
   public JoystickButton disableTurret;
   public JoystickButton zeroTurret;
-  private FindTarget findTarget;
-  private SetRPM setRPM;
-  private Pivot pivotDown;
-  private StopShooter stopShooter;
-  private ManualStorage manualStorageUp;
-  private ManualStorage manualStorageDown;
-  private PivotUp pivotUp;
-  private RatchetRetract telescopeDown;
-  private UnratchetExtend telescopeUp;
-  private TelescopicManual stopClimber;
-  private ParallelCommandGroup twoBallAuto;
+  private Command twoBallAuto;
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -98,7 +67,6 @@ public class RobotContainer {
 
     shoot = new JoystickButton(driverJoystick, 8);
     pivot = new JoystickButton(driverJoystick, 6);
-    alignDrivetrain = new JoystickButton(driverJoystick, 6);
 
     quickturn = new JoystickButton(driverJoystick, 5);
     throttle = new RollingAverage(50);
@@ -112,21 +80,12 @@ public class RobotContainer {
     upManualStorage = new JoystickButton(operatorJoystick, 7);
     downManualStorage = new JoystickButton(operatorJoystick, 8);
 
-    findTarget = new FindTarget(turret);
-    setRPM = new SetRPM(shooter, storage, turret, shoot);
-    stopShooter = new StopShooter(shooter, storage);
-    pivotDown = new Pivot(intake, storage);
-    pivotUp = new PivotUp(intake, storage);
-    manualStorageUp = new ManualStorage(storage, true, upManualStorage::get);
-    manualStorageDown = new ManualStorage(storage, false, downManualStorage::get);
-    telescopeDown = new RatchetRetract(climber, this::isRetractPressed, Constants.Climber.kTelescopicRetractManualSpeed);
-    telescopeUp = new UnratchetExtend(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed);
-    stopClimber = new TelescopicManual(climber, this::isRetractPressed, 0);
-
     twoBallAuto = new ParallelCommandGroup(
       new SequentialCommandGroup(
-        new RunDrive(drivetrain, 1.25).withTimeout(1.5),
-        new SetRPM(shooter, storage, turret)
+        new RunDrive(drivetrain, 1.25, 0.2).withTimeout(1.5),
+        new RunDrive(drivetrain, .75, -0.2).withTimeout(0.75),
+        new SetRPM(shooter, storage, turret).withTimeout(2),
+        new RunDrive(drivetrain, 2, 0.3).withTimeout(2)
       ),
       new Pivot(intake, storage)
     );
@@ -231,8 +190,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return 
-    new FiveBallAuton(drivetrain, intake, shooter, storage, turret);//new AligningAuton(drivetrain, intake, storage, turret, shooter);
+    return twoBallAuto;
 
   }
 
