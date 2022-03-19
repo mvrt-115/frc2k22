@@ -83,7 +83,7 @@ public class Climber extends SubsystemBase {
      */
     public void setTelescopicSpeed(double speed) {
         if(!(getTelescopicPosition() <= 1000 && speed < 0)){
-            leftTelescopic.set(ControlMode.PercentOutput, speed*1.5); // test and change value
+            leftTelescopic.set(ControlMode.PercentOutput, speed*1.2); // test and change value
             rightTelescopic.set(ControlMode.PercentOutput, speed); 
         }
     }
