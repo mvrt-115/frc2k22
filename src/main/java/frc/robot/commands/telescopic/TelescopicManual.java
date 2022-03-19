@@ -35,7 +35,6 @@ public class TelescopicManual extends CommandBase {
     @Override
     public void execute() {
       climber.setTelescopicSpeed(speed);
-      SmartDashboard.putNumber("climber pos", climber.getTelescopicPosition());
     }
 
     // Called once the command ends or is interrupted.
@@ -51,6 +50,7 @@ public class TelescopicManual extends CommandBase {
      */
     @Override
     public boolean isFinished() {
-        return !button.get();
+        return !button.get() || ((speed < 0 && climber.getTelescopicPosition() <= Constants.Climber.kTelescopicDownwardLimit) 
+        || (speed > 0 && climber.getTelescopicPosition() >= Constants.Climber.kTelescopicFullExtend));
     }
 }

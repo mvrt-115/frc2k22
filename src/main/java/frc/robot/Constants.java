@@ -242,8 +242,8 @@ public final class Constants {
         public static final double kFeedForwardPivot = 0;
 
         //speeds for manual climbing
-        public static final double kTelescopicRetractManualSpeed = -0.25; // 0.25
-        public static final double kTelescopicExtendManualSpeed = 0.5; // 0.2
+        public static final double kTelescopicRetractManualSpeed = -0.30; 
+        public static final double kTelescopicExtendManualSpeed = 0.5; 
         public static final double kPivotManualSpeed = 0.1;
 
         // servo ratchet and unratchet values

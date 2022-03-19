@@ -58,7 +58,7 @@ public class Climber extends SubsystemBase {
 
 
         //reconfiguring all motors with PID constants
-        rightTelescopic.follow(leftTelescopic);
+        //rightTelescopic.follow(leftTelescopic);
         
 
         leftTelescopic.config_kP(Constants.kPIDIdx, Constants.Climber.kTelekP);
@@ -83,8 +83,8 @@ public class Climber extends SubsystemBase {
      */
     public void setTelescopicSpeed(double speed) {
         if(!(getTelescopicPosition() <= 1000 && speed < 0)){
-            leftTelescopic.set(ControlMode.PercentOutput, speed);
-            rightTelescopic.set(ControlMode.PercentOutput, speed);
+            leftTelescopic.set(ControlMode.PercentOutput, speed*1.5); // test and change value
+            rightTelescopic.set(ControlMode.PercentOutput, speed); 
         }
     }
 
@@ -102,10 +102,10 @@ public class Climber extends SubsystemBase {
      * 
      * @param finalPosition final position of the motor
      * @param feedForward The feed forward
-     */
+     
     public void setTelescopicPosition(double finalPosition, double feedForward) {
         leftTelescopic.set(ControlMode.Position, finalPosition, DemandType.ArbitraryFeedForward, feedForward);
-    }
+    }*/
 
     /**
      * Get the encoder value of the left telescopic motors
