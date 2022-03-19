@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.AligningAuton;
 import frc.robot.commands.DisableTurret;
 import frc.robot.commands.FindTarget;
+import frc.robot.commands.FiveBallAuton;
 import frc.robot.commands.JoystickDrive;
 import frc.robot.commands.ManualStorage;
 import frc.robot.commands.Pivot;
@@ -124,7 +125,7 @@ public class RobotContainer {
 
     twoBallAuto = new ParallelCommandGroup(
       new SequentialCommandGroup(
-        new RunDrive(drivetrain, 1.5).withTimeout(1.5),
+        new RunDrive(drivetrain, 1.25).withTimeout(1.5),
         new SetRPM(shooter, storage, turret)
       ),
       new Pivot(intake, storage)
@@ -230,7 +231,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new AligningAuton(drivetrain, intake, storage, turret, shooter);
+    return 
+    new FiveBallAuton(drivetrain, intake, shooter, storage, turret);//new AligningAuton(drivetrain, intake, storage, turret, shooter);
 
   }
 
