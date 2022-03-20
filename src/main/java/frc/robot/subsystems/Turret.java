@@ -23,7 +23,7 @@ import frc.robot.util.TalonFactory;
 public class Turret extends SubsystemBase {
 
   public static enum TurretState {
-    TARGETING, FLIPPING, SEARCHING, CAN_SHOOT, DISABLED
+    TARGETING, FLIPPING, CAN_SHOOT, DISABLED
   }
 
   private TalonFX turret;
@@ -39,10 +39,6 @@ public class Turret extends SubsystemBase {
   private double area;
 
   private double targetDegrees;
-  private double searchDirection;
-  private boolean searchFlipping;
-
-  private double offset;
   /** Creates a new Turret. */
   public Turret(Limelight limelight) {
     turret = TalonFactory.createTalonFX(5, true);
@@ -56,10 +52,6 @@ public class Turret extends SubsystemBase {
     area = 0;
 
     targetDegrees = 0;
-    searchDirection = 1;
-    searchFlipping = false;
-
-    offset = 0;
 
     turret.config_kP(0, 0.05);
     turret.config_kI(0, 0);
@@ -91,13 +83,12 @@ public class Turret extends SubsystemBase {
        case FLIPPING:
          flip();
          break;
-       case SEARCHING:
-         search();
-         break;
        case CAN_SHOOT:
        case TARGETING:
          target();
          break;
+        default:
+        break;
      }
 
      SmartDashboard.putBoolean("Left Edge Turret", atEdgeLeft);
@@ -110,7 +101,7 @@ public class Turret extends SubsystemBase {
    * Targets using a pid on the limelight error
    */
   public void target() {
-    double error = (limelight.getHorizontalOffset() + offset) / 30;
+    double error = (limelight.getHorizontalOffset()) / 30;
     double time = Timer.getFPGATimestamp();
 
     area += lastError * (Timer.getFPGATimestamp() - lastTime);
@@ -119,24 +110,19 @@ public class Turret extends SubsystemBase {
       (Constants.Turret.kI * area) + 
       (((error - lastError) / (time - lastTime)) * Constants.Turret.kD);
 
-    if(Math.abs((limelight.getHorizontalOffset() + offset)) > 7 && limelight.targetsFound()) {
+    if(Math.abs((limelight.getHorizontalOffset())) > 7 && limelight.targetsFound()) {
       if(output < 0 && getCurrentPositionDegrees() < Constants.Turret.kMinAngle) {
         output = 0;
         atEdgeRight = true;
-      }
-        // setState(TurretState.FLIPPING);
-        
+      }       
       else if(output > 0 && getCurrentPositionDegrees() > Constants.Turret.kMaxAngle) {
          output = 0;
          atEdgeLeft = true;
-      } else
+      } else {
         atEdgeRight = false;
         atEdgeLeft = false;
-        // setState(TurretState.FLIPPING);
-       
-
-      output = Math.min(1, Math.max(-1, output));
-      
+        output = Math.min(1, Math.max(-1, output));
+      }
       setPercentOutput(output);
     } else {
       setPercentOutput(0);
@@ -158,33 +144,10 @@ public class Turret extends SubsystemBase {
   }
 
   /**
-   * Searches for a target by going from the min to the max degrees
-   */
-  public void search() {
-    if(searchDirection == 1)
-      setPercentOutput(0.5);
-    else
-      setPercentOutput(-0.5);
-
-    if(!searchFlipping && (turret.getSelectedSensorPosition() >= Constants.Turret.kMaxAngle || 
-      turret.getSelectedSensorPosition() <= Constants.Turret.kMinAngle)) {
-
-      searchFlipping = true;
-      searchDirection *= -1;
-    }
-
-    if(searchFlipping && Math.abs(getCurrentPositionDegrees()) <= 10)
-      searchFlipping = false;
-
-    if(limelight.targetsFound())
-      setState(TurretState.TARGETING);
-  }
-
-  /**
    * Updates the lastError and lastTime variables that are used for pid
    */
   private void updateLastVariables() {
-    lastError = (limelight.getHorizontalOffset() + offset) / 30;
+    lastError = (limelight.getHorizontalOffset()) / 30;
     lastTime = Timer.getFPGATimestamp();
   }
 
@@ -234,10 +197,6 @@ public class Turret extends SubsystemBase {
     this.state = state;
   }
 
-  public void setOffset(double offset) {
-    this.offset = offset;
-  }
-
   /** 
    * Finds the current position in degrees
    * @return  the current position of the turret in degrees
@@ -265,10 +224,6 @@ public class Turret extends SubsystemBase {
     return !magLimit.get();
   }
 
-  public double getOffset() {
-    return offset;
-  }
-
   public BaseTalon getMotor() {
     return turret;
   }
@@ -278,10 +233,9 @@ public class Turret extends SubsystemBase {
    */
   public void log() {
     SmartDashboard.putNumber("Turret Position (Degrees)", getCurrentPositionDegrees());
-    SmartDashboard.putNumber("Horizontal Error", limelight.getHorizontalOffset()+offset);
+    SmartDashboard.putNumber("Horizontal Error", limelight.getHorizontalOffset());
     SmartDashboard.putString("Turret State", state.toString());
     SmartDashboard.putNumber("Turret Output", turret.getMotorOutputPercent());
-    SmartDashboard.putNumber("Direction", searchDirection);
   }
 
   public void zero() {
