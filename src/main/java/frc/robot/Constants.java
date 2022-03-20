@@ -63,7 +63,7 @@ public final class Constants {
         public static final double kI = 0;
         public static final double kD = 0;
         public static final double kFF = 0;
-
+                                                            
         public static final double kPTurn = 0.003;
         public static final double kITurn = 0;
         public static final double kDTurn = 0;
@@ -78,14 +78,14 @@ public final class Constants {
 
         public static final double kTICKS_TO_BOTTOM = 20000;
         // the # of ticks it takes to be at the bottom when pivoting
-        public static final double kTICKS_TO_TOP = 600; // the # of ticks it takes to be at the top when pivoting
+        public static final double kTICKS_TO_TOP = 2500; // the # of ticks it takes to be at the top when pivoting
 
 
         public static final int kPIVOT_ID = 10; // change later
         public static final int kROLLER_ID = 21; // change later
 
 
-        public static final double kWHEELS_SPEED = .6;
+        public static final double kWHEELS_SPEED = .7;
 
         //public static final double kPIVOT_SPEED = -0.4; // speed of intake when going up or down
         public static final double kPIVOT_STOP_SPEED_WHEN_UP = 0; // speed of intake to keep it up
@@ -96,7 +96,7 @@ public final class Constants {
         public static final double kMARGIN_OF_ERROR_TICKS = 3000; // constant
 
 
-        public static final double kP = 0.02; //0.03
+        public static final double kP = 0.01; //0.03
         public static final double kI = 0.0;
         public static final double kD = 0.0;//0.001;
 
@@ -141,7 +141,7 @@ public final class Constants {
         public static final double TICKS_PER_REVOLUTION = 2048;
         public static final int NUM_AVG = 5;
         public static final double GEAR_RATIO = 25 / 16;
-        public static double LIN_CONST = 0;
+        public static double LIN_CONST = 0.3;
     }
 
 
@@ -172,7 +172,7 @@ public final class Constants {
     public static class Turret {
         public static final double kGearRatio = 47.142857;
         public static final double kTicksPerRevolution = 2048;
-        public static final double kMinAngle = -180; // degrees
+        public static final double kMinAngle = -150; // degrees
         public static final double kMaxAngle = 180; // degrees
         public static final double kLimelightOffset = 40; // degrees
 
@@ -244,7 +244,7 @@ public final class Constants {
 
         //speeds for manual climbing
         public static final double kTelescopicRetractManualSpeed = -0.30; 
-        public static final double kTelescopicExtendManualSpeed = 0.5; 
+        public static final double kTelescopicExtendManualSpeed = 0.6; 
         public static final double kPivotManualSpeed = 0.1;
 
         // servo ratchet and unratchet values

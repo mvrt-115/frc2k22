@@ -60,11 +60,14 @@ public class Intake extends SubsystemBase {
         break;
       case PIVOTING_UP: // intake goes back up and stops intaking
         
+        pivotMotor.setNeutralMode(NeutralMode.Brake);
         stopIntake();
         pivotUp();
         break;
       case PIVOTING_DOWN:
+        pivotMotor.setNeutralMode(NeutralMode.Coast);
         pivotDown();
+        startIntake();
         break;
       case UP:
         // stopPivot(); // to keep the intake up
@@ -73,7 +76,7 @@ public class Intake extends SubsystemBase {
         break;
     }
 
-    log();
+    // log();
   }
 
   /**
@@ -86,6 +89,10 @@ public class Intake extends SubsystemBase {
     SmartDashboard.putBoolean("is at top", Math.abs(getCurrentPos()) <= Constants.Intake.kMARGIN_OF_ERROR_TICKS);
     SmartDashboard.putBoolean("is at bottom", Math.abs(getCurrentPos() - Constants.Intake.kTICKS_TO_BOTTOM) <= Constants.Intake.kMARGIN_OF_ERROR_TICKS);
     SmartDashboard.putBoolean("pivotState", pivotState);
+  }
+
+  public void resetEncoders(){
+    pivotMotor.setSelectedSensorPosition(0);
   }
   
   /**

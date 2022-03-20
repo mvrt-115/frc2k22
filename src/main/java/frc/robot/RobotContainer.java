@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.*;
 import frc.robot.commands.telescopic.*;
@@ -83,18 +84,22 @@ public class RobotContainer {
     upManualStorage = new JoystickButton(operatorJoystick, 7);
     downManualStorage = new JoystickButton(operatorJoystick, 8);
 
-    adjustConstantIncrement = new JoystickButton(operatorJoystick, 5);
-    adjustConstantDecrement = new JoystickButton(operatorJoystick, 4);
+    adjustConstantIncrement = new JoystickButton(operatorJoystick, 4);
+    adjustConstantDecrement = new JoystickButton(operatorJoystick, 1);
 
 
-    twoBallAuto = new ParallelCommandGroup(
-      new SequentialCommandGroup(
-        new RunDrive(drivetrain, 1.25, 0.2).withTimeout(1.5),
-        new RunDrive(drivetrain, .75, -0.2).withTimeout(0.75),
-        new SetRPM(shooter, storage, turret).withTimeout(2),
-        new RunDrive(drivetrain, 2, 0.3).withTimeout(2)
+    twoBallAuto = new SequentialCommandGroup(
+      new ParallelCommandGroup(
+          new SequentialCommandGroup(
+            new RunDrive(drivetrain, 2.25, 0.2).withTimeout(2.25),
+            new WaitCommand(1)
+          ),
+        new Pivot(intake, storage).withTimeout(3.25)
       ),
-      new Pivot(intake, storage)
+      new PivotUp(intake, storage),
+      new RunDrive(drivetrain, 1, -0.2).withTimeout(1),
+      new WaitCommand(3), 
+      new SetRPM(shooter, storage, turret)
     );
     
     // Configure the button bindings
@@ -140,8 +145,8 @@ public class RobotContainer {
     disableTurret.whenPressed(new DisableTurret(turret)).whenReleased(new FindTarget(turret));
     zeroTurret.whenPressed(new ZeroTurret(turret)).whenReleased(new FindTarget(turret));
 
-    adjustConstantIncrement.whenPressed(new AdjustShooterConstant(-0.3));
-    adjustConstantDecrement.whenPressed(new AdjustShooterConstant(0.3));
+    adjustConstantIncrement.whenPressed(new AdjustShooterConstant(1));
+    adjustConstantDecrement.whenPressed(new AdjustShooterConstant(-1));
   }
   
   
@@ -156,6 +161,16 @@ public class RobotContainer {
   public double getThrottle() {
     throttle.updateValue(-driverJoystick.getRawAxis(3) * 1);
     return throttle.getAverage();
+  }
+
+  public Intake getIntake(){
+    return intake;
+  }
+  public Turret getTurret(){
+    return turret;
+  }
+  public Storage getStorage(){
+    return storage;
   }
   
   /**

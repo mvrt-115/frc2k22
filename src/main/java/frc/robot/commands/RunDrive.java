@@ -14,6 +14,7 @@ public class RunDrive extends CommandBase {
   double start;
   double time;
   double out;
+  int prevBalls;
   /** Creates a new RunDrive. */
   public RunDrive(Drivetrain dt, double time, double out){
     drivetrain = dt;
@@ -47,6 +48,6 @@ public class RunDrive extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(start - Timer.getFPGATimestamp()) > time;
+    return (Math.abs(start - Timer.getFPGATimestamp()) > time);
   }
 }

@@ -163,7 +163,7 @@ public class Shooter extends SubsystemBase {
     // power series regression from testing data
     // linear constant to slightly tune the shot, -> Limelight distances range from 80 to 220
     // *currently set to 0, I suggest it should be 1*
-    return 616.24*Math.pow(limelight.getHorizontalDistance() * 1.2 , 0.471) + Constants.Flywheel.LIN_CONST*limelight.getHorizontalDistance();
+    return Math.min(616.24*Math.pow(limelight.getHorizontalDistance() * 1.2 , 0.471) + Constants.Flywheel.LIN_CONST*limelight.getHorizontalDistance(), MAX_RPM);
   }
 
   /**

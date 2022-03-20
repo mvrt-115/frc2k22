@@ -98,19 +98,19 @@ public class Storage extends SubsystemBase  {
       // when there is one ball run until it passes first breakbeam
       case 1:
         if(!breakbeamBott.get())
-          runMotor(0.8);
+          runMotor(0.6);
         else 
           runMotor(0);
         break;
       case 2:
         if(breakbeamTop.get())
-          runMotor(0.8);
+          runMotor(0.6);
         else 
           runMotor(0);
         break;
       case 0: 
         // if(intaking)
-           runMotor(0.8);
+           runMotor(0.6);
         // else
         //   runMotor(0);
       default:
