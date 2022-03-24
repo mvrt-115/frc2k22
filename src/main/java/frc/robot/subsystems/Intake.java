@@ -57,9 +57,9 @@ public class Intake extends SubsystemBase {
       case INTAKING: // intake is deployed and starts running
         stopPivot();
         startIntake();
+        pivotMotor.setNeutralMode(NeutralMode.Coast);
         break;
-      case PIVOTING_UP: // intake goes back up and stops intaking
-        
+      case PIVOTING_UP: // intake goes back up and stops intaking  
         pivotMotor.setNeutralMode(NeutralMode.Brake);
         stopIntake();
         pivotUp();

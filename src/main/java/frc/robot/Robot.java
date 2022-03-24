@@ -78,7 +78,6 @@ public class Robot extends TimedRobot {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     m_robotContainer.getIntake().resetEncoders();
-      m_robotContainer.getTurret().resetEncoder();
       m_robotContainer.getStorage().setBalls(1);
 
     // schedule the autonomous command (example)
@@ -86,6 +85,7 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.schedule();
      // shooter.set(ControlMode.PercentOutput, 0.4);
     }
+    
   }
 
   /** This function is called periodically during autonomous. */

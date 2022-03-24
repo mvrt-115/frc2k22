@@ -110,7 +110,7 @@ public class Turret extends SubsystemBase {
       (Constants.Turret.kI * area) + 
       (((error - lastError) / (time - lastTime)) * Constants.Turret.kD);
 
-    if(Math.abs((limelight.getHorizontalOffset())) > 7 && limelight.targetsFound()) {
+    if(Math.abs((limelight.getHorizontalOffset())) > 7 / (limelight.getHorizontalDistance() / 50) && limelight.targetsFound()) {
       if(output < 0 && getCurrentPositionDegrees() < Constants.Turret.kMinAngle) {
         output = 0;
         atEdgeRight = true;

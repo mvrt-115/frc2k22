@@ -22,6 +22,7 @@ public class SetRPM extends CommandBase {
   private JoystickButton button;
   private Turret turret;
   private boolean dash;
+  boolean shoot = false;
 
   public SetRPM(Shooter shooter, Storage storage, Turret turret) {
     this.shooter = shooter;
@@ -75,10 +76,12 @@ public class SetRPM extends CommandBase {
       rpm = shooter.getRequiredRPM();
       if(dash) {
       rpm = SmartDashboard.getNumber("new rpm", 0);
-      
-      shooter.setTargetRPM(rpm);
 
       if(shooter.getState() == ShooterState.ATSPEED)
+        shoot = true;
+      else 
+        shoot = false;
+      if(shoot)
         storage.runMotor(1);
       else
         storage.runMotor(0);
@@ -91,7 +94,12 @@ public class SetRPM extends CommandBase {
       shooter.setTargetRPM(1000);
     }
     else {
-      shooter.setTargetRPM(rpm);
+      if(DriverStation.isAutonomous()){
+        shooter.setTargetRPM(rpm + 200);
+      }
+      else {
+        shooter.setTargetRPM(rpm);
+      }
     }
 
     if(rpm == 0)

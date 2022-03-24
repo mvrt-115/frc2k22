@@ -87,6 +87,9 @@ public class Storage extends SubsystemBase  {
     if(!overriden)  {
       autoStorage();
     }
+    else{
+      runMotor(1);
+    }
   }
 
   public void setOverriden(boolean state) {
@@ -98,19 +101,19 @@ public class Storage extends SubsystemBase  {
       // when there is one ball run until it passes first breakbeam
       case 1:
         if(!breakbeamBott.get())
-          runMotor(0.6);
+          runMotor(0.8);
         else 
           runMotor(0);
         break;
       case 2:
         if(breakbeamTop.get())
-          runMotor(0.6);
+          runMotor(0.8);
         else 
           runMotor(0);
         break;
       case 0: 
         // if(intaking)
-           runMotor(0.6);
+           runMotor(0.8);
         // else
         //   runMotor(0);
       default:

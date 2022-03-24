@@ -50,8 +50,8 @@ public class JoystickDrive extends CommandBase {
   public void execute() 
   {
     double fwd = throttle.get();
-    if(intake.getState() == IntakeState.INTAKING)
-      fwd = 0.7*fwd;
+    // if(intake.getState() == IntakeState.INTAKING)
+      // fwd = 0.7*fwd;
     drivetrain.cheesyIshDrive(fwd, wheel.get(), quickturn.get());
 
     SmartDashboard.putNumber("Throttle", throttle.get());

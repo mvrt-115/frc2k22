@@ -98,7 +98,7 @@ public class RobotContainer {
       ),
       new PivotUp(intake, storage),
       new RunDrive(drivetrain, 1, -0.2).withTimeout(1),
-      new WaitCommand(3), 
+      new WaitCommand(2), 
       new SetRPM(shooter, storage, turret)
     );
     
@@ -106,7 +106,7 @@ public class RobotContainer {
     configureButtonBindings();
   }
 
-  /**
+  /**[]\
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
@@ -122,8 +122,8 @@ public class RobotContainer {
     storage.setDefaultCommand(new TrackBalls(storage, shooter));
     turret.setDefaultCommand(new FindTarget(turret));
     
-    shoot.whenPressed(new SetRPM(shooter, storage, turret, shoot)).whenReleased(new StopShooter(shooter, storage));
-
+    // shoot.whenPressed(new SetRPM(shooter, storage, turret, shoot)).whenReleased(new StopShooter(shooter, storage));
+    // new SetRPM(shooter, storage, 1000).schedule();
     // SmartDashboard.putData("Testing Shooter", new SetRPM(shooter, storage, true));
     pivot.whenPressed(new Pivot(intake,storage)).whenReleased(new PivotUp(intake, storage));
       
