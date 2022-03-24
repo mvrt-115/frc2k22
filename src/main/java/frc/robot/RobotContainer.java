@@ -62,6 +62,8 @@ public class RobotContainer {
 
   private JoystickButton adjustConstantIncrement;
   private JoystickButton adjustConstantDecrement;
+
+  private JoystickButton lowShot;
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -87,6 +89,8 @@ public class RobotContainer {
     adjustConstantIncrement = new JoystickButton(operatorJoystick, 4);
     adjustConstantDecrement = new JoystickButton(operatorJoystick, 1);
 
+    lowShot = new JoystickButton(operatorJoystick, 6); // THIS BUTTON ID IS NOT FINAL, PLS CHANGE IT
+                                                       // to wtvr POTUS wants!!!
 
     twoBallAuto = new SequentialCommandGroup(
       new ParallelCommandGroup(
@@ -145,8 +149,11 @@ public class RobotContainer {
     disableTurret.whenPressed(new DisableTurret(turret)).whenReleased(new FindTarget(turret));
     zeroTurret.whenPressed(new ZeroTurret(turret)).whenReleased(new FindTarget(turret));
 
-    adjustConstantIncrement.whenPressed(new AdjustShooterConstant(1));
-    adjustConstantDecrement.whenPressed(new AdjustShooterConstant(-1));
+    adjustConstantIncrement.whenPressed(new AdjustShooterConstant(Constants.Flywheel.INCREMENT));
+    adjustConstantDecrement.whenPressed(new AdjustShooterConstant(-1*Constants.Flywheel.INCREMENT));
+    // KEEP THE INCREMENT LOW. 0.3 is already a lot.
+
+    lowShot.whenPressed(new SetRPM(shooter, storage, Constants.Flywheel.LOW_SHOT_RPM));
   }
   
   
