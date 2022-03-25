@@ -84,7 +84,7 @@ public class Drivetrain extends SubsystemBase {
         rightMaster.setInverted(TalonFXInvertType.Clockwise); 
         rightFollower.setInverted(TalonFXInvertType.Clockwise);
         leftMaster.setInverted(TalonFXInvertType.CounterClockwise);
-        leftFollower.setInverted(TalonFXInvertType.CounterClockwise);
+        leftFollower.setInverted(TalonFXInvertType. CounterClockwise);
 
         rightMaster.configSupplyCurrentLimit(Constants.kCurrentLimit, Constants.kTimeoutMs);
         rightFollower.configSupplyCurrentLimit(Constants.kCurrentLimit, Constants.kTimeoutMs);

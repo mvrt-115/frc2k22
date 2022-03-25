@@ -41,10 +41,10 @@ public final class Constants {
         public static int kCompLeftFollowerId = 3;
         public static int kCompRightFollowerId = 4;
        
-        public static int kPracLeftMasterId = 2;
-        public static int kPracRightMasterId = 0;
+        public static int kPracLeftMasterId = 1;
+        public static int kPracRightMasterId = 2;
         public static int kPracLeftFollowerId = 3;
-        public static int kPracRightFollowerId = 1;
+        public static int kPracRightFollowerId = 4;
 
         // constants for joystick drive
         public static final double kSensitivity = 0.90;
@@ -85,7 +85,7 @@ public final class Constants {
         public static final int kROLLER_ID = 21; // change later
 
 
-        public static final double kWHEELS_SPEED = .6;
+        public static final double kWHEELS_SPEED = .45;
 
         //public static final double kPIVOT_SPEED = -0.4; // speed of intake when going up or down
         public static final double kPIVOT_STOP_SPEED_WHEN_UP = 0; // speed of intake to keep it up
@@ -140,7 +140,7 @@ public final class Constants {
         public static final double MAX_VOLTAGE_COMPENSATION = 10;
         public static final double TICKS_PER_REVOLUTION = 2048;
         public static final int NUM_AVG = 5;
-        public static final double GEAR_RATIO = 25 / 16;
+        public static final double GEAR_RATIO = 25 / 24;
         public static double LIN_CONST = 0.3;
         public static double INCREMENT = 0.3; // 0.3 is a lot, it's 0.3 * range from 100 to 250
         public static double LOW_SHOT_RPM = 500;

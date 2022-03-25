@@ -206,7 +206,8 @@ public class Intake extends SubsystemBase {
   public void startIntake()
   {
  //   pivotMotor.setNeutralMode(NeutralMode.Brake);
-    intakeMotor.set(ControlMode.PercentOutput, Constants.Intake.kWHEELS_SPEED);
+    // intakeMotor.set(ControlMode.PercentOutput, Constants.Intake.kWHEELS_SPEED);
+    intakeMotor.set(ControlMode.PercentOutput, 0);
     // uncomment when intake motor is added
   }
 

@@ -20,7 +20,7 @@ public class Storage extends SubsystemBase  {
   private boolean prevStateTop, prevStateBott;
   private double lastTopChanged;
   private int balls;
-  private BaseTalon motor;
+  private  BaseTalon motor;
   private boolean overriden;
   private double lastTime;
   private boolean readyShoot = false;
@@ -34,8 +34,8 @@ public class Storage extends SubsystemBase  {
     breakbeamTop = new DigitalInput(1);
     breakbeamBott = new DigitalInput(3);
     prevStateTop = prevStateBott = true; // true is unbroken
-    motor = TalonFactory.createTalonSRX(39, true);
-    balls = 1;
+    motor = TalonFactory.createTalonFX(39, false);
+    balls = 0;
     overriden = false;
     lastTime = Timer.getFPGATimestamp();
     lastTopChanged = Timer.getFPGATimestamp();
@@ -97,23 +97,25 @@ public class Storage extends SubsystemBase  {
   }
 
   public void autoStorage() {
+    double s = 0.4;
+
     switch (balls) {
       // when there is one ball run until it passes first breakbeam
       case 1:
         if(!breakbeamBott.get())
-          runMotor(0.8);
+          runMotor(s);
         else 
           runMotor(0);
         break;
       case 2:
         if(breakbeamTop.get())
-          runMotor(0.8);
+          runMotor(s);
         else 
           runMotor(0);
         break;
       case 0: 
         // if(intaking)
-           runMotor(0.8);
+           runMotor(s);
         // else
         //   runMotor(0);
       default:

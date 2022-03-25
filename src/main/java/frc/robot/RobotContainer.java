@@ -126,7 +126,7 @@ public class RobotContainer {
     storage.setDefaultCommand(new TrackBalls(storage, shooter));
     turret.setDefaultCommand(new FindTarget(turret));
     
-    // shoot.whenPressed(new SetRPM(shooter, storage, turret, shoot)).whenReleased(new StopShooter(shooter, storage));
+    shoot.whenPressed(new SetRPM(shooter, storage, turret, shoot)).whenReleased(new StopShooter(shooter, storage));
     // new SetRPM(shooter, storage, 1000).schedule();
     // SmartDashboard.putData("Testing Shooter", new SetRPM(shooter, storage, true));
     pivot.whenPressed(new Pivot(intake,storage)).whenReleased(new PivotUp(intake, storage));
@@ -222,7 +222,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return twoBallAuto;
+    // return twoBallAuto;
+    return new Pivot(intake, storage);
 
   }
 
