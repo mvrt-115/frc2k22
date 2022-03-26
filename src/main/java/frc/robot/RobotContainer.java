@@ -138,15 +138,16 @@ public class RobotContainer {
    * positive angles
    */
   public double getOperatorRightAxisAngle() {
-    double x = operatorJoystick.getRawAxis(4);
-    double y = -operatorJoystick.getRawAxis(5);
+    double x = operatorJoystick.getRawAxis(0);
+    double y = -operatorJoystick.getRawAxis(1);
 
     double angle = Math.atan2(y, x);
 
-    if(x < 0)
-      angle += Math.PI;
-
+    if(angle <= -Math.PI / 2)
+      angle = Math.PI + (angle + Math.PI);
+    
     angle -= Math.PI / 2;
+
     angle *= -1;
 
     return angle * 180 / Math.PI;

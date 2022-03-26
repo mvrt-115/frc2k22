@@ -2,13 +2,25 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/LiveWindow/Drivetrain": "Subsystem",
       "/LiveWindow/ExampleSubsystem": "Subsystem",
+      "/LiveWindow/Intake": "Subsystem",
       "/LiveWindow/Limelight": "Subsystem",
       "/LiveWindow/Shooter": "Subsystem",
+      "/LiveWindow/Storage": "Subsystem",
+      "/LiveWindow/Turret": "Subsystem",
+      "/LiveWindow/Ungrouped/DifferentialDrive[1]": "DifferentialDrive",
+      "/LiveWindow/Ungrouped/DigitalInput[0]": "Digital Input",
+      "/LiveWindow/Ungrouped/DigitalInput[3]": "Digital Input",
+      "/LiveWindow/Ungrouped/DigitalInput[9]": "Digital Input",
+      "/LiveWindow/Ungrouped/PIDController[1]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[2]": "PIDController",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
+      "/LiveWindow/Ungrouped/navX-Sensor[4]": "Gyro",
       "/SmartDashboard/Change Angle": "Command",
       "/SmartDashboard/Config PIDF": "Command",
-      "/SmartDashboard/Run Flywheel": "Command"
+      "/SmartDashboard/Run Flywheel": "Command",
+      "/SmartDashboard/field": "Field2d"
     }
   },
   "NetworkTables": {

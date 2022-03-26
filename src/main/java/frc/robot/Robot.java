@@ -110,6 +110,8 @@ public class Robot extends TimedRobot {
     //   intakeMotor.set(ControlMode.PercentOutput, -0.8);
     // else
     //   intakeMotor.set(ControlMode.PercentOutput, 0);
+
+    SmartDashboard.putNumber("angle", robotContainer.getOperatorRightAxisAngle());
   }
 
   @Override
