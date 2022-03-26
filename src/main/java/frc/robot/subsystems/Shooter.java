@@ -28,8 +28,6 @@ public class Shooter extends SubsystemBase {
     OFF, ADJUSTING, ATPOSITION;
   }
 
-  private final double MAX_RPM = 5200;
-
   private final int LEADER_ID = 12;
 
   private BaseTalon flywheelLeader;
@@ -84,7 +82,7 @@ public class Shooter extends SubsystemBase {
    * @param exit_velocity (an rpm value)
    */
   public void setTargetRPM(double exit_velocity) {
-    targetRPM = Math.min(MAX_RPM, exit_velocity);
+    targetRPM = Math.min(Constants.Flywheel.MAX_RPM, exit_velocity);
     
     if(exit_velocity == 0)
       setState(ShooterState.OFF);
@@ -163,7 +161,14 @@ public class Shooter extends SubsystemBase {
     // power series regression from testing data
     // linear constant to slightly tune the shot, -> Limelight distances range from 80 to 220
     // *currently set to 0, I suggest it should be 1*
-    return 616.24*Math.pow(limelight.getHorizontalDistance() * 1.2 , 0.471) + Constants.Flywheel.LIN_CONST*limelight.getHorizontalDistance();
+    double rpm = Math.min(616.24*Math.pow(limelight.getHorizontalDistance() * Constants.Flywheel.STRETCH_CONSTANT , 0.471) + Constants.Flywheel.LIN_CONST*limelight.getHorizontalDistance(), Constants.Flywheel.MAX_RPM);
+  
+    if(Math.abs(limelight.getHorizontalOffset())>Constants.Flywheel.ALIGN_ERROR)
+    {
+      rpm = rpm - Constants.Flywheel.ADJ_Horiz_Error*limelight.getHorizontalOffset();
+    }
+
+    return rpm;
   }
 
   /**

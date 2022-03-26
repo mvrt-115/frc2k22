@@ -57,14 +57,17 @@ public class Intake extends SubsystemBase {
       case INTAKING: // intake is deployed and starts running
         stopPivot();
         startIntake();
+        pivotMotor.setNeutralMode(NeutralMode.Coast);
         break;
-      case PIVOTING_UP: // intake goes back up and stops intaking
-        
+      case PIVOTING_UP: // intake goes back up and stops intaking  
+        pivotMotor.setNeutralMode(NeutralMode.Brake);
         stopIntake();
         pivotUp();
         break;
       case PIVOTING_DOWN:
+        pivotMotor.setNeutralMode(NeutralMode.Coast);
         pivotDown();
+        startIntake();
         break;
       case UP:
         // stopPivot(); // to keep the intake up
@@ -73,7 +76,7 @@ public class Intake extends SubsystemBase {
         break;
     }
 
-    log();
+    // log();
   }
 
   /**
@@ -86,6 +89,10 @@ public class Intake extends SubsystemBase {
     SmartDashboard.putBoolean("is at top", Math.abs(getCurrentPos()) <= Constants.Intake.kMARGIN_OF_ERROR_TICKS);
     SmartDashboard.putBoolean("is at bottom", Math.abs(getCurrentPos() - Constants.Intake.kTICKS_TO_BOTTOM) <= Constants.Intake.kMARGIN_OF_ERROR_TICKS);
     SmartDashboard.putBoolean("pivotState", pivotState);
+  }
+
+  public void resetEncoders(){
+    pivotMotor.setSelectedSensorPosition(0);
   }
   
   /**
@@ -199,7 +206,8 @@ public class Intake extends SubsystemBase {
   public void startIntake()
   {
  //   pivotMotor.setNeutralMode(NeutralMode.Brake);
-    intakeMotor.set(ControlMode.PercentOutput, Constants.Intake.kWHEELS_SPEED);
+    // intakeMotor.set(ControlMode.PercentOutput, Constants.Intake.kWHEELS_SPEED);
+    intakeMotor.set(ControlMode.PercentOutput, 0);
     // uncomment when intake motor is added
   }
 

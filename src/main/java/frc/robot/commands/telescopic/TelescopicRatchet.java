@@ -45,6 +45,6 @@ public class TelescopicRatchet extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(Timer.getFPGATimestamp() - startTime) > 1.5;
+    return Math.abs(Timer.getFPGATimestamp() - startTime) > 1;
   }
 }

@@ -77,11 +77,15 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
+    m_robotContainer.getIntake().resetEncoders();
+      m_robotContainer.getStorage().setBalls(1);
+
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
      // shooter.set(ControlMode.PercentOutput, 0.4);
     }
+    
   }
 
   /** This function is called periodically during autonomous. */

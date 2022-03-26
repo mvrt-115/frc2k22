@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.commands.telescopic.TelescopicRatchet;
 import frc.robot.util.MathUtils;
 import frc.robot.util.TalonFactory;
 
@@ -82,8 +83,15 @@ public class Climber extends SubsystemBase {
      * @param speed speed at which the motor needs to be run
      */
     public void setTelescopicSpeed(double speed) {
-        if(!(getTelescopicPosition() <= 1000 && speed < 0)){
-            leftTelescopic.set(ControlMode.PercentOutput, speed*1.2); // test and change value
+        if(getTelescopicPosition() <= 1000 || getTelescopicPosition() >= 260000 && speed > 0) {
+            leftTelescopic.set(ControlMode.PercentOutput, 0); // test and change value
+            rightTelescopic.set(ControlMode.PercentOutput, 0); 
+        }
+        else {
+            // if(speed > 0)
+                // leftTelescopic.set(ControlMode.PercentOutput, speed * 1.5); // test and change value
+            // if(speed < 0)
+            leftTelescopic.set(ControlMode.PercentOutput, speed); // test and change value
             rightTelescopic.set(ControlMode.PercentOutput, speed); 
         }
     }
@@ -206,6 +214,12 @@ public class Climber extends SubsystemBase {
     // This method will be called once per scheduler run
     @Override
     public void periodic() {
-        SmartDashboard.getNumber("max height of arms (ticks)", getLeftTelescopicEncoderValue());
+        // SmartDashboard.putNumber("left clim", getLeftTelescopicEncoderValue());
+        // SmartDashboard.putNumber("right clim", getRightTelescopicEncoderValue());
+
+        if(getTelescopicPosition() >= 260000){
+            leftServo.set(Constants.Climber.kServoRatchet);
+            rightServo.set(Constants.Climber.kServoRatchet);
+        }
     }
 }

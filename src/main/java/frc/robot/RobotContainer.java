@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.*;
 import frc.robot.commands.telescopic.*;
@@ -60,6 +61,11 @@ public class RobotContainer {
   public JoystickButton disableTurret;
   public JoystickButton zeroTurret;
   private Command twoBallAuto;
+
+  private JoystickButton adjustConstantIncrement;
+  private JoystickButton adjustConstantDecrement;
+
+  private JoystickButton lowShot;
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -85,21 +91,31 @@ public class RobotContainer {
     upManualStorage = new JoystickButton(operatorJoystick, 7);
     downManualStorage = new JoystickButton(operatorJoystick, 8);
 
-    twoBallAuto = new ParallelCommandGroup(
-      new SequentialCommandGroup(
-        new RunDrive(drivetrain, 1.25, 0.2).withTimeout(1.5),
-        new RunDrive(drivetrain, .75, -0.2).withTimeout(0.75),
-        new SetRPM(shooter, storage, turret).withTimeout(2),
-        new RunDrive(drivetrain, 2, 0.3).withTimeout(2)
+    adjustConstantIncrement = new JoystickButton(operatorJoystick, 4);
+    adjustConstantDecrement = new JoystickButton(operatorJoystick, 1);
+
+    lowShot = new JoystickButton(operatorJoystick, 6); // THIS BUTTON ID IS NOT FINAL, PLS CHANGE IT
+                                                       // to wtvr POTUS wants!!!
+
+    twoBallAuto = new SequentialCommandGroup(
+      new ParallelCommandGroup(
+          new SequentialCommandGroup(
+            new RunDrive(drivetrain, 2.25, 0.2).withTimeout(2.25),
+            new WaitCommand(1)
+          ),
+        new Pivot(intake, storage).withTimeout(3.25)
       ),
-      new Pivot(intake, storage)
+      new PivotUp(intake, storage),
+      new RunDrive(drivetrain, 1, -0.2).withTimeout(1),
+      new WaitCommand(2), 
+      new SetRPM(shooter, storage, turret)
     );
     
     // Configure the button bindings
     configureButtonBindings();
   }
 
-  /**
+  /**[]\
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
@@ -116,7 +132,7 @@ public class RobotContainer {
     turret.setDefaultCommand(new FindTarget(turret));
     
     shoot.whenPressed(new SetRPM(shooter, storage, turret, shoot)).whenReleased(new StopShooter(shooter, storage));
-
+    // new SetRPM(shooter, storage, 1000).schedule();
     // SmartDashboard.putData("Testing Shooter", new SetRPM(shooter, storage, true));
     pivot.whenPressed(new Pivot(intake,storage)).whenReleased(new PivotUp(intake, storage));
       
@@ -139,6 +155,11 @@ public class RobotContainer {
     zeroTurret.whenPressed(new ZeroTurret(turret)).whenReleased(new FindTarget(turret));
 
     systemsCheckButton.whenPressed(new SystemsCheck(intake, storage, drivetrain, turret, shooter, climber));
+    adjustConstantIncrement.whenPressed(new AdjustShooterConstant(Constants.Flywheel.INCREMENT));
+    adjustConstantDecrement.whenPressed(new AdjustShooterConstant(-1*Constants.Flywheel.INCREMENT));
+    // KEEP THE INCREMENT LOW. 0.3 is already a lot.
+
+    lowShot.whenPressed(new SetRPM(shooter, storage, Constants.Flywheel.LOW_SHOT_RPM));
   }
   
   
@@ -153,6 +174,16 @@ public class RobotContainer {
   public double getThrottle() {
     throttle.updateValue(-driverJoystick.getRawAxis(3) * 1);
     return throttle.getAverage();
+  }
+
+  public Intake getIntake(){
+    return intake;
+  }
+  public Turret getTurret(){
+    return turret;
+  }
+  public Storage getStorage(){
+    return storage;
   }
   
   /**
@@ -197,7 +228,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return twoBallAuto;
+    // return twoBallAuto;
+    return new Pivot(intake, storage);
 
   }
 
