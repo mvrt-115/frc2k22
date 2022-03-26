@@ -62,34 +62,41 @@ public class Storage extends SubsystemBase  {
     SmartDashboard.putString("Ball color", getBallColor());
 
    
-    if(prevStateBott && !breakbeamBott.get() && Timer.getFPGATimestamp() - lastTopChanged > 0.5) {
-      balls++;
-      lastTopChanged = Timer.getFPGATimestamp();
-    }
+    
+      if(!overriden && prevStateBott && !breakbeamBott.get() && Timer.getFPGATimestamp() - lastTime > 0.3) {
+        balls++;
+        lastTime = Timer.getFPGATimestamp();
+      }
+  
+      else if(!prevStateTop && breakbeamTop.get()&& Timer.getFPGATimestamp() - lastTopChanged > 0.3)  {
+        balls--;
+        lastTopChanged = Timer.getFPGATimestamp();
+      }
+    
+      if(overriden && motor.getMotorOutputPercent() < 0 && !prevStateBott && breakbeamBott.get() && Timer.getFPGATimestamp() - lastTime > 0.3) {
+        balls--;
+        lastTime = Timer.getFPGATimestamp();
+      }
+    
 
-    else if(!prevStateTop && breakbeamTop.get()&& Timer.getFPGATimestamp() - lastTime > 0.5)  {
-      balls--;
-      lastTime = Timer.getFPGATimestamp();
-    }
-
-    if(stopIntakeTime != -1 && Timer.getFPGATimestamp() - stopIntakeTime > 0.5) {
+    if(stopIntakeTime != -1 && Timer.getFPGATimestamp() - stopIntakeTime > 0.3) {
       intaking = false;
       stopIntakeTime = -1;
     }
-
+  
     if(balls < 0) balls = 0;
-
+  
     if(balls >= 3) balls = 2;
-
-    
+      
     prevStateBott = breakbeamBott.get();
     prevStateTop = breakbeamTop.get();
-    if(!overriden)  {
-      autoStorage();
-    }
-    else{
-      runMotor(1);
-    }
+      //if(!overriden)  {
+    if(!overriden) autoStorage();
+      //}
+      //else{
+       // runMotor(1);
+     // }
+    
   }
 
   public void setOverriden(boolean state) {
