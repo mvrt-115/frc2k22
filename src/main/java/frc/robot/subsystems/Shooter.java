@@ -168,13 +168,17 @@ public class Shooter extends SubsystemBase {
     //double rpm = Math.min(333*Math.pow(limelight.getHorizontalDistance() * Constants.Flywheel.STRETCH_CONSTANT, 0.522) + Constants.Flywheel.LIN_CONST * limelight.getHorizontalDistance(), Constants.Flywheel.MAX_RPM);
    
     double rpm = 479.18*Math.pow(x, 0.4418) + Constants.Flywheel.LIN_CONST * limelight.getHorizontalDistance();
+    
+    // Use this is power equation is not working
+    // double rpm = 2040.9 * Math.pow(Math.E, 0.0058 * x);
 
-    // if(Math.abs(limelight.getHorizontalOffset())>Constants.Flywheel.ALIGN_ERROR)
-    // {
-    //   rpm = rpm - Constants.Flywheel.ADJ_HORIZ_ERROR*limelight.getHorizontalOffset();
-    // }
+    if(Math.abs(limelight.getHorizontalOffset())>Constants.Flywheel.ALIGN_ERROR)
+    {
+      rpm = rpm - Constants.Flywheel.ADJ_HORIZ_ERROR*limelight.getHorizontalOffset();
+    }
     // SERIOUSLY DO NOT IGNORE THIS DIMENSION, as the turret is slightly off, the shots often overshoot, so we need
-    // to reduce it a bit so they have a better chance of landing in. If you notice this happening, look at this.
+    // to reduce it a bit so they have a better chance of landing in. If you notice this happening, change the constant.
+    // Right now, it is 0, so it won't affect anything.
 
     return rpm;
   }
