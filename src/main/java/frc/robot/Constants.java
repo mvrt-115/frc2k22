@@ -136,18 +136,18 @@ public final class Constants {
         public static final double DHood = 6.9;
         public static final double FHood = 0.058;
         public static final double RADIUS = 2;
-        public static final double ACCEPTABLE_ERROR = 100; //100;
+        public static final double ACCEPTABLE_ERROR = 25; //100;
         public static final double MAX_VOLTAGE_COMPENSATION = 10;
         public static final double TICKS_PER_REVOLUTION = 2048;
         public static final int NUM_AVG = 5;
         public static final double GEAR_RATIO = 25 / 24;
-        public static double LIN_CONST = 0;
+        public static final double LIN_CONST = 0;
         public static double INCREMENT = 0.3; // 0.3 is a lot, it's 0.3 * range from 100 to 250
         public static final double LOW_SHOT_RPM = 500;
         public static final double STRETCH_CONSTANT = 1;
         public static final double ADJ_Horiz_Error = 0; // If the limelight is not perfectly aligning,
                                                         // this adjusts the shot for it to make.
-        public static final double MAX_RPM = 5250;
+        public static final double MAX_RPM = 100000;
         public static final double ALIGN_ERROR = 7;
     }
 
@@ -194,9 +194,9 @@ public final class Constants {
         // public static final double kP = 0.05;
         // public static final double kI = 0;
         // public static final double kD = 0.03;  // try with 0.007
-        public static final double kP = 0.4;
+        public static final double kP = 0.35;
         public static final double kI = 0;
-        public static final double kD = 0.375;//-0.05;//16;
+        public static final double kD = 0.05;//-0.05;//16;
         public static final double kTurnSpeed = 0.3;
     }
         public static class Climber {

@@ -82,30 +82,17 @@ public class SetRPM extends CommandBase {
       else 
         shoot = false;
       if(shoot)
-        storage.runMotor(.4);
+        storage.runMotor(1);
       else
         storage.runMotor(0);
     }
     
-    if(given)
-      rpm = shooter.getRequiredRPM();
-    // shooter.setTargetRPM(rpm);
-    if(!storage.getBallColor().trim().equals(DriverStation.getAlliance().toString()) && storage.isTopBreakbeamBroken()){
-      shooter.setTargetRPM(3000);
-    }
-    else {
-      if(DriverStation.isAutonomous()){
-        shooter.setTargetRPM(rpm + 200);
-      }
-      else {
-        shooter.setTargetRPM(1000);
-      }
-    }
+    shooter.setTargetRPM(shooter.getRequiredRPM());
 
     if(rpm == 0)
        storage.runMotor(0);
     if(shooter.getState() == ShooterState.ATSPEED) {
-        storage.runMotor(0.4);
+        storage.runMotor(1);
     } else
       storage.runMotor(0);
   }

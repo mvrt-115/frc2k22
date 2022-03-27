@@ -33,7 +33,7 @@ public class Intake extends SubsystemBase {
     pivotState = true;
     state = IntakeState.UP;
 
-    intakeMotor = TalonFactory.createTalonSRX(Constants.Intake.kROLLER_ID, false); // change motor IDs from Constants later
+    intakeMotor = TalonFactory.createTalonFX(Constants.Intake.kROLLER_ID, false); // change motor IDs from Constants later
 
     pivotMotor = TalonFactory.createTalonFX(Constants.Intake.kPIVOT_ID, true); // change motor IDs from Constants later
     //pivotMotor.setInverted(true);
@@ -67,7 +67,7 @@ public class Intake extends SubsystemBase {
       case PIVOTING_DOWN:
         pivotMotor.setNeutralMode(NeutralMode.Coast);
         pivotDown();
-        startIntake();
+        //startIntake();
         break;
       case UP:
         // stopPivot(); // to keep the intake up
@@ -206,8 +206,8 @@ public class Intake extends SubsystemBase {
   public void startIntake()
   {
  //   pivotMotor.setNeutralMode(NeutralMode.Brake);
-    // intakeMotor.set(ControlMode.PercentOutput, Constants.Intake.kWHEELS_SPEED);
-    intakeMotor.set(ControlMode.PercentOutput, 0);
+    intakeMotor.set(ControlMode.PercentOutput, Constants.Intake.kWHEELS_SPEED);
+    // intakeMotor.set(ControlMode.PercentOutput, 0);
     // uncomment when intake motor is added
   }
 

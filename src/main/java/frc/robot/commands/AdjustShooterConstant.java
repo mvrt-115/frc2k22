@@ -26,7 +26,6 @@ public class AdjustShooterConstant extends CommandBase {
   @Override
   public void execute()
   {
-    Constants.Flywheel.LIN_CONST+=increment;
   }
 
   // Called once the command ends or is interrupted.

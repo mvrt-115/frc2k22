@@ -8,6 +8,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -76,7 +77,7 @@ public class RobotContainer {
 
     quickturn = new JoystickButton(driverJoystick, 5);
     throttle = new RollingAverage(50);
-    wheel = new RollingAverage(15);
+    wheel = new RollingAverage(30);
 
     extend =  new JoystickButton(operatorJoystick, 9);
     retract = new JoystickButton(operatorJoystick, 10);
@@ -123,12 +124,12 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, intake, 
     this::getThrottle, this::getWheel, quickturn::get));
 
-    storage.setDefaultCommand(new TrackBalls(storage, shooter));
+    //storage.setDefaultCommand(new TrackBalls(storage, shooter));
     turret.setDefaultCommand(new FindTarget(turret));
     
     shoot.whenPressed(new SetRPM(shooter, storage, turret, shoot)).whenReleased(new StopShooter(shooter, storage));
     // new SetRPM(shooter, storage, 1000).schedule();
-    // SmartDashboard.putData("Testing Shooter", new SetRPM(shooter, storage, true));
+    SmartDashboard.putData("Testing Shooter", new SetRPM(shooter, storage, true));
     pivot.whenPressed(new Pivot(intake,storage)).whenReleased(new PivotUp(intake, storage));
       
     upManualStorage.whenPressed(new ManualStorage(storage, true, upManualStorage::get));  // true for up
@@ -149,8 +150,8 @@ public class RobotContainer {
     disableTurret.whenPressed(new DisableTurret(turret)).whenReleased(new FindTarget(turret));
     zeroTurret.whenPressed(new ZeroTurret(turret)).whenReleased(new FindTarget(turret));
 
-    adjustConstantIncrement.whenPressed(new AdjustShooterConstant(Constants.Flywheel.INCREMENT));
-    adjustConstantDecrement.whenPressed(new AdjustShooterConstant(-1*Constants.Flywheel.INCREMENT));
+    // adjustConstantIncrement.whenPressed(new AdjustShooterConstant(Constants.Flywheel.INCREMENT));
+    // adjustConstantDecrement.whenPressed(new AdjustShooterConstant(-1*Constants.Flywheel.INCREMENT));
     // KEEP THE INCREMENT LOW. 0.3 is already a lot.
 
     lowShot.whenPressed(new SetRPM(shooter, storage, Constants.Flywheel.LOW_SHOT_RPM));
@@ -166,7 +167,7 @@ public class RobotContainer {
    * @return value from [-1, 1] that is used for input for the the robot forward or backwards movement
    */
   public double getThrottle() {
-    throttle.updateValue(-driverJoystick.getRawAxis(3) * 1);
+    throttle.updateValue(-driverJoystick.getRawAxis(3) * .7);
     return throttle.getAverage();
   }
 
@@ -203,6 +204,28 @@ public class RobotContainer {
     return retract.get();
   }
 
+  /**
+   * Gets the ange of the right axis for the operator joystick
+   * @return The angle from [-180, 180] where 0 degrees is the top and the right side represents
+   * positive angles
+   */
+  public double getOperatorRightAxisAngle() {
+    double x = operatorJoystick.getRawAxis(2);
+    double y = -operatorJoystick.getRawAxis(3);
+
+    double angle = Math.atan2(y, x);
+
+    SmartDashboard.putNumber("operator raw angle", angle);
+
+    // if(x < 0)
+    //   angle += Math.PI;
+
+    angle -= Math.PI / 2;
+    angle *= -1;
+
+    return angle * 180 / Math.PI;
+  }
+
   /** 
    * Gets the state of all buttons (if all buttoons are pressed, then is true, otherwise false)
    * @param buttons the array of all buttons that need to be checked
@@ -214,7 +237,6 @@ public class RobotContainer {
 
     return true;
   }
-
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

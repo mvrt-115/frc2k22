@@ -34,7 +34,7 @@ public class Storage extends SubsystemBase  {
     breakbeamTop = new DigitalInput(1);
     breakbeamBott = new DigitalInput(3);
     prevStateTop = prevStateBott = true; // true is unbroken
-    motor = TalonFactory.createTalonFX(39, false);
+    motor = TalonFactory.createTalonSRX(39, false);
     balls = 0;
     overriden = false;
     lastTime = Timer.getFPGATimestamp();
@@ -62,17 +62,22 @@ public class Storage extends SubsystemBase  {
     SmartDashboard.putString("Ball color", getBallColor());
 
    
-    if(prevStateBott && !breakbeamBott.get() && Timer.getFPGATimestamp() - lastTopChanged > 0.5) {
+    if( prevStateBott && !breakbeamBott.get() && Timer.getFPGATimestamp() - lastTime > 0.3) {
       balls++;
-      lastTopChanged = Timer.getFPGATimestamp();
-    }
-
-    else if(!prevStateTop && breakbeamTop.get()&& Timer.getFPGATimestamp() - lastTime > 0.5)  {
-      balls--;
       lastTime = Timer.getFPGATimestamp();
     }
 
-    if(stopIntakeTime != -1 && Timer.getFPGATimestamp() - stopIntakeTime > 0.5) {
+    // else if(overriden && motor.getMotorOutputPercent() < 0 && !prevStateBott && breakbeamBott.get() && Timer.getFPGATimestamp() - lastTime > 0.3) {
+    //   balls--;
+    //   lastTime = Timer.getFPGATimestamp();
+    // }
+
+    else if(!prevStateTop && breakbeamTop.get()&& Timer.getFPGATimestamp() - lastTopChanged > 0.5)  {
+      balls--;
+      lastTopChanged = Timer.getFPGATimestamp();
+    }
+
+    if(stopIntakeTime != -1 && Timer.getFPGATimestamp() - stopIntakeTime > 0.3) {
       intaking = false;
       stopIntakeTime = -1;
     }
