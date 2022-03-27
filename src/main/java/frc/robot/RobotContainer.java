@@ -32,6 +32,7 @@ public class RobotContainer {
 
   private Joystick driverJoystick; //Joysticks
   private Joystick operatorJoystick;
+  private Joystick systemsCheck;
   
   private JoystickButton  pivot; //buttons
 
@@ -56,6 +57,7 @@ public class RobotContainer {
 
   private JoystickButton quickturn;
   private JoystickButton shoot;
+  private JoystickButton systemsCheckButton;
 
   public JoystickButton disableTurret;
   public JoystickButton zeroTurret;
@@ -71,6 +73,9 @@ public class RobotContainer {
     // Configure the button bindings
     driverJoystick = new Joystick(0);
     operatorJoystick = new Joystick(1); //MAKE SURE IT IS ON D MODE (so that the right trigger acts as a button)
+    systemsCheck = new Joystick(2);
+
+    systemsCheckButton = new JoystickButton(systemsCheck, 1);
 
     shoot = new JoystickButton(driverJoystick, 8);
     pivot = new JoystickButton(driverJoystick, 6);

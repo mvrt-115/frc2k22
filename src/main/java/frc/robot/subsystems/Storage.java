@@ -81,20 +81,20 @@ public class Storage extends SubsystemBase  {
       intaking = false;
       stopIntakeTime = -1;
     }
-
+  
     if(balls < 0) balls = 0;
-
+  
     if(balls >= 3) balls = 2;
-
-    
+      
     prevStateBott = breakbeamBott.get();
     prevStateTop = breakbeamTop.get();
-    if(!overriden)  {
-      autoStorage();
-    }
-    else{
-      runMotor(1);
-    }
+      //if(!overriden)  {
+    if(!overriden) autoStorage();
+      //}
+      //else{
+       // runMotor(1);
+     // }
+    
   }
 
   public void setOverriden(boolean state) {
