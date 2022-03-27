@@ -171,8 +171,10 @@ public class Shooter extends SubsystemBase {
 
     // if(Math.abs(limelight.getHorizontalOffset())>Constants.Flywheel.ALIGN_ERROR)
     // {
-    //   rpm = rpm - Constants.Flywheel.ADJ_Horiz_Error*limelight.getHorizontalOffset();
+    //   rpm = rpm - Constants.Flywheel.ADJ_HORIZ_ERROR*limelight.getHorizontalOffset();
     // }
+    // SERIOUSLY DO NOT IGNORE THIS DIMENSION, as the turret is slightly off, the shots often overshoot, so we need
+    // to reduce it a bit so they have a better chance of landing in. If you notice this happening, look at this.
 
     return rpm;
   }
