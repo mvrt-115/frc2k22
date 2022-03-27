@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 // import edu.wpi.first.wpilibj.DigitalInput;
@@ -171,6 +172,22 @@ public class Turret extends SubsystemBase {
 
     if(limelight.targetsFound())
       setState(TurretState.TARGETING);
+  }
+
+  /**
+   * Turns the turret to a rough estimate of where the hub is using the gyro and current turret position
+   * @param pose The current pose of the robot
+   */
+  public void estimate(Pose2d pose) {
+    double hubX = 8.283;
+    double hubY = 4.099;
+    
+    double robotX = pose.getX();
+    double robotY = pose.getY();
+
+    double rawAngleDiff = Math.atan2(robotY - hubY, robotX - hubX);
+
+
   }
 
   /**
