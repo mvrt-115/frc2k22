@@ -30,8 +30,7 @@ public class UnratchetExtend extends SequentialCommandGroup {
     // this just unratchets the arms and then allows the telescopic arms to extend
     addCommands(
       new TelescopicRatchet(climber, Constants.Climber.kServoUnRatchet).withTimeout(2),
-      new TelescopicManual(climber, buttonState, speed),
-      new TelescopicRatchet(climber, Constants.Climber.kServoRatchet).withTimeout(2)
+      new TelescopicManual(climber, buttonState, speed)
     );
   }
 }

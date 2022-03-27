@@ -41,10 +41,10 @@ public final class Constants {
         public static int kCompLeftFollowerId = 3;
         public static int kCompRightFollowerId = 4;
        
-        public static int kPracLeftMasterId = 2;
-        public static int kPracRightMasterId = 0;
+        public static int kPracLeftMasterId = 1;
+        public static int kPracRightMasterId = 2;
         public static int kPracLeftFollowerId = 3;
-        public static int kPracRightFollowerId = 1;
+        public static int kPracRightFollowerId = 4;
 
         // constants for joystick drive
         public static final double kSensitivity = 0.90;
@@ -63,7 +63,7 @@ public final class Constants {
         public static final double kI = 0;
         public static final double kD = 0;
         public static final double kFF = 0;
-
+                                                            
         public static final double kPTurn = 0.003;
         public static final double kITurn = 0;
         public static final double kDTurn = 0;
@@ -76,16 +76,16 @@ public final class Constants {
     
     public static class Intake{
 
-        public static final double kTICKS_TO_BOTTOM = 15000;
+        public static final double kTICKS_TO_BOTTOM = 20000;
         // the # of ticks it takes to be at the bottom when pivoting
-        public static final double kTICKS_TO_TOP = -17000; // the # of ticks it takes to be at the top when pivoting
+        public static final double kTICKS_TO_TOP = 2500; // the # of ticks it takes to be at the top when pivoting
 
 
         public static final int kPIVOT_ID = 10; // change later
         public static final int kROLLER_ID = 21; // change later
 
 
-        public static final double kWHEELS_SPEED = .9;
+        public static final double kWHEELS_SPEED = .45;
 
         //public static final double kPIVOT_SPEED = -0.4; // speed of intake when going up or down
         public static final double kPIVOT_STOP_SPEED_WHEN_UP = 0; // speed of intake to keep it up
@@ -93,14 +93,14 @@ public final class Constants {
         public static final double kPIVOT_STOP_SPEED_WHEN_DOWN = 0.0    ; // speed of intake to keep it down
         //change later after testing
 
-        public static final double kMARGIN_OF_ERROR_TICKS = 1500; // constant
+        public static final double kMARGIN_OF_ERROR_TICKS = 3000; // constant
 
 
-        public static final double kP = 0.03;
+        public static final double kP = 0.01; //0.03
         public static final double kI = 0.0;
         public static final double kD = 0.0;//0.001;
 
-        public static final double kFF = .005;
+        public static final double kFF = .01;
         ;//-0.001;
     }
 
@@ -136,11 +136,19 @@ public final class Constants {
         public static final double DHood = 6.9;
         public static final double FHood = 0.058;
         public static final double RADIUS = 2;
-        public static final double ACCEPTABLE_ERROR = 50; //100;
+        public static final double ACCEPTABLE_ERROR = 25; //100;
         public static final double MAX_VOLTAGE_COMPENSATION = 10;
         public static final double TICKS_PER_REVOLUTION = 2048;
         public static final int NUM_AVG = 5;
-        public static final double GEAR_RATIO = 1; // Can change
+        public static final double GEAR_RATIO = 25 / 24;
+        public static double LIN_CONST = 0;
+        public static double INCREMENT = 0.3; // 0.3 is a lot, it's 0.3 * range from 100 to 250
+        public static final double LOW_SHOT_RPM = 500;
+        public static final double STRETCH_CONSTANT = 1;
+        public static final double ADJ_HORIZ_ERROR = 0; // If the limelight is not perfectly aligning,
+                                                        // this adjusts the shot for it to make.
+        public static final double MAX_RPM = 100000;
+        public static final double ALIGN_ERROR = 7;
     }
 
 
@@ -171,8 +179,8 @@ public final class Constants {
     public static class Turret {
         public static final double kGearRatio = 47.142857;
         public static final double kTicksPerRevolution = 2048;
-        public static final double kMinAngle = -200; // degrees
-        public static final double kMaxAngle = 200; // degrees
+        public static final double kMinAngle = -140; // degrees
+        public static final double kMaxAngle = 170; // degrees
         public static final double kLimelightOffset = 40; // degrees
 
         public static final double kEThreshold = 60;
@@ -186,13 +194,12 @@ public final class Constants {
         // public static final double kP = 0.05;
         // public static final double kI = 0;
         // public static final double kD = 0.03;  // try with 0.007
-        public static final double kP = 0.2;
+        public static final double kP = 0.35;
         public static final double kI = 0;
-        public static final double kD = 0.4;//-0.05;//16;
+        public static final double kD = 0.05;//-0.05;//16;
         public static final double kTurnSpeed = 0.3;
     }
-
-    public static class Climber {
+        public static class Climber {
         //constants for the climber arms 
         // change values later
 
@@ -200,12 +207,12 @@ public final class Constants {
         //NEED TO BE CHANGED WHEN FULLY WIRED OR TESTING
         //motors
         //public static final int kPivotID = 0; // 22
-        public static final int kRightTelescopicID = 6;
-        public static final int kLeftTelescopicID = 7;
+        public static final int kRightTelescopicID = 6; // 6
+        public static final int kLeftTelescopicID = 7; // 7
 
         // Servo Contants
-        public static final int kRightServoID = 9; //Check (analog input)
-        public static final int kLeftServoID = 8; // Check (analog input)
+        public static final int kRightServoID = 8; //Check (analog input) 9
+        public static final int kLeftServoID = 9; // Check (analog input) 8 
 
         //inductive proximity sensors
         public static final int kPivotProximityChannel = 0;
@@ -223,9 +230,9 @@ public final class Constants {
         public static final double kPotentiometerInitialOffset = 0;
 
         //Math constants for calculating positions
-        public static final double kTicksPerRotation = 0;
+        public static final double kTicksPerRotation = 2048;
         public static final double kPivotGearRatio = 0;
-        public static final double kTelescopicGearRatio = 0;
+        public static final double kTelescopicGearRatio = 12 * 0.709677; //CHECK IF THIS WORKS!!!!!!!!!!!!!!!!!
         
         //PID constants for each motor
         //telescopic arm extension/retraction PID constants
@@ -243,27 +250,29 @@ public final class Constants {
         public static final double kFeedForwardPivot = 0;
 
         //speeds for manual climbing
-        public static final double kTelescopicRetractManualSpeed = -0.25;
-        public static final double kTelescopicExtendManualSpeed = 0.20;
+        public static final double kTelescopicRetractManualSpeed = -0.30; 
+        public static final double kTelescopicExtendManualSpeed = 0.6; 
         public static final double kPivotManualSpeed = 0.1;
 
         // servo ratchet and unratchet values
-        public static final double kServoRatchet = 90; // check
-        public static final double kServoUnRatchet = 145; // check
-        public static final double kServoError = 0.05; // check
+        public static final double kServoRatchet = 0; // check
+        public static final double kServoUnRatchet = 0.15; // check
+        public static final double kOffsetError = 0.0; // check
+        public static final double kServoError = 0.0; // check
         public static final double kMotorInitialUnratchetSpeed = 0.03; //test
         public static final double kMotorDownTime = 0.1; //seconds
 
         //manual position constants
-        public static final double kTelescopicFullExtend = 0; //inches
-        public static final double kTelescopicFullRetract = 0; //inches
+        public static final double kTelescopicFullExtend = 62; //inches
+        public static final double kTelescopicFullRetract = 1; //inches
+        public static final double kTelescopicDownwardLimit = 50; //inches
+        public static final double kTelescopicDownwardLimitTicks = MathUtils.inchesToTicks(kTelescopicDownwardLimit); //inches
         public static final double kPivotStowingPos = 32; //degrees
         public static final double kPivotMaxForwardPos = 30; //degrees
         public static final double kPivotMaxReversePos = -3; //degrees
         public static final double kApproachRungSpeed = 0.05; //PercentOutput
 
-        //button constants
-        public static final double kAxisThreshold = 0.2;
+        //public static final double kClimberDisableTime = 30; //seconds
 
         //31" in height of pivot arm
         //30" min 62" max of telescopic 

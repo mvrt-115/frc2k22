@@ -24,14 +24,13 @@ public class RatchetRetract extends SequentialCommandGroup {
     this.climber = climber;
     this.buttonState = buttonState;
     this.speed = speed;
-    // Add your commands in the addCommands() call, e.g.
+    // Add your commands in the () call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
 
     // this just allows the telescopic arms to retract and then ratchet
     addCommands(
-     // new TelescopicRatchet(climber, Constants.Climber.kServoUnRatchet).withTimeout(2),
-      new TelescopicManual(climber, buttonState,speed)
-     // new TelescopicRatchet(climber, Constants.Climber.kServoRatchet).withTimeout(2)
+      new TelescopicRatchet(climber, Constants.Climber.kServoRatchet).withTimeout(1.5),
+      new TelescopicManual(climber, buttonState, speed)
     );
   }
 }

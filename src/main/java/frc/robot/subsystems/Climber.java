@@ -11,8 +11,10 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.commands.telescopic.TelescopicRatchet;
 import frc.robot.util.MathUtils;
 import frc.robot.util.TalonFactory;
 
@@ -45,15 +47,19 @@ public class Climber extends SubsystemBase {
         leftTelescopic = TalonFactory.createTalonFX(Constants.Climber.kLeftTelescopicID, false);
         rightTelescopic = TalonFactory.createTalonFX(Constants.Climber.kRightTelescopicID, false);
 
+        resetTelescopicEncoder();
+
         leftTelescopic.setInverted(TalonFXInvertType.Clockwise);
         rightTelescopic.setInverted(TalonFXInvertType.Clockwise);
 
         leftServo = new Servo(Constants.Climber.kLeftServoID);
         rightServo = new Servo(Constants.Climber.kRightServoID); 
 
+        setServoTurn(0);
+
 
         //reconfiguring all motors with PID constants
-        rightTelescopic.follow(leftTelescopic);
+        //rightTelescopic.follow(leftTelescopic);
         
 
         leftTelescopic.config_kP(Constants.kPIDIdx, Constants.Climber.kTelekP);
@@ -77,7 +83,17 @@ public class Climber extends SubsystemBase {
      * @param speed speed at which the motor needs to be run
      */
     public void setTelescopicSpeed(double speed) {
-        leftTelescopic.set(ControlMode.PercentOutput, speed);
+        if(getTelescopicPosition() <= 1000 || getTelescopicPosition() >= 260000 && speed > 0) {
+            leftTelescopic.set(ControlMode.PercentOutput, 0); // test and change value
+            rightTelescopic.set(ControlMode.PercentOutput, 0); 
+        }
+        else {
+            // if(speed > 0)
+                // leftTelescopic.set(ControlMode.PercentOutput, speed * 1.5); // test and change value
+            // if(speed < 0)
+            leftTelescopic.set(ControlMode.PercentOutput, speed); // test and change value
+            rightTelescopic.set(ControlMode.PercentOutput, speed); 
+        }
     }
 
     /**
@@ -94,10 +110,10 @@ public class Climber extends SubsystemBase {
      * 
      * @param finalPosition final position of the motor
      * @param feedForward The feed forward
-     */
+     
     public void setTelescopicPosition(double finalPosition, double feedForward) {
         leftTelescopic.set(ControlMode.Position, finalPosition, DemandType.ArbitraryFeedForward, feedForward);
-    }
+    }*/
 
     /**
      * Get the encoder value of the left telescopic motors
@@ -125,7 +141,13 @@ public class Climber extends SubsystemBase {
      */
     public double getTelescopicPosition() {
         double average = (getLeftTelescopicEncoderValue() + getRightTelescopicEncoderValue()) / 2;
-        return MathUtils.ticksToInches(average);
+        return average;
+    }
+
+    public void resetTelescopicEncoder()
+    {
+        leftTelescopic.setSelectedSensorPosition(0);
+        rightTelescopic.setSelectedSensorPosition(0);
     }
 
     /**
@@ -177,51 +199,27 @@ public class Climber extends SubsystemBase {
     }
 
     public void setServoTurn(double turn) {
-        leftServo.setAngle(turn);
-        rightServo.setAngle(turn);
+        leftServo.setPosition(turn);
+        rightServo.setPosition(turn);
+    }
+
+    public double getServoAngle() {
+        return leftServo.getPosition();
+    }
+
+    public double getOffsetServoAngle() {
+        return rightServo.getPosition();
     }
 
     // This method will be called once per scheduler run
     @Override
     public void periodic() {
-    //     // checks to see if the pivot limit switch has been contacted and then sets the state to the pivot limit state
-    //     if(RobotContainer.PIVOT_EXISTS)
-    //     if (getLimitSwitch(pivotLimit)) 
-    //         setPivotState(ClimberState.PIVOT_LIMIT);
-            
-    //     // checks to see if the telescopic limit swtiches have been constacted and then sets the state to the telescopic limit state
-    //     if (getLimitSwitch(rightTelescopicLimit) && getLimitSwitch(leftTelescopicLimit))
-    //         setTelescopicState(ClimberState.TELESCOPIC_LIMIT);
+        // SmartDashboard.putNumber("left clim", getLeftTelescopicEncoderValue());
+        // SmartDashboard.putNumber("right clim", getRightTelescopicEncoderValue());
 
-    //     /* check to see if the telescopic proximity sense the rung and checks to make sure that telescopic limit swtiches are touched
-    //      *  and then sets the telescopic state to the telescopic proximity (telescopic amrs on rung) */
-    //     if (getProximity(leftTelescopicProximity) && getProximity(rightTelescopicProximity) && getPivotState() == ClimberState.TELESCOPIC_LIMIT) 
-    //         setTelescopicState(ClimberState.TELESCOPIC_PROXIMITY);
-
-    //     /* checks to see if the pivot proximity sense the rung and then checks to see if the previous state is set to the pivot limit switch
-    //      * being contacted and then the pivot proximity state is set (pivot arms on rung) */
-    //     if(RobotContainer.PIVOT_EXISTS && (pivotProximity.get()) && getPivotState() == ClimberState.PIVOT_LIMIT) 
-    //       setPivotState(ClimberState.PIVOT_PROXIMITY);
-
-    //     /* if the pivot proximity has not sensed the rung and the pivot state is the proximity state then the pivot state is set as none 
-    //      * (pivot not on rung) */
-    //     if(RobotContainer.PIVOT_EXISTS &&!getProximity(pivotProximity) && getPivotState() == ClimberState.PIVOT_PROXIMITY) 
-    //         setPivotState(ClimberState.NONE);
-            
-    //     /* if the telescopic proximity sensors have not sensed the rung and the telescopic state is the proximity state then the 
-    //      *  telescopic state is set to none (telescopic not on rung)
-    //     */
-    //     if(!getProximity(rightTelescopicProximity) &&!getProximity(leftTelescopicProximity) 
-    //         && getPivotState() == ClimberState.TELESCOPIC_PROXIMITY) 
-    //           setTelescopicState(ClimberState.NONE);
-
-    //     if(Math.abs(leftTelescopic.getMotorOutputPercent()) <= Constants.Climber.kServoOnThreshold){
-    //         leftServo.setAngle(Constants.Climber.kInitialServoAngle);
-    //         rightServo.setAngle(Constants.Climber.kInitialServoAngle);
-    //     }
-    //     else {
-    //         leftServo.setAngle(Constants.Climber.kServoTurn);
-    //         rightServo.setAngle(Constants.Climber.kServoTurn);
-    //     }
+        if(getTelescopicPosition() >= 260000){
+            leftServo.set(Constants.Climber.kServoRatchet);
+            rightServo.set(Constants.Climber.kServoRatchet);
+        }
     }
 }

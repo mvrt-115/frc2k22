@@ -4,9 +4,10 @@
 
 package frc.robot;
 
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import org.photonvision.PhotonCamera;
 
-import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -22,6 +23,8 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
+  PhotonCamera cam;
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -31,6 +34,16 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+
+    CameraServer.startAutomaticCapture();
+    cam = new PhotonCamera("gloworm");
+    if (DriverStation.getAlliance().toString().equals("Blue")) {
+      cam.setPipelineIndex(2);
+    }
+    else{
+      cam.setPipelineIndex(1);
+    }
+    cam.setDriverMode(true);
     
   }
 
@@ -65,11 +78,15 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
+    m_robotContainer.getIntake().resetEncoders();
+      m_robotContainer.getStorage().setBalls(1);
+
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
      // shooter.set(ControlMode.PercentOutput, 0.4);
     }
+    
   }
 
   /** This function is called periodically during autonomous. */
@@ -92,6 +109,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+    SmartDashboard.putNumber("operator right axis angle", m_robotContainer.getOperatorRightAxisAngle());
   }
 
   @Override

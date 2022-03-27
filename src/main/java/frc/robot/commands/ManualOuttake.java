@@ -2,49 +2,52 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.telescopic;
+package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.Timer;
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
-import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Shooter.ShooterState;
+import frc.robot.subsystems.Storage;
 
-public class TelescopicRatchet extends CommandBase {
-  
-  public Climber climber;
-  public double servoTurn;
-  double startTime;
-
-  /** Creates a new TelescopicRatchet. */
-  public TelescopicRatchet(Climber climber, double servoTurn) {
-    this.climber = climber;
-    this.servoTurn = servoTurn;
+public class ManualOuttake extends CommandBase {
+  Storage storage;
+  Shooter shooter;
+  Supplier<Boolean> button;
+  /** Creates a new ManualOuttake. */
+  public ManualOuttake(Storage storage, Shooter shooter, Supplier<Boolean> button) {
     // Use addRequirements() here to declare subsystem dependencies.
+    this.storage = storage;
+    this.shooter = shooter;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    startTime = Timer.getFPGATimestamp();
+    shooter.setTargetRPM(700);
+    storage.setOverriden(true);
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.
-
-  // ratchets both the servos
   @Override
   public void execute() {
-    climber.setServoTurn(servoTurn);
+    if(shooter.getState() == ShooterState.ATSPEED){
+      storage.runMotor(0.8);
+    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    climber.stopTelescopicMotor();
+    shooter.setTargetRPM(0);
+    storage.setOverriden(false);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(Timer.getFPGATimestamp() - startTime) > 1;
+    return button.get();
   }
 }

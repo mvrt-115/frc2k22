@@ -25,20 +25,20 @@ public class FiveBallAuton extends ParallelCommandGroup {
     addCommands(
       new SequentialCommandGroup(
           runPath("Path6Part1"),
-          new AlignIntakeToBall(drivetrain, true).withTimeout(2),
+          new AlignIntakeToBall(drivetrain, true).withTimeout(1),
           //need to intake here
           new SetRPM(shooter, storage, turret).withTimeout(2), //shoot 2 balls
           runPath("Path6Part1.5"), //going back
           runPath("Path6Part2"), //going to get other ball
-          new AlignIntakeToBall(drivetrain, true).withTimeout(2),
+          new AlignIntakeToBall(drivetrain, true).withTimeout(1),
           //need to intake here
           new SetRPM(shooter, storage, turret).withTimeout(2), //intake 1 ball
           runPath("Path6Part3"), //going to terminal
-          new AlignIntakeToBall(drivetrain, true).withTimeout(2),
+          new AlignIntakeToBall(drivetrain, true).withTimeout(1),
           runPath("Path6Part4"), //going back to shoot
           new SetRPM(shooter, storage, turret).withTimeout(2) //shoot 2 balls
       ),
-      new IntakeBalls(in, storage)
+      new Pivot(in, storage)
     );
     
     Trajectory trajectory = PathPlanner.loadPath("Path6Part1", 1, 1);

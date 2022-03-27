@@ -31,19 +31,19 @@ public class TrackBalls extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(!storage.getShooting()){
-        if(!storage.getBallColor().trim().equals("No Ball") && !storage.getBallColor().trim().equals(alliance)){
-          SmartDashboard.putBoolean("pooping", true);
-          shooter.setTargetRPM(100);
-          storage.runMotor(1);
-          stopExp = true;
-        } else if (stopExp) {
-          SmartDashboard.putBoolean("pooping", false);
-          shooter.setTargetRPM(0);
-          storage.runMotor(0);
-          stopExp = false; 
-        }
-    }
+    // if(!storage.getShooting()){
+    //     if(!storage.getBallColor().trim().equals("No Ball") && !storage.getBallColor().trim().equals(alliance)){
+    //       SmartDashboard.putBoolean("pooping", true);
+    //       shooter.setTargetRPM(1000);
+    //       storage.runMotor(1);
+    //       stopExp = true;
+    //     } else if (stopExp) {
+    //       SmartDashboard.putBoolean("pooping", false);
+    //       shooter.setTargetRPM(0);
+    //       storage.runMotor(0);
+    //       stopExp = false; 
+    //     }
+    // }
   }
 
   // Called once the command ends or is interrupted.

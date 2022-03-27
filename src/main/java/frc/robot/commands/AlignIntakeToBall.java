@@ -11,6 +11,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.Storage;
 import frc.robot.subsystems.Drivetrain;
 
 public class AlignIntakeToBall extends CommandBase {
@@ -31,13 +32,22 @@ public class AlignIntakeToBall extends CommandBase {
   PhotonCamera camera = new PhotonCamera("gloworm");
 
   //create PID controller
-  PIDController throttlePID = new PIDController(0.8, 0.0, 0.0);
+  PIDController throttlePID = new PIDController(1.1, 0.0, 0.0);
   PIDController turnPID = new PIDController(0.008, 0.0, 0.0);
+  Storage storage;
+  int prevballs;
   
   public AlignIntakeToBall(Drivetrain drivetrain2, boolean _notStopping) 
   {
     drivetrain = drivetrain2;
     notStopping = _notStopping;
+    addRequirements(drivetrain);
+  }
+  public AlignIntakeToBall(Drivetrain drivetrain2, Storage str) 
+  {
+    drivetrain = drivetrain2;
+    storage = str;
+    prevballs = storage.getBalls();
     addRequirements(drivetrain);
   }
 
@@ -89,6 +99,6 @@ public class AlignIntakeToBall extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return !notStopping;
+    return prevballs < storage.getBalls();
   }
 }

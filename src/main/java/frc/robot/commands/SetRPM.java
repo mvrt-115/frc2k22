@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -21,6 +22,7 @@ public class SetRPM extends CommandBase {
   private JoystickButton button;
   private Turret turret;
   private boolean dash;
+  boolean shoot = false;
 
   public SetRPM(Shooter shooter, Storage storage, Turret turret) {
     this.shooter = shooter;
@@ -30,10 +32,11 @@ public class SetRPM extends CommandBase {
   }
 
 
-  public SetRPM(Shooter shooter, Storage storage, JoystickButton button) {
+  public SetRPM(Shooter shooter, Storage storage, Turret turret, JoystickButton button) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.shooter = shooter;
     this.storage = storage;
+    this.turret = turret;
     given = false;
     this.button = button;
     addRequirements(shooter, storage);
@@ -70,30 +73,26 @@ public class SetRPM extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(dash) {
+      rpm = shooter.getRequiredRPM();
+      if(dash) {
       rpm = SmartDashboard.getNumber("new rpm", 0);
-      
-      shooter.setTargetRPM(rpm);
 
       if(shooter.getState() == ShooterState.ATSPEED)
+        shoot = true;
+      else 
+        shoot = false;
+      if(shoot)
         storage.runMotor(1);
       else
         storage.runMotor(0);
     }
     
-    if(given)
-      rpm = shooter.getCurrentRPM();
-    // shooter.setTargetRPM(rpm);
-    // if(!storage.getBallColor().trim().equals(alliance)){
-    //   shooter.setTargetRPM(600);
-    // }
-    // else {
-    shooter.setTargetRPM(rpm);
+    shooter.setTargetRPM(shooter.getRequiredRPM());
 
     if(rpm == 0)
        storage.runMotor(0);
-    if(shooter.getState() == ShooterState.ATSPEED && turret.canShoot()) {
-      storage.runMotor(1);
+    if(shooter.getState() == ShooterState.ATSPEED) {
+        storage.runMotor(1);
     } else
       storage.runMotor(0);
   }

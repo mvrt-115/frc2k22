@@ -187,7 +187,12 @@ public class Turret extends SubsystemBase {
 
     double rawAngleDiff = Math.atan2(robotY - hubY, robotX - hubX);
 
+    double currRobotAngle = pose.getRotation().getRadians();
+    double currRobotAngleWithTurret = currRobotAngle - (getCurrentPositionDegrees() * Math.PI / 180);
+  
+    double turnAngle = rawAngleDiff - currRobotAngleWithTurret;
 
+    turret.setSelectedSensorPosition((turnAngle * 180 / Math.PI) - getCurrentPositionDegrees());
   }
 
   /**

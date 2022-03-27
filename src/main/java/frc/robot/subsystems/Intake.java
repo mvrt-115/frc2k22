@@ -23,15 +23,17 @@ public class Intake extends SubsystemBase {
   // motors for the intake --> currently BaseTalon, may change 
   // (decide type of motor later)
   private BaseTalon intakeMotor; 
+  private boolean pivotState;
   public BaseTalon pivotMotor; 
 
   private double feedForward; // feed forward double needed to pivot for a certain number of ticks
 
 
   public Intake() {
+    pivotState = true;
     state = IntakeState.UP;
 
-    intakeMotor = TalonFactory.createTalonSRX(Constants.Intake.kROLLER_ID, true); // change motor IDs from Constants later
+    intakeMotor = TalonFactory.createTalonFX(Constants.Intake.kROLLER_ID, false); // change motor IDs from Constants later
 
     pivotMotor = TalonFactory.createTalonFX(Constants.Intake.kPIVOT_ID, true); // change motor IDs from Constants later
     //pivotMotor.setInverted(true);
@@ -55,17 +57,21 @@ public class Intake extends SubsystemBase {
       case INTAKING: // intake is deployed and starts running
         stopPivot();
         startIntake();
+        pivotMotor.setNeutralMode(NeutralMode.Coast);
         break;
-      case PIVOTING_UP: // intake goes back up and stops intaking
-        
+      case PIVOTING_UP: // intake goes back up and stops intaking  
+        pivotMotor.setNeutralMode(NeutralMode.Brake);
         stopIntake();
         pivotUp();
         break;
       case PIVOTING_DOWN:
+        pivotMotor.setNeutralMode(NeutralMode.Coast);
         pivotDown();
+        //startIntake();
         break;
       case UP:
-        stopPivot(); // to keep the intake up
+        // stopPivot(); // to keep the intake up
+        pivotUp();
         stopIntake();
         break;
     }
@@ -82,6 +88,11 @@ public class Intake extends SubsystemBase {
     SmartDashboard.putNumber("Ticks", getCurrentPos());
     SmartDashboard.putBoolean("is at top", Math.abs(getCurrentPos()) <= Constants.Intake.kMARGIN_OF_ERROR_TICKS);
     SmartDashboard.putBoolean("is at bottom", Math.abs(getCurrentPos() - Constants.Intake.kTICKS_TO_BOTTOM) <= Constants.Intake.kMARGIN_OF_ERROR_TICKS);
+    SmartDashboard.putBoolean("pivotState", pivotState);
+  }
+
+  public void resetEncoders(){
+    pivotMotor.setSelectedSensorPosition(0);
   }
   
   /**
@@ -106,7 +117,8 @@ public class Intake extends SubsystemBase {
     else 
       pivotMotor.set(ControlMode.PercentOutput, 0);
   }
-  
+  public boolean getPivotState() { return pivotState;}
+  public void setPivotState(boolean changed){ pivotState = changed;}
 
   /**
    * moves the intake down. if it is already at the bottom, then it sets
@@ -121,12 +133,10 @@ public class Intake extends SubsystemBase {
     if(isAtBottom())
     {
       state = IntakeState.INTAKING;
-     pivotMotor.setSelectedSensorPosition(0);
     }
     else
     {
-      pivotMotor.set(ControlMode.Position, Constants.Intake.kTICKS_TO_BOTTOM, DemandType.ArbitraryFeedForward, 
-      feedForward);
+      pivotMotor.set(ControlMode.Position, Constants.Intake.kTICKS_TO_BOTTOM, DemandType.ArbitraryFeedForward, 0);
     }
   }
 
@@ -183,12 +193,10 @@ public class Intake extends SubsystemBase {
     if(isAtTop())
     {
       state = IntakeState.UP;
-      pivotMotor.setSelectedSensorPosition(0);
     }
     else
     {
-      pivotMotor.set(ControlMode.Position, Constants.Intake.kTICKS_TO_TOP, DemandType.ArbitraryFeedForward, 
-      feedForward);
+      pivotMotor.set(ControlMode.Position, Constants.Intake.kTICKS_TO_TOP, DemandType.ArbitraryFeedForward, -0.1);
     }
   }
 
@@ -199,6 +207,7 @@ public class Intake extends SubsystemBase {
   {
  //   pivotMotor.setNeutralMode(NeutralMode.Brake);
     intakeMotor.set(ControlMode.PercentOutput, Constants.Intake.kWHEELS_SPEED);
+    // intakeMotor.set(ControlMode.PercentOutput, 0);
     // uncomment when intake motor is added
   }
 
@@ -206,6 +215,6 @@ public class Intake extends SubsystemBase {
    * @return The current angle of the pivot motor
    */
   public double getAngle() {
-    return 90 + (getCurrentPos() / 15000 * 100);
+    return 90 + (getCurrentPos() / (2048 * 50));
   }
 }

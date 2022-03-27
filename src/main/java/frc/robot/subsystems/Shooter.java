@@ -28,8 +28,6 @@ public class Shooter extends SubsystemBase {
     OFF, ADJUSTING, ATPOSITION;
   }
 
-  private final double MAX_RPM = 8000;
-
   private final int LEADER_ID = 12;
 
   private BaseTalon flywheelLeader;
@@ -44,7 +42,7 @@ public class Shooter extends SubsystemBase {
   /** Creates a new Shooter. */
   public Shooter(Limelight limelight/*, Drivetrain drivetrain, Turret turret*/) {
     // Mind Bending Test aon the Reality of our Situation
-    flywheelLeader = TalonFactory.createTalonFX(LEADER_ID, true);
+    flywheelLeader = TalonFactory.createTalonFX(LEADER_ID, false);
 
 
     // Sets up PIDF
@@ -84,7 +82,7 @@ public class Shooter extends SubsystemBase {
    * @param exit_velocity (an rpm value)
    */
   public void setTargetRPM(double exit_velocity) {
-    targetRPM = Math.min(MAX_RPM, exit_velocity);
+    targetRPM = Math.min(Constants.Flywheel.MAX_RPM, exit_velocity);
     
     if(exit_velocity == 0)
       setState(ShooterState.OFF);
@@ -119,6 +117,7 @@ public class Shooter extends SubsystemBase {
    */
   public void log()
   {
+    SmartDashboard.putNumber("Output", flywheelLeader.getMotorOutputPercent());
     SmartDashboard.putNumber("Flywheel RPM", getCurrentRPM());
     SmartDashboard.putNumber("RPM Needed", getRequiredRPM());
     SmartDashboard.putString("Shooter State", state.toString());
@@ -128,15 +127,6 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-
-    // debug pid values
-    final double kP = SmartDashboard.getNumber("kP Shooter", Constants.Flywheel.P);
-    final double kI = SmartDashboard.getNumber("kI Shooter", Constants.Flywheel.I);
-    final double kD = SmartDashboard.getNumber("kD Shooter", Constants.Flywheel.D);
-
-    flywheelLeader.config_kP(Constants.kPIDIdx, kP);
-    flywheelLeader.config_kI(Constants.kPIDIdx, kI);
-    flywheelLeader.config_kD(Constants.kPIDIdx, kD);
   
     // With servos all this is kinda unnecessary but idt it matters so we can keep it
 
@@ -169,7 +159,28 @@ public class Shooter extends SubsystemBase {
    */
   public double getRequiredRPM() {
     // power series regression from testing data
-    return 640.55*Math.pow(limelight.getHorizontalDistance(), 0.3468);
+    // linear constant to slightly tune the shot, -> Limelight distances range from 80 to 220
+    // *currently set to 0, I suggest it should be 1*
+    double x = limelight.getHorizontalDistance() * Constants.Flywheel.STRETCH_CONSTANT;
+    
+
+    
+    //double rpm = Math.min(333*Math.pow(limelight.getHorizontalDistance() * Constants.Flywheel.STRETCH_CONSTANT, 0.522) + Constants.Flywheel.LIN_CONST * limelight.getHorizontalDistance(), Constants.Flywheel.MAX_RPM);
+   
+    double rpm = 479.18*Math.pow(x, 0.4418) + Constants.Flywheel.LIN_CONST * limelight.getHorizontalDistance();
+    
+    // Use this is power equation is not working
+    // double rpm = 2040.9 * Math.pow(Math.E, 0.0058 * x);
+
+    if(Math.abs(limelight.getHorizontalOffset())>Constants.Flywheel.ALIGN_ERROR)
+    {
+      rpm = rpm - Constants.Flywheel.ADJ_HORIZ_ERROR*limelight.getHorizontalOffset();
+    }
+    // SERIOUSLY DO NOT IGNORE THIS DIMENSION, as the turret is slightly off, the shots often overshoot, so we need
+    // to reduce it a bit so they have a better chance of landing in. If you notice this happening, change the constant.
+    // Right now, it is 0, so it won't affect anything.
+
+    return rpm;
   }
 
   /**
