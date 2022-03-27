@@ -44,8 +44,10 @@ public class Turret extends SubsystemBase {
 
   private double offset;
 
+  private Drivetrain drivetrain;
+
   /** Creates a new Turret. */
-  public Turret(Limelight limelight) {
+  public Turret(Limelight limelight, Drivetrain drivetrain) {
     turret = TalonFactory.createTalonFX(5, true);
     this.limelight = limelight;
     magLimit = new DigitalInput(9);
@@ -61,6 +63,8 @@ public class Turret extends SubsystemBase {
     searchFlipping = false;
 
     offset = 0;
+
+    this.drivetrain = drivetrain;
 
     turret.config_kP(0, 0.1);//Constants.Turret.kPLarge);
     turret.config_kI(0, 0);//Constants.Turret.kI);
@@ -90,7 +94,11 @@ public class Turret extends SubsystemBase {
        case DISABLED:
          break;
        case FLIPPING:
-         flip();
+        //  flip();
+
+        // --------- uncomment for rough align to hub---------------
+        //  estimate();
+        // ---------------------------------------------------------
          break;
        case SEARCHING:
          search();
@@ -176,18 +184,17 @@ public class Turret extends SubsystemBase {
 
   /**
    * Turns the turret to a rough estimate of where the hub is using the gyro and current turret position
-   * @param pose The current pose of the robot
    */
-  public void estimate(Pose2d pose) {
+  public void estimate() {
     double hubX = 8.283;
     double hubY = 4.099;
     
-    double robotX = pose.getX();
-    double robotY = pose.getY();
+    double robotX = drivetrain.getPose().getX();
+    double robotY = drivetrain.getPose().getY();
 
     double rawAngleDiff = Math.atan2(robotY - hubY, robotX - hubX);
 
-    double currRobotAngle = pose.getRotation().getRadians();
+    double currRobotAngle = drivetrain.getPose().getRotation().getRadians();
     double currRobotAngleWithTurret = currRobotAngle - (getCurrentPositionDegrees() * Math.PI / 180);
   
     double turnAngle = rawAngleDiff - currRobotAngleWithTurret;
