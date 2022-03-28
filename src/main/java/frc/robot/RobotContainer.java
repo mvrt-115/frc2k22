@@ -158,7 +158,7 @@ public class RobotContainer {
 
     disableTurret.whenPressed(new DisableTurret(turret)).whenReleased(new FindTarget(turret));
     zeroTurret.whenPressed(new ZeroTurret(turret)).whenReleased(new FindTarget(turret));
-    estimateTurret.whenPressed(new EstimateTurret(turret, drivetrain));
+    estimateTurret.whenPressed(new EstimateTurret(turret, drivetrain)).whenReleased(new FindTarget(turret));
 
     // adjustConstantIncrement.whenPressed(new AdjustShooterConstant(Constants.Flywheel.INCREMENT));
     // adjustConstantDecrement.whenPressed(new AdjustShooterConstant(-1*Constants.Flywheel.INCREMENT));

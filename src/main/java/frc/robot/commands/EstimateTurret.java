@@ -13,14 +13,10 @@ public class EstimateTurret extends CommandBase {
   private Turret turret;
   private Drivetrain drivetrain;
   
-  private double target;
-
   /** Creates a new EstimateTurret. */
   public EstimateTurret(Turret turret, Drivetrain drivetrain) {
     this.turret = turret;
     this.drivetrain = drivetrain;    
-
-    target = 0;
 
     addRequirements(turret);
   }
@@ -34,7 +30,7 @@ public class EstimateTurret extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    target = turret.estimate(drivetrain.getPose());
+    turret.estimate(drivetrain.getPose());
   }
 
   // Called once the command ends or is interrupted.
@@ -44,12 +40,6 @@ public class EstimateTurret extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(Math.abs(target - turret.getCurrentPositionDegrees()) < 2) {
-      turret.setState(TurretState.TARGETING);
-
-      return true;
-    }
-
     return false;
   }
 }

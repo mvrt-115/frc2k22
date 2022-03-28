@@ -177,7 +177,7 @@ public class Turret extends SubsystemBase {
    * Turns the turret to a rough estimate of where the hub is using the gyro and current turret position
    * @para drivetrainPose The drivetrain pose
    */
-  public double estimate(Pose2d drivetrainPose) {
+  public void estimate(Pose2d drivetrainPose) {
     double hubX = 8.283;
     double hubY = 4.099;
     
@@ -191,8 +191,6 @@ public class Turret extends SubsystemBase {
     double target = normalizeAngle(Math.toDegrees(turnAngle));
 
     turret.set(ControlMode.Position, MathUtils.degreesToTicks(target, Constants.Turret.kTicksPerRevolution, Constants.Turret.kGearRatio));
-
-    return target;
   }
 
   /**
