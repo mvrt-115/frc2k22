@@ -220,12 +220,11 @@ public class RobotContainer {
 
     double angle = Math.atan2(y, x);
 
-    SmartDashboard.putNumber("operator raw angle", angle);
-
-    // if(x < 0)
-    //   angle += Math.PI;
-
+    if(angle <= -Math.PI / 2)
+      angle = Math.PI + (angle + Math.PI);
+    
     angle -= Math.PI / 2;
+
     angle *= -1;
 
     return angle * 180 / Math.PI;

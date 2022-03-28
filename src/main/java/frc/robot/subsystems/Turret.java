@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.motorcontrol.SD540;
 // import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -95,10 +96,6 @@ public class Turret extends SubsystemBase {
          break;
        case FLIPPING:
         //  flip();
-
-        // --------- uncomment for rough align to hub---------------
-        //  estimate();
-        // ---------------------------------------------------------
          break;
        case SEARCHING:
          search();
@@ -116,8 +113,6 @@ public class Turret extends SubsystemBase {
       turret.set(ControlMode.PercentOutput, 0);
      }
 
-    // target();
-
     SmartDashboard.putString("Turret State", state.toString());
   }
 
@@ -125,6 +120,9 @@ public class Turret extends SubsystemBase {
    * Targets using a pid on the limelight error
    */
   public void target() {
+    if(!limelight.targetsFound())
+      setState(TurretState.SEARCHING);
+
     double error = (limelight.getHorizontalOffset() + offset) / 30;
     double time = Timer.getFPGATimestamp();
 
@@ -163,20 +161,22 @@ public class Turret extends SubsystemBase {
    * Searches for a target by going from the min to the max degrees
    */
   public void search() {
-    if(searchDirection == 1)
-      setPercentOutput(0.5);
-    else
-      setPercentOutput(-0.5);
+    // if(searchDirection == 1)
+    //   setPercentOutput(0.5);
+    // else
+    //   setPercentOutput(-0.5);
 
-    if(!searchFlipping && (turret.getSelectedSensorPosition() >= Constants.Turret.kMaxAngle || 
-      turret.getSelectedSensorPosition() <= Constants.Turret.kMinAngle)) {
+    // if(!searchFlipping && (turret.getSelectedSensorPosition() >= Constants.Turret.kMaxAngle || 
+    //   turret.getSelectedSensorPosition() <= Constants.Turret.kMinAngle)) {
 
-      searchFlipping = true;
-      searchDirection *= -1;
-    }
+    //   searchFlipping = true;
+    //   searchDirection *= -1;
+    // }
 
-    if(searchFlipping && Math.abs(getCurrentPositionDegrees()) <= 10)
-      searchFlipping = false;
+    // if(searchFlipping && Math.abs(getCurrentPositionDegrees()) <= 10)
+    //   searchFlipping = false;
+
+    estimate();
 
     if(limelight.targetsFound())
       setState(TurretState.TARGETING);
@@ -187,19 +187,16 @@ public class Turret extends SubsystemBase {
    */
   public void estimate() {
     double hubX = 8.283;
-    double hubY = 4.099;
+    double hubY = -4.099;
     
     double robotX = drivetrain.getPose().getX();
     double robotY = drivetrain.getPose().getY();
 
-    double rawAngleDiff = Math.atan2(robotY - hubY, robotX - hubX);
-
-    double currRobotAngle = drivetrain.getPose().getRotation().getRadians();
-    double currRobotAngleWithTurret = currRobotAngle - (getCurrentPositionDegrees() * Math.PI / 180);
+    double rawAngleDiff = -Math.atan2(hubY - robotY, hubX - robotX);
   
-    double turnAngle = rawAngleDiff - currRobotAngleWithTurret;
+    double turnAngle = rawAngleDiff + drivetrain.getPose().getRotation().getRadians();
 
-    turret.setSelectedSensorPosition((turnAngle * 180 / Math.PI) - getCurrentPositionDegrees());
+    turret.setSelectedSensorPosition(Math.toDegrees(normalizeAngle(turnAngle)));
   }
 
   /**
@@ -231,6 +228,19 @@ public class Turret extends SubsystemBase {
    */
   public void setPercentOutput(double percentOutput) {
     turret.set(ControlMode.PercentOutput, percentOutput);
+  }
+
+  /**
+   * Normalizes the angle to fit the bounds [kMinAngle, kMaxAngle]
+   * @param degrees
+   */
+  public double normalizeAngle(double degrees) {
+    if(degrees > Constants.Turret.kMaxAngle)
+      degrees = Constants.Turret.kMinAngle + (degrees + Constants.Turret.kMinAngle);
+    else if(degrees < Constants.Turret.kMinAngle)
+      degrees = Constants.Turret.kMaxAngle + (degrees + Constants.Turret.kMaxAngle);
+
+    return Math.max(Constants.Turret.kMinAngle, Math.min(degrees, Constants.Turret.kMaxAngle));
   }
 
   /**
