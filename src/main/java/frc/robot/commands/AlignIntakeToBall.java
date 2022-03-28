@@ -9,6 +9,7 @@ import org.photonvision.PhotonUtils;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Storage;
@@ -32,7 +33,7 @@ public class AlignIntakeToBall extends CommandBase {
   PhotonCamera camera = new PhotonCamera("gloworm");
 
   //create PID controller
-  PIDController throttlePID = new PIDController(1.1, 0.0, 0.0);
+  PIDController throttlePID = new PIDController(0.9, 0.0, 0.0);
   PIDController turnPID = new PIDController(0.008, 0.0, 0.0);
   Storage storage;
   int prevballs;
@@ -42,6 +43,7 @@ public class AlignIntakeToBall extends CommandBase {
     drivetrain = drivetrain2;
     notStopping = _notStopping;
     addRequirements(drivetrain);
+    
   }
   public AlignIntakeToBall(Drivetrain drivetrain2, Storage str) 
   {
@@ -54,6 +56,13 @@ public class AlignIntakeToBall extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    // if(DriverStation.getAlliance() == DriverStation.Alliance.Red){
+
+      camera.setPipelineIndex(3);
+    // }
+    // else{
+    //   camera.setPipelineIndex(4);
+    // }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -71,7 +80,7 @@ public class AlignIntakeToBall extends CommandBase {
                       CAMERA_PITCH_RADIANS,
                       Units.degreesToRadians(results.getBestTarget().getPitch()));
       SmartDashboard.putNumber("Range", range);
-      forward = throttlePID.calculate(range, GOAL_RANGE_METERS);
+      forward = -0.2;//throttlePID.calculate(range, GOAL_RANGE_METERS);
       turn = turnPID.calculate(results.getBestTarget().getYaw(), 0);
       
     }
@@ -80,6 +89,7 @@ public class AlignIntakeToBall extends CommandBase {
     }
     SmartDashboard.putNumber("for", forward);
     SmartDashboard.putNumber("turn", turn);
+    
     if(Math.abs(turn) <= 0.05){
       drivetrain.setDrivetrainMotorSpeed(-forward, -forward);
     }
@@ -99,6 +109,6 @@ public class AlignIntakeToBall extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return prevballs < storage.getBalls();
+    return false;
   }
 }

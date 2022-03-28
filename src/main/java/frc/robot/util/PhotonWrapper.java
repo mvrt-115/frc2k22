@@ -14,14 +14,14 @@ public class PhotonWrapper extends PhotonCamera
     }
 
     public void setPipline (){
-        if(DriverStation.getAlliance().toString().equals("Red"))
-        {
-            this.setPipelineIndex(1);
-        }
-        else
-        {
-            this.setPipelineIndex(2);
-        }
+        // if(DriverStation.getAlliance().toString().equals("Red"))
+        // {
+        //     this.setPipelineIndex(1);
+        // }
+        // else
+        // {
+        //     this.setPipelineIndex(2);
+        // }
         
     }
     

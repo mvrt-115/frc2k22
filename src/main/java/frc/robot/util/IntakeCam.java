@@ -22,11 +22,11 @@ public class IntakeCam extends SubsystemBase {
   // Change this to match the name of your camera
   PhotonCamera camera = new PhotonCamera("gloworm");
   public IntakeCam() {
-    if (DriverStation.getAlliance().equals(DriverStation.Alliance.Red)) {
-      camera.setPipelineIndex(1);
-    } else {
-      camera.setPipelineIndex(2);
-    }
+    // if (DriverStation.getAlliance().equals(DriverStation.Alliance.Red)) {
+    //   camera.setPipelineIndex(1);
+    // } else {
+    //   camera.setPipelineIndex(2);
+    // }
       
     }    
 

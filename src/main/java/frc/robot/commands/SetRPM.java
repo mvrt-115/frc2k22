@@ -87,7 +87,7 @@ public class SetRPM extends CommandBase {
         storage.runMotor(0);
     }
     
-    shooter.setTargetRPM(shooter.getRequiredRPM());
+    shooter.setTargetRPM(3000);//(shooter.getRequiredRPM());
 
     if(rpm == 0)
        storage.runMotor(0);
@@ -103,6 +103,7 @@ public class SetRPM extends CommandBase {
     SmartDashboard.putBoolean("changing rpm", false);
     shooter.setState(ShooterState.OFF);
     storage.setReadyShoot(false);
+    storage.runMotor(0);
   }
 
   // Returns true when the command should end.

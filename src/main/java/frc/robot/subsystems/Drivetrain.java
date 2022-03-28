@@ -175,7 +175,7 @@ public class Drivetrain extends SubsystemBase {
         pose = odometry.update(getGyroAngle(), getDistanceTravelled(leftMaster, leftFollower),
                 getDistanceTravelled(rightMaster, rightFollower));
         field.setRobotPose(odometry.getPoseMeters());
-        // log();
+        log();
     }
 
     /**

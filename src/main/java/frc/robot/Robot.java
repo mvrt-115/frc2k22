@@ -35,15 +35,15 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
 
-    CameraServer.startAutomaticCapture();
+    // CameraServer.startAutomaticCapture();
     cam = new PhotonCamera("gloworm");
-    if (DriverStation.getAlliance().toString().equals("Blue")) {
-      cam.setPipelineIndex(2);
-    }
-    else{
-      cam.setPipelineIndex(1);
-    }
-    cam.setDriverMode(true);
+    // if (DriverStation.getAlliance().toString().equals("Blue")) {
+    //   cam.setPipelineIndex(2);
+    // }
+    // else{
+    //   cam.setPipelineIndex(1);
+    // }
+    // cam.setDriverMode(true);
     
   }
 

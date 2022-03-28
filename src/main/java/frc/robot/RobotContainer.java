@@ -250,8 +250,8 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // return twoBallAuto;
-    return new Pivot(intake, storage);
-
+    // return new ParallelCommandGroup(new AlignIntakeToBall(drivetrain, storage), new Pivot(intake, storage));//.withTimeout(5).andThen(new SetRPM(shooter, storage, turret));
+    return new FiveBallAuton(drivetrain, intake, shooter, storage, turret);
   }
 
   public double getStorageThrottle(){

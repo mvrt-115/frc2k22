@@ -36,7 +36,7 @@ public class Storage extends SubsystemBase  {
     prevStateTop = prevStateBott = true; // true is unbroken
     motor = TalonFactory.createTalonSRX(39, false);
     balls = 0;
-    overriden = false;
+    overriden = true;
     lastTime = Timer.getFPGATimestamp();
     lastTopChanged = Timer.getFPGATimestamp();
     // intaking = false;
