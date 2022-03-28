@@ -61,6 +61,8 @@ public class RobotContainer {
 
   public JoystickButton disableTurret;
   public JoystickButton zeroTurret;
+  public JoystickButton estimateTurret;
+
   private Command twoBallAuto;
 
   private JoystickButton adjustConstantIncrement;
@@ -89,6 +91,8 @@ public class RobotContainer {
 
     disableTurret = new JoystickButton(operatorJoystick, 2);
     zeroTurret = new JoystickButton(operatorJoystick, 3);
+    estimateTurret = new JoystickButton(operatorJoystick, 5);
+
     upManualStorage = new JoystickButton(operatorJoystick, 7);
     downManualStorage = new JoystickButton(operatorJoystick, 8);
 
@@ -154,6 +158,7 @@ public class RobotContainer {
 
     disableTurret.whenPressed(new DisableTurret(turret)).whenReleased(new FindTarget(turret));
     zeroTurret.whenPressed(new ZeroTurret(turret)).whenReleased(new FindTarget(turret));
+    estimateTurret.whenPressed(new EstimateTurret(turret, drivetrain)).whenReleased(new FindTarget(turret));
 
     // adjustConstantIncrement.whenPressed(new AdjustShooterConstant(Constants.Flywheel.INCREMENT));
     // adjustConstantDecrement.whenPressed(new AdjustShooterConstant(-1*Constants.Flywheel.INCREMENT));
@@ -220,12 +225,11 @@ public class RobotContainer {
 
     double angle = Math.atan2(y, x);
 
-    SmartDashboard.putNumber("operator raw angle", angle);
-
-    // if(x < 0)
-    //   angle += Math.PI;
-
+    if(angle <= -Math.PI / 2)
+      angle = Math.PI + (angle + Math.PI);
+    
     angle -= Math.PI / 2;
+
     angle *= -1;
 
     return angle * 180 / Math.PI;
