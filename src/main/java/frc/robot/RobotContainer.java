@@ -40,7 +40,7 @@ public class RobotContainer {
   private final Limelight limelight = new Limelight();
   private final Shooter shooter = new Shooter(limelight);
   private final Climber climber = new Climber();
-  private final Turret turret = new Turret(limelight, drivetrain);
+  private final Turret turret = new Turret(limelight);
 
   // climber operator manual buttons
   private JoystickButton extend;
@@ -61,6 +61,8 @@ public class RobotContainer {
 
   public JoystickButton disableTurret;
   public JoystickButton zeroTurret;
+  public JoystickButton estimateTurret;
+
   private Command twoBallAuto;
 
   private JoystickButton adjustConstantIncrement;
@@ -89,6 +91,8 @@ public class RobotContainer {
 
     disableTurret = new JoystickButton(operatorJoystick, 2);
     zeroTurret = new JoystickButton(operatorJoystick, 3);
+    estimateTurret = new JoystickButton(operatorJoystick, 5);
+
     upManualStorage = new JoystickButton(operatorJoystick, 7);
     downManualStorage = new JoystickButton(operatorJoystick, 8);
 
@@ -154,6 +158,7 @@ public class RobotContainer {
 
     disableTurret.whenPressed(new DisableTurret(turret)).whenReleased(new FindTarget(turret));
     zeroTurret.whenPressed(new ZeroTurret(turret)).whenReleased(new FindTarget(turret));
+    estimateTurret.whenPressed(new EstimateTurret(turret, drivetrain));
 
     // adjustConstantIncrement.whenPressed(new AdjustShooterConstant(Constants.Flywheel.INCREMENT));
     // adjustConstantDecrement.whenPressed(new AdjustShooterConstant(-1*Constants.Flywheel.INCREMENT));

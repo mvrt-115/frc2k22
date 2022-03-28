@@ -45,10 +45,8 @@ public class Turret extends SubsystemBase {
 
   private double offset;
 
-  private Drivetrain drivetrain;
-
   /** Creates a new Turret. */
-  public Turret(Limelight limelight, Drivetrain drivetrain) {
+  public Turret(Limelight limelight) {
     turret = TalonFactory.createTalonFX(5, true);
     this.limelight = limelight;
     magLimit = new DigitalInput(9);
@@ -64,8 +62,6 @@ public class Turret extends SubsystemBase {
     searchFlipping = false;
 
     offset = 0;
-
-    this.drivetrain = drivetrain;
 
     turret.config_kP(0, 0.1);//Constants.Turret.kPLarge);
     turret.config_kI(0, 0);//Constants.Turret.kI);
@@ -120,9 +116,6 @@ public class Turret extends SubsystemBase {
    * Targets using a pid on the limelight error
    */
   public void target() {
-    if(!limelight.targetsFound())
-      setState(TurretState.SEARCHING);
-
     double error = (limelight.getHorizontalOffset() + offset) / 30;
     double time = Timer.getFPGATimestamp();
 
@@ -161,22 +154,20 @@ public class Turret extends SubsystemBase {
    * Searches for a target by going from the min to the max degrees
    */
   public void search() {
-    // if(searchDirection == 1)
-    //   setPercentOutput(0.5);
-    // else
-    //   setPercentOutput(-0.5);
+    if(searchDirection == 1)
+      setPercentOutput(0.5);
+    else
+      setPercentOutput(-0.5);
 
-    // if(!searchFlipping && (turret.getSelectedSensorPosition() >= Constants.Turret.kMaxAngle || 
-    //   turret.getSelectedSensorPosition() <= Constants.Turret.kMinAngle)) {
+    if(!searchFlipping && (turret.getSelectedSensorPosition() >= Constants.Turret.kMaxAngle || 
+      turret.getSelectedSensorPosition() <= Constants.Turret.kMinAngle)) {
 
-    //   searchFlipping = true;
-    //   searchDirection *= -1;
-    // }
+      searchFlipping = true;
+      searchDirection *= -1;
+    }
 
-    // if(searchFlipping && Math.abs(getCurrentPositionDegrees()) <= 10)
-    //   searchFlipping = false;
-
-    estimate();
+    if(searchFlipping && Math.abs(getCurrentPositionDegrees()) <= 10)
+      searchFlipping = false;
 
     if(limelight.targetsFound())
       setState(TurretState.TARGETING);
@@ -184,19 +175,24 @@ public class Turret extends SubsystemBase {
 
   /**
    * Turns the turret to a rough estimate of where the hub is using the gyro and current turret position
+   * @para drivetrainPose The drivetrain pose
    */
-  public void estimate() {
+  public double estimate(Pose2d drivetrainPose) {
     double hubX = 8.283;
     double hubY = 4.099;
     
-    double robotX = drivetrain.getPose().getX();
-    double robotY = drivetrain.getPose().getY();
+    double robotX = drivetrainPose.getX();
+    double robotY = drivetrainPose.getY();
 
     double rawAngleDiff = -Math.atan2(hubY - robotY, hubX - robotX);
   
-    double turnAngle = rawAngleDiff + drivetrain.getPose().getRotation().getRadians();
+    double turnAngle = rawAngleDiff + drivetrainPose.getRotation().getRadians();
 
-    turret.setSelectedSensorPosition(Math.toDegrees(normalizeAngle(turnAngle)));
+    double target = normalizeAngle(Math.toDegrees(turnAngle));
+
+    turret.setSelectedSensorPosition(MathUtils.degreesToTicks(target, Constants.Turret.kTicksPerRevolution, Constants.Turret.kGearRatio));
+
+    return target;
   }
 
   /**
@@ -241,6 +237,10 @@ public class Turret extends SubsystemBase {
       degrees = Constants.Turret.kMaxAngle + (degrees + Constants.Turret.kMaxAngle);
 
     return Math.max(Constants.Turret.kMinAngle, Math.min(degrees, Constants.Turret.kMaxAngle));
+  }
+
+  public void zero() {
+    turret.set(ControlMode.Position, 0);
   }
 
   /**
