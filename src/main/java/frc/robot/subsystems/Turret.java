@@ -190,7 +190,7 @@ public class Turret extends SubsystemBase {
 
     double target = normalizeAngle(Math.toDegrees(turnAngle));
 
-    turret.setSelectedSensorPosition(MathUtils.degreesToTicks(target, Constants.Turret.kTicksPerRevolution, Constants.Turret.kGearRatio));
+    turret.set(ControlMode.Position, MathUtils.degreesToTicks(target, Constants.Turret.kTicksPerRevolution, Constants.Turret.kGearRatio));
 
     return target;
   }
