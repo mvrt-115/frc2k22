@@ -42,7 +42,7 @@ public class FiveBallAuton extends ParallelCommandGroup {
           runPath("Path6Part2"), //going to get other ball
           // //need to intake here
           new PivotUp(in, storage),
-          new SetRPM(shooter, storage, turret).withTimeout(2), //shoot 1 ball
+          new SetRPM(shooter, storage, turret).withTimeout(1), //shoot 1 ball
           new Pivot(in, storage),
           runPath("Path6Part3"), //going to terminal
           runPath("Path6Part4"), //going back to shoot
@@ -52,7 +52,7 @@ public class FiveBallAuton extends ParallelCommandGroup {
       new FindTarget(turret)
     );
     
-    Trajectory trajectory = PathPlanner.loadPath("Path6Part1", 3, 1);
+    Trajectory trajectory = PathPlanner.loadPath("Path6Part1", 4.75, 3);
     drivetrain.setOdometry(trajectory.getInitialPose());
   }
   public Command runPath(String pathName)
@@ -62,7 +62,7 @@ public class FiveBallAuton extends ParallelCommandGroup {
     if(pathName.equals("Path6Part3"))
       vel = 1;
 
-    Trajectory trajectory = PathPlanner.loadPath(pathName, vel, 1, reversed);
+    Trajectory trajectory = PathPlanner.loadPath(pathName, vel, 3, reversed);
     return drivetrain.getRamseteCommand(trajectory);
   }
 }
