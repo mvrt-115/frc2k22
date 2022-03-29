@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Turret;
@@ -25,6 +27,7 @@ public class EstimateTurret extends CommandBase {
   @Override
   public void initialize() {
     turret.setState(TurretState.DISABLED);
+    drivetrain.setOdometry(new Pose2d(5.86, 5.1, Rotation2d.fromDegrees( drivetrain.getGyroAngle().getDegrees()))); // debuggubg
   }
 
   // Called every time the scheduler runs while the command is scheduled.

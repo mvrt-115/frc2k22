@@ -59,6 +59,8 @@ public class RobotContainer {
   private JoystickButton shoot;
   private JoystickButton systemsCheckButton;
 
+  private JoystickButton resetBalls;
+
   public JoystickButton disableTurret;
   public JoystickButton zeroTurret;
   public JoystickButton estimateTurret;
@@ -89,9 +91,10 @@ public class RobotContainer {
     extend =  new JoystickButton(operatorJoystick, 9);
     retract = new JoystickButton(operatorJoystick, 10);
 
+    resetBalls = new JoystickButton(operatorJoystick, 13);
     disableTurret = new JoystickButton(operatorJoystick, 2);
     zeroTurret = new JoystickButton(operatorJoystick, 3);
-    estimateTurret = new JoystickButton(operatorJoystick, 5);
+    // estimateTurret = new JoystickButton(operatorJoystick, 5);
 
     upManualStorage = new JoystickButton(operatorJoystick, 7);
     downManualStorage = new JoystickButton(operatorJoystick, 8);
@@ -99,7 +102,7 @@ public class RobotContainer {
     adjustConstantIncrement = new JoystickButton(operatorJoystick, 4);
     adjustConstantDecrement = new JoystickButton(operatorJoystick, 1);
 
-    lowShot = new JoystickButton(operatorJoystick, 6); // THIS BUTTON ID IS NOT FINAL, PLS CHANGE IT
+    lowShot = new JoystickButton(operatorJoystick, 5); // THIS BUTTON ID IS NOT FINAL, PLS CHANGE IT
                                                        // to wtvr POTUS wants!!!
 
     twoBallAuto = new SequentialCommandGroup(
@@ -110,7 +113,7 @@ public class RobotContainer {
           ),
         new Pivot(intake, storage).withTimeout(3.25)
       ),
-      new PivotUp(intake, storage),
+      // new PivotUp(intake, storage),
       new RunDrive(drivetrain, 1, -0.2).withTimeout(1),
       new WaitCommand(2), 
       new SetRPM(shooter, storage, turret)
@@ -140,7 +143,7 @@ public class RobotContainer {
     // new SetRPM(shooter, storage, 1000).schedule();
     SmartDashboard.putData("Testing Shooter", new SetRPM(shooter, storage, true));
     pivot.whenPressed(new Pivot(intake,storage)).whenReleased(new PivotUp(intake, storage));
-      
+    resetBalls.whenPressed(new ResetBalls(storage));
     upManualStorage.whenPressed(new ManualStorage(storage, true, upManualStorage::get));  // true for up
     downManualStorage.whenPressed(new ManualStorage(storage, false, downManualStorage::get)); // false for down
     
@@ -158,7 +161,7 @@ public class RobotContainer {
 
     disableTurret.whenPressed(new DisableTurret(turret)).whenReleased(new FindTarget(turret));
     zeroTurret.whenPressed(new ZeroTurret(turret)).whenReleased(new FindTarget(turret));
-    estimateTurret.whenPressed(new EstimateTurret(turret, drivetrain)).whenReleased(new FindTarget(turret));
+    // estimateTurret.whenPressed(new EstimateTurret(turret, drivetrain)).whenReleased(new FindTarget(turret));
 
     // adjustConstantIncrement.whenPressed(new AdjustShooterConstant(Constants.Flywheel.INCREMENT));
     // adjustConstantDecrement.whenPressed(new AdjustShooterConstant(-1*Constants.Flywheel.INCREMENT));
@@ -253,9 +256,10 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // return twoBallAuto;
+    return twoBallAuto;
     // return new ParallelCommandGroup(new AlignIntakeToBall(drivetrain, storage), new Pivot(intake, storage));//.withTimeout(5).andThen(new SetRPM(shooter, storage, turret));
-    return new FiveBallAuton(drivetrain, intake, shooter, storage, turret);
+    // return new FiveBallAuton(drivetrain, intake, shooter, storage, turret);
+    // return new EstimateTurret(turret, drivetrain);
   }
 
   public double getStorageThrottle(){

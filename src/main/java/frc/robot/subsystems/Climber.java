@@ -83,7 +83,7 @@ public class Climber extends SubsystemBase {
      * @param speed speed at which the motor needs to be run
      */
     public void setTelescopicSpeed(double speed) {
-        if(getTelescopicPosition() <= 1000 || getTelescopicPosition() >= 260000 && speed > 0) {
+        if((speed < 0 && getTelescopicPosition() <= 1000) || (speed > 0 && getTelescopicPosition() >= 260000)) {
             leftTelescopic.set(ControlMode.PercentOutput, 0); // test and change value
             rightTelescopic.set(ControlMode.PercentOutput, 0); 
         }
@@ -91,8 +91,8 @@ public class Climber extends SubsystemBase {
             // if(speed > 0)
                 // leftTelescopic.set(ControlMode.PercentOutput, speed * 1.5); // test and change value
             // if(speed < 0)
-            leftTelescopic.set(ControlMode.PercentOutput, speed); // test and change value
-            rightTelescopic.set(ControlMode.PercentOutput, speed); 
+            leftTelescopic.set(ControlMode.PercentOutput, 0.9); // test and change value
+            rightTelescopic.set(ControlMode.PercentOutput, 0.9); 
         }
     }
 
@@ -137,10 +137,10 @@ public class Climber extends SubsystemBase {
     /**
      * Gives the position of the telescopic arms through values given by encoder
      * 
-     * @return The inches the encoders have rotated
+     * @return The ticks the encoders have rotated
      */
     public double getTelescopicPosition() {
-        double average = (getLeftTelescopicEncoderValue() + getRightTelescopicEncoderValue()) / 2;
+        double average = (getRightTelescopicEncoderValue()) / 1; //left is a lot more firctionaly, so just use right
         return average;
     }
 
@@ -214,12 +214,13 @@ public class Climber extends SubsystemBase {
     // This method will be called once per scheduler run
     @Override
     public void periodic() {
-        // SmartDashboard.putNumber("left clim", getLeftTelescopicEncoderValue());
-        // SmartDashboard.putNumber("right clim", getRightTelescopicEncoderValue());
+        SmartDashboard.putNumber("left clim", getLeftTelescopicEncoderValue());
+        SmartDashboard.putNumber("right clim", getRightTelescopicEncoderValue());
 
-        if(getTelescopicPosition() >= 260000){
-            leftServo.set(Constants.Climber.kServoRatchet);
-            rightServo.set(Constants.Climber.kServoRatchet);
-        }
+        // if(getTelescopicPosition() >= 260000){
+        //     leftServo.set(Constants.Climber.kServoRatchet);
+        //     rightServo.set(Constants.Climber.kServoRatchet);
+        // } //bruh
+
     }
 }

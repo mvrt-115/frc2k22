@@ -63,7 +63,7 @@ public class Turret extends SubsystemBase {
 
     offset = 0;
 
-    turret.config_kP(0, 0.1);//Constants.Turret.kPLarge);
+    turret.config_kP(0, 0.03);//Constants.Turret.kPLarge);
     turret.config_kI(0, 0);//Constants.Turret.kI);
     turret.config_kD(0, 0);//Constants.Turret.kD);
 
@@ -102,13 +102,6 @@ public class Turret extends SubsystemBase {
          updateLastVariables();
          break;
      }      
-
-     if(getCurrentPositionDegrees() < Constants.Turret.kMinAngle - 20 && turret.getMotorOutputPercent() < 0) {
-       turret.set(ControlMode.PercentOutput, 0);
-     } else if(getCurrentPositionDegrees() > Constants.Turret.kMinAngle + 20 && turret.getMotorOutputPercent() > 0) {
-      turret.set(ControlMode.PercentOutput, 0);
-     }
-
     SmartDashboard.putString("Turret State", state.toString());
   }
 

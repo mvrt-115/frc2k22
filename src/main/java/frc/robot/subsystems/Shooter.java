@@ -66,7 +66,7 @@ public class Shooter extends SubsystemBase {
    * Stops Shooter
    */
   public void stopFlywheel() {
-    flywheelLeader.set(ControlMode.PercentOutput, 0);
+    flywheelLeader.set(ControlMode.PercentOutput, 0.5);
   }
 
   /**
@@ -167,10 +167,10 @@ public class Shooter extends SubsystemBase {
     
     //double rpm = Math.min(333*Math.pow(limelight.getHorizontalDistance() * Constants.Flywheel.STRETCH_CONSTANT, 0.522) + Constants.Flywheel.LIN_CONST * limelight.getHorizontalDistance(), Constants.Flywheel.MAX_RPM);
    
-    double rpm = 479.18*Math.pow(x, 0.4418) + Constants.Flywheel.LIN_CONST * limelight.getHorizontalDistance();
+    // double rpm = 479.18*Math.pow(x, 0.4418) + Constants.Flywheel.LIN_CONST * limelight.getHorizontalDistance();
     
     // Use this is power equation is not working
-    // double rpm = 2040.9 * Math.pow(Math.E, 0.0058 * x);
+    double rpm = 2040.9 * Math.pow(Math.E, 0.0058 * x);
 
     if(Math.abs(limelight.getHorizontalOffset())>Constants.Flywheel.ALIGN_ERROR)
     {

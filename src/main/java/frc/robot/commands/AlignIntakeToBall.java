@@ -58,7 +58,7 @@ public class AlignIntakeToBall extends CommandBase {
   public void initialize() {
     // if(DriverStation.getAlliance() == DriverStation.Alliance.Red){
 
-      camera.setPipelineIndex(3);
+      // camera.setPipelineIndex(1);
     // }
     // else{
     //   camera.setPipelineIndex(4);

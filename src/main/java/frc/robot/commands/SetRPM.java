@@ -22,7 +22,10 @@ public class SetRPM extends CommandBase {
   private JoystickButton button;
   private Turret turret;
   private boolean dash;
+  public boolean auton = false;
   boolean shoot = false;
+
+  boolean low = false;
 
   public SetRPM(Shooter shooter, Storage storage, Turret turret) {
     this.shooter = shooter;
@@ -52,7 +55,24 @@ public class SetRPM extends CommandBase {
     addRequirements(shooter, storage);
   }
 
-  public SetRPM(Shooter shooter, Storage storage, boolean dash) {
+  
+  public SetRPM(Shooter shooter, Storage storage, boolean storEnd, double hi) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    this.shooter = shooter;
+    this.storage = storage;
+    auton = true;
+    SmartDashboard.putNumber("new rpm", 0);
+    addRequirements(shooter, storage);
+  }
+  public SetRPM(Shooter shooter, Storage storage, boolean storEnd, boolean hi) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    this.shooter = shooter;
+    this.storage = storage;
+    
+    SmartDashboard.putNumber("new rpm", 0);
+    addRequirements(shooter, storage);
+  }
+    public SetRPM(Shooter shooter, Storage storage, boolean dash) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.shooter = shooter;
     this.storage = storage;
@@ -73,7 +93,7 @@ public class SetRPM extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-      rpm = shooter.getRequiredRPM();
+      // rpm = shooter.getRequiredRPM();
       if(dash) {
       rpm = SmartDashboard.getNumber("new rpm", 0);
 
@@ -86,8 +106,13 @@ public class SetRPM extends CommandBase {
       else
         storage.runMotor(0);
     }
-    
-    shooter.setTargetRPM(3000);//(shooter.getRequiredRPM());
+    if(!given){
+      shooter.setTargetRPM(rpm);
+    }
+    else{
+
+      shooter.setTargetRPM(shooter.getRequiredRPM());//(shooter.getRequiredRPM());
+    }
 
     if(rpm == 0)
        storage.runMotor(0);
@@ -109,6 +134,9 @@ public class SetRPM extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    if(auton) {
+      return (storage.getBalls() == 0);
+    }
     if(button != null)
       return !button.get();
     return rpm == 0;
