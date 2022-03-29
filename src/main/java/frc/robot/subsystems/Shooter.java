@@ -176,9 +176,9 @@ public class Shooter extends SubsystemBase {
     {
       rpm = rpm - Constants.Flywheel.ADJ_HORIZ_ERROR*limelight.getHorizontalOffset();
     }
-    // SERIOUSLY DO NOT IGNORE THIS DIMENSION, as the turret is slightly off, the shots often overshoot, so we need
-    // to reduce it a bit so they have a better chance of landing in. If you notice this happening, change the constant.
-    // Right now, it is 0, so it won't affect anything.
+    // SERIOUSLY DO NOT CHANGE THIS DIMENSION, as the turret is slightly off, the shots often overshoot, so we need
+    // to reduce it a bit so they have a better chance of landing in. Only if you notice this happening, change the
+    // constant. Right now, it is 5, it won't affect the general rpm of the shots so don't change this.
 
     return rpm;
   }
