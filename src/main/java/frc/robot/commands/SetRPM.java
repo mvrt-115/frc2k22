@@ -106,7 +106,7 @@ public class SetRPM extends CommandBase {
       else
         storage.runMotor(0);
     }
-    if(!given){
+    if(given){
       shooter.setTargetRPM(rpm);
     }
     else{

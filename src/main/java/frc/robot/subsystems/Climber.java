@@ -217,10 +217,10 @@ public class Climber extends SubsystemBase {
         SmartDashboard.putNumber("left clim", getLeftTelescopicEncoderValue());
         SmartDashboard.putNumber("right clim", getRightTelescopicEncoderValue());
 
-        // if(getTelescopicPosition() >= 260000){
-        //     leftServo.set(Constants.Climber.kServoRatchet);
-        //     rightServo.set(Constants.Climber.kServoRatchet);
-        // } //bruh
+        if(getTelescopicPosition() >= 280000){
+            leftServo.set(Constants.Climber.kServoRatchet);
+            rightServo.set(Constants.Climber.kServoRatchet);
+        } //bruh
 
     }
 }

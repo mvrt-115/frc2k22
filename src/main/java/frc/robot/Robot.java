@@ -7,6 +7,7 @@ package frc.robot;
 import org.photonvision.PhotonCamera;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -35,8 +36,11 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
 
-    // CameraServer.startAutomaticCapture();
-    cam = new PhotonCamera("gloworm");
+    UsbCamera cam =  CameraServer.startAutomaticCapture();
+    cam.setResolution(128, 140);
+    cam.setFPS(30);
+    cam.setBrightness(50);
+    // cam = new PhotonCamera("gloworm");
     // if (DriverStation.getAlliance().toString().equals("Blue")) {
     //   cam.setPipelineIndex(2);
     // }

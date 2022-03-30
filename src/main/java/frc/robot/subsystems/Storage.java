@@ -62,7 +62,7 @@ public class Storage extends SubsystemBase  {
     SmartDashboard.putString("Ball color", getBallColor());
 
    
-    if( prevStateBott && !breakbeamBott.get() && Timer.getFPGATimestamp() - lastTime > 0.3) {
+    if( prevStateBott && !breakbeamBott.get() && Timer.getFPGATimestamp() - lastTime > 0.15) {
       balls++;
       lastTime = Timer.getFPGATimestamp();
     }
@@ -72,7 +72,7 @@ public class Storage extends SubsystemBase  {
     //   lastTime = Timer.getFPGATimestamp();
     // }
 
-    else if(!prevStateTop && breakbeamTop.get()&& Timer.getFPGATimestamp() - lastTopChanged > 0.5)  {
+    else if(!prevStateTop && breakbeamTop.get())  {
       balls--;
       lastTopChanged = Timer.getFPGATimestamp();
     }
@@ -103,6 +103,12 @@ public class Storage extends SubsystemBase  {
 
   public void autoStorage() {
     double s = 0.4;
+
+    if(!breakbeamTop.get()) {
+      runMotor(0);
+      return;
+    }
+      
 
     switch (balls) {
       // when there is one ball run until it passes first breakbeam

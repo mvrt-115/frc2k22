@@ -14,6 +14,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 
 public class Shooter extends SubsystemBase {
@@ -43,6 +44,7 @@ public class Shooter extends SubsystemBase {
   public Shooter(Limelight limelight/*, Drivetrain drivetrain, Turret turret*/) {
     // Mind Bending Test aon the Reality of our Situation
     flywheelLeader = TalonFactory.createTalonFX(LEADER_ID, false);
+    flywheelLeader.setNeutralMode(NeutralMode.Coast);
 
 
     // Sets up PIDF
@@ -66,11 +68,7 @@ public class Shooter extends SubsystemBase {
    * Stops Shooter
    */
   public void stopFlywheel() {
-    // runs shooter at constant output so less time is spent spinning up motor
-    if(limelight.targetsFound())
-      flywheelLeader.set(ControlMode.Velocity, MathUtils.rpmToTicks(getCurrentRPM() - 500, Constants.Flywheel.TICKS_PER_REVOLUTION, Constants.Flywheel.GEAR_RATIO));
-    else
-    flywheelLeader.set(ControlMode.Velocity, MathUtils.rpmToTicks(500, Constants.Flywheel.TICKS_PER_REVOLUTION, Constants.Flywheel.GEAR_RATIO));
+    flywheelLeader.set(ControlMode.PercentOutput, 0.0);
   }
 
   /**

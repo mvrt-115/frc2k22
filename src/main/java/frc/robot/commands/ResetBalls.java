@@ -9,15 +9,19 @@ import frc.robot.subsystems.Storage;
 
 public class ResetBalls extends CommandBase {
   /** Creates a new ResetBalls. */
+  Storage strg;
   public ResetBalls(Storage str) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(str);
-    str.setBalls(0);
+    strg = str;
+    // str.setBalls(0);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    strg.setBalls(0);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -30,6 +34,6 @@ public class ResetBalls extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }
