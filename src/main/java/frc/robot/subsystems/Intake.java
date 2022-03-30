@@ -10,6 +10,7 @@ import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.util.TalonFactory;
@@ -74,6 +75,9 @@ public class Intake extends SubsystemBase {
         pivotUp();
         stopIntake();
         break;
+    }
+    if (DriverStation.isDisabled()) {
+      pivotMotor.setNeutralMode(NeutralMode.Coast);
     }
 
     // log();

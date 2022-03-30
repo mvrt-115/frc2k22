@@ -110,6 +110,7 @@ public class SetRPM extends CommandBase {
       shooter.setTargetRPM(rpm);
     }
     else{
+      // shooter.setTargetRPM(1000);
 
       shooter.setTargetRPM(shooter.getRequiredRPM());//(shooter.getRequiredRPM());
     }

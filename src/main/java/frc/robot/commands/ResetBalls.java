@@ -20,12 +20,14 @@ public class ResetBalls extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    strg.setBalls(0);
+   
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    strg.setBalls(0); 
+  }
 
   // Called once the command ends or is interrupted.
   @Override

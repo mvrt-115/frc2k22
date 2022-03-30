@@ -83,7 +83,7 @@ public class Robot extends TimedRobot {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     m_robotContainer.getIntake().resetEncoders();
-      m_robotContainer.getStorage().setBalls(1);
+      m_robotContainer.getStorage().setBalls(0);
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {

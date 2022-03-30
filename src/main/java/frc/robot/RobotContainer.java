@@ -157,11 +157,11 @@ public class RobotContainer {
 
     // retract.whenPressed(new TelescopicManual(climber, this::isRetractPressed, Constants.Climber.kTelescopicRetractManualSpeed))
     retract.whenPressed(new RatchetRetract(climber, this::isRetractPressed, Constants.Climber.kTelescopicRetractManualSpeed))
-      .whenReleased(new TelescopicManual(climber, this::isRetractPressed, 0));
+      .whenReleased(new TelescopicManual(climber, () -> !isRetractPressed(), 0));
 
     //extend.whenPressed(new TelescopicManual(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed))
     extend.whenPressed(new UnratchetExtend(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed))
-    .whenReleased(new TelescopicManual(climber, this::isRetractPressed, 0).alongWith(new TelescopicRatchet(climber, Constants.Climber.kServoRatchet))); 
+    .whenReleased(new TelescopicManual(climber, () -> !isExtendPressed(), 0).alongWith(new TelescopicRatchet(climber, Constants.Climber.kServoRatchet))); 
 
     disableTurret.whenPressed(new DisableTurret(turret)).whenReleased(new FindTarget(turret));
     zeroTurret.whenPressed(new ZeroTurret(turret)).whenReleased(new FindTarget(turret));
@@ -266,7 +266,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autonSelector.getSelected();
+    return new Pivot(intake, storage);
+    // return autonSelector.getSelected();
   }
 
   public double getStorageThrottle(){

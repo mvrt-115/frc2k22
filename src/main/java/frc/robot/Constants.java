@@ -78,7 +78,7 @@ public final class Constants {
 
         public static final double kTICKS_TO_BOTTOM = 20000;
         // the # of ticks it takes to be at the bottom when pivoting
-        public static final double kTICKS_TO_TOP = 2500; // the # of ticks it takes to be at the top when pivoting
+        public static final double kTICKS_TO_TOP = 1500; // the # of ticks it takes to be at the top when pivoting
 
 
         public static final int kPIVOT_ID = 10; // change later
@@ -93,7 +93,7 @@ public final class Constants {
         public static final double kPIVOT_STOP_SPEED_WHEN_DOWN = 0.0    ; // speed of intake to keep it down
         //change later after testing
 
-        public static final double kMARGIN_OF_ERROR_TICKS = 3000; // constant
+        public static final double kMARGIN_OF_ERROR_TICKS = 2000; // constant
 
 
         public static final double kP = 0.01; //0.03
@@ -251,7 +251,7 @@ public final class Constants {
 
         //speeds for manual climbing
         public static final double kTelescopicRetractManualSpeed = -0.30; 
-        public static final double kTelescopicExtendManualSpeed = 0.7; 
+        public static final double kTelescopicExtendManualSpeed = 0.5; 
         public static final double kPivotManualSpeed = 0.1;
 
         // servo ratchet and unratchet values

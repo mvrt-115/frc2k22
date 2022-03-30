@@ -83,6 +83,11 @@ public class Climber extends SubsystemBase {
      * @param speed speed at which the motor needs to be run
      */
     public void setTelescopicSpeed(double speed) {
+        if(speed == 0) {
+            leftTelescopic.set(ControlMode.PercentOutput, 0); // test and change value
+            rightTelescopic.set(ControlMode.PercentOutput, 0); 
+            return;
+        }
         if((speed < 0 && getTelescopicPosition() <= 1000) || (speed > 0 && getTelescopicPosition() >= 260000)) {
             leftTelescopic.set(ControlMode.PercentOutput, 0); // test and change value
             rightTelescopic.set(ControlMode.PercentOutput, 0); 
@@ -91,8 +96,8 @@ public class Climber extends SubsystemBase {
             // if(speed > 0)
                 // leftTelescopic.set(ControlMode.PercentOutput, speed * 1.5); // test and change value
             // if(speed < 0)
-            leftTelescopic.set(ControlMode.PercentOutput, 0.9); // test and change value
-            rightTelescopic.set(ControlMode.PercentOutput, 0.9); 
+            leftTelescopic.set(ControlMode.PercentOutput, speed); // test and change value
+            rightTelescopic.set(ControlMode.PercentOutput, speed); 
         }
     }
 
@@ -140,7 +145,7 @@ public class Climber extends SubsystemBase {
      * @return The ticks the encoders have rotated
      */
     public double getTelescopicPosition() {
-        double average = (getRightTelescopicEncoderValue()) / 1; //left is a lot more firctionaly, so just use right
+        double average = (getLeftTelescopicEncoderValue()) / 1; //left is a lot more firctionaly, so just use right
         return average;
     }
 

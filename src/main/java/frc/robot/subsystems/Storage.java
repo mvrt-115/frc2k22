@@ -35,7 +35,7 @@ public class Storage extends SubsystemBase  {
     breakbeamBott = new DigitalInput(3);
     prevStateTop = prevStateBott = true; // true is unbroken
     motor = TalonFactory.createTalonSRX(39, false);
-    balls = 1;
+    balls = 0;
     overriden = false;
     lastTime = Timer.getFPGATimestamp();
     lastTopChanged = Timer.getFPGATimestamp();
@@ -102,7 +102,7 @@ public class Storage extends SubsystemBase  {
   }
 
   public void autoStorage() {
-    double s = 0.4;
+    double s = 0.2;
 
     if(!breakbeamTop.get()) {
       runMotor(0);
