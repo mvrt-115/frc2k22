@@ -8,6 +8,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -71,6 +72,7 @@ public class RobotContainer {
   private JoystickButton adjustConstantDecrement;
 
   private JoystickButton lowShot;
+  SendableChooser<Command> autonSelector;
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -80,6 +82,8 @@ public class RobotContainer {
     systemsCheck = new Joystick(2);
 
     systemsCheckButton = new JoystickButton(systemsCheck, 1);
+
+    autonSelector = new SendableChooser<>();
 
     shoot = new JoystickButton(driverJoystick, 8);
     pivot = new JoystickButton(driverJoystick, 6);
@@ -168,6 +172,12 @@ public class RobotContainer {
     // KEEP THE INCREMENT LOW. 0.3 is already a lot.
 
     lowShot.whenPressed(new SetRPM(shooter, storage, Constants.Flywheel.LOW_SHOT_RPM));
+    
+    autonSelector.addOption("2 Ball", twoBallAuto);
+    autonSelector.addOption("5 Ball", new FiveBallAuton(drivetrain, intake, shooter, storage, turret));
+    autonSelector.setDefaultOption("Two Ball Auton", twoBallAuto);
+
+    SmartDashboard.putData("Auton Selector", autonSelector);
   }
   
   
@@ -256,10 +266,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-   return twoBallAuto;
-    // return new ParallelCommandGroup(new AlignIntakeToBall(drivetrain, storage), new Pivot(intake, storage));//.withTimeout(5).andThen(new SetRPM(shooter, storage, turret));
-    // return new FiveBallAuton(drivetrain, intake, shooter, storage, turret);
-    // return new EstimateTurret(turret, drivetrain);
+    return autonSelector.getSelected();
   }
 
   public double getStorageThrottle(){
