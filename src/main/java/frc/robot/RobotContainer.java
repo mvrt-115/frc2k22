@@ -38,10 +38,13 @@ public class RobotContainer {
   private JoystickButton  pivot; //buttons
 
   public final Drivetrain drivetrain = new Drivetrain();
+  private final Intake intake = new Intake();
   private final Limelight limelight = new Limelight();
   private final Shooter shooter = new Shooter(limelight);
+  private final Storage storage = new Storage();
   private final Climber climber = new Climber();
   private final Turret turret = new Turret(limelight);
+  private final LEDs led = new LEDs();
 
   // climber operator manual buttons
   private JoystickButton extend;
@@ -51,10 +54,6 @@ public class RobotContainer {
   private JoystickButton downManualStorage;
 
   public RollingAverage throttle, wheel;
-
-  private final Storage storage = new Storage();
-
-  private final Intake intake = new Intake();
 
   private JoystickButton quickturn;
   private JoystickButton shoot;
@@ -142,6 +141,7 @@ public class RobotContainer {
     // alignDrivetrain.whenPressed(new AlignIntakeToBall(drivetrain, true)).whenReleased(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
     drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, intake, 
     this::getThrottle, this::getWheel, quickturn::get));
+    led.setDefaultCommand(new LEDCommand(led, turret, shooter, climber, storage, intake));
 
     //storage.setDefaultCommand(new TrackBalls(storage, shooter));
     turret.setDefaultCommand(new FindTarget(turret));
