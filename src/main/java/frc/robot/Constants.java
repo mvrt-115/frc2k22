@@ -78,25 +78,32 @@ public final class Constants {
 
         public static final double kTICKS_TO_BOTTOM = 20000;
         // the # of ticks it takes to be at the bottom when pivoting
-        public static final double kTICKS_TO_TOP = 1500; // the # of ticks it takes to be at the top when pivoting
+        public static final double kTICKS_TO_TOP = 1700; // the # of ticks it takes to be at the top when pivoting
 
 
         public static final int kPIVOT_ID = 10; // change later
         public static final int kROLLER_ID = 21; // change later
 
 
-        public static final double kWHEELS_SPEED = .45;
+
+
+        public static final double kWHEELS_SPEED = .8;
+
+
 
         //public static final double kPIVOT_SPEED = -0.4; // speed of intake when going up or down
         public static final double kPIVOT_STOP_SPEED_WHEN_UP = 0; // speed of intake to keep it up
 
         public static final double kPIVOT_STOP_SPEED_WHEN_DOWN = 0.0    ; // speed of intake to keep it down
+ 
+
+
         //change later after testing
 
         public static final double kMARGIN_OF_ERROR_TICKS = 2000; // constant
 
 
-        public static final double kP = 0.01; //0.03
+        public static final double kP = 0.0175; //0.03
         public static final double kI = 0.0;
         public static final double kD = 0.0;//0.001;
 
@@ -141,10 +148,10 @@ public final class Constants {
         public static final double TICKS_PER_REVOLUTION = 2048;
         public static final int NUM_AVG = 5;
         public static final double GEAR_RATIO = 25 / 24;
-        public static double LIN_CONST = 0;
+        public static double LIN_CONST = 0.2;
         public static double INCREMENT = 0.3; // 0.3 is a lot, it's 0.3 * range from 100 to 250
         public static final double LOW_SHOT_RPM = 500;
-        public static final double STRETCH_CONSTANT = 1;
+        public static final double STRETCH_CONSTANT = 1 ;
         public static final double ADJ_HORIZ_ERROR = 5; // If the limelight is not perfectly aligning,
                                                         // this adjusts the shot for it to make.
         public static final double MAX_RPM = 100000;
@@ -179,10 +186,9 @@ public final class Constants {
     public static class Turret {
         public static final double kGearRatio = 47.142857;
         public static final double kTicksPerRevolution = 2048;
-        public static final double kMinAngle = -140; // degrees
-        public static final double kMaxAngle = 170; // degrees
+        public static final double kMinAngle = -170; // -130 degrees
+        public static final double kMaxAngle = 170; // 160 degrees
         public static final double kLimelightOffset = 40; // degrees
-
         public static final double kEThreshold = 60;
         public static final double kLowETurnThreshold = 0; // degrees; limelight x fov = 59.6
 
@@ -212,7 +218,7 @@ public final class Constants {
 
         // Servo Contants
         public static final int kRightServoID = 8; //Check (analog input) 9
-        public static final int kLeftServoID = 9; // Check (analog input) 8 
+        public static final int kLeftServoID = 4; // Check (analog input) 8 
 
         //inductive proximity sensors
         public static final int kPivotProximityChannel = 0;
@@ -250,14 +256,15 @@ public final class Constants {
         public static final double kFeedForwardPivot = 0;
 
         //speeds for manual climbing
-        public static final double kTelescopicRetractManualSpeed = -0.30; 
-        public static final double kTelescopicExtendManualSpeed = 0.5; 
+        public static final double kTelescopicRetractManualSpeed = -0.5;//-0.75; 
+        public static final double kTelescopicExtendManualSpeed = 0.7;//0.8; 
         public static final double kPivotManualSpeed = 0.1;
 
         // servo ratchet and unratchet values
         public static final double kServoRatchet = 0; // check
-        public static final double kServoUnRatchet = 0.15; // check
-        public static final double kOffsetError = 0.0; // check
+        public static final double kServoUnRatchet = 0.1; // check
+        public static final double kServoUnRatchet1 = 0.1; // check
+        public static final double kOffsetError = 0.4; // check
         public static final double kServoError = 0.0; // check
         public static final double kMotorInitialUnratchetSpeed = 0.03; //test
         public static final double kMotorDownTime = 0.1; //seconds

@@ -61,6 +61,7 @@ public class RobotContainer {
   private JoystickButton systemsCheckButton;
 
   private JoystickButton resetBalls;
+  private JoystickButton lowClimb;
 
   public JoystickButton disableTurret;
   public JoystickButton zeroTurret;
@@ -92,10 +93,12 @@ public class RobotContainer {
     throttle = new RollingAverage(50);
     wheel = new RollingAverage(30);
 
+    lowClimb = new JoystickButton(operatorJoystick, 11);
+
     extend =  new JoystickButton(operatorJoystick, 9);
     retract = new JoystickButton(operatorJoystick, 10);
 
-    resetBalls = new JoystickButton(operatorJoystick, 13);
+    resetBalls = new JoystickButton(operatorJoystick, 11);
     disableTurret = new JoystickButton(operatorJoystick, 2);
     zeroTurret = new JoystickButton(operatorJoystick, 3);
     // estimateTurret = new JoystickButton(operatorJoystick, 5);
@@ -117,7 +120,7 @@ public class RobotContainer {
           ),
         new Pivot(intake, storage).withTimeout(3.25)
       ),
-      // new PivotUp(intake, storage),
+      new PivotUp(intake, storage),
       new RunDrive(drivetrain, 1, -0.2).withTimeout(1),
       new WaitCommand(2), 
       new SetRPM(shooter, storage, turret)
@@ -145,7 +148,7 @@ public class RobotContainer {
     
     shoot.whenPressed(new SetRPM(shooter, storage, turret, shoot)).whenReleased(new StopShooter(shooter, storage));
     // new SetRPM(shooter, storage, 1000).schedule();
-    SmartDashboard.putData("Testing Shooter", new SetRPM(shooter, storage, true));
+    // SmartDashboard.putData("Testing Shooter", new SetRPM(shooter, storage, true));
     pivot.whenPressed(new Pivot(intake,storage)).whenReleased(new PivotUp(intake, storage));
     resetBalls.whenPressed(new ResetBalls(storage));
     upManualStorage.whenPressed(new ManualStorage(storage, true, upManualStorage::get));  // true for up
@@ -155,20 +158,22 @@ public class RobotContainer {
     /* when the retract and extend buttons are pressed then the telescopic manual command is called accordingly with 
        the given value */
 
+    // lowClimb.whenPressed(new LowClimb(climber));
+
     // retract.whenPressed(new TelescopicManual(climber, this::isRetractPressed, Constants.Climber.kTelescopicRetractManualSpeed))
     retract.whenPressed(new RatchetRetract(climber, this::isRetractPressed, Constants.Climber.kTelescopicRetractManualSpeed))
-      .whenReleased(new TelescopicManual(climber, () -> !isRetractPressed(), 0));
+      .whenReleased(new TelescopicManual(climber, () -> !isRetractPressed(), 0).alongWith(new TelescopicRatchet(climber, Constants.Climber.kServoRatchet).withTimeout(1.5)));
 
     //extend.whenPressed(new TelescopicManual(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed))
     extend.whenPressed(new UnratchetExtend(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed))
     .whenReleased(new TelescopicManual(climber, () -> !isExtendPressed(), 0).alongWith(new TelescopicRatchet(climber, Constants.Climber.kServoRatchet))); 
 
-    disableTurret.whenPressed(new DisableTurret(turret)).whenReleased(new FindTarget(turret));
+    disableTurret.whenPressed(new DisableTurret(turret));//.whenReleased(new FindTarget(turret));
     zeroTurret.whenPressed(new ZeroTurret(turret)).whenReleased(new FindTarget(turret));
     // estimateTurret.whenPressed(new EstimateTurret(turret, drivetrain)).whenReleased(new FindTarget(turret));
 
-    // adjustConstantIncrement.whenPressed(new AdjustShooterConstant(Constants.Flywheel.INCREMENT));
-    // adjustConstantDecrement.whenPressed(new AdjustShooterConstant(-1*Constants.Flywheel.INCREMENT));
+    adjustConstantIncrement.whenPressed(new AdjustShooterConstant(Constants.Flywheel.INCREMENT));
+    adjustConstantDecrement.whenPressed(new AdjustShooterConstant(-1*Constants.Flywheel.INCREMENT));
     // KEEP THE INCREMENT LOW. 0.3 is already a lot.
 
     lowShot.whenPressed(new SetRPM(shooter, storage, Constants.Flywheel.LOW_SHOT_RPM));
@@ -266,8 +271,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new Pivot(intake, storage);
-    // return autonSelector.getSelected();
+    return autonSelector.getSelected();
   }
 
   public double getStorageThrottle(){

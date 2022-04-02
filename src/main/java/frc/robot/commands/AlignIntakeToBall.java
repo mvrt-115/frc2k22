@@ -73,22 +73,22 @@ public class AlignIntakeToBall extends CommandBase {
 
     var results = camera.getLatestResult();
     if (results.hasTargets()) {
-      SmartDashboard.putBoolean("Target", true);
+      // SmartDashboard.putBoolean("Target", true);
       double range = PhotonUtils.calculateDistanceToTargetMeters(
                       CAMERA_HEIGHT_METERS,
                       TARGET_HEIGHT_METERS,
                       CAMERA_PITCH_RADIANS,
                       Units.degreesToRadians(results.getBestTarget().getPitch()));
-      SmartDashboard.putNumber("Range", range);
+      // SmartDashboard.putNumber("Range", range);
       forward = -0.2;//throttlePID.calculate(range, GOAL_RANGE_METERS);
       turn = turnPID.calculate(results.getBestTarget().getYaw(), 0);
       
     }
     else{
-      SmartDashboard.putBoolean("Target", false);
+      // SmartDashboard.putBoolean("Target", false);
     }
-    SmartDashboard.putNumber("for", forward);
-    SmartDashboard.putNumber("turn", turn);
+    // SmartDashboard.putNumber("for", forward);
+    // SmartDashboard.putNumber("turn", turn);
     
     if(Math.abs(turn) <= 0.05){
       drivetrain.setDrivetrainMotorSpeed(-forward, -forward);
@@ -97,7 +97,7 @@ public class AlignIntakeToBall extends CommandBase {
 
       drivetrain.setDrivetrainMotorSpeed(-forward-turn, -forward+turn);
     }
-    SmartDashboard.putNumber("Forward", forward);
+    // SmartDashboard.putNumber("Forward", forward);
   }
 
   // Called once the command ends or is interrupted.

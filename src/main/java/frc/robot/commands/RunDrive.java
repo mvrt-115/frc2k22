@@ -26,7 +26,7 @@ public class RunDrive extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    SmartDashboard.putBoolean("running", false);
+    // SmartDashboard.putBoolean("running", false);
     start = Timer.getFPGATimestamp();
   }
 
@@ -35,7 +35,7 @@ public class RunDrive extends CommandBase {
   public void execute() {
     // drivetrain.cheesyIshDrive(.3, 0, false);
     drivetrain.setDrivetrainMotorSpeed(out, out);
-    SmartDashboard.putBoolean("running", true);
+    // SmartDashboard.putBoolean("running", true);
   }
 
   // Called once the command ends or is interrupted.

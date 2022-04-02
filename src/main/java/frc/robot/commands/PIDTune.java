@@ -36,10 +36,10 @@ public class PIDTune extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    SmartDashboard.putNumber(name + " P", P);
-    SmartDashboard.putNumber(name + " I", I);
-    SmartDashboard.putNumber(name + " D", D);
-    SmartDashboard.putNumber(name + " F", F);
+    // SmartDashboard.putNumber(name + " P", P);
+    // SmartDashboard.putNumber(name + " I", I);
+    // SmartDashboard.putNumber(name + " D", D);
+    // SmartDashboard.putNumber(name + " F", F);
     SmartDashboard.putBoolean("Changing " + name + " PID", true);
     rpm = talon.getSelectedSensorVelocity();
     talon.set(ControlMode.Velocity, 0);

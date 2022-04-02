@@ -61,7 +61,7 @@ public class SetRPM extends CommandBase {
     this.shooter = shooter;
     this.storage = storage;
     auton = true;
-    SmartDashboard.putNumber("new rpm", 0);
+    // SmartDashboard.putNumber("new rpm", 0);
     addRequirements(shooter, storage);
   }
   public SetRPM(Shooter shooter, Storage storage, boolean storEnd, boolean hi) {
@@ -69,7 +69,7 @@ public class SetRPM extends CommandBase {
     this.shooter = shooter;
     this.storage = storage;
     
-    SmartDashboard.putNumber("new rpm", 0);
+    // SmartDashboard.putNumber("new rpm", 0);
     addRequirements(shooter, storage);
   }
     public SetRPM(Shooter shooter, Storage storage, boolean dash) {
@@ -77,7 +77,7 @@ public class SetRPM extends CommandBase {
     this.shooter = shooter;
     this.storage = storage;
     this.dash = dash;
-    SmartDashboard.putNumber("new rpm", 0);
+    // SmartDashboard.putNumber("new rpm", 0);
     addRequirements(shooter, storage);
   }
 
@@ -95,7 +95,7 @@ public class SetRPM extends CommandBase {
   public void execute() {
       // rpm = shooter.getRequiredRPM();
       if(dash) {
-      rpm = SmartDashboard.getNumber("new rpm", 0);
+      // rpm = SmartDashboard.getNumber("new rpm", 0);
 
       if(shooter.getState() == ShooterState.ATSPEED)
         shoot = true;
@@ -112,7 +112,7 @@ public class SetRPM extends CommandBase {
     else{
       // shooter.setTargetRPM(1000);
 
-      shooter.setTargetRPM(shooter.getRequiredRPM());//(shooter.getRequiredRPM());
+      shooter.setTargetRPM(shooter.getRequiredRPM()+50);//(shooter.getRequiredRPM());
     }
 
     if(rpm == 0)
@@ -126,7 +126,7 @@ public class SetRPM extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    SmartDashboard.putBoolean("changing rpm", false);
+    // SmartDashchanging rpm", false);
     shooter.setState(ShooterState.OFF);
     storage.setReadyShoot(false);
     storage.runMotor(0);
@@ -135,9 +135,6 @@ public class SetRPM extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(auton) {
-      return (storage.getBalls() == 0);
-    }
     if(button != null)
       return !button.get();
     return rpm == 0;

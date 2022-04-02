@@ -77,7 +77,7 @@ public class Turret extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // log();
+    log();
 
     // if(getCurrentPositionDegrees() >= Constants.Turret.kMaxAngle) {
     //   targetDegrees = Constants.Turret.kMinAngle + 20;
@@ -102,7 +102,7 @@ public class Turret extends SubsystemBase {
          updateLastVariables();
          break;
      }      
-    SmartDashboard.putString("Turret State", state.toString());
+    // SmartDashboard.putString("Turret State", state.toString());
   }
 
   /**
@@ -118,11 +118,11 @@ public class Turret extends SubsystemBase {
       (Constants.Turret.kI * area) + 
       (((error - lastError) / (time - lastTime)) * Constants.Turret.kD);
 
-    if(Math.abs((limelight.getHorizontalOffset() + offset)) > 4 && limelight.targetsFound()) {
+    if(Math.abs((limelight.getHorizontalOffset() + offset)) > 2.5 && limelight.targetsFound()) {
       if(output < 0 && getCurrentPositionDegrees() < Constants.Turret.kMinAngle)
-        setState(TurretState.FLIPPING);
+        output = 0;
       else if(output > 0 && getCurrentPositionDegrees() > Constants.Turret.kMaxAngle)
-        setState(TurretState.FLIPPING);
+        output = 0;
 
       turret.set(ControlMode.PercentOutput, output);
     } else {
@@ -301,9 +301,9 @@ public class Turret extends SubsystemBase {
    */
   public void log() {
     SmartDashboard.putNumber("Turret Position (Degrees)", getCurrentPositionDegrees());
-    SmartDashboard.putNumber("Horizontal Error", limelight.getHorizontalOffset()+offset);
-    SmartDashboard.putString("Turret State", state.toString());
-    SmartDashboard.putNumber("Turret Output", turret.getMotorOutputPercent());
-    SmartDashboard.putNumber("Direction", searchDirection);
+    // SmartDashboard.putNumber("Horizontal Error", limelight.getHorizontalOffset()+offset);
+    // SmartDashboard.putString("Turret State", state.toString());
+    // SmartDashboard.putNumber("Turret Output", turret.getMotorOutputPercent());
+    // SmartDashboard.putNumber("Direction", searchDirection);
   }
 }

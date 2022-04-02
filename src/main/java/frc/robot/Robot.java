@@ -8,6 +8,7 @@ import org.photonvision.PhotonCamera;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -40,6 +41,7 @@ public class Robot extends TimedRobot {
     cam.setResolution(128, 140);
     cam.setFPS(30);
     cam.setBrightness(50);
+
     // cam = new PhotonCamera("gloworm");
     // if (DriverStation.getAlliance().toString().equals("Blue")) {
     //   cam.setPipelineIndex(2);
@@ -83,7 +85,7 @@ public class Robot extends TimedRobot {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     m_robotContainer.getIntake().resetEncoders();
-      m_robotContainer.getStorage().setBalls(0);
+      m_robotContainer.getStorage().setBalls(1);
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
@@ -113,7 +115,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    SmartDashboard.putNumber("operator right axis angle", m_robotContainer.getOperatorRightAxisAngle());
+    // SmartDashboard.putNumber("operator right axis angle", m_robotContainer.getOperatorRightAxisAngle());
   }
 
   @Override

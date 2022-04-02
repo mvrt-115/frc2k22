@@ -25,8 +25,8 @@ public class Storage extends SubsystemBase  {
   private double lastTime;
   private boolean readyShoot = false;
   private boolean intaking = true;
-  private final I2C.Port i2cPort = I2C.Port.kOnboard;
-  public final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
+  // private final I2C.Port i2cPort = I2C.Port.kOnboard;
+  // public final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
   private double stopIntakeTime = -1;
 
 
@@ -58,11 +58,11 @@ public class Storage extends SubsystemBase  {
     SmartDashboard.putBoolean("top breakbeam broken", !breakbeamTop.get());
     SmartDashboard.putBoolean("bottom breakbeam broken", !breakbeamBott.get());
     SmartDashboard.putNumber("number of balls", balls);
-    SmartDashboard.putBoolean("overriden", overriden);
-    SmartDashboard.putString("Ball color", getBallColor());
+    // SmartDashboard.putBoolean("overriden", overriden);
+    // SmartDashboard.putString("Ball color", getBallColor());
 
    
-    if( prevStateBott && !breakbeamBott.get() && Timer.getFPGATimestamp() - lastTime > 0.15) {
+    if( prevStateBott && !breakbeamBott.get() && Timer.getFPGATimestamp() - lastTime > 0.25) {
       balls++;
       lastTime = Timer.getFPGATimestamp();
     }
@@ -149,21 +149,21 @@ public class Storage extends SubsystemBase  {
   public boolean getShooting() {
     return readyShoot;
   }
-  public String getBallColor(){
-    if(colorSensor.isConnected() && !breakbeamTop.get()){
-     return getColor(colorSensor.getBlue(), colorSensor.getRed());
-    }
-    return "No Ball";
+  // public String getBallColor(){
+  //   if(colorSensor.isConnected() && !breakbeamTop.get()){
+  //    return getColor(colorSensor.getBlue(), colorSensor.getRed());
+  //   }
+  //   return "No Ball";
 
-    }
+  //   }
 
-    public String getColor( double blue, double red){
-      if(colorSensor.getBlue() > colorSensor.getRed())
-        return "Blue";
-      else if(colorSensor.getRed() > colorSensor.getBlue())
-        return "Red";
-      return "No Ball";
-    }
+  //   public String getColor( double blue, double red){
+  //     if(colorSensor.getBlue() > colorSensor.getRed())
+  //       return "Blue";
+  //     else if(colorSensor.getRed() > colorSensor.getBlue())
+  //       return "Red";
+  //     return "No Ball";
+  //   }
   }
   
 

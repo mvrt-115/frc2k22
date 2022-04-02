@@ -7,6 +7,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -31,38 +32,55 @@ public class FiveBallAuton extends ParallelCommandGroup {
 
     addCommands(
       new SequentialCommandGroup(
-          new Pivot(in, storage),
+          new Pivot(in, storage).alongWith(new WaitCommand(1)),
           runPath("Path6Part1"),
-          new PivotUp(in, storage),
+          new PivotUp(in, storage).alongWith(new WaitCommand(1)),
           new SetRPM(shooter, storage, turret).withTimeout(2),
-          // //need to intake here
           runPath("Path6Part1.5"), //going back
-           //shoot 2 balls
-          new Pivot(in, storage),
+          //  //shoot 2 balls
+          new Pivot(in, storage).alongWith(new WaitCommand(1)),
           runPath("Path6Part2"), //going to get other ball
-          // //need to intake here
-          new PivotUp(in, storage),
-          new SetRPM(shooter, storage, turret).withTimeout(1), //shoot 1 ball
+          // // //need to intake here
+          new WaitCommand(.5),
+          new PivotUp(in, storage).alongWith(new WaitCommand(1)),
+          new SetRPM(shooter, storage, turret).withTimeout(2), //shoot 1 ball
           new Pivot(in, storage),
-          runPath("Path6Part3"), //going to terminal
-          runPath("Path6Part4"), //going back to shoot
-          new PivotUp(in, storage),
+          runPath("Path6Part3", 4), //going to terminal
+          runPath("Path6Part4", 4), //going back to shoot
+          new WaitCommand(.75),
+          new PivotUp(in, storage).alongWith(new WaitCommand(1)),
           new SetRPM(shooter, storage, turret).withTimeout(2) //shoot 2 balls
       ),
       new FindTarget(turret)
     );
     
-    Trajectory trajectory = PathPlanner.loadPath("Path6Part1", 4.75, 3);
+  }
+
+  @Override
+  public void initialize() {
+      // TODO Auto-generated method stub
+      super.initialize();
+      Trajectory trajectory = PathPlanner.loadPath("Path6Part1", 4.75, 3);
     drivetrain.setOdometry(trajectory.getInitialPose());
   }
   public Command runPath(String pathName)
   {
     boolean reversed = pathName.equals("Path6Part1.5") || pathName.equals("Path6Part4");
-    double vel = 4.75;
+    double vel = 2.75;
     if(pathName.equals("Path6Part3"))
-      vel = 1;
+      vel = 2;
+    if(pathName.equals("Path6Part1"))
+      vel = 1.25;
 
-    Trajectory trajectory = PathPlanner.loadPath(pathName, vel, 3, reversed);
+    Trajectory trajectory = PathPlanner.loadPath(pathName, vel, 2.5, reversed);
+    return 
+    drivetrain.getRamseteCommand(trajectory);
+  }
+  public Command runPath(String pathName, double sp)
+  {
+    boolean reversed = pathName.equals("Path6Part1.5") || pathName.equals("Path6Part4"); //pathName.equals("Path6Part1.5") || pathName.equals("Path6Part4");
+
+    Trajectory trajectory = PathPlanner.loadPath(pathName, sp, 1.5, reversed);
     return drivetrain.getRamseteCommand(trajectory);
   }
 }

@@ -5,6 +5,8 @@
 
 package frc.robot.subsystems;
 
+import java.sql.Driver;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
@@ -22,6 +24,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -47,7 +50,7 @@ public class Drivetrain extends SubsystemBase {
     //Auton Stuff
     private Pose2d pose;
     private DifferentialDriveOdometry odometry;
-    private Field2d field;
+    // private Field2d field;
     private SimpleMotorFeedforward feedforward;
     private DifferentialDriveKinematics kinematics;
     private PIDController leftController, rightController;
@@ -104,7 +107,7 @@ public class Drivetrain extends SubsystemBase {
         pose = new Pose2d();
         gyro = new AHRS(SPI.Port.kMXP);
         odometry = new DifferentialDriveOdometry(getGyroAngle());
-        field = new Field2d();
+        // field = new Field2d();
 
         feedforward = new SimpleMotorFeedforward(Constants.Drivetrain.kS, Constants.Drivetrain.kV, Constants.Drivetrain.kA);
         kinematics = new DifferentialDriveKinematics(MathUtils.inchesToMeters(Constants.Drivetrain.kTrackWidthInches)); //because kTrackWidthInches is in, well, inches (duh) lol
@@ -117,7 +120,7 @@ public class Drivetrain extends SubsystemBase {
         rightMaster.setSelectedSensorPosition(0);
         rightFollower.setSelectedSensorPosition(0);
 
-        SmartDashboard.putData("field", field);
+        // SmartDashboard.putData("field", field);
         
         gyro.reset();
     }
@@ -133,6 +136,9 @@ public class Drivetrain extends SubsystemBase {
     public void cheesyIshDrive(double throttle, double wheel, boolean quickTurn) {
         throttle = MathUtils.handleDeadband(throttle, Constants.Drivetrain.kThrottleDeadband);
         wheel = MathUtils.handleDeadband(wheel, Constants.Drivetrain.kWheelDeadband);
+
+        if(quickTurn)
+            wheel *= 0.8;
 
         double left = 0, right = 0;
         // setDrivetrainMotorSpeed((throttle+wheel) / 2, (throttle-wheel) / 2);
@@ -171,10 +177,12 @@ public class Drivetrain extends SubsystemBase {
         rightMaster.feed();
         leftFollower.feed();
         rightFollower.feed();
-
-        pose = odometry.update(getGyroAngle(), getDistanceTravelled(leftMaster, leftFollower),
-                getDistanceTravelled(rightMaster, rightFollower));
-        field.setRobotPose(odometry.getPoseMeters());
+        if (DriverStation.isAutonomous()) {
+            
+            pose = odometry.update(getGyroAngle(), getDistanceTravelled(leftMaster, leftFollower),
+                    getDistanceTravelled(rightMaster, rightFollower));
+        }
+        // field.setRobotPose(odometry.getPoseMeters());
         log();
     }
 
@@ -182,17 +190,17 @@ public class Drivetrain extends SubsystemBase {
      * Logs data about the drivetrain subystem to SmartDashboard
      */
     public void log() {
-        SmartDashboard.putNumber("Left Encoder:", leftMaster.getSelectedSensorPosition());
-        SmartDashboard.putNumber("Right Encoder:", rightMaster.getSelectedSensorPosition());
-        SmartDashboard.putNumber("Left Output", leftFollower.getMotorOutputPercent());
-        SmartDashboard.putNumber("Right Output", rightFollower.getMotorOutputPercent());
-        SmartDashboard.putNumber("Gyro Angle:", -gyro.getAngle());
-        SmartDashboard.putNumber("Pose Gyro Angle", pose.getRotation().getDegrees());
-        SmartDashboard.putNumber("Left Distance Traveled", getDistanceTravelled(leftMaster, leftFollower));
-        SmartDashboard.putNumber("Right Distance Traveled", getDistanceTravelled(rightMaster, rightFollower));
-        SmartDashboard.putNumber("X value", pose.getX());
-        SmartDashboard.putNumber("Y value", pose.getY());
-        SmartDashboard.putData("SD Field", field);
+        // SmartDashboard.putNumber("Left Encoder:", leftMaster.getSelectedSensorPosition());
+        // SmartDashboard.putNumber("Right Encoder:", rightMaster.getSelectedSensorPosition());
+        // SmartDashboard.putNumber("Left Output", leftFollower.getMotorOutputPercent());
+        // SmartDashboard.putNumber("Right Output", rightFollower.getMotorOutputPercent());
+        // SmartDashboard.putNumber("Gyro Angle:", -gyro.getAngle());
+        // SmartDashboard.putNumber("Pose Gyro Angle", pose.getRotation().getDegrees());
+        // SmartDashboard.putNumber("Left Distance Traveled", getDistanceTravelled(leftMaster, leftFollower));
+        // SmartDashboard.putNumber("Right Distance Traveled", getDistanceTravelled(rightMaster, rightFollower));
+        // SmartDashboard.putNumber("X value", pose.getX());
+        // SmartDashboard.putNumber("Y value", pose.getY());
+        // SmartDashboard.putData("SD Field", field);
     }
 
     /* GETTERS AND SETTERS (AND RESETTERS) */
@@ -373,13 +381,13 @@ public class Drivetrain extends SubsystemBase {
         return pose;
     }
     
-    /**
-     * Returns the field
-     * @return the robot field, shown in smartdashboard.
-     */
-    public Field2d getField() {
-        return field;
-    }
+    // /**
+    //  * Returns the field
+    //  * @return the robot field, shown in smartdashboard.
+    //  */
+    // public Field2d getField() {
+    //     return field;
+    // }
     
     /** 
      * Resets the gyro 

@@ -23,6 +23,7 @@
     },
     "windows": {
       "/SmartDashboard/SD Field": {
+        "image": "C:\\Users\\elect\\Downloads\\2022-field.png",
         "window": {
           "visible": true
         }
@@ -30,7 +31,7 @@
     }
   },
   "NetworkTables Settings": {
-    "mode": "Client",
+    "mode": "Server",
     "serverTeam": "115"
   }
 }

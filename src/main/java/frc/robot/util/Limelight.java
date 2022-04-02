@@ -47,7 +47,7 @@ public class Limelight extends SubsystemBase {
     // update ty and tx
     updateEntry("ty", ty);
     updateEntry("tx", tx);
-    SmartDashboard.putNumber("Dist From Target", getHorizontalDistance());
+    // SmartDashboard.putNumber("Dist From Target", getHorizontalDistance());
   }
 
   public void setLED(LED_STATE newState) {

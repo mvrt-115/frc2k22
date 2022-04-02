@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
@@ -25,6 +26,7 @@ public class Climber extends SubsystemBase {
     public Servo leftServo, rightServo; // servos that act as ratchets
     public DigitalInput leftTelescopicProximity, rightTelescopicProximity; // inductive proximity
                                                                                            // sensors
+    public boolean lowClimb; // check to see if the climb should be low or not                                                                                    
     // for detecting whether robot is hooked on rungs or not for each type of arm
     // public DigitalInput leftTelescopicLimit, rightTelescopicLimit; // inductive proximity sensors
     // for detecting whether robot is hooked on rungs or not for each type of arm
@@ -34,6 +36,8 @@ public class Climber extends SubsystemBase {
         // proximity state is triggerd when both limit switch and proximity sensors are
         // triggered
   }
+
+  
 
     private ClimberState telescopicState = ClimberState.NONE;
 
@@ -46,7 +50,8 @@ public class Climber extends SubsystemBase {
         // pivot = TalonFactory.createTalonFX(Constants.Climber.kLeftTelescopicID, TalonFXInvertType.Clockwise);
         leftTelescopic = TalonFactory.createTalonFX(Constants.Climber.kLeftTelescopicID, false);
         rightTelescopic = TalonFactory.createTalonFX(Constants.Climber.kRightTelescopicID, false);
-
+        leftTelescopic.setNeutralMode(NeutralMode.Coast);
+        rightTelescopic.setNeutralMode(NeutralMode.Coast);
         resetTelescopicEncoder();
 
         leftTelescopic.setInverted(TalonFXInvertType.Clockwise);
@@ -72,8 +77,13 @@ public class Climber extends SubsystemBase {
         rightTelescopic.config_kD(Constants.kPIDIdx, Constants.Climber.kTelekD);
         rightTelescopic.config_kF(Constants.kPIDIdx, Constants.Climber.kTelekF);
 
+        //rightTelescopic.setNeutralMode(NeutralMode.Brake);
+       // leftTelescopic.setNeutralMode(NeutralMode.Brake);
+
        // leftServo.setZeroLatch();
       //  rightServo.setZeroLatch();
+
+        lowClimb = false;
     }
 
     /**
@@ -88,17 +98,40 @@ public class Climber extends SubsystemBase {
             rightTelescopic.set(ControlMode.PercentOutput, 0); 
             return;
         }
-        if((speed < 0 && getTelescopicPosition() <= 1000) || (speed > 0 && getTelescopicPosition() >= 260000)) {
+        if((speed < 0 && getTelescopicPosition() <= 2000) || (speed > 0 && leftTelescopic.getSelectedSensorPosition() >= 276675)) {
             leftTelescopic.set(ControlMode.PercentOutput, 0); // test and change value
-            rightTelescopic.set(ControlMode.PercentOutput, 0); 
+            // rightTelescopic.set(ControlMode.PercentOutput, 0); 
         }
         else {
-            // if(speed > 0)
-                // leftTelescopic.set(ControlMode.PercentOutput, speed * 1.5); // test and change value
-            // if(speed < 0)
-            leftTelescopic.set(ControlMode.PercentOutput, speed); // test and change value
-            rightTelescopic.set(ControlMode.PercentOutput, speed); 
+            leftTelescopic.set(ControlMode.PercentOutput, speed);
         }
+        if((speed < 0 && rightTelescopic.getSelectedSensorPosition() <= 2000) || (speed > 0 && rightTelescopic.getSelectedSensorPosition() >= 271943)) {
+            rightTelescopic.set(ControlMode.PercentOutput, 0); // test and change value
+            // rightTelescopic.set(ControlMode.PercentOutput, 0); 
+        }
+        else {
+            rightTelescopic.set(ControlMode.PercentOutput, speed);
+        }
+
+        // low climb soft limits
+        /*if(lowClimb []\
+        \][
+            []\
+            ][\
+            ]
+        ]]opic.set(ControlMode.PercentOutput, 0); // test and change value
+            // rightTelescopic.set(ControlMode.PercentOutput, 0); 
+        }
+        else {
+            leftTelescopic.set(ControlMode.PercentOutput, speed);
+        }
+        if(lowClimb && (speed < 0 && rightTelescopic.getSelectedSensorPosition() <= 2000) || (speed > 0 && rightTelescopic.getSelectedSensorPosition() >= )) { // change
+            rightTelescopic.set(ControlMode.PercentOutput, 0); // test and change value
+            // rightTelescopic.set(ControlMode.PercentOutput, 0); 
+        }
+        else {
+            rightTelescopic.set(ControlMode.PercentOutput, speed);
+        }*/
     }
 
     /**
@@ -204,8 +237,13 @@ public class Climber extends SubsystemBase {
     }
 
     public void setServoTurn(double turn) {
-        leftServo.setPosition(turn);
-        rightServo.setPosition(turn);
+        if(turn == 0 ){
+            leftServo.set(turn);
+            rightServo.set(turn);
+            return;
+        }
+        leftServo.set(turn+0.4);
+        rightServo.set(turn);
     }
 
     public double getServoAngle() {
@@ -219,13 +257,16 @@ public class Climber extends SubsystemBase {
     // This method will be called once per scheduler run
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("left clim", getLeftTelescopicEncoderValue());
-        SmartDashboard.putNumber("right clim", getRightTelescopicEncoderValue());
+        // SmartDashboard.putNumber("left clim", getLeftTelescopicEncoderValue());
+        // SmartDashboard.putNumber("right clim", getRightTelescopicEncoderValue());
 
-        if(getTelescopicPosition() >= 280000){
-            leftServo.set(Constants.Climber.kServoRatchet);
-            rightServo.set(Constants.Climber.kServoRatchet);
-        } //bruh
+        // SmartDashboard.putNumber("left lowClim", getLeftTelescopicEncoderValue());
+        // SmartDashboard.putNumber("right lowClim", getRightTelescopicEncoderValue());
+
+        // if(getTelescopicPosition() >= 280000){
+        //     leftServo.set(Constants.Climber.kServoRatchet);
+        //     rightServo.set(Constants.Climber.kServoRatchet);
+        // } //bruh
 
     }
 }

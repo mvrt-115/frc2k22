@@ -156,9 +156,9 @@ public class Shooter extends SubsystemBase {
 
   public void log()
   {
-    SmartDashboard.putNumber("Flywheel RPM", getCurrentRPM());
-    SmartDashboard.putNumber("RPM Needed", getRequiredRPM());
-    SmartDashboard.putString("State", state.toString());
+    // SmartDashboard.putNumber("Flywheel RPM", getCurrentRPM());
+    // SmartDashboard.putNumber("RPM Needed", getRequiredRPM());
+    // SmartDashboard.putString("State", state.toString());
   }
 
   @Override
@@ -178,8 +178,8 @@ public class Shooter extends SubsystemBase {
       case SPEEDING:
         flywheelLeader.set(ControlMode.Velocity, rpmToTicks(targetRPM));
         hoodMotor.set(ControlMode.Position, degreesToTicks(targetAng));
-        SmartDashboard.putNumber("target rpm", targetRPM);
-        SmartDashboard.putNumber("target angle", targetAng);
+        // SmartDashboard.putNumber("target rpm", targetRPM);
+        // SmartDashboard.putNumber("target angle", targetAng);
 
         if(allWithinError(targetRPM, Constants.Flywheel.ACCEPTABLE_ERROR))
         {

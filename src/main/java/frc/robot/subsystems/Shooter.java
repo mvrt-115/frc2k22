@@ -68,7 +68,7 @@ public class Shooter extends SubsystemBase {
    * Stops Shooter
    */
   public void stopFlywheel() {
-    flywheelLeader.set(ControlMode.PercentOutput, 0.0);
+    flywheelLeader.set(ControlMode.PercentOutput, 0.3);
   }
 
   /**
@@ -119,11 +119,11 @@ public class Shooter extends SubsystemBase {
    */
   public void log()
   {
-    SmartDashboard.putNumber("Output", flywheelLeader.getMotorOutputPercent());
-    SmartDashboard.putNumber("Flywheel RPM", getCurrentRPM());
-    SmartDashboard.putNumber("RPM Needed", getRequiredRPM());
-    SmartDashboard.putString("Shooter State", state.toString());
-    SmartDashboard.putNumber("Target RPM", targetRPM);
+    // SmartDashboard.putNumber("Output", flywheelLeader.getMotorOutputPercent());
+    // SmartDashboard.putNumber("Flywheel RPM", getCurrentRPM());
+    // SmartDashboard.putNumber("RPM Needed", getRequiredRPM());
+    // SmartDashboard.putString("Shooter State", state.toString());
+    // SmartDashboard.putNumber("Target RPM", targetRPM);
   }
 
   @Override
