@@ -34,20 +34,14 @@ public class MovingShot extends CommandBase {
   @Override
   public void execute() {
     // double driveSpeed = (drivetrain.getSpeeds().leftMetersPerSecond+drivetrain.getSpeeds().rightMetersPerSecond)/2;
-    
     // double initSpeed = shooter.getVelocityFromWheelRPM();
-    // double addSpeed = Math.sqrt(Math.pow(initSpeed, 2) + 2*initSpeed*driveSpeed*Math.cos(1-turret.getCurrentPositionDegrees()+Math.pow(driveSpeed, 2)));
-
-    // double offset = Math.asin(driveSpeed*Math.sin(1-turret.getCurrentPositionDegrees())/(initSpeed+addSpeed));
-
-    // turret.setOffset(offset);
-
-    // double increasedRPM = (turret.getCurrentPositionDegrees()>90) ? shooter.getRPMFromVelocity(addSpeed) : -1* shooter.getRPMFromVelocity(addSpeed);
-
-    // shooter.setTargetRPM(increasedRPM + shooter.getRequiredRPM());
-
-    // if(shooter.getState() == ShooterState.ATSPEED)
-    //   storage.runMotor(1);
+    // double diff_const = initSpeed - driveSpeed*Math.cos(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()));
+    // double vert_drive_comp = driveSpeed*Math.sin(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()));
+    // double addSpeed = Math.sqrt(vert_drive_comp*vert_drive_comp + diff_const*diff_const)-initSpeed;
+    
+    // double totRPM = shooter.getRequiredRPM()+shooter.getRPMFromVelocity(addSpeed);
+    
+    
   }
 
   // Called once the command ends or is interrupted.

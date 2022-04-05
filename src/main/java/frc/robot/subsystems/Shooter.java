@@ -40,8 +40,11 @@ public class Shooter extends SubsystemBase {
   private RollingAverage rpm;
   private Limelight limelight;
 
+  private Turret turret;
+  private Drivetrain drivetrain;
+
   /** Creates a new Shooter. */
-  public Shooter(Limelight limelight/*, Drivetrain drivetrain, Turret turret*/) {
+  public Shooter(Limelight limelight, Drivetrain drivetrain, Turret turret) {
     // Mind Bending Test aon the Reality of our Situation
     flywheelLeader = TalonFactory.createTalonFX(LEADER_ID, false);
     flywheelLeader.setNeutralMode(NeutralMode.Coast);
@@ -58,6 +61,9 @@ public class Shooter extends SubsystemBase {
     state = ShooterState.OFF;
     // hoodState = HoodState.OFF;
     rpm = new RollingAverage(Constants.Flywheel.NUM_AVG);
+
+    this.turret = turret;
+    this.drivetrain = drivetrain;
   }
 
   public void runMotor(double out ){
@@ -153,6 +159,8 @@ public class Shooter extends SubsystemBase {
            setState(ShooterState.SPEEDING);
          break;
      }
+
+    moveAlign();
   }
 
   /**
@@ -164,9 +172,7 @@ public class Shooter extends SubsystemBase {
     // linear constant to slightly tune the shot, -> Limelight distances range from 80 to 220
     // *currently set to 0, I suggest it should be 1*
     double x = limelight.getHorizontalDistance() * Constants.Flywheel.STRETCH_CONSTANT;
-    
 
-    
     //double rpm = Math.min(333*Math.pow(limelight.getHorizontalDistance() * Constants.Flywheel.STRETCH_CONSTANT, 0.522) + Constants.Flywheel.LIN_CONST * limelight.getHorizontalDistance(), Constants.Flywheel.MAX_RPM);
    
     // double rpm = 479.18*Math.pow(x, 0.4418) + Constants.Flywheel.LIN_CONST * limelight.getHorizontalDistance();
@@ -178,9 +184,20 @@ public class Shooter extends SubsystemBase {
     {
       rpm = rpm - Constants.Flywheel.ADJ_HORIZ_ERROR*limelight.getHorizontalOffset();
     }
+
+    rpm+=Constants.Flywheel.REG_CONSTANT;
+
     // SERIOUSLY DO NOT CHANGE THIS DIMENSION, as the turret is slightly off, the shots often overshoot, so we need
     // to reduce it a bit so they have a better chance of landing in. Only if you notice this happening, change the
     // constant. Right now, it is 5, it won't affect the general rpm of the shots so don't change this.
+
+    double driveSpeed = (drivetrain.getSpeeds().leftMetersPerSecond+drivetrain.getSpeeds().rightMetersPerSecond)/2;
+    double initSpeed = getVelocityFromWheelRPM(rpm);
+    double diff_const = initSpeed - driveSpeed*Math.cos(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()));
+    double vert_drive_comp = driveSpeed*Math.sin(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()));
+    double addSpeed = Math.sqrt(vert_drive_comp*vert_drive_comp + diff_const*diff_const)-initSpeed;
+    
+    rpm = getRequiredRPM()+getRPMFromVelocity(addSpeed);
 
     return rpm;
   }
@@ -229,17 +246,21 @@ public class Shooter extends SubsystemBase {
   /**
    * Adjusts the turret to the correct offset
    */
-  /*public void moveAlign()
+  public void moveAlign()
   {
     double driveSpeed = (drivetrain.getSpeeds().leftMetersPerSecond+drivetrain.getSpeeds().rightMetersPerSecond)/2;
-    
     double initSpeed = getVelocityFromWheelRPM();
-    double addSpeed = Math.sqrt(Math.pow(initSpeed, 2) + 2*initSpeed*driveSpeed*Math.cos(1-turret.getCurrentPositionDegrees())+Math.pow(driveSpeed, 2));
+    double diff_const = initSpeed - driveSpeed*Math.cos(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()));
+    double vert_drive_comp = driveSpeed*Math.sin(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()));
+    double totSpeed = Math.sqrt(vert_drive_comp*vert_drive_comp + diff_const*diff_const)+initSpeed;
 
-    double offset = Math.asin(driveSpeed*Math.sin(1-turret.getCurrentPositionDegrees())/(initSpeed+addSpeed));
+    double offset = 0;
+
+    if(Math.abs(offset)<=1)
+      offset = Math.asin(driveSpeed*Math.sin(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()))/(totSpeed));
 
     turret.setOffset(offset);
-  }*/
+  }
 
   /**
    * Converts the rpm of the flywheel to linear velocity
@@ -247,6 +268,14 @@ public class Shooter extends SubsystemBase {
    */
   public double getVelocityFromWheelRPM() {
     return getRequiredRPM()/Constants.Flywheel.RADIUS/60;
+  }
+
+  /**
+   * Converts the rpm of the flywheel to linear velocity
+   * @return linear velocity
+   */
+  public double getVelocityFromWheelRPM(double rpm) {
+    return rpm/Constants.Flywheel.RADIUS/60;
   }
 
   /**
