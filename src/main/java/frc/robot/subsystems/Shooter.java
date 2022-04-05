@@ -160,7 +160,7 @@ public class Shooter extends SubsystemBase {
          break;
      }
 
-    moveAlign();
+    // moveAlign();
   }
 
   /**
@@ -180,24 +180,24 @@ public class Shooter extends SubsystemBase {
     // Use this is power equation is not working
     double rpm = 2040.9 * Math.pow(Math.E, 0.0058 * x);
 
-    if(Math.abs(limelight.getHorizontalOffset())>Constants.Flywheel.ALIGN_ERROR)
-    {
-      rpm = rpm - Constants.Flywheel.ADJ_HORIZ_ERROR*limelight.getHorizontalOffset();
-    }
+    // if(Math.abs(limelight.getHorizontalOffset())>Constants.Flywheel.ALIGN_ERROR)
+    // {
+    //   rpm = rpm - Constants.Flywheel.ADJ_HORIZ_ERROR*limelight.getHorizontalOffset();
+    // }
 
-    rpm+=Constants.Flywheel.REG_CONSTANT;
+    // rpm+=Constants.Flywheel.REG_CONSTANT;
 
-    // SERIOUSLY DO NOT CHANGE THIS DIMENSION, as the turret is slightly off, the shots often overshoot, so we need
-    // to reduce it a bit so they have a better chance of landing in. Only if you notice this happening, change the
-    // constant. Right now, it is 5, it won't affect the general rpm of the shots so don't change this.
+    // // SERIOUSLY DO NOT CHANGE THIS DIMENSION, as the turret is slightly off, the shots often overshoot, so we need
+    // // to reduce it a bit so they have a better chance of landing in. Only if you notice this happening, change the
+    // // constant. Right now, it is 5, it won't affect the general rpm of the shots so don't change this.
 
-    double driveSpeed = (drivetrain.getSpeeds().leftMetersPerSecond+drivetrain.getSpeeds().rightMetersPerSecond)/2;
-    double initSpeed = getVelocityFromWheelRPM(rpm);
-    double diff_const = initSpeed - driveSpeed*Math.cos(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()));
-    double vert_drive_comp = driveSpeed*Math.sin(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()));
-    double addSpeed = Math.sqrt(vert_drive_comp*vert_drive_comp + diff_const*diff_const)-initSpeed;
+    // double driveSpeed = (drivetrain.getSpeeds().leftMetersPerSecond+drivetrain.getSpeeds().rightMetersPerSecond)/2;
+    // double initSpeed = getVelocityFromWheelRPM(rpm);
+    // double diff_const = initSpeed - driveSpeed*Math.cos(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()));
+    // double vert_drive_comp = driveSpeed*Math.sin(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()));
+    // double addSpeed = Math.sqrt(vert_drive_comp*vert_drive_comp + diff_const*diff_const)-initSpeed;
     
-    rpm = getRequiredRPM()+getRPMFromVelocity(addSpeed);
+    // rpm = getRequiredRPM()+getRPMFromVelocity(addSpeed);
 
     return rpm;
   }
