@@ -198,7 +198,7 @@ public class Shooter extends SubsystemBase {
     double vert_drive_comp = driveSpeed*Math.sin(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()));
     double addSpeed = Math.sqrt(vert_drive_comp*vert_drive_comp + diff_const*diff_const)-initSpeed;
     
-    rpm = getRequiredRPM(); //+getRPMFromVelocity(addSpeed);
+    // rpm = getRequiredRPM()+getRPMFromVelocity(addSpeed);
 
     return rpm;
   }
