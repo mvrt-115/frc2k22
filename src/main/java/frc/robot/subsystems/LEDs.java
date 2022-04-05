@@ -8,21 +8,24 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.Turret.TurretState;
 
 public class LEDs extends SubsystemBase {
+
+  public enum TurretState {DISABLED, CAN_SHOOT, TARGETING};
+  public TurretState turretState = TurretState.DISABLED;
+
   /** Creates a new LEDSubsystem. */
 
-  public AddressableLED led, turretLed;
-  public AddressableLEDBuffer lBuffer, turretBuffer;
+  public AddressableLED led/*, turretLed*/;
+  public AddressableLEDBuffer lBuffer/*, turretBuffer*/;
 
-  public final int LED_PORT = 0;
-  public final int TURRET_LED_PORT = 1;
+  public final int LED_PORT = 1;
+  public final int TURRET_LED_PORT = 2;
   public final int LED_LENGTH = 56;
   public final int TURRET_LED_LENGTH = 39;
   public int counter = 0;
 
-  public enum LedState {CLIMBER, TURRET_ALIGNED, TURRET_UNALIGNED, SHOOTING, DEFAULT};
+  public enum LedState {CLIMBER, SHOOTING, DEFAULT};
   public LedState prevState = LedState.DEFAULT;
   public LedState currState = LedState.DEFAULT;
 
@@ -34,7 +37,7 @@ public class LEDs extends SubsystemBase {
     led.setLength(LED_LENGTH);
     led.start();
 
-    turretLed = new AddressableLED(TURRET_LED_PORT);
+    /*turretLed = new AddressableLED(TURRET_LED_PORT);
     turretBuffer = new AddressableLEDBuffer(TURRET_LED_LENGTH);
 
     turretLed.setLength(TURRET_LED_LENGTH);
@@ -42,7 +45,7 @@ public class LEDs extends SubsystemBase {
 
     setGradient(0, TURRET_LED_LENGTH/3, Color.kBlack, Color.kGreen);
     setGradient(TURRET_LED_LENGTH/3, (TURRET_LED_LENGTH*2)/3, Color.kBlack, Color.kGreen);
-    setGradient((TURRET_LED_LENGTH*2)/3, TURRET_LED_LENGTH, Color.kBlack, Color.kGreen);
+    setGradient((TURRET_LED_LENGTH*2)/3, TURRET_LED_LENGTH, Color.kBlack, Color.kGreen);*/
   }
 
   public Color RBGToColor(int[] values) 
@@ -55,29 +58,14 @@ public class LEDs extends SubsystemBase {
     lBuffer.setLED(index, color);
   }
 
-  public void setLEDBulbTurret(int index, Color color) 
-  {
-    turretBuffer.setLED(index, color);
-  }
-
   public Color getLEDColor(int index)
   {
     return lBuffer.getLED(index);
   }
 
-  public Color getLEDColorTurret(int index)
-  {
-    return turretBuffer.getLED(index);
-  }
-
   public void sendData() 
   {
     led.setData(lBuffer);
-  }
-
-  public void sendDataTurret() 
-  {
-    turretLed.setData(turretBuffer);
   }
 
   /**
@@ -96,28 +84,11 @@ public class LEDs extends SubsystemBase {
     }
   }
 
-  public void setSingleBlockTurret(int startIndex, int endIndex, Color color) 
-  {
-    if(startIndex >= 0 && endIndex < LED_LENGTH) {
-      for(int i = startIndex; i <= endIndex; i++)
-      {
-        turretBuffer.setLED(i, color);
-      }
-    }
-  }
-
   public void setFullLength(Color color)
   {
     setSingleBlock(0, LED_LENGTH-1, color);
   }
 
-  public void setFullLengthTurret(Color color)
-  {
-    setSingleBlockTurret(0, LED_LENGTH-1, color);
-  }
-
-
-  //DIDN'T WORK
   public void moveUp(int startIndex, int endIndex, double delay)
   {
     Color tempColor = lBuffer.getLED(endIndex);
@@ -127,31 +98,15 @@ public class LEDs extends SubsystemBase {
       setLEDBulb(i, lBuffer.getLED(i-1));
     }
 
-    setLEDBulb(0, tempColor);
+    setLEDBulb(startIndex, tempColor);
 
     sendData();
     Timer.delay(delay);
   }
 
-  public void moveUpTurret(int startIndex, int endIndex, double delay)
-  {
-    Color tempColor = lBuffer.getLED(endIndex);
-    
-    for(int i = endIndex; i > startIndex; i--)
-    {
-      setLEDBulbTurret(i, lBuffer.getLED(i-1));
-    }
-
-    setLEDBulbTurret(0, tempColor);
-
-    sendDataTurret();
-    Timer.delay(delay);
-  }
-
-  //DIDN'T WORK
   public void moveDown(int startIndex, int endIndex, double delay)
   {
-    Color tempColor = lBuffer.getLED(0);
+    Color tempColor = lBuffer.getLED(startIndex);
     
     for(int i = startIndex; i < endIndex; i++)
     {
@@ -166,13 +121,12 @@ public class LEDs extends SubsystemBase {
 
   public void setWave(int startIndex, int endIndex, int waveLength, Color darkColor, Color lightColor)
   {
-    for(int i = startIndex; i <= endIndex; i += waveLength)
+    for(int i = startIndex; i < endIndex; i += waveLength)
     {
       setGradientOnTwoSides(i, i + waveLength - 1, darkColor, lightColor);
     }
   }
 
-  //DIDN'T WORK
   public void setGradient(int startIndex, int endIndex, Color startColor, Color endColor)
   {
     int length = endIndex - startIndex;
@@ -184,21 +138,6 @@ public class LEDs extends SubsystemBase {
     for(int i = 0; i <= length; i++)
     {
       setLEDBulb(i + startIndex, new Color((startColor.red+redShift*i), (startColor.green+greenShift*i), 
-        (startColor.blue+blueShift*i)));
-    }
-  }
-
-  public void setGradientTurret(int startIndex, int endIndex, Color startColor, Color endColor)
-  {
-    int length = endIndex - startIndex;
-
-    double redShift = (double)(endColor.red-startColor.red)/length;
-    double greenShift = (double)(endColor.green-startColor.green)/length;
-    double blueShift = (double)(endColor.blue-startColor.blue)/length;
-
-    for(int i = 0; i <= length; i++)
-    {
-      setLEDBulbTurret(i + startIndex, new Color((startColor.red+redShift*i), (startColor.green+greenShift*i), 
         (startColor.blue+blueShift*i)));
     }
   }
@@ -262,6 +201,66 @@ public class LEDs extends SubsystemBase {
       (originalColor.blue + addColor.blue)%256));
   }
 
+  /*public void setLEDBulbTurret(int index, Color color) 
+  {
+    turretBuffer.setLED(index, color);
+  }
+
+  public Color getLEDColorTurret(int index)
+  {
+    return turretBuffer.getLED(index);
+  }
+
+  public void sendDataTurret() 
+  {
+    turretLed.setData(turretBuffer);
+  }
+
+  public void setSingleBlockTurret(int startIndex, int endIndex, Color color) 
+  {
+    if(startIndex >= 0 && endIndex < LED_LENGTH) {
+      for(int i = startIndex; i <= endIndex; i++)
+      {
+        turretBuffer.setLED(i, color);
+      }
+    }
+  }
+
+  public void setFullLengthTurret(Color color)
+  {
+    setSingleBlockTurret(0, LED_LENGTH-1, color);
+  }
+
+  public void moveUpTurret(int startIndex, int endIndex, double delay)
+  {
+    Color tempColor = lBuffer.getLED(endIndex);
+    
+    for(int i = endIndex; i > startIndex; i--)
+    {
+      setLEDBulbTurret(i, lBuffer.getLED(i-1));
+    }
+
+    setLEDBulbTurret(0, tempColor);
+
+    sendDataTurret();
+    Timer.delay(delay);
+  }
+
+  public void setGradientTurret(int startIndex, int endIndex, Color startColor, Color endColor)
+  {
+    int length = endIndex - startIndex;
+
+    double redShift = (double)(endColor.red-startColor.red)/length;
+    double greenShift = (double)(endColor.green-startColor.green)/length;
+    double blueShift = (double)(endColor.blue-startColor.blue)/length;
+
+    for(int i = 0; i <= length; i++)
+    {
+      setLEDBulbTurret(i + startIndex, new Color((startColor.red+redShift*i), (startColor.green+greenShift*i), 
+        (startColor.blue+blueShift*i)));
+    }
+  }
+
   public void setTurretLEDs(double flywheelSpeed, double targetSpeed, TurretState turretState)
   {
     if(turretState == TurretState.DISABLED) //purple
@@ -305,7 +304,7 @@ public class LEDs extends SubsystemBase {
 
     moveUpTurret(0, TURRET_LED_LENGTH-1, 0.1);
     sendDataTurret(); 
-  }
+  }*/
 
   @Override
   public void periodic() {
