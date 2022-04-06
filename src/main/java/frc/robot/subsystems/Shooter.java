@@ -163,11 +163,8 @@ public class Shooter extends SubsystemBase {
     // moveAlign();
   }
 
-  /**
-   * Get required RPM for shooter
-   * @return required rpm for shooter
-   */
-  public double getRequiredRPM() {
+  public double getStationaryRPM()
+  {
     // power series regression from testing data
     // linear constant to slightly tune the shot, -> Limelight distances range from 80 to 220
     // *currently set to 0, I suggest it should be 1*
@@ -192,13 +189,22 @@ public class Shooter extends SubsystemBase {
     // // to reduce it a bit so they have a better chance of landing in. Only if you notice this happening, change the
     // // constant. Right now, it is 5, it won't affect the general rpm of the shots so don't change this.
 
+    return rpm;
+  }
+
+  /**
+   * Get required RPM for shooter
+   * @return required rpm for shooter
+   */
+  public double getRequiredRPM() {
+
     double driveSpeed = (drivetrain.getSpeeds().leftMetersPerSecond+drivetrain.getSpeeds().rightMetersPerSecond)/2;
-    double initSpeed = getVelocityFromWheelRPM(rpm);
+    double initSpeed = getBaseVelocityFromWheel();
     double diff_const = initSpeed - driveSpeed*Math.cos(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()));
     double vert_drive_comp = driveSpeed*Math.sin(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()));
     double addSpeed = Math.sqrt(vert_drive_comp*vert_drive_comp + diff_const*diff_const)-initSpeed;
-    
-    // rpm = getRequiredRPM()+getRPMFromVelocity(addSpeed);
+
+    double rpm = getStationaryRPM(); //+getRPMFromVelocity(addSpeed);
 
     return rpm;
   }
@@ -249,8 +255,13 @@ public class Shooter extends SubsystemBase {
    */
   public void moveAlign()
   {
+    turret.setOffset(getCalculatedOffset());
+  }
+
+  public double getCalculatedOffset()
+  {
     double driveSpeed = (drivetrain.getSpeeds().leftMetersPerSecond+drivetrain.getSpeeds().rightMetersPerSecond)/2;
-    double initSpeed = getVelocityFromWheelRPM();
+    double initSpeed = getBaseVelocityFromWheel();
     double diff_const = initSpeed - driveSpeed*Math.cos(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()));
     double vert_drive_comp = driveSpeed*Math.sin(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()));
     double totSpeed = Math.sqrt(vert_drive_comp*vert_drive_comp + diff_const*diff_const)+initSpeed;
@@ -258,17 +269,17 @@ public class Shooter extends SubsystemBase {
     double offset = 0;
 
     if(Math.abs(offset)<=1)
-      offset = Math.asin(driveSpeed*Math.sin(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()))/(totSpeed));
+      offset = Math.toDegrees(Math.asin(driveSpeed*Math.sin(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()))/(totSpeed)));
 
-    turret.setOffset(offset);
+    return offset;
   }
 
   /**
    * Converts the rpm of the flywheel to linear velocity
    * @return linear velocity
    */
-  public double getVelocityFromWheelRPM() {
-    return getRequiredRPM()/Constants.Flywheel.RADIUS/60;
+  public double getBaseVelocityFromWheel() {
+    return getStationaryRPM()/Constants.Flywheel.RADIUS/60;
   }
 
   /**
