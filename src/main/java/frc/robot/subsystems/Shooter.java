@@ -130,6 +130,8 @@ public class Shooter extends SubsystemBase {
     // SmartDashboard.putNumber("RPM Needed", getRequiredRPM());
     // SmartDashboard.putString("Shooter State", state.toString());
     // SmartDashboard.putNumber("Target RPM", targetRPM);
+    // SmartDashboard.putNumber("Turret Offset", getCalculatedOffset());
+    // SmartDashboard.putNumber("Added RPM", getCalculatedAddRPM());
   }
 
   @Override
@@ -170,11 +172,11 @@ public class Shooter extends SubsystemBase {
     // *currently set to 0, I suggest it should be 1*
     double x = limelight.getHorizontalDistance() * Constants.Flywheel.STRETCH_CONSTANT;
 
-    //double rpm = Math.min(333*Math.pow(limelight.getHorizontalDistance() * Constants.Flywheel.STRETCH_CONSTANT, 0.522) + Constants.Flywheel.LIN_CONST * limelight.getHorizontalDistance(), Constants.Flywheel.MAX_RPM);
+    // double rpm = Math.min(333*Math.pow(limelight.getHorizontalDistance() * Constants.Flywheel.STRETCH_CONSTANT, 0.522) + Constants.Flywheel.LIN_CONST * limelight.getHorizontalDistance(), Constants.Flywheel.MAX_RPM);
    
     // double rpm = 479.18*Math.pow(x, 0.4418) + Constants.Flywheel.LIN_CONST * limelight.getHorizontalDistance();
     
-    // Use this is power equation is not working
+    // Use this if power equation is not working
     double rpm = 2040.9 * Math.pow(Math.E, 0.0058 * x);
 
     // THIS IS NOT FOR SHOOTING ON THE MOVE LOL, JUST FOR DEALING WITH LIMELIGHT ERROR
@@ -185,10 +187,6 @@ public class Shooter extends SubsystemBase {
 
     rpm+=Constants.Flywheel.REG_CONSTANT;
 
-    // // SERIOUSLY DO NOT CHANGE THIS DIMENSION, as the turret is slightly off, the shots often overshoot, so we need
-    // // to reduce it a bit so they have a better chance of landing in. Only if you notice this happening, change the
-    // // constant. Right now, it is 5, it won't affect the general rpm of the shots so don't change this.
-
     return rpm;
   }
 
@@ -198,13 +196,7 @@ public class Shooter extends SubsystemBase {
    */
   public double getRequiredRPM() {
 
-    double driveSpeed = (drivetrain.getSpeeds().leftMetersPerSecond+drivetrain.getSpeeds().rightMetersPerSecond)/2;
-    double initSpeed = getBaseVelocityFromWheel();
-    double diff_const = initSpeed - driveSpeed*Math.cos(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()));
-    double vert_drive_comp = driveSpeed*Math.sin(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()));
-    double addSpeed = Math.sqrt(vert_drive_comp*vert_drive_comp + diff_const*diff_const)-initSpeed;
-
-    double rpm = getStationaryRPM(); //+getRPMFromVelocity(addSpeed);
+    double rpm = getStationaryRPM();// + getCalculatedAddRPM();
 
     return rpm;
   }
@@ -272,6 +264,17 @@ public class Shooter extends SubsystemBase {
       offset = Math.toDegrees(Math.asin(driveSpeed*Math.sin(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()))/(totSpeed)));
 
     return offset;
+  }
+
+  public double getCalculatedAddRPM()
+  {
+    double driveSpeed = (drivetrain.getSpeeds().leftMetersPerSecond+drivetrain.getSpeeds().rightMetersPerSecond)/2;
+    double initSpeed = getBaseVelocityFromWheel();
+    double diff_const = initSpeed - driveSpeed*Math.cos(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()));
+    double vert_drive_comp = driveSpeed*Math.sin(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()));
+    double addSpeed = Math.sqrt(vert_drive_comp*vert_drive_comp + diff_const*diff_const)-initSpeed;
+
+    return getRPMFromVelocity(addSpeed);
   }
 
   /**
