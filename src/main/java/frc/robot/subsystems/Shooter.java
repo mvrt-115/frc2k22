@@ -236,9 +236,7 @@ public class Shooter extends SubsystemBase {
    * @param acceptableError -- the acceptable +- error range
    * @return boolean whether the RPM is within the acceptable error or not
    */
-  private boolean 
-  
-  allWithinRPMError(double targetSpeed) {
+  private boolean allWithinRPMError(double targetSpeed) {
     return Math.abs(rpm.getAverage() - targetSpeed) <= Constants.Flywheel.ACCEPTABLE_ERROR;
   }
 
