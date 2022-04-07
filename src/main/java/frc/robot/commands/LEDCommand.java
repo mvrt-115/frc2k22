@@ -13,14 +13,10 @@ import frc.robot.subsystems.Storage;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.LEDs.LedState;
-import frc.robot.subsystems.LEDs.TurretState;
 
 public class LEDCommand extends CommandBase {
   /** Creates a new LEDCommand. */
   public LEDs led;
-
-  public enum GeneralStates {TELESCOPIC_RUNNING, SHOOTER_RUNNING, STORAGE};
-  public GeneralStates currState = GeneralStates.STORAGE;
 
   public int numBalls = 1;
   public int lastBalls;
@@ -55,7 +51,8 @@ public class LEDCommand extends CommandBase {
     if(climber.leftTelescopic.getMotorOutputPercent() != 0)
       led.setCurrentState(LedState.CLIMBER);
 
-    //led.setTurretLEDs(shooter.getCurrentRPM(), shooter.getRequiredRPM(), turret.getTurretState());
+    led.setTurretLEDs(shooter.getCurrentRPM(), shooter.getRequiredRPM(), turret.getTurretState());
+    //led.setTurretLEDs(900, 7000, TurretState.TARGETING);
 
     if(led.getCurrentState() == LedState.CLIMBER) {
       if(led.getPreviousState() != LedState.CLIMBER)
@@ -68,17 +65,17 @@ public class LEDCommand extends CommandBase {
     }
 
     else if(led.getCurrentState() == LedState.DEFAULT) {
-      if(numBalls != lastBalls)
+      if(storage.getBalls() != 0)
       {
         led.setWave(0, led.LED_LENGTH/2 - (led.LED_LENGTH/4 * (2 - numBalls)), 7, 
-          led.RBGToColor(new int[]{85, 5, 117}), led.RBGToColor(new int[]{255, 196, 16}));
+          led.kMVRTPurple, led.kMVRTGold);
         led.setWave(led.LED_LENGTH/2 + (led.LED_LENGTH/4 * (2 - numBalls)), led.LED_LENGTH, 7, 
-          led.RBGToColor(new int[]{85, 5, 117}), led.RBGToColor(new int[]{255, 196, 16}));
+          led.kMVRTPurple, led.kMVRTGold);
         led.setPreviousState(LedState.DEFAULT);
       }
 
-      led.moveDown(0, led.LED_LENGTH/2 - (led.LED_LENGTH/4 * (2 - numBalls)) - 1, 0.05);
-      led.moveUp(led.LED_LENGTH/2 + (led.LED_LENGTH/4 * (2 - numBalls)), led.LED_LENGTH - 1, 0.05);
+      led.moveDown(0, led.LED_LENGTH/2 - (led.LED_LENGTH/4 * (2 - numBalls)) - 1, 0.005);
+      led.moveUp(led.LED_LENGTH/2 + (led.LED_LENGTH/4 * (2 - numBalls)), led.LED_LENGTH - 1, 0.005);
     }
 
     lastBalls = numBalls;
