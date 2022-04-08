@@ -4,8 +4,6 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Intake;
@@ -13,11 +11,15 @@ import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Storage;
 import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.LEDs.LedState;
 
 public class LEDCommand extends CommandBase {
   /** Creates a new LEDCommand. */
   public LEDs led;
+
+  public int numBalls = 1;
+  public int lastBalls;
   public Turret turret;
   public Shooter shooter;
   public Climber climber;
@@ -26,14 +28,14 @@ public class LEDCommand extends CommandBase {
 
   public LEDCommand(LEDs leds, Turret turret, Shooter shooter, Climber climber, Storage storage, Intake intake) {
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(leds);
     led = leds;
     this.turret = turret;
     this.shooter = shooter;
     this.climber = climber;
     this.storage = storage;
     this.intake = intake;
-
-    
+    lastBalls = 0;
   }
 
   // Called when the command is initially scheduled.
@@ -44,28 +46,39 @@ public class LEDCommand extends CommandBase {
   @Override
   public void execute() 
   {
-    if(climber.leftTelescopic.getMotorOutputPercent() != 0 && Timer.getMatchTime() < 30)
+    numBalls = storage.getBalls();
+
+    if(climber.leftTelescopic.getMotorOutputPercent() != 0)
       led.setCurrentState(LedState.CLIMBER);
-    else if(Timer.getMatchTime() > 30)
-      led.setCurrentState(LedState.DEFAULT);
 
     led.setTurretLEDs(shooter.getCurrentRPM(), shooter.getRequiredRPM(), turret.getTurretState());
+    //led.setTurretLEDs(900, 7000, TurretState.TARGETING);
 
-    if(led.getCurrentState() == LedState.CLIMBER && led.getPreviousState() != LedState.CLIMBER) {
-      led.setRainbow(0, led.LED_LENGTH-1);
-      led.setPreviousState(LedState.CLIMBER);
-      led.moveDown(0, led.LED_LENGTH-1, 0.1);
+    if(led.getCurrentState() == LedState.CLIMBER) {
+      if(led.getPreviousState() != LedState.CLIMBER)
+      {
+        led.setRainbow(0, led.LED_LENGTH-1);
+        led.setPreviousState(LedState.CLIMBER);
+      }
+      
+      led.moveDown(0, led.LED_LENGTH-1, 0.075);
     }
-    else if(led.getCurrentState() == LedState.DEFAULT && led.getPreviousState() != LedState.DEFAULT) {
-      led.setWave(0, led.LED_LENGTH/2 - (led.LED_LENGTH/4 * (2 - storage.getBalls())), 7, 
-        led.RBGToColor(new int[]{85, 5, 117}), led.RBGToColor(new int[]{255, 196, 16}));
-      led.setWave(led.LED_LENGTH/2, led.LED_LENGTH - (led.LED_LENGTH/4 * (2 - storage.getBalls())), 7, 
-        led.RBGToColor(new int[]{85, 5, 117}), led.RBGToColor(new int[]{255, 196, 16}));
-      led.setPreviousState(LedState.DEFAULT);
 
-      led.moveDown(0, led.LED_LENGTH/2 - (led.LED_LENGTH/4 * (2 - storage.getBalls())), 0.1);
-      led.moveDown(led.LED_LENGTH/2, led.LED_LENGTH - (led.LED_LENGTH/4 * (2 - storage.getBalls())), 0.1);
+    else if(led.getCurrentState() == LedState.DEFAULT) {
+      if(storage.getBalls() != 0)
+      {
+        led.setWave(0, led.LED_LENGTH/2 - (led.LED_LENGTH/4 * (2 - numBalls)), 7, 
+          led.kMVRTPurple, led.kMVRTGold);
+        led.setWave(led.LED_LENGTH/2 + (led.LED_LENGTH/4 * (2 - numBalls)), led.LED_LENGTH, 7, 
+          led.kMVRTPurple, led.kMVRTGold);
+        led.setPreviousState(LedState.DEFAULT);
+      }
+
+      led.moveDown(0, led.LED_LENGTH/2 - (led.LED_LENGTH/4 * (2 - numBalls)) - 1, 0.005);
+      led.moveUp(led.LED_LENGTH/2 + (led.LED_LENGTH/4 * (2 - numBalls)), led.LED_LENGTH - 1, 0.005);
     }
+
+    lastBalls = numBalls;
   }
 
   // Called once the command ends or is interrupted.

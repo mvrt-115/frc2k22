@@ -116,6 +116,7 @@ public final class Constants {
         public static final double MOUNT_ANGLE = 15;
         public static final double Height_IN = 36;
         public static final double TARGET_HEIGHT_IN = 104;
+        public static final int LIMELIGHT_ROLLING_AVG = 8;
     }
 
     public static class Hood
@@ -136,7 +137,7 @@ public final class Constants {
     {
         public static final double P = 0.21;
         public static final double I = 0;
-        public static final double D = 6.9;
+        public static final double D = 7.5; // 6.9
         public static final double F = 0.058;
         public static final double PHood = 0.21;
         public static final double IHood = 0;
@@ -148,14 +149,16 @@ public final class Constants {
         public static final double TICKS_PER_REVOLUTION = 2048;
         public static final int NUM_AVG = 5;
         public static final double GEAR_RATIO = 25 / 24;
-        public static double LIN_CONST = 0.2;
-        public static double INCREMENT = 0.3; // 0.3 is a lot, it's 0.3 * range from 100 to 250
+        public static double LIN_CONST = 0;
+        public static final double INCREMENT = 0.3; // 0.3 is a lot, it's 0.3 * range from 100 to 250
         public static final double LOW_SHOT_RPM = 500;
-        public static final double STRETCH_CONSTANT = 1 ;
+        public static final double STRETCH_CONSTANT = 1;
+        public static final double REG_CONSTANT = 0;
         public static final double ADJ_HORIZ_ERROR = 5; // If the limelight is not perfectly aligning,
                                                         // this adjusts the shot for it to make.
-        public static final double MAX_RPM = 100000;
+        public static final double MAX_RPM = 6400;
         public static final double ALIGN_ERROR = 3;
+        public static final boolean ENMOVSHOT = false;
     }
 
 
@@ -186,9 +189,10 @@ public final class Constants {
     public static class Turret {
         public static final double kGearRatio = 47.142857;
         public static final double kTicksPerRevolution = 2048;
-        public static final double kMinAngle = -170; // -130 degrees
-        public static final double kMaxAngle = 170; // 160 degrees
+        public static final double kMinAngle = -185; // -170 degrees
+        public static final double kMaxAngle = 185; // 170 degrees
         public static final double kLimelightOffset = 40; // degrees
+        public static final double kMaxOffset = 25;
         public static final double kEThreshold = 60;
         public static final double kLowETurnThreshold = 0; // degrees; limelight x fov = 59.6
 

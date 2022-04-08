@@ -40,11 +40,11 @@ public class RobotContainer {
   public final Drivetrain drivetrain = new Drivetrain();
   private final Intake intake = new Intake();
   private final Limelight limelight = new Limelight();
-  private final Shooter shooter = new Shooter(limelight);
   private final Storage storage = new Storage();
   private final Climber climber = new Climber();
   private final Turret turret = new Turret(limelight);
-  // private final LEDs led = new LEDs();
+  private final Shooter shooter = new Shooter(limelight, drivetrain, turret);
+  private final LEDs led = new LEDs();
 
   // climber operator manual buttons
   private JoystickButton extend;

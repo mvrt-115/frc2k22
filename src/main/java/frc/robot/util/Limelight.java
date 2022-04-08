@@ -8,6 +8,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class Limelight extends SubsystemBase {
 
@@ -35,8 +36,8 @@ public class Limelight extends SubsystemBase {
   public Limelight() {
     
     limelight = NetworkTableInstance.getDefault().getTable("limelight");
-    tx = new RollingAverage(5);
-    ty = new RollingAverage(5);
+    tx = new RollingAverage(Constants.Limelight.LIMELIGHT_ROLLING_AVG);
+    ty = new RollingAverage(Constants.Limelight.LIMELIGHT_ROLLING_AVG);
     
     setLED(LED_STATE.DEFAULT);
     setPipeline(CAM_MODE.VISION_WIDE);
