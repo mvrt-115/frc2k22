@@ -16,8 +16,8 @@ public class LEDs extends SubsystemBase {
   public AddressableLED led, turretLed;
   public AddressableLEDBuffer lBuffer, turretBuffer;
 
-  public final int LED_PORT = 0;
-  public final int TURRET_LED_PORT = 1;
+  public final int LED_PORT = 1;
+  public final int TURRET_LED_PORT = 0;
   public final int LED_LENGTH = 56;
   public final int TURRET_LED_LENGTH = 39;
   public int counter = 0;
