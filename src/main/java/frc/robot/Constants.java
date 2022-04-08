@@ -137,7 +137,7 @@ public final class Constants {
     {
         public static final double P = 0.21;
         public static final double I = 0;
-        public static final double D = 6.9;
+        public static final double D = 7.5; // 6.9
         public static final double F = 0.058;
         public static final double PHood = 0.21;
         public static final double IHood = 0;
@@ -156,8 +156,9 @@ public final class Constants {
         public static final double REG_CONSTANT = 0;
         public static final double ADJ_HORIZ_ERROR = 5; // If the limelight is not perfectly aligning,
                                                         // this adjusts the shot for it to make.
-        public static final double MAX_RPM = 100000;
+        public static final double MAX_RPM = 6400;
         public static final double ALIGN_ERROR = 3;
+        public static final boolean ENMOVSHOT = false;
     }
 
 
@@ -188,10 +189,10 @@ public final class Constants {
     public static class Turret {
         public static final double kGearRatio = 47.142857;
         public static final double kTicksPerRevolution = 2048;
-        public static final double kMinAngle = -190; // -170 degrees
-        public static final double kMaxAngle = 190; // 170 degrees
+        public static final double kMinAngle = -185; // -170 degrees
+        public static final double kMaxAngle = 185; // 170 degrees
         public static final double kLimelightOffset = 40; // degrees
-        public static final double kMaxOffset = 27;
+        public static final double kMaxOffset = 25;
         public static final double kEThreshold = 60;
         public static final double kLowETurnThreshold = 0; // degrees; limelight x fov = 59.6
 

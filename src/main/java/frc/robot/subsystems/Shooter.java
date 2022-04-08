@@ -162,7 +162,10 @@ public class Shooter extends SubsystemBase {
          break;
      }
 
-    // moveAlign();
+    if(Constants.Flywheel.ENMOVSHOT)
+    {
+      moveAlign();
+    }
   }
 
   public double getStationaryRPM()
@@ -196,7 +199,12 @@ public class Shooter extends SubsystemBase {
    */
   public double getRequiredRPM() {
 
-    double rpm = getStationaryRPM();// + getCalculatedAddRPM();
+    double rpm = getStationaryRPM();
+
+    if(Constants.Flywheel.ENMOVSHOT)
+    {
+      rpm+=getCalculatedAddRPM();
+    }
 
     return rpm;
   }
@@ -288,7 +296,7 @@ public class Shooter extends SubsystemBase {
    * @return linear velocity
    */
   public double getVelocityFromWheelRPM(double rpm) {
-    return rpm/Constants.Flywheel.RADIUS/60;
+    return rpm/Constants.Flywheel.RADIUS/60/Constants.Flywheel.GEAR_RATIO;
   }
 
   /**
@@ -296,7 +304,7 @@ public class Shooter extends SubsystemBase {
    * @return rpm
    */
   public double getRPMFromVelocity(double velocity) {
-    return velocity*Constants.Flywheel.RADIUS*60;
+    return velocity*Constants.Flywheel.RADIUS*Constants.Flywheel.GEAR_RATIO*60;
   }
 
   /**
