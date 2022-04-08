@@ -261,7 +261,7 @@ public class Shooter extends SubsystemBase {
     if(Math.abs(offset)<=1)
       offset = Math.toDegrees(Math.asin(driveSpeed*Math.sin(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()))/(totSpeed)));
 
-    return offset;
+    return (Math.abs(offset) > Constants.Turret.kMaxOffset) ? Constants.Turret.kMaxOffset : offset;
   }
 
   public double getCalculatedAddRPM()
