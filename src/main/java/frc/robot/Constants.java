@@ -87,7 +87,7 @@ public final class Constants {
 
 
 
-        public static final double kWHEELS_SPEED = .8;
+        public static final double kWHEELS_SPEED = .5;
 
 
 

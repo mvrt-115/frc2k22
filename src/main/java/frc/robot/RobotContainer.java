@@ -141,7 +141,7 @@ public class RobotContainer {
     // alignDrivetrain.whenPressed(new AlignIntakeToBall(drivetrain, true)).whenReleased(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
     drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, intake, 
     this::getThrottle, this::getWheel, quickturn::get));
-    led.setDefaultCommand(new LEDCommand(led, turret, shooter, climber, storage, intake));
+    // led.setDefaultCommand(new LEDCommand(led, turret, shooter, climber, storage, intake));
 
     //storage.setDefaultCommand(new TrackBalls(storage, shooter));
     turret.setDefaultCommand(new FindTarget(turret));
