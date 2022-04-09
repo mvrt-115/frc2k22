@@ -41,11 +41,11 @@ public class SetRPMDash extends CommandBase {
   public void execute()
   {
     rpm = SmartDashboard.getNumber("new rpm", 0);
+    shooter.setTargetRPM(rpm);
 
     if(shooter.getState() == ShooterState.ATSPEED)
     {
       storage.runMotor(1);
-      shooter.setTargetRPM(rpm);
     }
     else 
       storage.runMotor(0);

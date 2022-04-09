@@ -18,14 +18,9 @@ public class SetRPM extends CommandBase {
   private Shooter shooter;
   private double rpm;
   private Storage storage;
-  private boolean given;
   private JoystickButton button;
   private Turret turret;
-  private boolean dash;
-  public boolean auton = false;
   boolean shoot = false;
-
-  boolean low = false;
 
   public SetRPM(Shooter shooter, Storage storage, Turret turret) {
     this.shooter = shooter;
@@ -36,56 +31,18 @@ public class SetRPM extends CommandBase {
 
 
   public SetRPM(Shooter shooter, Storage storage, Turret turret, JoystickButton button) {
-    // Use addRequirements() here to declare subsystem dependencies.
     this.shooter = shooter;
     this.storage = storage;
     this.turret = turret;
-    given = false;
     this.button = button;
     addRequirements(shooter, storage);
     
   }
 
-  public SetRPM(Shooter shooter, Storage storage, double rpm) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    this.shooter = shooter;
-    this.storage = storage;
-    this.rpm = rpm;
-    given = true;
-    addRequirements(shooter, storage);
-  }
-
-  
-  public SetRPM(Shooter shooter, Storage storage, boolean storEnd, double hi) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    this.shooter = shooter;
-    this.storage = storage;
-    auton = true;
-    // SmartDashboard.putNumber("new rpm", 0);
-    addRequirements(shooter, storage);
-  }
-  public SetRPM(Shooter shooter, Storage storage, boolean storEnd, boolean hi) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    this.shooter = shooter;
-    this.storage = storage;
-    
-    // SmartDashboard.putNumber("new rpm", 0);
-    addRequirements(shooter, storage);
-  }
-    public SetRPM(Shooter shooter, Storage storage, boolean dash) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    this.shooter = shooter;
-    this.storage = storage;
-    this.dash = dash;
-    // SmartDashboard.putNumber("new rpm", 0);
-    addRequirements(shooter, storage);
-  }
-
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if(!given)
-      rpm = shooter.getRequiredRPM();
+    rpm = shooter.getRequiredRPM();
     // rpm = SmartDashboard.getNumber("new rpm", defaultRPM);
     storage.setReadyShoot(true);
   }
@@ -93,33 +50,14 @@ public class SetRPM extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-      // rpm = shooter.getRequiredRPM();
-      if(dash) {
-      // rpm = SmartDashboard.getNumber("new rpm", 0);
-
-      if(shooter.getState() == ShooterState.ATSPEED)
-        shoot = true;
-      else 
-        shoot = false;
-      if(shoot)
-        storage.runMotor(1);
-      else
-        storage.runMotor(0);
-    }
-    if(given){
-      shooter.setTargetRPM(rpm);
-    }
-    else{
-      // shooter.setTargetRPM(1000);
-
-      shooter.setTargetRPM(shooter.getRequiredRPM());//(shooter.getRequiredRPM());
-    }
-
-    if(rpm == 0)
-       storage.runMotor(0);
-    if(shooter.getState() == ShooterState.ATSPEED) {
-        storage.runMotor(1);
-    } else
+    if(shooter.getState() == ShooterState.ATSPEED)
+      shoot = true;
+    else 
+      shoot = false;
+    
+    if(shoot)
+      storage.runMotor(1);
+    else
       storage.runMotor(0);
   }
 

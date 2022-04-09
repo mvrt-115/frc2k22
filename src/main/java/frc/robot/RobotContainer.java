@@ -176,7 +176,7 @@ public class RobotContainer {
     adjustConstantDecrement.whenPressed(new AdjustShooterConstant(-1*Constants.Flywheel.INCREMENT));
     // KEEP THE INCREMENT LOW. 0.3 is already a lot.
 
-    lowShot.whenPressed(new SetRPM(shooter, storage, Constants.Flywheel.LOW_SHOT_RPM));
+    lowShot.whenPressed(new SetRPMValue(shooter, storage, Constants.Flywheel.LOW_SHOT_RPM));
     
     autonSelector.addOption("2 Ball", twoBallAuto);
     autonSelector.addOption("5 Ball", new FiveBallAuton(drivetrain, intake, shooter, storage, turret));

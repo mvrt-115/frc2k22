@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Storage;
-import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Shooter.ShooterState;
 
 public class SetRPMRequired extends CommandBase {
@@ -43,11 +42,11 @@ public class SetRPMRequired extends CommandBase {
   public void execute()
   {
     rpm = shooter.getRequiredRPM();
+    shooter.setTargetRPM(rpm);
 
     if(shooter.getState() == ShooterState.ATSPEED)
     {
       storage.runMotor(1);
-      shooter.setTargetRPM(rpm);
     }
     else 
       storage.runMotor(0);
