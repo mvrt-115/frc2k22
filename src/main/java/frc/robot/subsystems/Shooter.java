@@ -293,7 +293,14 @@ public class Shooter extends SubsystemBase {
   public double getStationaryOffset()
   {
     // This is for the stationary offset
-    return Math.toDegrees(Math.atan(Constants.Flywheel.OFF_TARGET/limelight.getHorizontalDistance()));
+    // Stationary offset is only set when the shooter is speeding or atspeed
+    // I suggest we only set it like this, but during testing this could change
+    if(getState()!=ShooterState.OFF)
+    {
+      return Math.toDegrees(Math.atan(Constants.Flywheel.OFF_TARGET/limelight.getHorizontalDistance()));
+    }
+
+    return 0;
   }
 
   /**
