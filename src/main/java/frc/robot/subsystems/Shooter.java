@@ -263,10 +263,7 @@ public class Shooter extends SubsystemBase {
     double vert_drive_comp = driveSpeed*Math.sin(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()));
     double totSpeed = Math.sqrt(vert_drive_comp*vert_drive_comp + diff_const*diff_const)+initSpeed;
 
-    double movOffset = 0;
-
-    if(Math.abs(movOffset)<=1)
-      movOffset = Math.toDegrees(Math.asin(driveSpeed*Math.sin(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()))/(totSpeed)));
+    double movOffset = Math.toDegrees(Math.asin(driveSpeed*Math.sin(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()))/(totSpeed)));
 
     if(Math.abs(movOffset)>Constants.Turret.kMaxOffset)
     {
