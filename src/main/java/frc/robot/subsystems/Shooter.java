@@ -162,10 +162,7 @@ public class Shooter extends SubsystemBase {
          break;
      }
 
-    if(Constants.Flywheel.ENMOVSHOT)
-    {
-      moveAlign();
-    }
+    autoOffset();
   }
 
   public double getStationaryRPM()
@@ -251,25 +248,38 @@ public class Shooter extends SubsystemBase {
   /**
    * Adjusts the turret to the correct offset
    */
-  public void moveAlign()
+  public void autoOffset()
   {
     turret.setOffset(getCalculatedOffset());
   }
 
   public double getCalculatedOffset()
   {
+    double offset = getStationaryOffset();
+    
     double driveSpeed = (drivetrain.getSpeeds().leftMetersPerSecond+drivetrain.getSpeeds().rightMetersPerSecond)/2;
     double initSpeed = getBaseVelocityFromWheel();
     double diff_const = initSpeed - driveSpeed*Math.cos(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()));
     double vert_drive_comp = driveSpeed*Math.sin(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()));
     double totSpeed = Math.sqrt(vert_drive_comp*vert_drive_comp + diff_const*diff_const)+initSpeed;
 
-    double offset = 0;
+    double movOffset = 0;
 
-    if(Math.abs(offset)<=1)
-      offset = Math.toDegrees(Math.asin(driveSpeed*Math.sin(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()))/(totSpeed)));
+    if(Math.abs(movOffset)<=1)
+      movOffset = Math.toDegrees(Math.asin(driveSpeed*Math.sin(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()))/(totSpeed)));
 
-    return (Math.abs(offset) > Constants.Turret.kMaxOffset) ? Constants.Turret.kMaxOffset : offset;
+    if(Math.abs(movOffset)>Constants.Turret.kMaxOffset)
+    {
+      movOffset = movOffset/Math.abs(movOffset)*Constants.Turret.kMaxOffset;
+    }
+
+    // Only does move shot when it's enabled.
+    if(Constants.Flywheel.ENMOVSHOT)
+    {
+      offset+=movOffset;
+    }
+
+    return offset;
   }
 
   public double getCalculatedAddRPM()
@@ -281,6 +291,12 @@ public class Shooter extends SubsystemBase {
     double addSpeed = Math.sqrt(vert_drive_comp*vert_drive_comp + diff_const*diff_const)-initSpeed;
 
     return getRPMFromVelocity(addSpeed);
+  }
+
+  public double getStationaryOffset()
+  {
+    // This is for the stationary offset
+    return Math.toDegrees(Math.atan(Constants.Flywheel.OFF_TARGET/limelight.getHorizontalDistance()));
   }
 
   /**
