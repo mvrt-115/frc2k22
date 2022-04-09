@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
+import com.ctre.phoenix.motorcontrol.StatusFrame; 
 import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -35,6 +36,7 @@ public class Storage extends SubsystemBase  {
     breakbeamBott = new DigitalInput(3);
     prevStateTop = prevStateBott = true; // true is unbroken
     motor = TalonFactory.createTalonSRX(39, false);
+    motor.setStatusFramePeriod(StatusFrame.Status_1_General, 18, 0); // updating status frame period
     balls = 0;
     overriden = false;
     lastTime = Timer.getFPGATimestamp();
