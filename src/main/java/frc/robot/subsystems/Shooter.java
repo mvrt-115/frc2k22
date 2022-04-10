@@ -130,8 +130,8 @@ public class Shooter extends SubsystemBase {
     // SmartDashboard.putNumber("RPM Needed", getRequiredRPM());
     // SmartDashboard.putString("Shooter State", state.toString());
     // SmartDashboard.putNumber("Target RPM", targetRPM);
-    // SmartDashboard.putNumber("Turret Offset", getCalculatedOffset());
-    // SmartDashboard.putNumber("Added RPM", getCalculatedAddRPM());
+    SmartDashboard.putNumber("Turret Offset", getCalculatedOffset());
+    SmartDashboard.putNumber("Added RPM", getCalculatedAddRPM());
   }
 
   @Override
@@ -171,13 +171,14 @@ public class Shooter extends SubsystemBase {
     // linear constant to slightly tune the shot, -> Limelight distances range from 80 to 220
     // *currently set to 0, I suggest it should be 1*
     double x = limelight.getHorizontalDistance() * Constants.Flywheel.STRETCH_CONSTANT;
+    double additionalTuneRPM = Constants.Flywheel.LIN_CONST*limelight.getHorizontalDistance() + Constants.Flywheel.REG_CONSTANT;
 
     // double rpm = Math.min(333*Math.pow(limelight.getHorizontalDistance() * Constants.Flywheel.STRETCH_CONSTANT, 0.522) + Constants.Flywheel.LIN_CONST * limelight.getHorizontalDistance(), Constants.Flywheel.MAX_RPM);
    
     // double rpm = 479.18*Math.pow(x, 0.4418) + Constants.Flywheel.LIN_CONST * limelight.getHorizontalDistance();
     
     // Use this if power equation is not working
-    double rpm = 2040.9 * Math.pow(Math.E, 0.0058 * x);
+    double rpm = 2040.9 * Math.pow(Math.E, 0.0058 *x) + additionalTuneRPM;
 
     // THIS IS NOT FOR SHOOTING ON THE MOVE LOL, JUST FOR DEALING WITH LIMELIGHT ERROR
     if(Math.abs(limelight.getHorizontalOffset())>Constants.Flywheel.ALIGN_ERROR)

@@ -149,11 +149,11 @@ public final class Constants {
         public static final double TICKS_PER_REVOLUTION = 2048;
         public static final int NUM_AVG = 5;
         public static final double GEAR_RATIO = 25 / 24;
-        public static double LIN_CONST = 0;
-        public static final double INCREMENT = 0.3; // 0.3 is a lot, it's 0.3 * range from 100 to 250
+        public static final double LIN_CONST = 0;
+        public static final double INCREMENT = 25; // Now it's just a constant increment not linear
         public static final double LOW_SHOT_RPM = 500;
         public static final double STRETCH_CONSTANT = 1;
-        public static final double REG_CONSTANT = 0;
+        public static double REG_CONSTANT = 0;
         public static final double ADJ_HORIZ_ERROR = 0; // If the limelight is not perfectly aligning,
                                                         // this adjusts the shot for it to make.
                                                         // Only change this after shooter is tuned.
