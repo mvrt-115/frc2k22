@@ -308,7 +308,7 @@ public class Shooter extends SubsystemBase {
    * @return linear velocity
    */
   public double getBaseVelocityFromWheel() {
-    return getStationaryRPM()/Constants.Flywheel.RADIUS/60;
+    return MathUtils.inchesToMeters(getStationaryRPM()/Constants.Flywheel.RADIUS/60/Constants.Flywheel.GEAR_RATIO);
   }
 
   /**
@@ -316,7 +316,7 @@ public class Shooter extends SubsystemBase {
    * @return linear velocity
    */
   public double getVelocityFromWheelRPM(double rpm) {
-    return rpm/Constants.Flywheel.RADIUS/60/Constants.Flywheel.GEAR_RATIO;
+    return MathUtils.inchesToMeters(rpm/Constants.Flywheel.RADIUS/60/Constants.Flywheel.GEAR_RATIO);
   }
 
   /**
