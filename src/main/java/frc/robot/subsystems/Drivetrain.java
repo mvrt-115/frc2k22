@@ -423,8 +423,8 @@ public class Drivetrain extends SubsystemBase {
         rightFollower.setSelectedSensorPosition(0);
     }
 
-    public double getLinSpeed()
+    public double getLinSpeed() // Positive speed in direction of zeroed turret, negative speed in direction of intake
     {
-        return (getSpeeds().leftMetersPerSecond+getSpeeds().rightMetersPerSecond)/2;
+        return -1*(getSpeeds().leftMetersPerSecond+getSpeeds().rightMetersPerSecond)/2;
     }
 }
