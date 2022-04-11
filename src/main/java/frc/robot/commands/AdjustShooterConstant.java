@@ -20,13 +20,15 @@ public class AdjustShooterConstant extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize()
+  {
+    Constants.Flywheel.REG_CONSTANT+=increment;
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute()
   {
-    Constants.Flywheel.LIN_CONST+=increment;
   }
 
   // Called once the command ends or is interrupted.

@@ -132,6 +132,7 @@ public class Shooter extends SubsystemBase {
     // SmartDashboard.putNumber("Target RPM", targetRPM);
     // SmartDashboard.putNumber("Turret Offset", getCalculatedOffset());
     // SmartDashboard.putNumber("Added RPM", getCalculatedAddRPM());
+    SmartDashboard.putNumber("Tuned RPM", Constants.Flywheel.REG_CONSTANT); // For testing to see how much rpm was added by Arnav
   }
 
   @Override
@@ -171,21 +172,20 @@ public class Shooter extends SubsystemBase {
     // linear constant to slightly tune the shot, -> Limelight distances range from 80 to 220
     // *currently set to 0, I suggest it should be 1*
     double x = limelight.getHorizontalDistance() * Constants.Flywheel.STRETCH_CONSTANT;
+    double addTuneRPM = Constants.Flywheel.LIN_CONST*limelight.getHorizontalDistance()+Constants.Flywheel.REG_CONSTANT;
 
     // double rpm = Math.min(333*Math.pow(limelight.getHorizontalDistance() * Constants.Flywheel.STRETCH_CONSTANT, 0.522) + Constants.Flywheel.LIN_CONST * limelight.getHorizontalDistance(), Constants.Flywheel.MAX_RPM);
    
     // double rpm = 479.18*Math.pow(x, 0.4418) + Constants.Flywheel.LIN_CONST * limelight.getHorizontalDistance();
     
     // Use this if power equation is not working
-    double rpm = 2040.9 * Math.pow(Math.E, 0.0058 * x);
+    double rpm = 2040.9 * Math.pow(Math.E, 0.0058 * x) + addTuneRPM;
 
     // THIS IS NOT FOR SHOOTING ON THE MOVE LOL, JUST FOR DEALING WITH LIMELIGHT ERROR
     if(Math.abs(limelight.getHorizontalOffset())>Constants.Flywheel.ALIGN_ERROR)
     {
       rpm = rpm - Constants.Flywheel.ADJ_HORIZ_ERROR*limelight.getHorizontalOffset();
     }
-
-    rpm+=Constants.Flywheel.REG_CONSTANT;
 
     return rpm;
   }
@@ -281,7 +281,7 @@ public class Shooter extends SubsystemBase {
 
   public double getCalculatedAddRPM()
   {
-    double driveSpeed = (drivetrain.getSpeeds().leftMetersPerSecond+drivetrain.getSpeeds().rightMetersPerSecond)/2;
+    double driveSpeed = drivetrain.getLinSpeed();
     double initSpeed = getBaseVelocityFromWheel();
     double diff_const = initSpeed - driveSpeed*Math.cos(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()));
     double vert_drive_comp = driveSpeed*Math.sin(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()));
@@ -293,9 +293,9 @@ public class Shooter extends SubsystemBase {
   public double getStationaryOffset()
   {
     // This is for the stationary offset
-    // Stationary offset is only set when the shooter is speeding or atspeed
+    // Stationary offset is only set when the shooter is speeding or atspeed, if the robot is moving, it will be set to 0
     // I suggest we only set it like this, but during testing this could change
-    if(getState()!=ShooterState.OFF)
+    if(getState()!=ShooterState.OFF && Math.abs(drivetrain.getLinSpeed())<Constants.Drivetrain.IS_MOVING)
     {
       return Math.toDegrees(Math.atan(Constants.Flywheel.OFF_TARGET/limelight.getHorizontalDistance()));
     }

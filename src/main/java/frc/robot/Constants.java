@@ -72,6 +72,8 @@ public final class Constants {
         public static final double kS = 0; //0.69382 //units: Volts
         public static final double kV = 1.30485; //2.6097 //units: Volts * Seconds / Meters
         public static final double kA = 0; //0.35228 //units: Volts * Seconds^2 / Meters
+
+        public static final double IS_MOVING = 1; // Amount of m/s to say that dt motion is significant
     }
     
     public static class Intake{
@@ -149,11 +151,11 @@ public final class Constants {
         public static final double TICKS_PER_REVOLUTION = 2048;
         public static final int NUM_AVG = 5;
         public static final double GEAR_RATIO = 25 / 24;
-        public static double LIN_CONST = 0;
-        public static final double INCREMENT = 0.3; // 0.3 is a lot, it's 0.3 * range from 100 to 250
+        public static final double LIN_CONST = 0;
+        public static final double INCREMENT = 25; // regular constant, just adding this to rpm value
         public static final double LOW_SHOT_RPM = 500;
         public static final double STRETCH_CONSTANT = 1;
-        public static final double REG_CONSTANT = 0;
+        public static double REG_CONSTANT = 0;
         public static final double ADJ_HORIZ_ERROR = 0; // If the limelight is not perfectly aligning,
                                                         // this adjusts the shot for it to make.
                                                         // Only change this after shooter is tuned.

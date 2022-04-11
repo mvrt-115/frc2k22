@@ -422,4 +422,9 @@ public class Drivetrain extends SubsystemBase {
         rightMaster.setSelectedSensorPosition(0);
         rightFollower.setSelectedSensorPosition(0);
     }
+
+    public double getLinSpeed()
+    {
+        return (getSpeeds().leftMetersPerSecond+getSpeeds().rightMetersPerSecond)/2;
+    }
 }

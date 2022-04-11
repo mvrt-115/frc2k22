@@ -174,9 +174,9 @@ public class RobotContainer {
 
     adjustConstantIncrement.whenPressed(new AdjustShooterConstant(Constants.Flywheel.INCREMENT));
     adjustConstantDecrement.whenPressed(new AdjustShooterConstant(-1*Constants.Flywheel.INCREMENT));
-    // KEEP THE INCREMENT LOW. 0.3 is already a lot.
+    // KEEP THE INCREMENT LOW. 25 is already a lot.
 
-    lowShot.whenPressed(new SetRPMValue(shooter, storage, Constants.Flywheel.LOW_SHOT_RPM));
+    lowShot.whenPressed(new SetRPMValue(shooter, storage, Constants.Flywheel.LOW_SHOT_RPM)).whenReleased(new StopShooter(shooter, storage));
     
     autonSelector.addOption("2 Ball", twoBallAuto);
     autonSelector.addOption("5 Ball", new FiveBallAuton(drivetrain, intake, shooter, storage, turret));
