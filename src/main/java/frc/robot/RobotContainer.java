@@ -44,7 +44,6 @@ public class RobotContainer {
   private final Climber climber = new Climber();
   private final Turret turret = new Turret(limelight);
   private final Shooter shooter = new Shooter(limelight, drivetrain, turret);
-  private final LEDs led = new LEDs();
 
   // climber operator manual buttons
   private JoystickButton extend;

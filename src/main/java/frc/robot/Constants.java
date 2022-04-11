@@ -152,7 +152,7 @@ public final class Constants {
         public static final int NUM_AVG = 5;
         public static final double GEAR_RATIO = 25 / 24;
         public static final double LIN_CONST = 0;
-        public static final double INCREMENT = 25; // regular constant, just adding this to rpm value
+        public static final double INCREMENT = 25; // Now it's just a constant increment not linear
         public static final double LOW_SHOT_RPM = 500;
         public static final double STRETCH_CONSTANT = 1;
         public static double REG_CONSTANT = 0;
