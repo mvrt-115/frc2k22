@@ -159,7 +159,7 @@ public final class Constants {
         public static final double ADJ_HORIZ_ERROR = 0; // If the limelight is not perfectly aligning,
                                                         // this adjusts the shot for it to make.
                                                         // Only change this after shooter is tuned.
-        public static final double MAX_RPM = 6400;
+        public static final double MAX_RPM = 6380;
         public static final double ALIGN_ERROR = 3;
         public static final boolean ENMOVSHOT = false;
         public static final double OFF_TARGET = 10;     // How far off thwe target you want the shot to go (in inches).

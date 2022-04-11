@@ -10,6 +10,7 @@ import frc.robot.util.MathUtils;
 import frc.robot.util.RollingAverage;
 import frc.robot.util.TalonFactory;
 import frc.robot.Constants;
+import edu.wpi.first.hal.ConstantsJNI;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -203,7 +204,7 @@ public class Shooter extends SubsystemBase {
       rpm+=getCalculatedAddRPM();
     }
 
-    return rpm;
+    return Math.min(rpm, Constants.Flywheel.MAX_RPM);
   }
 
   /**
