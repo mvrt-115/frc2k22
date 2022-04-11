@@ -266,15 +266,15 @@ public class Shooter extends SubsystemBase {
 
     double movOffset = Math.toDegrees(Math.asin(driveSpeed*Math.sin(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()))/(totSpeed)));
 
-    if(Math.abs(movOffset)>Constants.Turret.kMaxOffset)
-    {
-      movOffset = movOffset/Math.abs(movOffset)*Constants.Turret.kMaxOffset;
-    }
-
     // Only does move shot when it's enabled.
     if(Constants.Flywheel.ENMOVSHOT)
     {
       offset+=movOffset;
+    }
+
+    if(Math.abs(offset)>Constants.Turret.kMaxOffset)
+    {
+      offset = offset/Math.abs(offset)*Constants.Turret.kMaxOffset;
     }
 
     return offset;
