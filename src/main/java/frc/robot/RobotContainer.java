@@ -44,6 +44,7 @@ public class RobotContainer {
   private final Climber climber = new Climber();
   private final Turret turret = new Turret(limelight);
   private final Shooter shooter = new Shooter(limelight, drivetrain, turret);
+  private final LEDs led = new LEDs();
 
   // climber operator manual buttons
   private JoystickButton extend;
@@ -140,7 +141,7 @@ public class RobotContainer {
     // alignDrivetrain.whenPressed(new AlignIntakeToBall(drivetrain, true)).whenReleased(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
     drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, intake, 
     this::getThrottle, this::getWheel, quickturn::get));
-    // led.setDefaultCommand(new LEDCommand(led, turret, shooter, climber, storage, intake));
+    led.setDefaultCommand(new LEDCommand(led, turret, shooter, climber, storage, intake));
 
     //storage.setDefaultCommand(new TrackBalls(storage, shooter));
     //turret.setDefaultCommand(new FindTarget(turret));
@@ -275,5 +276,10 @@ public class RobotContainer {
 
   public double getStorageThrottle(){
     return 0.4* operatorJoystick.getRawAxis(5);
+  }
+
+  public void disabledPeriodic() {
+    led.setFullLength(led.kMVRTPurple);
+    led.setFullLengthTurret(led.kMVRTPurple);
   }
 }
