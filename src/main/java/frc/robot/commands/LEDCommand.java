@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Intake;
@@ -17,6 +18,9 @@ import frc.robot.subsystems.LEDs.LedState;
 public class LEDCommand extends CommandBase {
   /** Creates a new LEDCommand. */
   public LEDs led;
+
+  public enum GeneralStates {TELESCOPIC_RUNNING, SHOOTER_RUNNING, STORAGE};
+  public GeneralStates currState = GeneralStates.STORAGE;
 
   public int numBalls = 1;
   public int lastBalls;
@@ -48,11 +52,11 @@ public class LEDCommand extends CommandBase {
   {
     numBalls = storage.getBalls();
 
-    if(climber.leftTelescopic.getMotorOutputPercent() != 0)
+    if(currState == GeneralStates.TELESCOPIC_RUNNING/*climber.leftTelescopic.getMotorOutputPercent() != 0*/)
       led.setCurrentState(LedState.CLIMBER);
 
     led.setTurretLEDs(shooter.getCurrentRPM(), shooter.getRequiredRPM(), turret.getTurretState());
-    //led.setTurretLEDs(900, 7000, TurretState.TARGETING);
+    //led.setTurretLEDs(0, 7000, TurretState.DISABLED);
 
     if(led.getCurrentState() == LedState.CLIMBER) {
       if(led.getPreviousState() != LedState.CLIMBER)
@@ -65,17 +69,17 @@ public class LEDCommand extends CommandBase {
     }
 
     else if(led.getCurrentState() == LedState.DEFAULT) {
-      if(storage.getBalls() != 0)
+      if(numBalls != lastBalls)
       {
-        led.setWave(0, led.LED_LENGTH/2 - (led.LED_LENGTH/4 * (2 - numBalls)), 7, 
-          led.kMVRTPurple, led.kMVRTGold);
-        led.setWave(led.LED_LENGTH/2 + (led.LED_LENGTH/4 * (2 - numBalls)), led.LED_LENGTH, 7, 
-          led.kMVRTPurple, led.kMVRTGold);
+        led.setMultiBlock(7, new Color[]{led.kMVRTPurple, led.kMVRTGold}, 0, led.LED_LENGTH/2 - (led.LED_LENGTH/4 * (2 - numBalls)));
+        led.setSingleBlock(led.LED_LENGTH/2 - (led.LED_LENGTH/4 * (2 - numBalls)), led.LED_LENGTH/2, led.kBlack);
+        led.setMultiBlock(7, new Color[]{led.kMVRTPurple, led.kMVRTGold}, led.LED_LENGTH/2 + (led.LED_LENGTH/4 * (2 - numBalls)), led.LED_LENGTH);
+        led.setSingleBlock(led.LED_LENGTH/2, led.LED_LENGTH/2 - (led.LED_LENGTH/4 * (2 - numBalls)), led.kBlack);
         led.setPreviousState(LedState.DEFAULT);
       }
 
-      led.moveDown(0, led.LED_LENGTH/2 - (led.LED_LENGTH/4 * (2 - numBalls)) - 1, 0.005);
-      led.moveUp(led.LED_LENGTH/2 + (led.LED_LENGTH/4 * (2 - numBalls)), led.LED_LENGTH - 1, 0.005);
+      led.moveDown(0, led.LED_LENGTH/2 - (led.LED_LENGTH/4 * (2 - numBalls)) - 1, 0.01);
+      led.moveUp(led.LED_LENGTH/2 + (led.LED_LENGTH/4 * (2 - numBalls)), led.LED_LENGTH - 1, 0.01);
     }
 
     lastBalls = numBalls;
