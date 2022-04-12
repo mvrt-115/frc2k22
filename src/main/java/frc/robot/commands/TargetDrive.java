@@ -50,7 +50,9 @@ public class TargetDrive extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted)
-  {}
+  {
+    drivetrain.stopDrivetrain();
+  }
 
   // Returns true when the command should end.
   @Override
