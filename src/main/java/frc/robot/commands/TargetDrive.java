@@ -55,7 +55,7 @@ public class TargetDrive extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    // 325 degrees max turn bc limelight only covers 54 degrees of 360
-    return turret.getLimelight().targetsFound() || Math.abs(drivetrain.getGyroAngle().getDegrees()-initAngle)>=325;
+    // 360 degrees max turn bc limelight only covers 54 degrees of 360
+    return turret.getLimelight().targetsFound() || Math.abs(drivetrain.getGyroAngle().getDegrees()-initAngle)>=360;
   }
 }
