@@ -143,11 +143,11 @@ public class RobotContainer {
     // led.setDefaultCommand(new LEDCommand(led, turret, shooter, climber, storage, intake));
 
     //storage.setDefaultCommand(new TrackBalls(storage, shooter));
-    turret.setDefaultCommand(new FindTarget(turret));
+    //turret.setDefaultCommand(new FindTarget(turret));
     
     shoot.whenPressed(new SetRPMRequired(shooter, storage, shoot)).whenReleased(new StopShooter(shooter, storage));
     // new SetRPM(shooter, storage, 1000).schedule();
-    // SmartDashboard.putData("Testing Shooter", new SetRPM(shooter, storage, true));
+    SmartDashboard.putData("Testing Shooter", new SetRPMDash(shooter, storage, turret));
     pivot.whenPressed(new Pivot(intake,storage)).whenReleased(new PivotUp(intake, storage));
     resetBalls.whenPressed(new ResetBalls(storage));
     upManualStorage.whenPressed(new ManualStorage(storage, true, upManualStorage::get));  // true for up
@@ -194,7 +194,7 @@ public class RobotContainer {
    * @return value from [-1, 1] that is used for input for the the robot forward or backwards movement
    */
   public double getThrottle() {
-    throttle.updateValue(-driverJoystick.getRawAxis(3) * .7);
+    throttle.updateValue(-driverJoystick.getRawAxis(3) * 0.8);
     return throttle.getAverage();
   }
 

@@ -162,7 +162,7 @@ public final class Constants {
         public static final double MAX_RPM = 6380;
         public static final double ALIGN_ERROR = 3;
         public static final boolean ENMOVSHOT = false;
-        public static final double OFF_TARGET = 10;     // How far off thwe target you want the shot to go (in inches).
+        public static final double OFF_TARGET = 6.75;     // How far off thwe target you want the shot to go (in inches).
     }
 
 
@@ -193,12 +193,14 @@ public final class Constants {
     public static class Turret {
         public static final double kGearRatio = 47.142857;
         public static final double kTicksPerRevolution = 2048;
-        public static final double kMinAngle = -170; // -170 degrees
-        public static final double kMaxAngle = 170; // 170 degrees
+        public static final double kMinAngle = -155; // -170 degrees
+        public static final double kMaxAngle = 155; // 170 degrees
         public static final double kLimelightOffset = 40; // degrees
         public static final double kMaxOffset = 22;
         public static final double kEThreshold = 60;
         public static final double kLowETurnThreshold = 0; // degrees; limelight x fov = 59.6
+        public static final double kTurretError = 1;
+        public static final double PROP_OF_OFFSET = 0.9;
 
         // for large angles > 60 degrees
         public static final double kPLarge = 0.3;

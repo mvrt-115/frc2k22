@@ -12,20 +12,25 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Storage;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Shooter.ShooterState;
+import frc.robot.subsystems.Turret.TurretState;
 
 public class SetRPMDash extends CommandBase {
 
   private Shooter shooter;
   private Storage storage;
   private double rpm;
+  private double offset;
+  private Turret turret;
 
   /** Creates a new SetRPMDash. */
-  public SetRPMDash(Shooter shooter, Storage storage) {
+  public SetRPMDash(Shooter shooter, Storage storage, Turret turret) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.shooter = shooter;
     this.storage = storage;
+    this.turret = turret;
+    this.offset = turret.getOffset();
     rpm = 0;
-    // SmartDashboard.putNumber("new rpm", 0);
+    SmartDashboard.putNumber("new rpm", 0);
     addRequirements(shooter, storage);
   }
 
@@ -34,18 +39,26 @@ public class SetRPMDash extends CommandBase {
   public void initialize()
   {
     rpm = SmartDashboard.getNumber("new rpm", 0);
+    turret.setOffset(offset);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute()
   {
-    rpm = SmartDashboard.getNumber("new rpm", 0);
+    //rpm = SmartDashboard.getNumber("new rpm", 0);
     shooter.setTargetRPM(rpm);
+
+    if(turret.canShoot())
+    {
+      turret.setState(TurretState.DISABLED);
+    }
 
     if(shooter.getState() == ShooterState.ATSPEED)
     {
-      storage.runMotor(1);
+      storage.runMotor(0.4);
+
+      turret.setState(TurretState.DISABLED);
     }
     else 
       storage.runMotor(0);
@@ -59,6 +72,8 @@ public class SetRPMDash extends CommandBase {
     shooter.setState(ShooterState.OFF);
     storage.setReadyShoot(false);
     storage.runMotor(0);
+
+    turret.setState(TurretState.TARGETING);
   }
 
   // Returns true when the command should end.

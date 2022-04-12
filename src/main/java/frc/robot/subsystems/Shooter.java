@@ -127,12 +127,14 @@ public class Shooter extends SubsystemBase {
   public void log()
   {
     // SmartDashboard.putNumber("Output", flywheelLeader.getMotorOutputPercent());
-    // SmartDashboard.putNumber("Flywheel RPM", getCurrentRPM());
+    SmartDashboard.putNumber("Flywheel RPM", getCurrentRPM());
     // SmartDashboard.putNumber("RPM Needed", getRequiredRPM());
     // SmartDashboard.putString("Shooter State", state.toString());
     // SmartDashboard.putNumber("Target RPM", targetRPM);
-    // SmartDashboard.putNumber("Turret Offset", getCalculatedOffset());
-    // SmartDashboard.putNumber("Added RPM", getCalculatedAddRPM());
+    SmartDashboard.putNumber("Limelight Distance", limelight.getHorizontalDistance());
+    SmartDashboard.putNumber("Real Offset", limelight.getHorizontalOffset());
+    SmartDashboard.putNumber("Turret Offset", getCalculatedOffset());
+    SmartDashboard.putNumber("Added RPM", getCalculatedAddRPM());
     SmartDashboard.putNumber("Tuned RPM", Constants.Flywheel.REG_CONSTANT); // For testing to see how much rpm was added by Arnav
   }
 
@@ -199,7 +201,7 @@ public class Shooter extends SubsystemBase {
 
     double rpm = getStationaryRPM();
 
-    if(Constants.Flywheel.ENMOVSHOT)
+    if(Constants.Flywheel.ENMOVSHOT && limelight.targetsFound())
     {
       rpm+=getCalculatedAddRPM();
     }
@@ -267,7 +269,7 @@ public class Shooter extends SubsystemBase {
     double movOffset = Math.toDegrees(Math.asin(driveSpeed*Math.sin(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()))/(totSpeed)));
 
     // Only does move shot when it's enabled.
-    if(Constants.Flywheel.ENMOVSHOT)
+    if(Constants.Flywheel.ENMOVSHOT && limelight.targetsFound())
     {
       offset+=movOffset;
     }
@@ -298,7 +300,7 @@ public class Shooter extends SubsystemBase {
     // I suggest we only set it like this, but during testing this could change
     if(getState()!=ShooterState.OFF && Math.abs(drivetrain.getLinSpeed())<Constants.Drivetrain.IS_MOVING)
     {
-      return Math.toDegrees(Math.atan(Constants.Flywheel.OFF_TARGET/limelight.getHorizontalDistance()));
+      return Math.toDegrees(Math.atan(Constants.Flywheel.OFF_TARGET/limelight.getHorizontalDistance()))+1;
     }
 
     return 0;
