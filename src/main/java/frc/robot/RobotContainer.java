@@ -148,7 +148,7 @@ public class RobotContainer {
     
     shoot.whenPressed(new SetRPMRequired(shooter, storage, shoot)).whenReleased(new StopShooter(shooter, storage));
     // new SetRPM(shooter, storage, 1000).schedule();
-    SmartDashboard.putData("Testing Shooter", new SetRPMDash(shooter, storage, turret));
+    SmartDashboard.putData("Testing Shooter", new SetRPMDash(shooter, storage, turret, drivetrain));
     pivot.whenPressed(new Pivot(intake,storage)).whenReleased(new PivotUp(intake, storage));
     resetBalls.whenPressed(new ResetBalls(storage));
     upManualStorage.whenPressed(new ManualStorage(storage, true, upManualStorage::get));  // true for up
