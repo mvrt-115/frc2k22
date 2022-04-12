@@ -16,6 +16,7 @@ public class TargetDrive extends CommandBase {
 
   Drivetrain drivetrain;
   Turret turret;
+  double initAngle;
   double dir;
 
   /** Creates a new TargetDrive. */
@@ -23,6 +24,7 @@ public class TargetDrive extends CommandBase {
   {
     this.drivetrain = drivetrain;
     this.turret = turret;
+    initAngle = drivetrain.getGyroAngle().getDegrees();
     dir = 0;
     
     // Use addRequirements() here to declare subsystem dependencies.
@@ -53,6 +55,7 @@ public class TargetDrive extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return turret.getLimelight().targetsFound();
+    // 325 degrees max turn bc limelight only covers 54 degrees of 360
+    return turret.getLimelight().targetsFound() || Math.abs(drivetrain.getGyroAngle().getDegrees()-initAngle)>=325;
   }
 }
