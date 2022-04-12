@@ -144,7 +144,7 @@ public class RobotContainer {
     //led.setDefaultCommand(new LEDCommand(led, turret, shooter, climber, storage, intake));
 
     //storage.setDefaultCommand(new TrackBalls(storage, shooter));
-    //turret.setDefaultCommand(new FindTarget(turret));
+    turret.setDefaultCommand(new FindTarget(turret));
     
     shoot.whenPressed(new SetRPMRequired(shooter, storage, shoot)).whenReleased(new StopShooter(shooter, storage));
     // new SetRPM(shooter, storage, 1000).schedule();
