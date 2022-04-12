@@ -19,8 +19,8 @@ public class LEDCommand extends CommandBase {
   /** Creates a new LEDCommand. */
   public LEDs led;
 
-  public enum GeneralStates {TELESCOPIC_RUNNING, SHOOTER_RUNNING, STORAGE};
-  public GeneralStates currState = GeneralStates.STORAGE;
+  /*public enum GeneralStates {TELESCOPIC_RUNNING, SHOOTER_RUNNING, STORAGE};
+  public GeneralStates currState = GeneralStates.STORAGE;*/
 
   public int numBalls = 1;
   public int lastBalls;
@@ -52,7 +52,7 @@ public class LEDCommand extends CommandBase {
   {
     numBalls = storage.getBalls();
 
-    if(currState == GeneralStates.TELESCOPIC_RUNNING/*climber.leftTelescopic.getMotorOutputPercent() != 0*/)
+    if(climber.leftTelescopic.getMotorOutputPercent() != 0)
       led.setCurrentState(LedState.CLIMBER);
 
     led.setTurretLEDs(shooter.getCurrentRPM(), shooter.getRequiredRPM(), turret.getTurretState());
