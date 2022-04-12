@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Storage;
 import frc.robot.subsystems.Turret;
+import frc.robot.Constants;
+import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Shooter.ShooterState;
 import frc.robot.subsystems.Turret.TurretState;
 
@@ -18,16 +20,18 @@ public class SetRPMDash extends CommandBase {
 
   private Shooter shooter;
   private Storage storage;
+  private Drivetrain drivetrain;
   private double rpm;
   private double offset;
   private Turret turret;
 
   /** Creates a new SetRPMDash. */
-  public SetRPMDash(Shooter shooter, Storage storage, Turret turret) {
+  public SetRPMDash(Shooter shooter, Storage storage, Turret turret, Drivetrain drivetain) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.shooter = shooter;
     this.storage = storage;
     this.turret = turret;
+    this.drivetrain = drivetrain;
     this.offset = turret.getOffset();
     rpm = 0;
     SmartDashboard.putNumber("new rpm", 0);
@@ -49,14 +53,18 @@ public class SetRPMDash extends CommandBase {
     //rpm = SmartDashboard.getNumber("new rpm", 0);
     shooter.setTargetRPM(rpm);
 
-    if(turret.canShoot())
+    if(drivetrain.getLinSpeed()<Constants.Drivetrain.IS_MOVING && turret.canShoot())
     {
       turret.setState(TurretState.DISABLED);
+    }
+    else
+    {
+      turret.setState(TurretState.TARGETING);
     }
 
     if(shooter.getState() == ShooterState.ATSPEED)
     {
-      storage.runMotor(0.4);
+      storage.runMotor(0.4); 
 
       turret.setState(TurretState.DISABLED);
     }
