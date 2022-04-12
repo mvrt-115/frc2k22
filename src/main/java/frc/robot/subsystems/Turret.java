@@ -296,6 +296,11 @@ public class Turret extends SubsystemBase {
     return turret;
   }
 
+  public Limelight getLimelight()
+  {
+    return limelight;
+  }
+
   /**
    * Logs data about Turret Subsystem to SmartDashboard
    */

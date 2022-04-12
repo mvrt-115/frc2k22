@@ -74,6 +74,8 @@ public final class Constants {
         public static final double kA = 0; //0.35228 //units: Volts * Seconds^2 / Meters
 
         public static final double IS_MOVING = 1; // Amount of m/s to say that dt motion is significant
+
+        public static final double AUTO_TURN_SPEED = 0.5;
     }
     
     public static class Intake{

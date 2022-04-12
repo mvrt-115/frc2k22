@@ -71,6 +71,8 @@ public class RobotContainer {
   private JoystickButton adjustConstantIncrement;
   private JoystickButton adjustConstantDecrement;
 
+  private JoystickButton autoAlign; // Aligns turret to hub using drivetrain
+
   private JoystickButton lowShot;
   SendableChooser<Command> autonSelector;
   
@@ -107,6 +109,8 @@ public class RobotContainer {
 
     adjustConstantIncrement = new JoystickButton(operatorJoystick, 4);
     adjustConstantDecrement = new JoystickButton(operatorJoystick, 1);
+
+    autoAlign = new JoystickButton(operatorJoystick, 6);
 
     lowShot = new JoystickButton(operatorJoystick, 5); // THIS BUTTON ID IS NOT FINAL, PLS CHANGE IT
                                                        // to wtvr POTUS wants!!!
@@ -175,6 +179,9 @@ public class RobotContainer {
     adjustConstantIncrement.whenPressed(new AdjustShooterConstant(Constants.Flywheel.INCREMENT));
     adjustConstantDecrement.whenPressed(new AdjustShooterConstant(-1*Constants.Flywheel.INCREMENT));
     // KEEP THE INCREMENT LOW. 25 is already a lot.
+
+    autoAlign.whenPressed(new TargetDrive(drivetrain, turret));
+    // Speed is 0.5 right now.
 
     lowShot.whenPressed(new SetRPMValue(shooter, storage, Constants.Flywheel.LOW_SHOT_RPM)).whenReleased(new StopShooter(shooter, storage));
     
