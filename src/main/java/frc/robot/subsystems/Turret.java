@@ -301,6 +301,11 @@ public class Turret extends SubsystemBase {
     return limelight;
   }
 
+  public boolean targetFound()
+  {
+    return limelight.targetsFound();
+  }
+
   /**
    * Logs data about Turret Subsystem to SmartDashboard
    */

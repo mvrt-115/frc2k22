@@ -32,7 +32,6 @@ public class SetRPMDash extends CommandBase {
     this.storage = storage;
     this.turret = turret;
     this.drivetrain = drivetrain;
-    this.offset = turret.getOffset();
     rpm = 0;
     SmartDashboard.putNumber("new rpm", 0);
     addRequirements(shooter, storage);
@@ -43,7 +42,6 @@ public class SetRPMDash extends CommandBase {
   public void initialize()
   {
     rpm = SmartDashboard.getNumber("new rpm", 0);
-    turret.setOffset(offset);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
