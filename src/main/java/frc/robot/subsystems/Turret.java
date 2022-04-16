@@ -109,7 +109,7 @@ public class Turret extends SubsystemBase {
    * Targets using a pid on the limelight error
    */
   public void target() {
-    double error = (limelight.getHorizontalOffset() + offset) / 30;
+    double error = (limelight.getHorizontalOffset() + (offset)) / 30;
     double time = Timer.getFPGATimestamp();
 
     area += lastError * (Timer.getFPGATimestamp() - lastTime);
@@ -190,7 +190,7 @@ public class Turret extends SubsystemBase {
    * Updates the lastError and lastTime variables that are used for pid
    */
   private void updateLastVariables() {
-    lastError = (limelight.getHorizontalOffset() + offset) / 30;
+    lastError = (limelight.getHorizontalOffset()) / 30;
     lastTime = Timer.getFPGATimestamp();
   }
 

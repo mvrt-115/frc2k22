@@ -21,19 +21,13 @@ public class DisableTurret extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if(turret.getTurretState() == TurretState.DISABLED){
-      new FindTarget(turret).schedule();
-    }
-    else {
-      turret.setState(TurretState.DISABLED);
-
-    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // turret.setPercentOutput(0);
+    turret.setPercentOutput(0);
+    turret.setState(TurretState.DISABLED);
   }
 
   // Called once the command ends or is interrupted.

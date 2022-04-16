@@ -42,8 +42,9 @@ public class SetRPMValue extends CommandBase {
     {
       storage.runMotor(1);
     }
-    else 
+    else {
       storage.runMotor(0);
+      System.out.println("hi6");}
     
   }
 
@@ -54,6 +55,7 @@ public class SetRPMValue extends CommandBase {
     shooter.setState(ShooterState.OFF);
     storage.setReadyShoot(false);
     storage.runMotor(0);
+    System.out.println("hi7");
   }
 
   // Returns true when the command should end.

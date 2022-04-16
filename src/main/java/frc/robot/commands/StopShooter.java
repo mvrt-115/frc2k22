@@ -30,7 +30,7 @@ public class StopShooter extends CommandBase {
   public void execute() {
     shooter.stopFlywheel();
     shooter.setState(ShooterState.OFF);
-    storage.runMotor(0);
+    storage.runMotor(0);System.out.println("hi8");
   }
 
   // Called once the command ends or is interrupted.

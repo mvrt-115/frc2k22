@@ -62,6 +62,7 @@ public class Storage extends SubsystemBase  {
     SmartDashboard.putNumber("number of balls", balls);
     // SmartDashboard.putBoolean("overriden", overriden);
     // SmartDashboard.putString("Ball color", getBallColor());
+    SmartDashboard.putNumber("Storage Output", motor.getMotorOutputPercent());
 
    
     if( prevStateBott && !breakbeamBott.get() && Timer.getFPGATimestamp() - lastTime > 0.25) {
@@ -91,7 +92,8 @@ public class Storage extends SubsystemBase  {
     prevStateBott = breakbeamBott.get();
     prevStateTop = breakbeamTop.get();
       //if(!overriden)  {
-    if(!overriden) autoStorage();
+    if(!readyShoot) autoStorage();
+
       //}
       //else{
        // runMotor(1);
@@ -104,13 +106,15 @@ public class Storage extends SubsystemBase  {
   }
 
   public void autoStorage() {
-    double s = 0.2;
+    double s = 0.4;
 
     if(!breakbeamTop.get()) {
       runMotor(0);
+
       return;
-    }
+    } 
       
+    
 
     switch (balls) {
       // when there is one ball run until it passes first breakbeam
@@ -147,6 +151,7 @@ public class Storage extends SubsystemBase  {
 
   public void setReadyShoot(boolean newShooting){
     readyShoot = newShooting;
+    System.out.println("BIG RACISM");
   }
   public boolean getShooting() {
     return readyShoot;

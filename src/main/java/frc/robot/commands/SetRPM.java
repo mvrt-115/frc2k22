@@ -45,6 +45,7 @@ public class SetRPM extends CommandBase {
     rpm = shooter.getRequiredRPM();
     // rpm = SmartDashboard.getNumber("new rpm", defaultRPM);
     storage.setReadyShoot(true);
+    System.out.println("racism");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -58,7 +59,8 @@ public class SetRPM extends CommandBase {
     if(shoot)
       storage.runMotor(1);
     else
-      storage.runMotor(0);
+    {storage.runMotor(0);
+    System.out.println("hi1");}
   }
 
   // Called once the command ends or is interrupted.
@@ -68,6 +70,7 @@ public class SetRPM extends CommandBase {
     shooter.setState(ShooterState.OFF);
     storage.setReadyShoot(false);
     storage.runMotor(0);
+    System.out.println("hi2");
   }
 
   // Returns true when the command should end.

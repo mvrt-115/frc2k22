@@ -129,7 +129,7 @@ public class Shooter extends SubsystemBase {
     // SmartDashboard.putNumber("Output", flywheelLeader.getMotorOutputPercent());
     SmartDashboard.putNumber("Flywheel RPM", getCurrentRPM());
     // SmartDashboard.putNumber("RPM Needed", getRequiredRPM());
-    // SmartDashboard.putString("Shooter State", state.toString());
+    SmartDashboard.putString("Shooter State", state.toString());
     // SmartDashboard.putNumber("Target RPM", targetRPM);
     SmartDashboard.putNumber("Limelight Distance", limelight.getHorizontalDistance());
     SmartDashboard.putNumber("Real Offset", limelight.getHorizontalOffset());
@@ -181,8 +181,11 @@ public class Shooter extends SubsystemBase {
    
     // double rpm = 479.18*Math.pow(x, 0.4418) + Constants.Flywheel.LIN_CONST * limelight.getHorizontalDistance();
     
-    // Use this if power equation is not working
-    double rpm = 2040.9 * Math.pow(Math.E, 0.0058 * x) + addTuneRPM;
+    // Use this if power equation is not working (old one)
+    // double rpm = 2040.9 * Math.pow(Math.E, 0.0058 * x) + addTuneRPM;
+
+    double rpm = 312.18*Math.pow(x, 0.5343);
+
 
     // THIS IS NOT FOR SHOOTING ON THE MOVE LOL, JUST FOR DEALING WITH LIMELIGHT ERROR
     if(Math.abs(limelight.getHorizontalOffset())>Constants.Flywheel.ALIGN_ERROR)
@@ -300,7 +303,8 @@ public class Shooter extends SubsystemBase {
     // I suggest we only set it like this, but during testing this could change
     if(getState()!=ShooterState.OFF && Math.abs(drivetrain.getLinSpeed())<Constants.Drivetrain.IS_MOVING)
     {
-      return Math.toDegrees(Math.atan(Constants.Flywheel.OFF_TARGET/limelight.getHorizontalDistance()))+1;
+      
+      return (Math.toDegrees(Math.atan(Constants.Flywheel.OFF_TARGET/limelight.getHorizontalDistance()))+1) * Constants.Turret.kPropOffset;
     }
 
     return 0;

@@ -44,7 +44,7 @@ public class RobotContainer {
   private final Climber climber = new Climber();
   private final Turret turret = new Turret(limelight);
   private final Shooter shooter = new Shooter(limelight, drivetrain, turret);
-  //private final LEDs led = new LEDs();
+  // private final LEDs led = new LEDs();
 
   // climber operator manual buttons
   private JoystickButton extend;
@@ -122,7 +122,7 @@ public class RobotContainer {
       new PivotUp(intake, storage),
       new RunDrive(drivetrain, 1, -0.2).withTimeout(1),
       new WaitCommand(2), 
-      new SetRPM(shooter, storage, turret)
+      new SetRPMRequired(shooter, storage)
     );
     
     // Configure the button bindings
@@ -141,14 +141,14 @@ public class RobotContainer {
     // alignDrivetrain.whenPressed(new AlignIntakeToBall(drivetrain, true)).whenReleased(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
     drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, intake, 
     this::getThrottle, this::getWheel, quickturn::get));
-    //led.setDefaultCommand(new LEDCommand(led, turret, shooter, climber, storage, intake));
+    // led.setDefaultCommand(new LEDCommand(led, turret, shooter, climber, storage, intake));
 
     //storage.setDefaultCommand(new TrackBalls(storage, shooter));
     turret.setDefaultCommand(new FindTarget(turret));
     
-    shoot.whenPressed(new SetRPMRequired(shooter, storage, shoot)).whenReleased(new StopShooter(shooter, storage));
+    shoot.whenPressed(new SetRPMRequired(shooter, storage, shoot));//.whenReleased(new StopShooter(shooter, storage));
     // new SetRPM(shooter, storage, 1000).schedule();
-    SmartDashboard.putData("Testing Shooter", new SetRPMDash(shooter, storage, turret, drivetrain));
+    // SmartDashboard.putData("Testing Shooter", new SetRPMDash(shooter, storage, turret, drivetrain));
     pivot.whenPressed(new Pivot(intake,storage)).whenReleased(new PivotUp(intake, storage));
     resetBalls.whenPressed(new ResetBalls(storage));
     upManualStorage.whenPressed(new ManualStorage(storage, true, upManualStorage::get));  // true for up
@@ -176,7 +176,7 @@ public class RobotContainer {
     adjustConstantDecrement.whenPressed(new AdjustShooterConstant(-1*Constants.Flywheel.INCREMENT));
     // KEEP THE INCREMENT LOW. 25 is already a lot.
 
-    lowShot.whenPressed(new SetRPMValue(shooter, storage, Constants.Flywheel.LOW_SHOT_RPM)).whenReleased(new StopShooter(shooter, storage));
+    // lowShot.whenPressed(new SetRPMValue(shooter, storage, Constants.Flywheel.LOW_SHOT_RPM));//.whenReleased(new StopShooter(shooter, storage));
     
     autonSelector.addOption("2 Ball", twoBallAuto);
     autonSelector.addOption("5 Ball", new FiveBallAuton(drivetrain, intake, shooter, storage, turret));
@@ -271,7 +271,9 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autonSelector.getSelected();
+    // return autonSelector.getSelected();
+    return new TwoBallAndHit(drivetrain, intake, shooter, storage, turret);
+    // return twoBallAuto;
   }
 
   public double getStorageThrottle(){
@@ -279,7 +281,7 @@ public class RobotContainer {
   }
 
   public void disabledPeriodic() {
-    //led.setFullLength(led.kMVRTPurple);
-    //led.setFullLengthTurret(led.kMVRTPurple);
+    // led.setFullLength(led.kMVRTPurple);
+    // led.setFullLengthTurret(led.kMVRTPurple);
   }
 }

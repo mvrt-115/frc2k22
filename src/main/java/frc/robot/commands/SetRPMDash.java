@@ -42,16 +42,18 @@ public class SetRPMDash extends CommandBase {
   public void initialize()
   {
     rpm = SmartDashboard.getNumber("new rpm", 0);
+
+    // storage.setReadyShoot(true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute()
   {
-    //rpm = SmartDashboard.getNumber("new rpm", 0);
+    rpm = SmartDashboard.getNumber("new rpm", 0);
     shooter.setTargetRPM(rpm);
 
-    if(drivetrain.getLinSpeed()<Constants.Drivetrain.IS_MOVING && turret.canShoot())
+    if(turret.canShoot())
     {
       turret.setState(TurretState.DISABLED);
     }
@@ -62,12 +64,15 @@ public class SetRPMDash extends CommandBase {
 
     if(shooter.getState() == ShooterState.ATSPEED)
     {
+    System.out.println("racism1");
+    storage.setReadyShoot(true);
       storage.runMotor(0.4); 
 
       turret.setState(TurretState.DISABLED);
     }
     else 
-      storage.runMotor(0);
+      // storage.runMotor(0);
+      storage.setReadyShoot(false);
     
   }
 
@@ -78,7 +83,7 @@ public class SetRPMDash extends CommandBase {
     shooter.setState(ShooterState.OFF);
     storage.setReadyShoot(false);
     storage.runMotor(0);
-
+    System.out.println("hi3");
     turret.setState(TurretState.TARGETING);
   }
 

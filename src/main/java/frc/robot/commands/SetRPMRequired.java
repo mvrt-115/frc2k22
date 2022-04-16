@@ -29,11 +29,22 @@ public class SetRPMRequired extends CommandBase {
     // SmartDashboard.putNumber("new rpm", 0);
     addRequirements(shooter, storage);
   }
+  public SetRPMRequired(Shooter shooter, Storage storage) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    this.shooter = shooter;
+    this.storage = storage;
+    // button = jb;
+    rpm = 0;
+    // SmartDashboard.putNumber("new rpm", 0);
+    addRequirements(shooter, storage);
+  }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize()
   {
+    // System.out.println("racism2");
+    storage.setReadyShoot(true);
     rpm = shooter.getRequiredRPM();
   }
 
@@ -46,10 +57,13 @@ public class SetRPMRequired extends CommandBase {
 
     if(shooter.getState() == ShooterState.ATSPEED)
     {
-      storage.runMotor(1);
+      
+      storage.runMotor(0.4);
     }
-    else 
+    else {
       storage.runMotor(0);
+      // System.out.println("hi4");
+    }
     
   }
 
@@ -60,6 +74,9 @@ public class SetRPMRequired extends CommandBase {
     shooter.setState(ShooterState.OFF);
     storage.setReadyShoot(false);
     storage.runMotor(0);
+    // System.out.println("hi5");
+
+    
   }
 
   // Returns true when the command should end.
