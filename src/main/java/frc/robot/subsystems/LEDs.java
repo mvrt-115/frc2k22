@@ -20,7 +20,7 @@ public class LEDs extends SubsystemBase {
   public AddressableLED led;
   public AddressableLEDBuffer lBuffer;
 
-  public final int LED_PORT = 1;
+  public final int LED_PORT = 0;
   public final int LED_LENGTH = 56;
   public final int TURRET_LED_LENGTH = 39;
   public final int ALIGNMENT_BLOCK_LENGTH = 4;
@@ -31,7 +31,8 @@ public class LEDs extends SubsystemBase {
   public final Color kGreen = RBGToColor(new int[]{0, 255, 0});
   public final Color kWhite = RBGToColor(new int[]{255, 255, 255});
   public final Color kBlack = RBGToColor(new int[]{0, 0, 0});
-  public final Color kMVRTPurple = RBGToColor(new int[]{160, 0, 196});
+  //public final Color kMVRTPurple = RBGToColor(new int[]{160, 0, 196});
+  public final Color kMVRTPurple = RBGToColor(new int[]{40, 0, 80});
   public final Color kMVRTGold = RBGToColor(new int[]{100, 35, 0});
 
 
@@ -42,17 +43,17 @@ public class LEDs extends SubsystemBase {
   public LEDs() 
   {
     led = new AddressableLED(LED_PORT);
-    lBuffer = new AddressableLEDBuffer(LED_LENGTH + TURRET_LED_LENGTH);
+    lBuffer = new AddressableLEDBuffer(LED_LENGTH*2 + TURRET_LED_LENGTH);
 
-    led.setLength(LED_LENGTH + TURRET_LED_LENGTH);
+    led.setLength(LED_LENGTH*2 + TURRET_LED_LENGTH);
     led.start();
 
-    setGradient(LED_LENGTH, LED_LENGTH + SHOOTER_SPEED_LENGTH - 1, kBlack, kGreen);
-    setSingleBlock(LED_LENGTH + SHOOTER_SPEED_LENGTH, LED_LENGTH + SHOOTER_SPEED_LENGTH + ALIGNMENT_BLOCK_LENGTH - 1, kBlack);
-    setGradient(LED_LENGTH + SHOOTER_SPEED_LENGTH + ALIGNMENT_BLOCK_LENGTH, LED_LENGTH + (SHOOTER_SPEED_LENGTH*2) + ALIGNMENT_BLOCK_LENGTH - 1, kBlack, kGreen);
-    setSingleBlock(LED_LENGTH + (SHOOTER_SPEED_LENGTH*2) + ALIGNMENT_BLOCK_LENGTH, LED_LENGTH + (SHOOTER_SPEED_LENGTH*2) + (ALIGNMENT_BLOCK_LENGTH*2) - 1, kBlack);
-    setGradient(LED_LENGTH + (SHOOTER_SPEED_LENGTH*2) + (ALIGNMENT_BLOCK_LENGTH*2), LED_LENGTH + (SHOOTER_SPEED_LENGTH*3) + (ALIGNMENT_BLOCK_LENGTH*2) - 1, kBlack, kGreen);
-    setSingleBlock(LED_LENGTH + (SHOOTER_SPEED_LENGTH*3) + (ALIGNMENT_BLOCK_LENGTH*2), LED_LENGTH + TURRET_LED_LENGTH - 1, kBlack);
+    setGradient(LED_LENGTH*2, LED_LENGTH*2 + SHOOTER_SPEED_LENGTH - 1, kBlack, kGreen);
+    setSingleBlock(LED_LENGTH*2 + SHOOTER_SPEED_LENGTH, LED_LENGTH*2 + SHOOTER_SPEED_LENGTH + ALIGNMENT_BLOCK_LENGTH - 1, kBlack);
+    setGradient(LED_LENGTH*2 + SHOOTER_SPEED_LENGTH + ALIGNMENT_BLOCK_LENGTH, LED_LENGTH*2 + (SHOOTER_SPEED_LENGTH*2) + ALIGNMENT_BLOCK_LENGTH - 1, kBlack, kGreen);
+    setSingleBlock(LED_LENGTH*2 + (SHOOTER_SPEED_LENGTH*2) + ALIGNMENT_BLOCK_LENGTH, LED_LENGTH*2 + (SHOOTER_SPEED_LENGTH*2) + (ALIGNMENT_BLOCK_LENGTH*2) - 1, kBlack);
+    setGradient(LED_LENGTH*2 + (SHOOTER_SPEED_LENGTH*2) + (ALIGNMENT_BLOCK_LENGTH*2), LED_LENGTH*2 + (SHOOTER_SPEED_LENGTH*3) + (ALIGNMENT_BLOCK_LENGTH*2) - 1, kBlack, kGreen);
+    setSingleBlock(LED_LENGTH*2 + (SHOOTER_SPEED_LENGTH*3) + (ALIGNMENT_BLOCK_LENGTH*2), LED_LENGTH*2 + TURRET_LED_LENGTH - 1, kBlack);
   }
 
   public Color RBGToColor(int[] values) 
@@ -82,7 +83,7 @@ public class LEDs extends SubsystemBase {
 
   public void setSingleBlock(int startIndex, int endIndex, Color color) 
   {
-    if(startIndex >= 0 && endIndex < LED_LENGTH + TURRET_LED_LENGTH) {
+    if(startIndex >= 0 && endIndex < LED_LENGTH*2 + TURRET_LED_LENGTH) {
       for(int i = startIndex; i <= endIndex; i++)
       {
         lBuffer.setLED(i, color);
@@ -209,15 +210,13 @@ public class LEDs extends SubsystemBase {
 
   public void setFullLengthTurret(Color color)
   {
-    setSingleBlock(LED_LENGTH, LED_LENGTH + TURRET_LED_LENGTH - 1, color);
+    setSingleBlock(LED_LENGTH*2, LED_LENGTH*2 + TURRET_LED_LENGTH - 1, color);
   }
 
   public void setTurretLEDs(double flywheelSpeed, double targetSpeed, TurretState turretState)
   {
-    double moveSpeed = (0.005 * targetSpeed)/(flywheelSpeed + 1);
+    double moveSpeed = (0.00025 * targetSpeed)/(flywheelSpeed + 1);
     if(moveSpeed > 0.0625 || targetSpeed <= 100) moveSpeed = 0.0625;
-
-    double flywheelAcceptableError = 100;
 
     if(turretState == TurretState.DISABLED)
       setFullLengthTurret(kRed);
@@ -226,14 +225,14 @@ public class LEDs extends SubsystemBase {
       Color newColor = kGreen;
       Color boldColor = kBlack;
 
-      for(int i = LED_LENGTH; i < LED_LENGTH + TURRET_LED_LENGTH; i++)
+      for(int i = LED_LENGTH*2; i < LED_LENGTH*2 + TURRET_LED_LENGTH; i++)
       {
         if(getLEDColor(i).red >= boldColor.red && getLEDColor(i).green >= boldColor.green 
           && getLEDColor(i).blue >= boldColor.blue)
             boldColor = getLEDColor(i);
       }
 
-      for(int i = LED_LENGTH; i < LED_LENGTH + TURRET_LED_LENGTH; i++) {
+      for(int i = LED_LENGTH*2; i < LED_LENGTH*2 + TURRET_LED_LENGTH; i++) {
         addGradientToColor(i, ColorToRGB(new Color((newColor.red-boldColor.red), (newColor.green-boldColor.green), 
           (newColor.blue-boldColor.blue))));
       }
@@ -245,37 +244,37 @@ public class LEDs extends SubsystemBase {
       Color newColor = getColorAtGradient(kRed, kGreen, (int)targetSpeed, (int)flywheelSpeed);
       Color boldColor = kBlack;
 
-      for(int i = LED_LENGTH; i < LED_LENGTH + TURRET_LED_LENGTH; i++)
+      for(int i = LED_LENGTH*2; i < LED_LENGTH*2 + TURRET_LED_LENGTH; i++)
       {
         if(getLEDColor(i).red >= boldColor.red && getLEDColor(i).green >= boldColor.green 
           && getLEDColor(i).blue >= boldColor.blue)
             boldColor = getLEDColor(i);
       }
 
-      for(int i = LED_LENGTH; i < LED_LENGTH + TURRET_LED_LENGTH; i++) {
+      for(int i = LED_LENGTH*2; i < LED_LENGTH*2 + TURRET_LED_LENGTH; i++) {
         addGradientToColor(i, ColorToRGB(new Color((newColor.red-boldColor.red), (newColor.green-boldColor.green), 
           (newColor.blue-boldColor.blue))));
       }
 
       sendData();
-
-      if(turretState == TurretState.CAN_SHOOT)
-      {
-        setSingleBlock(LED_LENGTH + SHOOTER_SPEED_LENGTH, LED_LENGTH + SHOOTER_SPEED_LENGTH + ALIGNMENT_BLOCK_LENGTH - 1, kWhite);
-        setSingleBlock(LED_LENGTH + (SHOOTER_SPEED_LENGTH*2) + ALIGNMENT_BLOCK_LENGTH, LED_LENGTH + (SHOOTER_SPEED_LENGTH*2) + (ALIGNMENT_BLOCK_LENGTH*2) - 1, kWhite);
-        setSingleBlock(LED_LENGTH + (SHOOTER_SPEED_LENGTH*3) + (ALIGNMENT_BLOCK_LENGTH*2), LED_LENGTH + TURRET_LED_LENGTH - 1, kWhite);
-      }
-      else
-      {
-        setSingleBlock(LED_LENGTH + SHOOTER_SPEED_LENGTH, LED_LENGTH + SHOOTER_SPEED_LENGTH + ALIGNMENT_BLOCK_LENGTH - 1, kBlack);
-        setSingleBlock(LED_LENGTH + (SHOOTER_SPEED_LENGTH*2) + ALIGNMENT_BLOCK_LENGTH, LED_LENGTH + (SHOOTER_SPEED_LENGTH*2) + (ALIGNMENT_BLOCK_LENGTH*2) - 1, kBlack);
-        setSingleBlock(LED_LENGTH + (SHOOTER_SPEED_LENGTH*3) + (ALIGNMENT_BLOCK_LENGTH*2), LED_LENGTH + TURRET_LED_LENGTH - 1, kBlack);
-      }
     }
 
-    moveUp(LED_LENGTH, LED_LENGTH + SHOOTER_SPEED_LENGTH - 1, moveSpeed);
-    moveUp(LED_LENGTH + SHOOTER_SPEED_LENGTH + ALIGNMENT_BLOCK_LENGTH, LED_LENGTH + (SHOOTER_SPEED_LENGTH*2) + ALIGNMENT_BLOCK_LENGTH - 1, moveSpeed);
-    moveUp(LED_LENGTH + (SHOOTER_SPEED_LENGTH*2) + (ALIGNMENT_BLOCK_LENGTH*2), LED_LENGTH + (SHOOTER_SPEED_LENGTH*3) + (ALIGNMENT_BLOCK_LENGTH*2) - 1, moveSpeed);
+    if(turretState == TurretState.CAN_SHOOT /*&& Math.abs(flywheelSpeed - targetSpeed) <= flywheelAcceptableError /*Constants.Flywheel.ACCEPTABLE_ERROR*/)
+    {
+      setSingleBlock(LED_LENGTH*2 + SHOOTER_SPEED_LENGTH, LED_LENGTH*2 + SHOOTER_SPEED_LENGTH + ALIGNMENT_BLOCK_LENGTH - 1, kWhite);
+      setSingleBlock(LED_LENGTH*2 + (SHOOTER_SPEED_LENGTH*2) + ALIGNMENT_BLOCK_LENGTH, LED_LENGTH*2 + (SHOOTER_SPEED_LENGTH*2) + (ALIGNMENT_BLOCK_LENGTH*2) - 1, kWhite);
+      setSingleBlock(LED_LENGTH*2 + (SHOOTER_SPEED_LENGTH*3) + (ALIGNMENT_BLOCK_LENGTH*2), LED_LENGTH*2 + TURRET_LED_LENGTH - 1, kWhite);
+    }
+    else
+    {
+      setSingleBlock(LED_LENGTH*2 + SHOOTER_SPEED_LENGTH, LED_LENGTH*2 + SHOOTER_SPEED_LENGTH + ALIGNMENT_BLOCK_LENGTH - 1, kBlack);
+      setSingleBlock(LED_LENGTH*2 + (SHOOTER_SPEED_LENGTH*2) + ALIGNMENT_BLOCK_LENGTH, LED_LENGTH*2 + (SHOOTER_SPEED_LENGTH*2) + (ALIGNMENT_BLOCK_LENGTH*2) - 1, kBlack);
+      setSingleBlock(LED_LENGTH*2 + (SHOOTER_SPEED_LENGTH*3) + (ALIGNMENT_BLOCK_LENGTH*2), LED_LENGTH*2 + TURRET_LED_LENGTH - 1, kBlack);
+    }
+
+    moveUp(LED_LENGTH*2, LED_LENGTH*2 + SHOOTER_SPEED_LENGTH - 1, moveSpeed);
+    moveUp(LED_LENGTH*2 + SHOOTER_SPEED_LENGTH + ALIGNMENT_BLOCK_LENGTH, LED_LENGTH*2 + (SHOOTER_SPEED_LENGTH*2) + ALIGNMENT_BLOCK_LENGTH - 1, moveSpeed);
+    moveUp(LED_LENGTH*2 + (SHOOTER_SPEED_LENGTH*2) + (ALIGNMENT_BLOCK_LENGTH*2), LED_LENGTH*2 + (SHOOTER_SPEED_LENGTH*3) + (ALIGNMENT_BLOCK_LENGTH*2) - 1, moveSpeed);
     sendData();
   }
 
