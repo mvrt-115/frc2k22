@@ -98,23 +98,30 @@ public class Climber extends SubsystemBase {
             rightTelescopic.set(ControlMode.PercentOutput, 0); 
             return;
         }
-        if((speed < 0 && getTelescopicPosition() <= 2000) || (speed > 0 && leftTelescopic.getSelectedSensorPosition() >= 276675)) {
+        if(!lowClimb && ((speed < 0 && getTelescopicPosition() <= 2000) || (speed > 0 && leftTelescopic.getSelectedSensorPosition() >= 276675))) { 
             leftTelescopic.set(ControlMode.PercentOutput, 0); // test and change value
             // rightTelescopic.set(ControlMode.PercentOutput, 0); 
+        }
+        else if(lowClimb && ((speed < 0 && getTelescopicPosition() <= 2000) || (speed > 0 && leftTelescopic.getSelectedSensorPosition() >= 168329))) {
+            leftTelescopic.set(ControlMode.PercentOutput, 0); 
         }
         else {
             leftTelescopic.set(ControlMode.PercentOutput, speed);
         }
-        if((speed < 0 && rightTelescopic.getSelectedSensorPosition() <= 2000) || (speed > 0 && rightTelescopic.getSelectedSensorPosition() >= 271943)) {
+
+        if(!lowClimb && ((speed < 0 && rightTelescopic.getSelectedSensorPosition() <= 2000) || (speed > 0 && rightTelescopic.getSelectedSensorPosition() >= 271943))) {
             rightTelescopic.set(ControlMode.PercentOutput, 0); // test and change value
             // rightTelescopic.set(ControlMode.PercentOutput, 0); 
+        }
+        else if(lowClimb && ((speed < 0 && rightTelescopic.getSelectedSensorPosition() <= 2000) || (speed > 0 && rightTelescopic.getSelectedSensorPosition() >= 154098))) {
+            rightTelescopic.set(ControlMode.PercentOutput, 0);
         }
         else {
             rightTelescopic.set(ControlMode.PercentOutput, speed);
         }
 
         // low climb soft limits
-        /*if(lowClimb []\
+        /*if(lowClimb []\ 
         \][
             []\
             ][\
@@ -132,6 +139,10 @@ public class Climber extends SubsystemBase {
         else {
             rightTelescopic.set(ControlMode.PercentOutput, speed);
         }*/
+    }
+
+    public void setClimb(boolean climb) {
+        lowClimb = climb;
     }
 
     /**
@@ -260,8 +271,8 @@ public class Climber extends SubsystemBase {
         // SmartDashboard.putNumber("left clim", getLeftTelescopicEncoderValue());
         // SmartDashboard.putNumber("right clim", getRightTelescopicEncoderValue());
 
-        // SmartDashboard.putNumber("left lowClim", getLeftTelescopicEncoderValue());
-        // SmartDashboard.putNumber("right lowClim", getRightTelescopicEncoderValue());
+         SmartDashboard.putNumber("left lowClim", getLeftTelescopicEncoderValue());
+         SmartDashboard.putNumber("right lowClim", getRightTelescopicEncoderValue());
 
         // if(getTelescopicPosition() >= 280000){
         //     leftServo.set(Constants.Climber.kServoRatchet);

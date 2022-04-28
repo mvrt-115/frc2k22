@@ -39,7 +39,7 @@ public class Shooter extends SubsystemBase {
   private double targetRPM = 0;
 
   private RollingAverage rpm;
-  private Limelight limelight;
+  public Limelight limelight;
 
   private Turret turret;
   private Drivetrain drivetrain;
@@ -126,7 +126,7 @@ public class Shooter extends SubsystemBase {
    */
   public void log()
   {
-    // SmartDashboard.putNumber("Output", flywheelLeader.getMotorOutputPercent());
+    SmartDashboard.putNumber("Flywheel Motor Output", flywheelLeader.getMotorOutputPercent());
     SmartDashboard.putNumber("Flywheel RPM", getCurrentRPM());
     // SmartDashboard.putNumber("RPM Needed", getRequiredRPM());
     SmartDashboard.putString("Shooter State", state.toString());
@@ -303,8 +303,7 @@ public class Shooter extends SubsystemBase {
     // I suggest we only set it like this, but during testing this could change
     if(getState()!=ShooterState.OFF && Math.abs(drivetrain.getLinSpeed())<Constants.Drivetrain.IS_MOVING)
     {
-      
-      return (Math.toDegrees(Math.atan(Constants.Flywheel.OFF_TARGET/limelight.getHorizontalDistance()))+1) * Constants.Turret.kPropOffset;
+      return Constants.Turret.kPropOffset*(Math.toDegrees(Math.atan(Constants.Flywheel.OFF_TARGET/limelight.getHorizontalDistance()))+1);
     }
 
     return 0;

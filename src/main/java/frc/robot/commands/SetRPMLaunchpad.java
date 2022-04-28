@@ -4,41 +4,48 @@
 
 package frc.robot.commands;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Storage;
+import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Shooter.ShooterState;
 
-public class SetRPMRequired extends CommandBase {
+public class SetRPMLaunchpad extends CommandBase {
 
   private Shooter shooter;
   private Storage storage;
   private JoystickButton button;
   private double start = 0;
   private double rpm;
+  private Turret turret;
+
 
   /** Creates a new SetRPMDash. */
-  public SetRPMRequired(Shooter shooter, Storage storage, JoystickButton jb) {
+  public SetRPMLaunchpad(Shooter shooter, Storage storage, Turret turret, JoystickButton jb) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.shooter = shooter;
     this.storage = storage;
+    this.turret = turret;
     button = jb;
     rpm = 0;
     // SmartDashboard.putNumber("new rpm", 0);
     addRequirements(shooter, storage);
   }
-  public SetRPMRequired(Shooter shooter, Storage storage) {
+  public SetRPMLaunchpad(Shooter shooter, Storage storage) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.shooter = shooter;
     this.storage = storage;
+    this.turret = turret;
     // button = jb;
     rpm = 0;
     // SmartDashboard.putNumber("new rpm", 0);
     addRequirements(shooter, storage);
-    shooter.autoOffset();
   }
 
   // Called when the command is initially scheduled.
@@ -48,24 +55,20 @@ public class SetRPMRequired extends CommandBase {
     // System.out.println("racism2");
     storage.setReadyShoot(true);
     rpm = shooter.getRequiredRPM();
+    start = Timer.getFPGATimestamp();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute()
   {
-    rpm = shooter.getRequiredRPM();
-    shooter.setTargetRPM(rpm);
+    shooter.getMotor().set(ControlMode.PercentOutput, 0.7);
+    if(Timer.getFPGATimestamp() - start > 1.0){
 
-    if(shooter.getState() == ShooterState.ATSPEED)
-    {
-      
       storage.runMotor(0.4);
     }
-    else {
-      storage.runMotor(0);
-      // System.out.println("hi4");
-    }
+
+    turret.setOffset(0);
     
   }
 

@@ -43,6 +43,9 @@ public class Intake extends SubsystemBase {
 
     pivotMotor.setSelectedSensorPosition(0);
 
+    pivotMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 30);
+    intakeMotor.setStatusFramePeriod(StatusFrame.Status_1_General, 150);
+    
     pivotMotor.setNeutralMode(NeutralMode.Brake);
 
     pivotMotor.config_kP(Constants.kPIDIdx, Constants.Intake.kP);
@@ -82,6 +85,12 @@ public class Intake extends SubsystemBase {
       pivotMotor.setNeutralMode(NeutralMode.Coast);
     }
 
+    if(intakeMotor.hasResetOccurred()){
+      intakeMotor.setStatusFramePeriod(StatusFrame.Status_1_General, 150);
+    }
+    if(pivotMotor.hasResetOccurred()){
+      pivotMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 30);
+    }
     // log();
   }
 

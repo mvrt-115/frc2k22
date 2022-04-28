@@ -20,17 +20,18 @@ public class UnratchetExtend extends SequentialCommandGroup {
   public Supplier<Boolean> buttonState;
   public double speed;
   /** Creates a new UnratchetExtend. */
-  public UnratchetExtend(Climber climber, Supplier<Boolean> buttonState, double speed) {
+  public UnratchetExtend(Climber climber, Supplier<Boolean> buttonState, double speed, boolean highLow) {
     this.climber = climber;
     this.buttonState = buttonState;
     this.speed = speed;
+    // climber.setClimb(highLow);
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
 
     // this just unratchets the arms and then allows the telescopic arms to extend
     addCommands(
       new TelescopicRatchet(climber, Constants.Climber.kServoUnRatchet).withTimeout(1.25),
-      new TelescopicManual(climber, buttonState, speed)
+      new TelescopicManual(climber, buttonState, speed, highLow)
     );
   }
 }

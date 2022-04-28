@@ -80,9 +80,9 @@ public final class Constants {
     
     public static class Intake{
 
-        public static final double kTICKS_TO_BOTTOM = 20000;
+        public static final double kTICKS_TO_BOTTOM = 21000;
         // the # of ticks it takes to be at the bottom when pivoting
-        public static final double kTICKS_TO_TOP = 1700; // the # of ticks it takes to be at the top when pivoting
+        public static final double kTICKS_TO_TOP = 800; // the # of ticks it takes to be at the top when pivoting
 
 
         public static final int kPIVOT_ID = 10; // change later
@@ -202,7 +202,7 @@ public final class Constants {
         public static final double kEThreshold = 60;
         public static final double kLowETurnThreshold = 0; // degrees; limelight x fov = 59.6
         public static final double kTurretError = 1;
-        public static final double kPropOffset = 0;
+        public static final double kPropOffset = 0.8; // set this to 0 to turn off offset
 
         // for large angles > 60 degrees
         public static final double kPLarge = 0.3;
@@ -268,8 +268,8 @@ public final class Constants {
         public static final double kFeedForwardPivot = 0;
 
         //speeds for manual climbing
-        public static final double kTelescopicRetractManualSpeed = -0.5;//-0.75; 
-        public static final double kTelescopicExtendManualSpeed = 0.7;//0.8; 
+        public static final double kTelescopicRetractManualSpeed = -0.5;//0.75; 
+        public static final double kTelescopicExtendManualSpeed = 0.7;// 0.8; 
         public static final double kPivotManualSpeed = 0.1;
 
         // servo ratchet and unratchet values

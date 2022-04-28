@@ -20,7 +20,7 @@ public class SystemsCheck extends SequentialCommandGroup {
       new Pivot(intake, storage).withTimeout(3),
       new PivotUp(intake, storage).withTimeout(3),
       new SetRPM(shooter, storage, turret).withTimeout(3),
-      new UnratchetExtend(climber, () -> true, Constants.Climber.kTelescopicExtendManualSpeed).withTimeout(3),
+      new UnratchetExtend(climber, () -> true, Constants.Climber.kTelescopicExtendManualSpeed, false).withTimeout(3),
       new RatchetRetract(climber, () -> true, Constants.Climber.kTelescopicRetractManualSpeed).withTimeout(3),
       new RunDrive(drivetrain, 3, 0.3).withTimeout(3)
     );

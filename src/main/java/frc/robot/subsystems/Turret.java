@@ -118,7 +118,7 @@ public class Turret extends SubsystemBase {
       (Constants.Turret.kI * area) + 
       (((error - lastError) / (time - lastTime)) * Constants.Turret.kD);
 
-    if(Math.abs((limelight.getHorizontalOffset() + offset)) > Constants.Turret.kTurretError && limelight.targetsFound()) {
+    if(Math.abs(limelight.getHorizontalOffset() + offset) > Constants.Turret.kTurretError && limelight.targetsFound()) {
       if(output < 0 && getCurrentPositionDegrees() < Constants.Turret.kMinAngle)
         output = 0;
       else if(output > 0 && getCurrentPositionDegrees() > Constants.Turret.kMaxAngle)
@@ -190,7 +190,7 @@ public class Turret extends SubsystemBase {
    * Updates the lastError and lastTime variables that are used for pid
    */
   private void updateLastVariables() {
-    lastError = (limelight.getHorizontalOffset()) / 30;
+    lastError = (limelight.getHorizontalOffset() + offset) / 30;
     lastTime = Timer.getFPGATimestamp();
   }
 
@@ -258,7 +258,7 @@ public class Turret extends SubsystemBase {
   }
 
   public void setOffset(double offset) {
-    this.offset = offset;
+    this.offset = offset * 0.7;
   }
 
   /** 

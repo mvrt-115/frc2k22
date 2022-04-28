@@ -15,19 +15,21 @@ public class TelescopicManual extends CommandBase {
     public Climber climber;
     public double speed;
     public Supplier<Boolean> button;
+    public boolean highlow_;
     /** Creates a new ClimberManual. */
-    public TelescopicManual(Climber climber, Supplier<Boolean> buttonState, double speed) {
+    public TelescopicManual(Climber climber, Supplier<Boolean> buttonState, double speed, boolean highlow) {
         // Use addRequirements() here to declare subsystem dependencies.
         this.speed = speed;
         this.button = buttonState;
         this.climber = climber;
+        highlow_ = highlow;
         addRequirements(climber); 
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-
+      climber.setClimb(highlow_);
     }
 
     // Called every time the scheduler runs while the command is scheduled.

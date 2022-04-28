@@ -20,6 +20,7 @@ public class SetRPM extends CommandBase {
   private Storage storage;
   private JoystickButton button;
   private Turret turret;
+  double startPos = 0;
   boolean shoot = false;
 
   public SetRPM(Shooter shooter, Storage storage, Turret turret) {

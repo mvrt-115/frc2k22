@@ -4,8 +4,10 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlFrame;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.StatusFrame; 
 import com.revrobotics.ColorSensorV3;
 
@@ -35,8 +37,9 @@ public class Storage extends SubsystemBase  {
     breakbeamTop = new DigitalInput(1);
     breakbeamBott = new DigitalInput(3);
     prevStateTop = prevStateBott = true; // true is unbroken
-    motor = TalonFactory.createTalonSRX(39, false);
-    motor.setStatusFramePeriod(StatusFrame.Status_1_General, 18, 0); // updating status frame period
+    motor = TalonFactory.createTalonFX(39, false);
+    motor.setStatusFramePeriod(StatusFrame.Status_1_General, 100); // updating status frame period
+    motor.setControlFramePeriod(ControlFrame.Control_3_General, 100);
     balls = 0;
     overriden = false;
     lastTime = Timer.getFPGATimestamp();
@@ -98,6 +101,10 @@ public class Storage extends SubsystemBase  {
       //else{
        // runMotor(1);
      // }
+
+     if (motor.hasResetOccurred()) {
+       motor.setStatusFramePeriod(StatusFrame.Status_1_General, 100);
+     }
     
   }
 
@@ -106,7 +113,7 @@ public class Storage extends SubsystemBase  {
   }
 
   public void autoStorage() {
-    double s = 0.4;
+    double s = 0.2;
 
     if(!breakbeamTop.get()) {
       runMotor(0);
@@ -114,7 +121,7 @@ public class Storage extends SubsystemBase  {
       return;
     } 
       
-    
+
 
     switch (balls) {
       // when there is one ball run until it passes first breakbeam

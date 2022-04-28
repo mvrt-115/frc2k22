@@ -8,6 +8,7 @@ package frc.robot.subsystems;
 import java.sql.Driver;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
@@ -96,6 +97,9 @@ public class Drivetrain extends SubsystemBase {
 
         rightFollower.follow(rightMaster);
         leftFollower.follow(leftMaster);
+
+        rightFollower.setStatusFramePeriod(StatusFrame.Status_1_General, 100);
+        leftFollower.setStatusFramePeriod(StatusFrame.Status_1_General, 100);
 
         //hmmmmmm
         rightMaster.setSafetyEnabled(false);

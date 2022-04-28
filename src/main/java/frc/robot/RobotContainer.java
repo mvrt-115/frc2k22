@@ -57,6 +57,7 @@ public class RobotContainer {
 
   private JoystickButton quickturn;
   private JoystickButton shoot;
+  private JoystickButton shootLaunch;
   private JoystickButton systemsCheckButton;
 
   private JoystickButton resetBalls;
@@ -66,12 +67,16 @@ public class RobotContainer {
   public JoystickButton zeroTurret;
   public JoystickButton estimateTurret;
 
+  public JoystickButton fast;
+
   private Command twoBallAuto;
+  private Command oneBallAuto;
 
   private JoystickButton adjustConstantIncrement;
   private JoystickButton adjustConstantDecrement;
 
   private JoystickButton lowShot;
+  
   SendableChooser<Command> autonSelector;
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -86,13 +91,15 @@ public class RobotContainer {
     autonSelector = new SendableChooser<>();
 
     shoot = new JoystickButton(driverJoystick, 8);
+    shootLaunch = new JoystickButton(driverJoystick, 7);
     pivot = new JoystickButton(driverJoystick, 6);
 
     quickturn = new JoystickButton(driverJoystick, 5);
     throttle = new RollingAverage(50);
     wheel = new RollingAverage(30);
 
-    lowClimb = new JoystickButton(operatorJoystick, 11);
+    lowClimb = new JoystickButton(operatorJoystick, 6);
+    fast = new JoystickButton(driverJoystick, 12);
 
     extend =  new JoystickButton(operatorJoystick, 9);
     retract = new JoystickButton(operatorJoystick, 10);
@@ -124,6 +131,11 @@ public class RobotContainer {
       new WaitCommand(2), 
       new SetRPMRequired(shooter, storage)
     );
+
+    oneBallAuto = new SequentialCommandGroup(
+      new SetRPMRequired(shooter, storage).withTimeout(3),
+      new RunDrive(drivetrain, 2.25, 0.2).withTimeout(2.25)
+    );
     
     // Configure the button bindings
     configureButtonBindings();
@@ -147,6 +159,7 @@ public class RobotContainer {
     turret.setDefaultCommand(new FindTarget(turret));
     
     shoot.whenPressed(new SetRPMRequired(shooter, storage, shoot));//.whenReleased(new StopShooter(shooter, storage));
+    shootLaunch.whenPressed(new SetRPMLaunchpad(shooter, storage, turret, shootLaunch));
     // new SetRPM(shooter, storage, 1000).schedule();
     // SmartDashboard.putData("Testing Shooter", new SetRPMDash(shooter, storage, turret, drivetrain));
     pivot.whenPressed(new Pivot(intake,storage)).whenReleased(new PivotUp(intake, storage));
@@ -158,15 +171,19 @@ public class RobotContainer {
     /* when the retract and extend buttons are pressed then the telescopic manual command is called accordingly with 
        the given value */
 
-    // lowClimb.whenPressed(new LowClimb(climber));
+    lowClimb.whenPressed(new UnratchetExtend(climber, this::isLowPressed, Constants.Climber.kTelescopicExtendManualSpeed, true))
+    .whenReleased(new TelescopicManual(climber, () -> !isLowPressed(), 0, true).alongWith(new TelescopicRatchet(climber, Constants.Climber.kServoRatchet)));
 
     // retract.whenPressed(new TelescopicManual(climber, this::isRetractPressed, Constants.Climber.kTelescopicRetractManualSpeed))
     retract.whenPressed(new RatchetRetract(climber, this::isRetractPressed, Constants.Climber.kTelescopicRetractManualSpeed))
-      .whenReleased(new TelescopicManual(climber, () -> !isRetractPressed(), 0).alongWith(new TelescopicRatchet(climber, Constants.Climber.kServoRatchet).withTimeout(1.5)));
+      .whenReleased(new TelescopicManual(climber, () -> !isRetractPressed(), 0, false));
 
     //extend.whenPressed(new TelescopicManual(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed))
-    extend.whenPressed(new UnratchetExtend(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed))
-    .whenReleased(new TelescopicManual(climber, () -> !isExtendPressed(), 0).alongWith(new TelescopicRatchet(climber, Constants.Climber.kServoRatchet))); 
+    extend.whenPressed(new UnratchetExtend(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed, false))
+    .whenReleased(new TelescopicManual(climber, () -> !isExtendPressed(), 0, false).alongWith(new TelescopicRatchet(climber, Constants.Climber.kServoRatchet))); 
+
+    // lowClimb.whenPressed(new UnratchetExtend(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed, true))
+    // .whenReleased(new TelescopicManual(climber, () -> !isExtendPressed(), 0, true).alongWith(new TelescopicRatchet(climber, Constants.Climber.kServoRatchet))); 
 
     disableTurret.whenPressed(new DisableTurret(turret));//.whenReleased(new FindTarget(turret));
     zeroTurret.whenPressed(new ZeroTurret(turret)).whenReleased(new FindTarget(turret));
@@ -179,8 +196,9 @@ public class RobotContainer {
     // lowShot.whenPressed(new SetRPMValue(shooter, storage, Constants.Flywheel.LOW_SHOT_RPM));//.whenReleased(new StopShooter(shooter, storage));
     
     autonSelector.addOption("2 Ball", twoBallAuto);
+    autonSelector.addOption("Rude Two Ball (the two ball that shoots another teams balls away in case you are confused Arnav Dalal). ", new TwoBallAndHit(drivetrain, intake, shooter, storage, turret));
     autonSelector.addOption("5 Ball", new FiveBallAuton(drivetrain, intake, shooter, storage, turret));
-    autonSelector.setDefaultOption("Two Ball Auton", twoBallAuto);
+    autonSelector.setDefaultOption("2 Ball", twoBallAuto);
 
     SmartDashboard.putData("Auton Selector", autonSelector);
   }
@@ -195,8 +213,14 @@ public class RobotContainer {
    * @return value from [-1, 1] that is used for input for the the robot forward or backwards movement
    */
   public double getThrottle() {
-    throttle.updateValue(-driverJoystick.getRawAxis(3) * 0.8);
-    return throttle.getAverage();
+    if(fast.get()){
+      throttle.updateValue(-driverJoystick.getRawAxis(3));
+      return throttle.getAverage();
+    }
+    else{
+      throttle.updateValue(-driverJoystick.getRawAxis(3) * 0.8);
+      return throttle.getAverage();
+    }
   }
 
   public Intake getIntake(){
@@ -226,6 +250,10 @@ public class RobotContainer {
    */
   public boolean isExtendPressed() {
     return extend.get();
+  }
+
+  public boolean isLowPressed(){
+    return lowClimb.get();
   }
 
   public boolean isRetractPressed() {
@@ -271,8 +299,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // return autonSelector.getSelected();
-    return new TwoBallAndHit(drivetrain, intake, shooter, storage, turret);
+    return autonSelector.getSelected();
     // return twoBallAuto;
   }
 
