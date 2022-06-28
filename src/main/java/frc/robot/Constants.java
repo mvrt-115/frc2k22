@@ -23,7 +23,7 @@ public final class Constants {
     public static final double MAX_VOLTAGE = 10.0;
     
     public static final int kPIDIdx = 0;
-    public static final int kTimeoutMs = 10;
+    public static final int kTimeoutMs = 35;
     public static final boolean kIsPracticeBot = true;
     public static final double kVoltageComp = 10.0;
     public static final SupplyCurrentLimitConfiguration kCurrentLimit = new SupplyCurrentLimitConfiguration(true, 40, 50, 3.8);

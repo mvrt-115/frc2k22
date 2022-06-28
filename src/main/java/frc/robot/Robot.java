@@ -8,6 +8,7 @@ import org.photonvision.PhotonCamera;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.util.net.PortForwarder;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -41,6 +42,14 @@ public class Robot extends TimedRobot {
     cam.setResolution(128, 140);
     cam.setFPS(30);
     cam.setBrightness(50);
+
+    // limelight ports available when usb connected
+    PortForwarder.add(5800, "limelight.local", 5800);
+    PortForwarder.add(5801, "limelight.local", 5801);
+    PortForwarder.add(5802, "limelight.local", 5802);
+    PortForwarder.add(5803, "limelight.local", 5803);
+    PortForwarder.add(5804, "limelight.local", 5804);
+    PortForwarder.add(5805, "limelight.local", 5805);
 
     // cam = new PhotonCamera("gloworm");
     // if (DriverStation.getAlliance().toString().equals("Blue")) {
