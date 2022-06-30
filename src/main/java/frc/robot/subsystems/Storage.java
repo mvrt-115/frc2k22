@@ -7,7 +7,6 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlFrame;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.StatusFrame; 
 import com.revrobotics.ColorSensorV3;
 
@@ -31,6 +30,12 @@ public class Storage extends SubsystemBase  {
   // private final I2C.Port i2cPort = I2C.Port.kOnboard;
   // public final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
   private double stopIntakeTime = -1;
+
+  private static Storage storage = new Storage();
+  
+  public static Storage getInstance() {
+    return storage;
+  }
 
 
   public Storage()  {

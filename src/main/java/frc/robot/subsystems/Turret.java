@@ -12,7 +12,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.motorcontrol.SD540;
 // import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -21,15 +20,13 @@ import frc.robot.util.Limelight;
 import frc.robot.util.MathUtils;
 import frc.robot.util.TalonFactory;
 
-// TODO: Edge cases for turret (need to recalibrate should be able to recalibrate no matter where turret is)
-
 public class Turret extends SubsystemBase {
 
   public static enum TurretState {
     TARGETING, FLIPPING, SEARCHING, CAN_SHOOT, DISABLED
   }
 
-  public static TalonFX turret;
+  public TalonFX turret;
   private Limelight limelight;
   private DigitalInput magLimit;
 
@@ -45,10 +42,16 @@ public class Turret extends SubsystemBase {
 
   private double offset;
 
+  private static Turret turretInstance = new Turret();
+
+  public static Turret getInstance() {
+    return turretInstance;
+  }
+
   /** Creates a new Turret. */
-  public Turret(Limelight limelight) {
+  public Turret() {
     turret = TalonFactory.createTalonFX(5, true);
-    this.limelight = limelight;
+    limelight = Limelight.getInstance();
     magLimit = new DigitalInput(9);
 
     state = TurretState.DISABLED;
@@ -265,7 +268,7 @@ public class Turret extends SubsystemBase {
    * Finds the current position in degrees
    * @return  the current position of the turret in degrees
    */
-  public static double getCurrentPositionDegrees() {
+  public double getCurrentPositionDegrees() {
     return MathUtils.ticksToDegrees(
       turret.getSelectedSensorPosition(), 
       Constants.Turret.kGearRatio, 

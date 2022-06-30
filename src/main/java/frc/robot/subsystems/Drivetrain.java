@@ -5,8 +5,6 @@
 
 package frc.robot.subsystems;
 
-import java.sql.Driver;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
@@ -46,18 +44,26 @@ public class Drivetrain extends SubsystemBase {
 
     private WPI_TalonFX rightMaster, leftMaster, rightFollower, leftFollower;
 
-    public static AHRS gyro;
+    public AHRS gyro;
+
+    
 
     //Auton Stuff
     private Pose2d pose;
     private DifferentialDriveOdometry odometry;
-    // private Field2d field;
+    private Field2d field;
     private SimpleMotorFeedforward feedforward;
     private DifferentialDriveKinematics kinematics;
     private PIDController leftController, rightController;
     private DifferentialDrive differentialDrive;
+    
+    private static Drivetrain drivetrain = new Drivetrain();
 
-    public Drivetrain() {
+    public static Drivetrain getInstance() {
+        return drivetrain;
+    }
+
+    private Drivetrain() {
         //     if (Constants.kIsPracticeBot) {
         //         rightMaster = TalonFactory.createTalonFX(Constants.Drivetrain.kPracRightMasterId, true);
         //         leftMaster = TalonFactory.createTalonFX(Constants.Drivetrain.kPracLeftMasterId, false);
@@ -111,7 +117,7 @@ public class Drivetrain extends SubsystemBase {
         pose = new Pose2d();
         gyro = new AHRS(SPI.Port.kMXP);
         odometry = new DifferentialDriveOdometry(getGyroAngle());
-        // field = new Field2d();
+        field = new Field2d();
 
         feedforward = new SimpleMotorFeedforward(Constants.Drivetrain.kS, Constants.Drivetrain.kV, Constants.Drivetrain.kA);
         kinematics = new DifferentialDriveKinematics(MathUtils.inchesToMeters(Constants.Drivetrain.kTrackWidthInches)); //because kTrackWidthInches is in, well, inches (duh) lol
@@ -181,12 +187,11 @@ public class Drivetrain extends SubsystemBase {
         rightMaster.feed();
         leftFollower.feed();
         rightFollower.feed();
-        if (DriverStation.isAutonomous()) {
-            
+        if (DriverStation.isEnabled()) {
             pose = odometry.update(getGyroAngle(), getDistanceTravelled(leftMaster, leftFollower),
                     getDistanceTravelled(rightMaster, rightFollower));
         }
-        // field.setRobotPose(odometry.getPoseMeters());
+        field.setRobotPose(odometry.getPoseMeters());
         log();
     }
 
@@ -196,15 +201,15 @@ public class Drivetrain extends SubsystemBase {
     public void log() {
         // SmartDashboard.putNumber("Left Encoder:", leftMaster.getSelectedSensorPosition());
         // SmartDashboard.putNumber("Right Encoder:", rightMaster.getSelectedSensorPosition());
-        // SmartDashboard.putNumber("Left Output", leftFollower.getMotorOutputPercent());
-        // SmartDashboard.putNumber("Right Output", rightFollower.getMotorOutputPercent());
-        SmartDashboard.putNumber("Gyro Angle:", -gyro.getAngle());
-        // SmartDashboard.putNumber("Pose Gyro Angle", pose.getRotation().getDegrees());
+        SmartDashboard.putNumber("Left Output", leftFollower.getMotorOutputPercent());
+        SmartDashboard.putNumber("Right Output", rightFollower.getMotorOutputPercent());
+        SmartDashboard.putNumber("Gyro Angle:", gyro.getAngle());
+        SmartDashboard.putNumber("Pose Gyro Angle", pose.getRotation().getDegrees());
         // SmartDashboard.putNumber("Left Distance Traveled", getDistanceTravelled(leftMaster, leftFollower));
         // SmartDashboard.putNumber("Right Distance Traveled", getDistanceTravelled(rightMaster, rightFollower));
-        // SmartDashboard.putNumber("X value", pose.getX());
-        // SmartDashboard.putNumber("Y value", pose.getY());
-        // SmartDashboard.putData("SD Field", field);
+        SmartDashboard.putNumber("X value", pose.getX());
+        SmartDashboard.putNumber("Y value", pose.getY());
+        SmartDashboard.putData("SD Field", field);
     }
 
     /* GETTERS AND SETTERS (AND RESETTERS) */
@@ -296,6 +301,15 @@ public class Drivetrain extends SubsystemBase {
      */
     public Rotation2d getGyroAngle() {
         return Rotation2d.fromDegrees(-gyro.getAngle());
+    }
+
+    /**
+     * Returns the rotation as a Rotation2d object
+     * 
+     * @return Rotation2d of current rotation
+     */
+    public double getRawGyroAngle() {
+        return gyro.getAngle();
     }
 
     /**

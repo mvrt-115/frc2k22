@@ -5,7 +5,6 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
@@ -15,8 +14,6 @@ import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.commands.telescopic.TelescopicRatchet;
-import frc.robot.util.MathUtils;
 import frc.robot.util.TalonFactory;
 
 public class Climber extends SubsystemBase {
@@ -30,6 +27,12 @@ public class Climber extends SubsystemBase {
     // for detecting whether robot is hooked on rungs or not for each type of arm
     // public DigitalInput leftTelescopicLimit, rightTelescopicLimit; // inductive proximity sensors
     // for detecting whether robot is hooked on rungs or not for each type of arm
+
+    private static Climber climber = new Climber();
+    
+    public static Climber getInstance() {
+        return climber;
+    }
 
     public enum ClimberState {
         NONE, TELESCOPIC_LIMIT, TELESCOPIC_PROXIMITY
@@ -45,9 +48,8 @@ public class Climber extends SubsystemBase {
      * Initializes all objects and reconfigures all motors to requirements
      */
 
-    public Climber() {
+    private Climber() {
         // initializes all motors and sensors
-        // pivot = TalonFactory.createTalonFX(Constants.Climber.kLeftTelescopicID, TalonFXInvertType.Clockwise);
         leftTelescopic = TalonFactory.createTalonFX(Constants.Climber.kLeftTelescopicID, false);
         rightTelescopic = TalonFactory.createTalonFX(Constants.Climber.kRightTelescopicID, false);
         leftTelescopic.setNeutralMode(NeutralMode.Coast);
@@ -63,9 +65,7 @@ public class Climber extends SubsystemBase {
         setServoTurn(0);
 
 
-        //reconfiguring all motors with PID constants
-        //rightTelescopic.follow(leftTelescopic);
-        
+        //reconfiguring all motors with PID constants        
 
         leftTelescopic.config_kP(Constants.kPIDIdx, Constants.Climber.kTelekP);
         leftTelescopic.config_kI(Constants.kPIDIdx, Constants.Climber.kTelekI);
@@ -76,12 +76,6 @@ public class Climber extends SubsystemBase {
         rightTelescopic.config_kI(Constants.kPIDIdx, Constants.Climber.kTelekI);
         rightTelescopic.config_kD(Constants.kPIDIdx, Constants.Climber.kTelekD);
         rightTelescopic.config_kF(Constants.kPIDIdx, Constants.Climber.kTelekF);
-
-        //rightTelescopic.setNeutralMode(NeutralMode.Brake);
-       // leftTelescopic.setNeutralMode(NeutralMode.Brake);
-
-       // leftServo.setZeroLatch();
-      //  rightServo.setZeroLatch();
 
         lowClimb = false;
     }
@@ -268,16 +262,7 @@ public class Climber extends SubsystemBase {
     // This method will be called once per scheduler run
     @Override
     public void periodic() {
-        // SmartDashboard.putNumber("left clim", getLeftTelescopicEncoderValue());
-        // SmartDashboard.putNumber("right clim", getRightTelescopicEncoderValue());
-
-         SmartDashboard.putNumber("left lowClim", getLeftTelescopicEncoderValue());
-         SmartDashboard.putNumber("right lowClim", getRightTelescopicEncoderValue());
-
-        // if(getTelescopicPosition() >= 280000){
-        //     leftServo.set(Constants.Climber.kServoRatchet);
-        //     rightServo.set(Constants.Climber.kServoRatchet);
-        // } //bruh
-
+         SmartDashboard.putNumber("left climber pos", getLeftTelescopicEncoderValue());
+         SmartDashboard.putNumber("right climber pos", getRightTelescopicEncoderValue());
     }
 }

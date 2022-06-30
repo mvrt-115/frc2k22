@@ -11,7 +11,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.RobotContainer;
+import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Turret;
 
 public class Limelight extends SubsystemBase {
@@ -21,9 +21,7 @@ public class Limelight extends SubsystemBase {
   private RollingAverage tx;
   private RollingAverage ty;
   private RollingAverage targetDist;
-  private NetworkTable limelight;
-
-  // TODO: CHANGE THE LIMELIGHT CONSTANTS !!!!!!!!
+  private NetworkTable limelightTable;
 
   public final double height = 104; // inches
   public final double limelightMountHeight = 37.5;  // inches
@@ -37,10 +35,16 @@ public class Limelight extends SubsystemBase {
     VISION_WIDE, DRIVER, VISION_ZOOM;
   }
 
+  private static Limelight limelight = new Limelight();
+
+  public static Limelight getInstance() {
+    return limelight;
+  }
+
   /** Creates a new LimelightWrapper. */
   public Limelight() {
     
-    limelight = NetworkTableInstance.getDefault().getTable("limelight");
+    limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
     tx = new RollingAverage(Constants.Limelight.LIMELIGHT_ROLLING_AVG);
     ty = new RollingAverage(Constants.Limelight.LIMELIGHT_ROLLING_AVG);
     targetDist = new RollingAverage(Constants.Limelight.LIMELIGHT_ROLLING_AVG);
@@ -63,16 +67,16 @@ public class Limelight extends SubsystemBase {
   public void setLED(LED_STATE newState) {
     switch (newState) {
       case ON:
-        limelight.getEntry("ledMode").setNumber(3);
+        limelightTable.getEntry("ledMode").setNumber(3);
         break;
       case OFF:
-        limelight.getEntry("ledMode").setNumber(1);
+        limelightTable.getEntry("ledMode").setNumber(1);
         break;
       case BLINKING:
-        limelight.getEntry("ledMode").setNumber(2);
+        limelightTable.getEntry("ledMode").setNumber(2);
         break;
       case DEFAULT:
-        limelight.getEntry("ledMode").setNumber(0);
+        limelightTable.getEntry("ledMode").setNumber(0);
         break;
     }
   }
@@ -80,13 +84,13 @@ public class Limelight extends SubsystemBase {
   public void setPipeline(CAM_MODE newMode) {
     switch (newMode) {
       case VISION_WIDE:
-        limelight.getEntry("pipeline").setNumber(0);
+        limelightTable.getEntry("pipeline").setNumber(0);
         break;
       case VISION_ZOOM:
-        limelight.getEntry("pipeline").setNumber(0);
+        limelightTable.getEntry("pipeline").setNumber(0);
         break;
       case DRIVER:
-        limelight.getEntry("pipeline").setNumber(0);
+        limelightTable.getEntry("pipeline").setNumber(0);
         break;
     }
   }
@@ -97,7 +101,7 @@ public class Limelight extends SubsystemBase {
    * @param rollingAvg  The rolling average to update (ty or tx)
    */
   private void updateEntry(String key, RollingAverage rollingAvg) {
-    rollingAvg.updateValue((limelight.getEntry(key).getDouble(0)));      
+    rollingAvg.updateValue((limelightTable.getEntry(key).getDouble(0)));      
   }
 
   /**
@@ -156,14 +160,18 @@ public class Limelight extends SubsystemBase {
    * @return true if targets can be found false if there aren't any
    */
   public boolean targetsFound() {
-    int tv = (int) limelight.getEntry("tv").getDouble(0);
+    int tv = (int) limelightTable.getEntry("tv").getDouble(0);
     if (tv == 1)
       return true;
     return false;
   }
 
   public Pose2d estimatePose() {
-      double angle = -(RobotContainer.drivetrain.gyro.getAngle() + Turret.getCurrentPositionDegrees());
+
+      Drivetrain dt = Drivetrain.getInstance();
+      Turret turret = Turret.getInstance();
+
+      double angle = -(-dt.getRawGyroAngle() + turret.getCurrentPositionDegrees());
 
       return new Pose2d(Math.cos(Math.toDegrees(angle)) * targetDist.getAverage(), Math.sin(Math.toDegrees(angle)) * targetDist.getAverage(), Rotation2d.fromDegrees(angle));
   }

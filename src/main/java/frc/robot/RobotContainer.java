@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.*;
 import frc.robot.commands.telescopic.*;
 import frc.robot.subsystems.*;
-import frc.robot.util.Limelight;
 import frc.robot.util.RollingAverage;
 
 /**
@@ -37,13 +36,12 @@ public class RobotContainer {
   
   private JoystickButton  pivot; //buttons
 
-  public static final Drivetrain drivetrain = new Drivetrain();
-  private final Intake intake = new Intake();
-  private static final Limelight limelight = new Limelight();
+  public static final Drivetrain drivetrain = Drivetrain.getInstance();
+  private final Intake intake = Intake.getInstance();
   private final Storage storage = new Storage();
-  private final Climber climber = new Climber();
-  public static final Turret turret = new Turret(limelight);
-  private final Shooter shooter = new Shooter(limelight, drivetrain, turret);
+  private final Climber climber = Climber.getInstance();
+  public static final Turret turret = Turret.getInstance();
+  private final Shooter shooter = Shooter.getInstance();
   // private final LEDs led = new LEDs();
 
   // climber operator manual buttons

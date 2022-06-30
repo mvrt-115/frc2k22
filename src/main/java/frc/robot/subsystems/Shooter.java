@@ -10,7 +10,6 @@ import frc.robot.util.MathUtils;
 import frc.robot.util.RollingAverage;
 import frc.robot.util.TalonFactory;
 import frc.robot.Constants;
-import edu.wpi.first.hal.ConstantsJNI;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -39,13 +38,23 @@ public class Shooter extends SubsystemBase {
   private double targetRPM = 0;
 
   private RollingAverage rpm;
-  public Limelight limelight;
-
+  private Limelight limelight;
   private Turret turret;
   private Drivetrain drivetrain;
 
+  private static Shooter shooter = new Shooter();
+
+  public static Shooter getInstance() {
+    return shooter;
+  }
+
   /** Creates a new Shooter. */
-  public Shooter(Limelight limelight, Drivetrain drivetrain, Turret turret) {
+  private Shooter() {
+
+    limelight = Limelight.getInstance();
+    turret = Turret.getInstance();
+    drivetrain = Drivetrain.getInstance();
+
     // Mind Bending Test aon the Reality of our Situation
     flywheelLeader = TalonFactory.createTalonFX(LEADER_ID, false);
     flywheelLeader.setNeutralMode(NeutralMode.Coast);
@@ -57,14 +66,9 @@ public class Shooter extends SubsystemBase {
     flywheelLeader.config_kD(Constants.kPIDIdx, Constants.Flywheel.D);
     flywheelLeader.config_kF(Constants.kPIDIdx, Constants.Flywheel.F);
 
-    this.limelight = limelight;
-
     state = ShooterState.OFF;
     // hoodState = HoodState.OFF;
     rpm = new RollingAverage(Constants.Flywheel.NUM_AVG);
-
-    this.turret = turret;
-    this.drivetrain = drivetrain;
   }
 
   public void runMotor(double out ){
@@ -175,7 +179,7 @@ public class Shooter extends SubsystemBase {
     // linear constant to slightly tune the shot, -> Limelight distances range from 80 to 220
     // *currently set to 0, I suggest it should be 1*
     double x = limelight.getHorizontalDistance() * Constants.Flywheel.STRETCH_CONSTANT;
-    double addTuneRPM = Constants.Flywheel.LIN_CONST*limelight.getHorizontalDistance()+Constants.Flywheel.REG_CONSTANT;
+    // double addTuneRPM = Constants.Flywheel.LIN_CONST*limelight.getHorizontalDistance()+Constants.Flywheel.REG_CONSTANT;
 
     // double rpm = Math.min(333*Math.pow(limelight.getHorizontalDistance() * Constants.Flywheel.STRETCH_CONSTANT, 0.522) + Constants.Flywheel.LIN_CONST * limelight.getHorizontalDistance(), Constants.Flywheel.MAX_RPM);
    
@@ -204,10 +208,10 @@ public class Shooter extends SubsystemBase {
 
     double rpm = getStationaryRPM();
 
-    if(Constants.Flywheel.ENMOVSHOT && limelight.targetsFound())
-    {
-      rpm+=getCalculatedAddRPM();
-    }
+    // if(Constants.Flywheel.ENMOVSHOT && limelight.targetsFound())
+    // {
+    //   rpm+=getCalculatedAddRPM();
+    // }
 
     return Math.min(rpm, Constants.Flywheel.MAX_RPM);
   }
@@ -269,13 +273,13 @@ public class Shooter extends SubsystemBase {
     double vert_drive_comp = driveSpeed*Math.sin(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()));
     double totSpeed = Math.sqrt(vert_drive_comp*vert_drive_comp + diff_const*diff_const)+initSpeed;
 
-    double movOffset = Math.toDegrees(Math.asin(driveSpeed*Math.sin(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()))/(totSpeed)));
+    // double movOffset = Math.toDegrees(Math.asin(driveSpeed*Math.sin(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()))/(totSpeed)));
 
     // Only does move shot when it's enabled.
-    if(Constants.Flywheel.ENMOVSHOT && limelight.targetsFound())
-    {
-      offset+=movOffset;
-    }
+    // if(Constants.Flywheel.ENMOVSHOT && limelight.targetsFound())
+    // {
+    //   offset+=movOffset;
+    // }
 
     if(Math.abs(offset)>Constants.Turret.kMaxOffset)
     {

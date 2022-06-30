@@ -12,7 +12,6 @@ import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import com.ctre.phoenix.motorcontrol.StatusFrame; // to set the status frame period of diff motors
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.util.TalonFactory;
 
@@ -28,10 +27,15 @@ public class Intake extends SubsystemBase {
   private boolean pivotState;
   public BaseTalon pivotMotor; 
 
-  private double feedForward; // feed forward double needed to pivot for a certain number of ticks
+  // private double feedForward; // feed forward double needed to pivot for a certain number of ticks
 
+  private static Intake intake = new Intake();
 
-  public Intake() {
+  public static Intake getInstance() {
+    return intake;
+  }
+
+  private Intake() {
     pivotState = true;
     state = IntakeState.UP;
 
@@ -57,7 +61,7 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    feedForward = Constants.Intake.kFF * Math.cos(Math.toRadians(getAngle()));
+    // feedForward = Constants.Intake.kFF * Math.cos(Math.toRadians(getAngle()));
     switch(state)
     {
       case INTAKING: // intake is deployed and starts running
