@@ -117,8 +117,8 @@ public final class Constants {
 
     public static class Limelight
     {
-        public static final double MOUNT_ANGLE = 15;
-        public static final double Height_IN = 36;
+        public static final double MOUNT_ANGLE = 64;
+        public static final double HEIGHT_IN = 35.3060254038 + 1.32892604878;
         public static final double TARGET_HEIGHT_IN = 104;
         public static final int LIMELIGHT_ROLLING_AVG = 8;
     }

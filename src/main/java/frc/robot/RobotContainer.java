@@ -37,12 +37,12 @@ public class RobotContainer {
   
   private JoystickButton  pivot; //buttons
 
-  public final Drivetrain drivetrain = new Drivetrain();
+  public static final Drivetrain drivetrain = new Drivetrain();
   private final Intake intake = new Intake();
-  private final Limelight limelight = new Limelight();
+  private static final Limelight limelight = new Limelight();
   private final Storage storage = new Storage();
   private final Climber climber = new Climber();
-  private final Turret turret = new Turret(limelight);
+  public static final Turret turret = new Turret(limelight);
   private final Shooter shooter = new Shooter(limelight, drivetrain, turret);
   // private final LEDs led = new LEDs();
 
@@ -54,7 +54,7 @@ public class RobotContainer {
   private JoystickButton downManualStorage;
 
   public RollingAverage throttle, wheel;
-
+ 
   private JoystickButton quickturn;
   private JoystickButton shoot;
   private JoystickButton shootLaunch;

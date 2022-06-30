@@ -46,7 +46,7 @@ public class Drivetrain extends SubsystemBase {
 
     private WPI_TalonFX rightMaster, leftMaster, rightFollower, leftFollower;
 
-    private AHRS gyro;
+    public static AHRS gyro;
 
     //Auton Stuff
     private Pose2d pose;
@@ -198,7 +198,7 @@ public class Drivetrain extends SubsystemBase {
         // SmartDashboard.putNumber("Right Encoder:", rightMaster.getSelectedSensorPosition());
         // SmartDashboard.putNumber("Left Output", leftFollower.getMotorOutputPercent());
         // SmartDashboard.putNumber("Right Output", rightFollower.getMotorOutputPercent());
-        // SmartDashboard.putNumber("Gyro Angle:", -gyro.getAngle());
+        SmartDashboard.putNumber("Gyro Angle:", -gyro.getAngle());
         // SmartDashboard.putNumber("Pose Gyro Angle", pose.getRotation().getDegrees());
         // SmartDashboard.putNumber("Left Distance Traveled", getDistanceTravelled(leftMaster, leftFollower));
         // SmartDashboard.putNumber("Right Distance Traveled", getDistanceTravelled(rightMaster, rightFollower));

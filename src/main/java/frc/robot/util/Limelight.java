@@ -4,11 +4,15 @@
 
 package frc.robot.util;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
+import frc.robot.subsystems.Turret;
 
 public class Limelight extends SubsystemBase {
 
@@ -16,6 +20,7 @@ public class Limelight extends SubsystemBase {
 
   private RollingAverage tx;
   private RollingAverage ty;
+  private RollingAverage targetDist;
   private NetworkTable limelight;
 
   // TODO: CHANGE THE LIMELIGHT CONSTANTS !!!!!!!!
@@ -38,6 +43,7 @@ public class Limelight extends SubsystemBase {
     limelight = NetworkTableInstance.getDefault().getTable("limelight");
     tx = new RollingAverage(Constants.Limelight.LIMELIGHT_ROLLING_AVG);
     ty = new RollingAverage(Constants.Limelight.LIMELIGHT_ROLLING_AVG);
+    targetDist = new RollingAverage(Constants.Limelight.LIMELIGHT_ROLLING_AVG);
     
     setLED(LED_STATE.DEFAULT);
     setPipeline(CAM_MODE.VISION_WIDE);
@@ -48,7 +54,10 @@ public class Limelight extends SubsystemBase {
     // update ty and tx
     updateEntry("ty", ty);
     updateEntry("tx", tx);
-    // SmartDashboard.putNumber("Dist From Target", getHorizontalDistance());
+
+    targetDist.updateValue(getDistToTarget());
+    SmartDashboard.putNumber("Dist From Target", targetDist.getAverage());
+    SmartDashboard.putString("pose stuff", estimatePose().toString());
   }
 
   public void setLED(LED_STATE newState) {
@@ -128,6 +137,20 @@ public class Limelight extends SubsystemBase {
   }
 
   /**
+   * Get distance to target 
+   * 
+   * CAP AT 200 INCHES
+   * 
+   * @return distance (inches)
+   */
+  public double getDistToTarget() {
+    double angleToGoalDegrees = (90 - Constants.Limelight.MOUNT_ANGLE) + ty.getAverage();
+    double angleToGoalRadians = angleToGoalDegrees * (Math.PI / 180);
+
+    return (Constants.Limelight.TARGET_HEIGHT_IN - Constants.Limelight.HEIGHT_IN) / Math.tan(angleToGoalRadians);
+  }
+
+  /**
    * Whether limelight has found any valid targets
    * 
    * @return true if targets can be found false if there aren't any
@@ -137,5 +160,11 @@ public class Limelight extends SubsystemBase {
     if (tv == 1)
       return true;
     return false;
+  }
+
+  public Pose2d estimatePose() {
+      double angle = -(RobotContainer.drivetrain.gyro.getAngle() + Turret.getCurrentPositionDegrees());
+
+      return new Pose2d(Math.cos(Math.toDegrees(angle)) * targetDist.getAverage(), Math.sin(Math.toDegrees(angle)) * targetDist.getAverage(), Rotation2d.fromDegrees(angle));
   }
 }

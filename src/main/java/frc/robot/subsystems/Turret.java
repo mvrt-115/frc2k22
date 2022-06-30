@@ -29,7 +29,7 @@ public class Turret extends SubsystemBase {
     TARGETING, FLIPPING, SEARCHING, CAN_SHOOT, DISABLED
   }
 
-  private TalonFX turret;
+  public static TalonFX turret;
   private Limelight limelight;
   private DigitalInput magLimit;
 
@@ -265,7 +265,7 @@ public class Turret extends SubsystemBase {
    * Finds the current position in degrees
    * @return  the current position of the turret in degrees
    */
-  public double getCurrentPositionDegrees() {
+  public static double getCurrentPositionDegrees() {
     return MathUtils.ticksToDegrees(
       turret.getSelectedSensorPosition(), 
       Constants.Turret.kGearRatio, 

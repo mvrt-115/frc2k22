@@ -131,7 +131,7 @@ public class Shooter extends SubsystemBase {
     // SmartDashboard.putNumber("RPM Needed", getRequiredRPM());
     SmartDashboard.putString("Shooter State", state.toString());
     // SmartDashboard.putNumber("Target RPM", targetRPM);
-    SmartDashboard.putNumber("Limelight Distance", limelight.getHorizontalDistance());
+    SmartDashboard.putNumber("Limelight Horizontal Distance", limelight.getHorizontalDistance());
     SmartDashboard.putNumber("Real Offset", limelight.getHorizontalOffset());
     SmartDashboard.putNumber("Turret Offset", getCalculatedOffset());
     SmartDashboard.putNumber("Added RPM", getCalculatedAddRPM());
