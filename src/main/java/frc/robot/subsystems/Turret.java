@@ -23,7 +23,7 @@ import frc.robot.util.TalonFactory;
 public class Turret extends SubsystemBase {
 
   public static enum TurretState {
-    TARGETING, FLIPPING, SEARCHING, CAN_SHOOT, DISABLED
+    TARGETING, FLIPPING, CAN_SHOOT, DISABLED
   }
 
   public TalonFX turret;
@@ -96,22 +96,25 @@ public class Turret extends SubsystemBase {
        case FLIPPING:
         //  flip();
          break;
-       case SEARCHING:
-         search();
-         break;
        case CAN_SHOOT:
        case TARGETING:
-         target();
-         updateLastVariables();
+        if(Math.abs(targetDegrees - getCurrentPositionDegrees()) < 2 && Math.abs(limelight.getHorizontalOffset()) >= 4) {
+          visionControl();
+          updateLastVariables();
+        } else {
+          fieldOrientedControl();
+          lastError = 0;
+          area = 0;
+        }
+         
          break;
      }      
-    // SmartDashboard.putString("Turret State", state.toString());
   }
 
   /**
    * Targets using a pid on the limelight error
    */
-  public void target() {
+  public void visionControl() {
     double error = (limelight.getHorizontalOffset() + (offset)) / 30;
     double time = Timer.getFPGATimestamp();
 
@@ -171,22 +174,22 @@ public class Turret extends SubsystemBase {
 
   /**
    * Turns the turret to a rough estimate of where the hub is using the gyro and current turret position
-   * @para drivetrainPose The drivetrain pose
    */
-  public void estimate(Pose2d drivetrainPose) {
-    double hubX = 8.283;
-    double hubY = 4.099;
+  public void fieldOrientedControl() {
+
+    final double hubX = 8.242;
+    final double hubY = 4.051;
     
-    double robotX = drivetrainPose.getX();
-    double robotY = drivetrainPose.getY();
+    double robotX = Drivetrain.getInstance().getPose().getX();
+    double robotY = Drivetrain.getInstance().getPose().getX();
 
     double rawAngleDiff = -Math.atan2(hubY - robotY, hubX - robotX);
   
-    double turnAngle = rawAngleDiff + drivetrainPose.getRotation().getRadians();
+    double turnAngle = rawAngleDiff + Drivetrain.getInstance().getGyroAngle().getRadians();
 
-    double target = normalizeAngle(Math.toDegrees(turnAngle));
+    targetDegrees = normalizeAngle(Math.toDegrees(turnAngle));
 
-    turret.set(ControlMode.Position, MathUtils.degreesToTicks(target, Constants.Turret.kTicksPerRevolution, Constants.Turret.kGearRatio));
+    turnDegrees(targetDegrees);
   }
 
   /**
@@ -225,10 +228,13 @@ public class Turret extends SubsystemBase {
    * @param degrees
    */
   public double normalizeAngle(double degrees) {
-    if(degrees > Constants.Turret.kMaxAngle)
-      degrees = Constants.Turret.kMinAngle + (degrees + Constants.Turret.kMinAngle);
-    else if(degrees < Constants.Turret.kMinAngle)
-      degrees = Constants.Turret.kMaxAngle + (degrees + Constants.Turret.kMaxAngle);
+
+    degrees = -degrees;
+
+    // if(degrees > Constants.Turret.kMaxAngle)
+    //   degrees = Constants.Turret.kMinAngle + (degrees + Constants.Turret.kMinAngle);
+    // else if(degrees < Constants.Turret.kMinAngle)
+    //   degrees = Constants.Turret.kMaxAngle + (degrees + Constants.Turret.kMaxAngle);
 
     return Math.max(Constants.Turret.kMinAngle, Math.min(degrees, Constants.Turret.kMaxAngle));
   }

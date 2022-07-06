@@ -5,7 +5,6 @@
 package frc.robot.util;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -62,6 +61,10 @@ public class Limelight extends SubsystemBase {
     targetDist.updateValue(getDistToTarget());
     SmartDashboard.putNumber("Dist From Target", targetDist.getAverage());
     SmartDashboard.putString("pose stuff", estimatePose().toString());
+
+    if(getHorizontalOffset() < 3 && targetsFound()) {
+      Drivetrain.getInstance().setOdometry(estimatePose());
+    }
   }
 
   public void setLED(LED_STATE newState) {
@@ -171,8 +174,16 @@ public class Limelight extends SubsystemBase {
       Drivetrain dt = Drivetrain.getInstance();
       Turret turret = Turret.getInstance();
 
+      final double fieldCenterX = 8.242;
+      final double fieldCenterY = 4.051;
+      final double hubRadius = 1.3589;
+
       double angle = -(-dt.getRawGyroAngle() + turret.getCurrentPositionDegrees());
 
-      return new Pose2d(Math.cos(Math.toDegrees(angle)) * targetDist.getAverage(), Math.sin(Math.toDegrees(angle)) * targetDist.getAverage(), Rotation2d.fromDegrees(angle));
+      return new Pose2d(
+        fieldCenterX + Math.cos(Math.toDegrees(angle)) * (targetDist.getAverage() + hubRadius), 
+        fieldCenterY + Math.sin(Math.toDegrees(angle)) * (targetDist.getAverage() + hubRadius), 
+        dt.getGyroAngle()
+      );
   }
 }
