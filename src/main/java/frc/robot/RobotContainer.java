@@ -38,7 +38,7 @@ public class RobotContainer {
 
   public static final Drivetrain drivetrain = Drivetrain.getInstance();
   private final Intake intake = Intake.getInstance();
-  private final Storage storage = new Storage();
+  private final Storage storage = Storage.getInstance();
   private final Climber climber = Climber.getInstance();
   public static final Turret turret = Turret.getInstance();
   private final Shooter shooter = Shooter.getInstance();

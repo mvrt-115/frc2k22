@@ -66,7 +66,7 @@ public class Turret extends SubsystemBase {
 
     offset = 0;
 
-    turret.config_kP(0, 0.03);//Constants.Turret.kPLarge);
+    turret.config_kP(0, 0.01);//Constants.Turret.kPLarge);
     turret.config_kI(0, 0);//Constants.Turret.kI);
     turret.config_kD(0, 0);//Constants.Turret.kD);
 
@@ -98,14 +98,14 @@ public class Turret extends SubsystemBase {
          break;
        case CAN_SHOOT:
        case TARGETING:
-        if(Math.abs(targetDegrees - getCurrentPositionDegrees()) < 2 && Math.abs(limelight.getHorizontalOffset()) >= 4) {
-          visionControl();
-          updateLastVariables();
-        } else {
+        // if(Math.abs(targetDegrees - getCurrentPositionDegrees()) < 2 && Math.abs(limelight.getHorizontalOffset()) >= 4) {
+        //   visionControl();
+        //   updateLastVariables();
+        // } else {
           fieldOrientedControl();
           lastError = 0;
           area = 0;
-        }
+        // }
          
          break;
      }      
@@ -181,13 +181,15 @@ public class Turret extends SubsystemBase {
     final double hubY = 4.051;
     
     double robotX = Drivetrain.getInstance().getPose().getX();
-    double robotY = Drivetrain.getInstance().getPose().getX();
+    double robotY = Drivetrain.getInstance().getPose().getY();
 
     double rawAngleDiff = -Math.atan2(hubY - robotY, hubX - robotX);
   
-    double turnAngle = rawAngleDiff + Drivetrain.getInstance().getGyroAngle().getRadians();
+    double turnAngle = rawAngleDiff - Drivetrain.getInstance().getGyroAngle().getRadians();
 
     targetDegrees = normalizeAngle(Math.toDegrees(turnAngle));
+
+    SmartDashboard.putNumber("targ  ", targetDegrees);
 
     turnDegrees(targetDegrees);
   }
@@ -229,7 +231,7 @@ public class Turret extends SubsystemBase {
    */
   public double normalizeAngle(double degrees) {
 
-    degrees = -degrees;
+    // degrees = -degrees;
 
     // if(degrees > Constants.Turret.kMaxAngle)
     //   degrees = Constants.Turret.kMinAngle + (degrees + Constants.Turret.kMinAngle);
@@ -325,5 +327,6 @@ public class Turret extends SubsystemBase {
     // SmartDashboard.putNumber("Turret Output", turret.getMotorOutputPercent());
     // SmartDashboard.putNumber("Direction", searchDirection);
     // SmartDashboard.putNumber("Offset", getOffset());
+    SmartDashboard.putNumber("Target Degrees", targetDegrees);
   }
 }

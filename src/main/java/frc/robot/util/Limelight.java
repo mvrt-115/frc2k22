@@ -61,10 +61,10 @@ public class Limelight extends SubsystemBase {
 
     targetDist.updateValue(getDistToTarget());
     SmartDashboard.putNumber("Dist From Target", targetDist.getAverage());
-    SmartDashboard.putString("pose stuff", estimatePose().toString());
 
     if(getHorizontalOffset() < 3 && targetsFound()) {
       Drivetrain.getInstance().setOdometry(estimatePose());
+      System.out.println("hi");
     }
   }
 
@@ -155,7 +155,7 @@ public class Limelight extends SubsystemBase {
     double angleToGoalDegrees = (90 - Constants.Limelight.MOUNT_ANGLE) + ty.getAverage();
     double angleToGoalRadians = angleToGoalDegrees * (Math.PI / 180);
 
-    return (Constants.Limelight.TARGET_HEIGHT_IN - Constants.Limelight.HEIGHT_IN) / Math.tan(angleToGoalRadians);
+    return (Constants.Limelight.TARGET_HEIGHT_IN - Constants.Limelight.HEIGHT_IN) / Math.tan(Math.toRadians(angleToGoalDegrees));
   }
 
   /**
@@ -177,16 +177,24 @@ public class Limelight extends SubsystemBase {
 
       final double fieldCenterX = 8.242;
       final double fieldCenterY = 4.051;
-      final double hubRadius = 1.3589;
+      final double hubRadius = 24;
 
-      double angle = -(-dt.getRawGyroAngle() + turret.getCurrentPositionDegrees());
+      double angle = (dt.getRawGyroAngle()) + turret.getCurrentPositionDegrees();
 
-      double distanceFromCenter = Units.inchesToMeters(targetDist.getAverage()) + hubRadius;
+      double distanceFromCenter = Units.inchesToMeters(targetDist.getAverage() + hubRadius);
 
-      return new Pose2d(
-        fieldCenterX + Math.cos(Math.toDegrees(angle)) * (distanceFromCenter), 
-        fieldCenterY + Math.sin(Math.toDegrees(angle)) * (distanceFromCenter), 
+      Pose2d pose = new Pose2d(
+        fieldCenterX + Math.cos(Math.toRadians(angle)) * (distanceFromCenter), 
+        fieldCenterY - Math.sin(Math.toRadians(angle)) * (distanceFromCenter), 
         dt.getGyroAngle()
       );
-  }
+
+      SmartDashboard.putNumber("disance from center", distanceFromCenter);
+      SmartDashboard.putNumber("angle", angle);
+      SmartDashboard.putNumber("robot x", pose.getX());
+      SmartDashboard.putNumber("robot angle", pose.getRotation().getDegrees());
+      SmartDashboard.putNumber("robot y", pose.getY());
+
+      return pose;
+    }
 }
