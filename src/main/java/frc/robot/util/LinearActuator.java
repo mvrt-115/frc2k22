@@ -85,7 +85,7 @@ public class LinearActuator {
     }
     else
     {
-      actuatorServo.setPosition(position/getRange());
+      actuatorServo.setPosition((position-minHeight)/getRange());
     }
   }
 
