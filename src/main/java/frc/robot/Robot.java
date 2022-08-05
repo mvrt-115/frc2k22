@@ -90,8 +90,8 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
-    m_robotContainer.getIntake().resetEncoders();
-      m_robotContainer.getStorage().setBalls(1);
+    // m_robotContainer.getIntake().resetEncoders();
+      // m_robotContainer.getStorage().setBalls(1);
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {

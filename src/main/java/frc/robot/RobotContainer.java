@@ -36,13 +36,13 @@ public class RobotContainer {
   
   private JoystickButton  pivot; //buttons
 
-  public static final Drivetrain drivetrain = Drivetrain.getInstance();
-  private final Intake intake = Intake.getInstance();
+  // public static final Drivetrain drivetrain = Drivetrain.getInstance();
+  // private final Intake intake = Intake.getInstance();
   private final Storage storage = Storage.getInstance();
-  private final Climber climber = Climber.getInstance();
-  public static final Turret turret = Turret.getInstance();
-  private final Shooter shooter = Shooter.getInstance();
-  // private final LEDs led = new LEDs();
+  // private final Climber climber = Climber.getInstance();
+  // public static final Turret turret = Turret.getInstance();
+  // private final Shooter shooter = Shooter.getInstance();
+  // // private final LEDs led = new LEDs();
 
   // climber operator manual buttons
   private JoystickButton extend;
@@ -116,24 +116,24 @@ public class RobotContainer {
     lowShot = new JoystickButton(operatorJoystick, 5); // THIS BUTTON ID IS NOT FINAL, PLS CHANGE IT
                                                        // to wtvr POTUS wants!!!
 
-    twoBallAuto = new SequentialCommandGroup(
-      new ParallelCommandGroup(
-          new SequentialCommandGroup(
-            new RunDrive(drivetrain, 2.25, 0.2).withTimeout(2.25),
-            new WaitCommand(1)
-          ),
-        new Pivot(intake, storage).withTimeout(3.25)
-      ),
-      new PivotUp(intake, storage),
-      new RunDrive(drivetrain, 1, -0.2).withTimeout(1),
-      new WaitCommand(2), 
-      new SetRPMRequired(shooter, storage)
-    );
+    // twoBallAuto = new SequentialCommandGroup(
+    //   new ParallelCommandGroup(
+    //       new SequentialCommandGroup(
+    //         new RunDrive(drivetrain, 2.25, 0.2).withTimeout(2.25),
+    //         new WaitCommand(1)
+    //       ),
+    //     new Pivot(intake, storage).withTimeout(3.25)
+    //   ),
+    //   new PivotUp(intake, storage),
+    //   new RunDrive(drivetrain, 1, -0.2).withTimeout(1),
+    //   new WaitCommand(2), 
+    //   new SetRPMRequired(shooter, storage)
+    // );
 
-    oneBallAuto = new SequentialCommandGroup(
-      new SetRPMRequired(shooter, storage).withTimeout(3),
-      new RunDrive(drivetrain, 2.25, 0.2).withTimeout(2.25)
-    );
+    // oneBallAuto = new SequentialCommandGroup(
+    //   new SetRPMRequired(shooter, storage).withTimeout(3),
+    //   new RunDrive(drivetrain, 2.25, 0.2).withTimeout(2.25)
+    // );
     
     // Configure the button bindings
     configureButtonBindings();
@@ -149,53 +149,53 @@ public class RobotContainer {
     // storage.setDefaultCommand(new TrackBalls(storage, shooter, alliance));
     // the :: syntax allows us to pass in methods of a class as variables so that the command can continuously access input values
     // alignDrivetrain.whenPressed(new AlignIntakeToBall(drivetrain, true)).whenReleased(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
-    drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, intake, 
-    this::getThrottle, this::getWheel, quickturn::get));
-    // led.setDefaultCommand(new LEDCommand(led, turret, shooter, climber, storage, intake));
+    // drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, intake, 
+    // this::getThrottle, this::getWheel, quickturn::get));
+    // // led.setDefaultCommand(new LEDCommand(led, turret, shooter, climber, storage, intake));
 
-    //storage.setDefaultCommand(new TrackBalls(storage, shooter));
-    turret.setDefaultCommand(new FindTarget(turret));
+    // //storage.setDefaultCommand(new TrackBalls(storage, shooter));
+    // turret.setDefaultCommand(new FindTarget(turret));
     
-    shoot.whenPressed(new SetRPMRequired(shooter, storage, shoot));//.whenReleased(new StopShooter(shooter, storage));
-    shootLaunch.whenPressed(new SetRPMLaunchpad(shooter, storage, turret, shootLaunch));
-    // new SetRPM(shooter, storage, 1000).schedule();
-    // SmartDashboard.putData("Testing Shooter", new SetRPMDash(shooter, storage, turret, drivetrain));
-    pivot.whenPressed(new Pivot(intake,storage)).whenReleased(new PivotUp(intake, storage));
-    resetBalls.whenPressed(new ResetBalls(storage));
-    upManualStorage.whenPressed(new ManualStorage(storage, true, upManualStorage::get));  // true for up
-    downManualStorage.whenPressed(new ManualStorage(storage, false, downManualStorage::get)); // false for down
+    // shoot.whenPressed(new SetRPMRequired(shooter, storage, shoot));//.whenReleased(new StopShooter(shooter, storage));
+    // shootLaunch.whenPressed(new SetRPMLaunchpad(shooter, storage, turret, shootLaunch));
+    // // new SetRPM(shooter, storage, 1000).schedule();
+    // // SmartDashboard.putData("Testing Shooter", new SetRPMDash(shooter, storage, turret, drivetrain));
+    // pivot.whenPressed(new Pivot(intake,storage)).whenReleased(new PivotUp(intake, storage));
+    // resetBalls.whenPressed(new ResetBalls(storage));
+    // upManualStorage.whenPressed(new ManualStorage(storage, true, upManualStorage::get));  // true for up
+    // downManualStorage.whenPressed(new ManualStorage(storage, false, downManualStorage::get)); // false for down
     
-    // alignDrivetrain.whenPressed(new AlignIntakeToBall(drivetrain, true)).whenReleased(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
-    /* when the retract and extend buttons are pressed then the telescopic manual command is called accordingly with 
-       the given value */
+    // // alignDrivetrain.whenPressed(new AlignIntakeToBall(drivetrain, true)).whenReleased(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
+    // /* when the retract and extend buttons are pressed then the telescopic manual command is called accordingly with 
+    //    the given value */
 
-    lowClimb.whenPressed(new UnratchetExtend(climber, this::isLowPressed, Constants.Climber.kTelescopicExtendManualSpeed, true))
-    .whenReleased(new TelescopicManual(climber, () -> !isLowPressed(), 0, true).alongWith(new TelescopicRatchet(climber, Constants.Climber.kServoRatchet)));
+    // lowClimb.whenPressed(new UnratchetExtend(climber, this::isLowPressed, Constants.Climber.kTelescopicExtendManualSpeed, true))
+    // .whenReleased(new TelescopicManual(climber, () -> !isLowPressed(), 0, true).alongWith(new TelescopicRatchet(climber, Constants.Climber.kServoRatchet)));
 
-    // retract.whenPressed(new TelescopicManual(climber, this::isRetractPressed, Constants.Climber.kTelescopicRetractManualSpeed))
-    retract.whenPressed(new RatchetRetract(climber, this::isRetractPressed, Constants.Climber.kTelescopicRetractManualSpeed))
-      .whenReleased(new TelescopicManual(climber, () -> !isRetractPressed(), 0, false));
+    // // retract.whenPressed(new TelescopicManual(climber, this::isRetractPressed, Constants.Climber.kTelescopicRetractManualSpeed))
+    // retract.whenPressed(new RatchetRetract(climber, this::isRetractPressed, Constants.Climber.kTelescopicRetractManualSpeed))
+    //   .whenReleased(new TelescopicManual(climber, () -> !isRetractPressed(), 0, false));
 
-    //extend.whenPressed(new TelescopicManual(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed))
-    extend.whenPressed(new UnratchetExtend(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed, false))
-    .whenReleased(new TelescopicManual(climber, () -> !isExtendPressed(), 0, false).alongWith(new TelescopicRatchet(climber, Constants.Climber.kServoRatchet))); 
+    // //extend.whenPressed(new TelescopicManual(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed))
+    // extend.whenPressed(new UnratchetExtend(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed, false))
+    // .whenReleased(new TelescopicManual(climber, () -> !isExtendPressed(), 0, false).alongWith(new TelescopicRatchet(climber, Constants.Climber.kServoRatchet))); 
 
-    // lowClimb.whenPressed(new UnratchetExtend(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed, true))
-    // .whenReleased(new TelescopicManual(climber, () -> !isExtendPressed(), 0, true).alongWith(new TelescopicRatchet(climber, Constants.Climber.kServoRatchet))); 
+    // // lowClimb.whenPressed(new UnratchetExtend(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed, true))
+    // // .whenReleased(new TelescopicManual(climber, () -> !isExtendPressed(), 0, true).alongWith(new TelescopicRatchet(climber, Constants.Climber.kServoRatchet))); 
 
-    disableTurret.whenPressed(new DisableTurret(turret));//.whenReleased(new FindTarget(turret));
-    zeroTurret.whenPressed(new ZeroTurret(turret)).whenReleased(new FindTarget(turret));
-    // estimateTurret.whenPressed(new EstimateTurret(turret, drivetrain)).whenReleased(new FindTarget(turret));
+    // disableTurret.whenPressed(new DisableTurret(turret));//.whenReleased(new FindTarget(turret));
+    // zeroTurret.whenPressed(new ZeroTurret(turret)).whenReleased(new FindTarget(turret));
+    // // estimateTurret.whenPressed(new EstimateTurret(turret, drivetrain)).whenReleased(new FindTarget(turret));
 
-    adjustConstantIncrement.whenPressed(new AdjustShooterConstant(Constants.Flywheel.INCREMENT));
-    adjustConstantDecrement.whenPressed(new AdjustShooterConstant(-1*Constants.Flywheel.INCREMENT));
+    // adjustConstantIncrement.whenPressed(new AdjustShooterConstant(Constants.Flywheel.INCREMENT));
+    // adjustConstantDecrement.whenPressed(new AdjustShooterConstant(-1*Constants.Flywheel.INCREMENT));
     // KEEP THE INCREMENT LOW. 25 is already a lot.
 
     // lowShot.whenPressed(new SetRPMValue(shooter, storage, Constants.Flywheel.LOW_SHOT_RPM));//.whenReleased(new StopShooter(shooter, storage));
     
     autonSelector.addOption("2 Ball", twoBallAuto);
-    autonSelector.addOption("Rude Two Ball (the two ball that shoots another teams balls away in case you are confused Arnav Dalal). ", new TwoBallAndHit(drivetrain, intake, shooter, storage, turret));
-    autonSelector.addOption("5 Ball", new FiveBallAuton(drivetrain, intake, shooter, storage, turret));
+    // autonSelector.addOption("Rude Two Ball (the two ball that shoots another teams balls away in case you are confused Arnav Dalal). ", new TwoBallAndHit(drivetrain, intake, shooter, storage, turret));
+    // autonSelector.addOption("5 Ball", new FiveBallAuton(drivetrain, intake, shooter, storage, turret));
     autonSelector.setDefaultOption("2 Ball", twoBallAuto);
 
     SmartDashboard.putData("Auton Selector", autonSelector);
@@ -221,12 +221,12 @@ public class RobotContainer {
     }
   }
 
-  public Intake getIntake(){
-    return intake;
-  }
-  public Turret getTurret(){
-    return turret;
-  }
+  // public Intake getIntake(){
+  //   return intake;
+  // }
+  // public Turret getTurret(){
+  //   return turret;
+  // }
   public Storage getStorage(){
     return storage;
   }
