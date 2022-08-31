@@ -175,4 +175,14 @@ public class Limelight extends SubsystemBase {
 
       return new Pose2d(Math.cos(Math.toDegrees(angle)) * targetDist.getAverage(), Math.sin(Math.toDegrees(angle)) * targetDist.getAverage(), Rotation2d.fromDegrees(angle));
   }
+
+  public void setNewMountAngle(double newMountAngle)
+  {
+    limelightMountAngle = newMountAngle;
+  }
+
+  public double getMountAngle()
+  {
+    return limelightMountAngle;
+  }
 }

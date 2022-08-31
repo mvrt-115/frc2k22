@@ -116,6 +116,8 @@ public class RobotContainer {
     lowShot = new JoystickButton(operatorJoystick, 5); // THIS BUTTON ID IS NOT FINAL, PLS CHANGE IT
                                                        // to wtvr POTUS wants!!!
 
+    shooter.setDefaultCommand(new SetHoodAngle(shooter));
+
     twoBallAuto = new SequentialCommandGroup(
       new ParallelCommandGroup(
           new SequentialCommandGroup(

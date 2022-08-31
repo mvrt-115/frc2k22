@@ -6,11 +6,13 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.Limelight;
+import frc.robot.util.LinearActuator;
 import frc.robot.util.MathUtils;
 import frc.robot.util.RollingAverage;
 import frc.robot.util.TalonFactory;
 import frc.robot.Constants;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -37,6 +39,13 @@ public class Shooter extends SubsystemBase {
   private ShooterState state;
   private double targetRPM = 0;
 
+  // Attributes of Hood
+  private double targetAngle = 0;
+  private double error = 2;
+
+  private LinearActuator leftHoodServo;
+  private LinearActuator rightHoodServo;
+
   private RollingAverage rpm;
   private Limelight limelight;
   private Turret turret;
@@ -50,6 +59,15 @@ public class Shooter extends SubsystemBase {
 
   /** Creates a new Shooter. */
   private Shooter() {
+
+    leftHoodServo = new LinearActuator(new Servo(Constants.Actuator.LEFT_SERVO_ID), 
+                    Constants.Actuator.HOOD_RADIUS, Constants.Actuator.DIST_FROM_BASE,
+                    Constants.Actuator.ACT_HEIGHT, Constants.Actuator.MAX_HEIGHT,
+                    Constants.Actuator.DEGREES_FROM_HORIZONTAL);
+    rightHoodServo = new LinearActuator(new Servo(Constants.Actuator.RIGHT_SERVO_ID), 
+                    Constants.Actuator.HOOD_RADIUS, Constants.Actuator.DIST_FROM_BASE,
+                    Constants.Actuator.ACT_HEIGHT, Constants.Actuator.MAX_HEIGHT,
+                    Constants.Actuator.DEGREES_FROM_HORIZONTAL);
 
     limelight = Limelight.getInstance();
     turret = Turret.getInstance();
@@ -105,6 +123,17 @@ public class Shooter extends SubsystemBase {
       setState(ShooterState.ATSPEED);
   }
 
+  public void setHoodAngle(double angle)
+  {
+    leftHoodServo.setPositionFromAngle(angle);
+    rightHoodServo.setPositionFromAngle(angle);
+  }
+
+  public double getHoodAngle()
+  {
+    return leftHoodServo.getHoodAngle();
+  }
+
   /**
    * Sets the state of the Flywheel
    * Sets target rpm to 0 if state is OFF
@@ -132,6 +161,7 @@ public class Shooter extends SubsystemBase {
   {
     SmartDashboard.putNumber("Flywheel Motor Output", flywheelLeader.getMotorOutputPercent());
     SmartDashboard.putNumber("Flywheel RPM", getCurrentRPM());
+    SmartDashboard.putNumber("Hood Angle", getHoodAngle());
     // SmartDashboard.putNumber("RPM Needed", getRequiredRPM());
     SmartDashboard.putString("Shooter State", state.toString());
     // SmartDashboard.putNumber("Target RPM", targetRPM);
@@ -171,6 +201,17 @@ public class Shooter extends SubsystemBase {
      }
 
     autoOffset();
+
+    double calcAngle = getRequiredAng();
+    if(Math.abs(calcAngle-targetAngle)<error || getHoodAngle()<=Constants.Hood.MIN_ANG)
+    {
+      targetAngle = calcAngle;
+    }
+
+    setHoodAngle(targetAngle);
+
+    // Only if the limelight is mounted on the hood
+    // limelight.setNewMountAngle(leftHoodServo.getHoodAngle()+Constants.Limelight.TILT_ANGLE);
   }
 
   public double getStationaryRPM()
@@ -230,20 +271,16 @@ public class Shooter extends SubsystemBase {
     // function to get theta value
     double angle_proj = 0;
 
-    // Set the angle from 0 to 20 (60 to 80) based on the distance
-    if(dx<=2.78) {
-      angle_proj = 20 - (5.6845 * Math.pow(dx, 2) - 33.067 * dx + 109.07 - 60);
-      
-      if(angle_proj>20)
-        angle_proj = 20;
-      else if(angle_proj<0)
-        angle_proj = 0;
-    }
-    else {
-      angle_proj = 20;
+    if(!limelight.targetsFound())
+    {
+      // Angle where the limelight can scan the field the best
+      return 80;
     }
 
-    return angle_proj;
+    // Set the angle from 0 to 20 (60 to 80) based on the distance
+
+    // Equation that returns the correct angle (need to run sim)
+    return 0;
   }
 
   /**

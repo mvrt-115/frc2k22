@@ -121,6 +121,7 @@ public final class Constants {
         public static final double HEIGHT_IN = 35.3060254038 + 1.32892604878;
         public static final double TARGET_HEIGHT_IN = 104;
         public static final int LIMELIGHT_ROLLING_AVG = 8;
+        public static final double TILT_ANGLE = 15;
     }
 
     public static class Hood
@@ -183,6 +184,8 @@ public final class Constants {
         public static final double kDefaultMaxServoPWM = 2.4;
         public static final double kDefaultMinServoPWM = 0.6;
         public static final double DEGREES_FROM_HORIZONTAL = 15; // How many degrees below the flywheel that the actuator is
+        public static final int LEFT_SERVO_ID = 0;
+        public static final int RIGHT_SERVO_ID = 0;
     }
 
     public static class Storage
