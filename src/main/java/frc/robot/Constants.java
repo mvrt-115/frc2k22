@@ -174,10 +174,10 @@ public final class Constants {
         public static final double THREAD_DISTANCE = 0.4; // in
         public static final double GEAR_RATIO = 56.0 / 34.0;
         public static final double TICKS_PER_ROTATION = 4096;
-        public static final double HOOD_RADIUS = 11.5;
-        public static final double DIST_FROM_BASE = 2 + HOOD_RADIUS;
-        public static final double ACT_HEIGHT = 5;
-        public static final double MAX_HEIGHT = 5;
+        public static final double HOOD_RADIUS = 19.8;
+        public static final double DIST_FROM_BASE = 20.8;
+        public static final double ACT_HEIGHT = 12;
+        public static final double MAX_HEIGHT = 16.5;
         public static final double P = 0.05;
         public static final double I = 0;
         public static final double D = 0.19;
