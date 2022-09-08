@@ -20,20 +20,18 @@ import frc.robot.util.TalonFactory;
 public class Storage extends SubsystemBase  {
   private DigitalInput breakbeamTop, breakbeamBott;
   private boolean prevStateTop, prevStateBott;
-  private double lastTopChanged;
   private int balls;
-  private  BaseTalon motor;
-  private boolean overriden;
+  private BaseTalon motorTop;
+  private BaseTalon motorBottom;
   private double lastTime;
   private boolean readyShoot = false;
-  private boolean intaking = true;
   // private final I2C.Port i2cPort = I2C.Port.kOnboard;
   // public final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
   private double stopIntakeTime = -1;
 
-  private static Storage storage = new Storage();
+  private static NewStorage storage = new NewStorage();
   
-  public static Storage getInstance() {
+  public static NewStorage getInstance() {
     return storage;
   }
 
@@ -42,147 +40,74 @@ public class Storage extends SubsystemBase  {
     breakbeamTop = new DigitalInput(1);
     breakbeamBott = new DigitalInput(3);
     prevStateTop = prevStateBott = true; // true is unbroken
-    motor = TalonFactory.createTalonFX(39, false);
-    motor.setStatusFramePeriod(StatusFrame.Status_1_General, 100); // updating status frame period
-    motor.setControlFramePeriod(ControlFrame.Control_3_General, 100);
-    balls = 0;
-    overriden = false;
-    lastTime = Timer.getFPGATimestamp();
-    lastTopChanged = Timer.getFPGATimestamp();
-    // intaking = false;
-  }
-
-  public boolean isTopBreakbeamBroken() {
-    return !breakbeamTop.get();
-  }
-
-  public void setIntaking(boolean intaking) {
-    if(!intaking)
-      stopIntakeTime = Timer.getFPGATimestamp();
-    else
-      intaking = true;
-  }
-
-  @Override
-  public void periodic()  {
-    SmartDashboard.putBoolean("top breakbeam broken", !breakbeamTop.get());
-    SmartDashboard.putBoolean("bottom breakbeam broken", !breakbeamBott.get());
-    SmartDashboard.putNumber("number of balls", balls);
-    // SmartDashboard.putBoolean("overriden", overriden);
-    // SmartDashboard.putString("Ball color", getBallColor());
-    SmartDashboard.putNumber("Storage Output", motor.getMotorOutputPercent());
-
-   
-    if( prevStateBott && !breakbeamBott.get() && Timer.getFPGATimestamp() - lastTime > 0.25) {
-      balls++;
-      lastTime = Timer.getFPGATimestamp();
-    }
-
-    // else if(overriden && motor.getMotorOutputPercent() < 0 && !prevStateBott && breakbeamBott.get() && Timer.getFPGATimestamp() - lastTime > 0.3) {
-    //   balls--;
-    //   lastTime = Timer.getFPGATimestamp();
-    // }
-
-    else if(!prevStateTop && breakbeamTop.get())  {
-      balls--;
-      lastTopChanged = Timer.getFPGATimestamp();
-    }
-
-    if(stopIntakeTime != -1 && Timer.getFPGATimestamp() - stopIntakeTime > 0.3) {
-      intaking = false;
-      stopIntakeTime = -1;
-    }
-  
-    if(balls < 0) balls = 0;
-  
-    if(balls >= 3) balls = 2;
-      
-    prevStateBott = breakbeamBott.get();
-    prevStateTop = breakbeamTop.get();
-      //if(!overriden)  {
-    if(!readyShoot) autoStorage();
-
-      //}
-      //else{
-       // runMotor(1);
-     // }
-
-     if (motor.hasResetOccurred()) {
-       motor.setStatusFramePeriod(StatusFrame.Status_1_General, 100);
-     }
     
+    //Set motors
+    motorTop = TalonFactory.createTalonFX(39, false);
+    motorTop.setStatusFramePeriod(StatusFrame.Status_1_General, 100); // updating status frame period
+    motorTop.setControlFramePeriod(ControlFrame.Control_3_General, 100);
+    motorBottom = TalonFactory.createTalonFX(39, false);
+    motorBottom.setStatusFramePeriod(StatusFrame.Status_1_General, 100); // updating status frame period
+    motorBottom.setControlFramePeriod(ControlFrame.Control_3_General, 100);
+
+    balls = 0;
+    lastTime = Timer.getFPGATimestamp();
   }
 
-  public void setOverriden(boolean state) {
-    overriden = state;
-  }
+  //!!!! - assume both motors are running in periodic
 
-  public void autoStorage() {
-    double s = 0.2;
+    @Override
+    public void periodic(){
+        //Top broken
+        if (!breakbeamTop.get()){
+            //Stop top motor
+            stopMotorTop();
+        }
 
-    if(!breakbeamTop.get()) {
-      runMotor(0);
+        //Both broken
+        if(!breakbeamTop.get() && !breakbeamBott.get()){
+            //Stop bottom
+            stopMotorBottom();
+        }
 
-      return;
-    } 
-      
+        //Top broken now 
+        if(prevStateTop && !breakbeamTop.get()){
+            //Add ball
+            balls++;
+        }
 
+        //Top is broken and bottom is broken
+        if (!breakbeamTop.get() && !breakbeamBott.get()){
+            balls++;
+        }
 
-    switch (balls) {
-      // when there is one ball run until it passes first breakbeam
-      case 1:
-        if(!breakbeamBott.get())
-          runMotor(s);
-        else 
-          runMotor(0);
-        break;
-      case 2:
-        if(breakbeamTop.get())
-          runMotor(s);
-        else 
-          runMotor(0);
-        break;
-      case 0: 
-        // if(intaking)
-           runMotor(s);
-        // else
-        //   runMotor(0);
-      default:
-        break;
+        if(balls < 0){
+            balls = 0;
+        }
+    
+        if(balls >= 3){
+            balls = 2;
+        }
+
+        //Update states
+        prevStateBott = breakbeamBott.get();
+        prevStateTop = breakbeamTop.get();
+        readyShoot = balls > 0;
     }
-  }
 
+    public void runMotorTop(double out) {
+        motorTop.set(ControlMode.PercentOutput, out);
+    }
 
+    public void runMotorBottom(double out) {
+        motorBottom.set(ControlMode.PercentOutput, out);
+    }
 
-  public void runMotor(double out) {
-    motor.set(ControlMode.PercentOutput, out);
-  }
+    public void stopMotorTop(){
+        runMotorTop(0);
+    }
 
-  public int getBalls() { return balls; }
-  public void setBalls(int balls) { this.balls = balls; }
+    public void stopMotorBottom(){
+        runMotorBottom(0);
+    }
 
-  public void setReadyShoot(boolean newShooting){
-    readyShoot = newShooting;
-    System.out.println("BIG RACISM");
-  }
-  public boolean getShooting() {
-    return readyShoot;
-  }
-  // public String getBallColor(){
-  //   if(colorSensor.isConnected() && !breakbeamTop.get()){
-  //    return getColor(colorSensor.getBlue(), colorSensor.getRed());
-  //   }
-  //   return "No Ball";
-
-  //   }
-
-  //   public String getColor( double blue, double red){
-  //     if(colorSensor.getBlue() > colorSensor.getRed())
-  //       return "Blue";
-  //     else if(colorSensor.getRed() > colorSensor.getBlue())
-  //       return "Red";
-  //     return "No Ball";
-  //   }
-  }
-  
-
+}
