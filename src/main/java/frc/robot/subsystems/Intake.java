@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import com.ctre.phoenix.motorcontrol.StatusFrame; // to set the status frame period of diff motors
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.util.TalonFactory;
 
@@ -38,7 +39,7 @@ public class Intake extends SubsystemBase {
   private Intake() {
     pivotState = true;
     state = IntakeState.UP;
-
+    
     intakeMotor = TalonFactory.createTalonFX(Constants.Intake.kROLLER_ID, false); // change motor IDs from Constants later
     intakeMotor.setStatusFramePeriod(StatusFrame.Status_1_General, 18, 0); // larger time period when sending info to roborio
 
@@ -46,8 +47,8 @@ public class Intake extends SubsystemBase {
     //pivotMotor.setInverted(true);
 
     pivotMotor.setSelectedSensorPosition(0);
-
-    pivotMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 30);
+    pivotMotor.setNeutralMode(NeutralMode.Brake);
+    // pivotMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 30);
     intakeMotor.setStatusFramePeriod(StatusFrame.Status_1_General, 150);
     
     pivotMotor.setNeutralMode(NeutralMode.Brake);
@@ -62,12 +63,15 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     // feedForward = Constants.Intake.kFF * Math.cos(Math.toRadians(getAngle()));
+    pivotMotor.set(ControlMode.PercentOutput, -0.5);
+    pivotMotor.setNeutralMode(NeutralMode.Brake);
     switch(state)
     {
       case INTAKING: // intake is deployed and starts running
-        stopPivot();
+        stopPivot()
+        ;
         startIntake();
-        pivotMotor.setNeutralMode(NeutralMode.Coast);
+        // pivotMotor.setNeutralMode(NeutralMode.Coast);
         break;
       case PIVOTING_UP: // intake goes back up and stops intaking  
         pivotMotor.setNeutralMode(NeutralMode.Brake);
@@ -75,7 +79,7 @@ public class Intake extends SubsystemBase {
         pivotUp();
         break;
       case PIVOTING_DOWN:
-        pivotMotor.setNeutralMode(NeutralMode.Coast);
+        // pivotMotor.setNeutralMode(NeutralMode.Coast);
         pivotDown();
         //startIntake();
         break;
@@ -86,8 +90,9 @@ public class Intake extends SubsystemBase {
         break;
     }
     if (DriverStation.isDisabled()) {
-      pivotMotor.setNeutralMode(NeutralMode.Coast);
-    }
+      // pivotMotor.setNeutralMode(NeutralMode.Coast);
+    pivotMotor.setNeutralMode(NeutralMode.Brake);
+  }
 
     if(intakeMotor.hasResetOccurred()){
       intakeMotor.setStatusFramePeriod(StatusFrame.Status_1_General, 150);
@@ -95,6 +100,8 @@ public class Intake extends SubsystemBase {
     if(pivotMotor.hasResetOccurred()){
       pivotMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 30);
     }
+    SmartDashboard.putNumber("ticks", pivotMotor.getSelectedSensorPosition());
+
     // log();
   }
 
@@ -134,7 +141,7 @@ public class Intake extends SubsystemBase {
     else if(state == IntakeState.UP)
       pivotMotor.set(ControlMode.PercentOutput, Constants.Intake.kPIVOT_STOP_SPEED_WHEN_UP);
     else 
-      pivotMotor.set(ControlMode.PercentOutput, 0);
+      pivotMotor.set(ControlMode.PercentOutput, -0.2);
   }
   public boolean getPivotState() { return pivotState;}
   public void setPivotState(boolean changed){ pivotState = changed;}

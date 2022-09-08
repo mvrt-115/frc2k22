@@ -19,6 +19,79 @@ import frc.robot.util.TalonFactory;
 
 public class Storage extends SubsystemBase  {
   private DigitalInput breakbeamTop, breakbeamBott;
+  private boolean lowerBeamState, upperBeamState; // where true means the breakbeams are broken, and false means they are not broken
+  private boolean lastLowerState, lastUpperState; 
+  private int balls;
+  private BaseTalon bottomMotor, topMotor;
+  private boolean overriden;
+  private double output = -0.5;
+  private static Storage storage = new Storage();
+
+  public static Storage getInstance()
+  {
+    if(storage == null) 
+    {
+      storage = new Storage();
+    }
+    return storage;
+  }
+
+  private Storage() 
+  {
+    breakbeamTop = new DigitalInput(1);
+    breakbeamBott = new DigitalInput(2);
+    lowerBeamState = upperBeamState = true;
+    lastLowerState = lastUpperState = true;
+    balls = 1; //assumption that the storage is preloaded with one ball
+    bottomMotor = TalonFactory.createTalonFX(11, false);
+    topMotor = TalonFactory.createTalonFX(0, false);
+    overriden = false;
+  }
+
+  @Override
+  public void periodic()  
+  {
+    lastLowerState = lowerBeamState;
+    lastUpperState = upperBeamState;
+
+    lowerBeamState = breakbeamBott.get();
+    upperBeamState = breakbeamTop.get();
+
+    if(lastLowerState && !lowerBeamState) balls++;
+    if(!lastUpperState && upperBeamState) balls--;
+
+    // if(upperBeamState == false) topMotor.set(ControlMode.PercentOutput,0);
+    // else  topMotor.set(ControlMode.PercentOutput,output );
+
+    // if(lowerBeamState == false && upperBeamState == false) bottomMotor.set(ControlMode.PercentOutput, 0);
+    // else bottomMotor.set(ControlMode.PercentOutput, output);
+
+    log();
+  }
+
+
+  public int getBalls()
+  {
+    return balls;
+  }
+  public void setBalls(int num){
+    balls = num;
+  }
+
+  public void setOverriden(boolean ov) { overriden = ov; }
+  
+  public void log()
+  {
+    SmartDashboard.putNumber("balls", balls);
+    SmartDashboard.putBoolean("top breakbeam broken", upperBeamState);
+    SmartDashboard.putBoolean("bottom breakbeam broken", lowerBeamState);
+  }
+  public void runMotor(double val){
+
+  }
+  public void setReadyShoot(boolean val){}
+  public void setIntaking(boolean val){}
+  /*private DigitalInput breakbeamTop, breakbeamBott;
   private boolean prevStateTop, prevStateBott;
   private int balls;
   private BaseTalon motorTop;
@@ -36,7 +109,7 @@ public class Storage extends SubsystemBase  {
   }
 
 
-  public Storage()  {
+  private Storage()  {
     breakbeamTop = new DigitalInput(1);
     breakbeamBott = new DigitalInput(3);
     prevStateTop = prevStateBott = true; // true is unbroken
@@ -106,8 +179,36 @@ public class Storage extends SubsystemBase  {
         runMotorTop(0);
     }
 
+<<<<<<< HEAD
     public void stopMotorBottom(){
         runMotorBottom(0);
     }
+=======
+  public int getBalls() { return balls; }
+  public void setBalls(int balls) { this.balls = balls; }
 
+  public void setReadyShoot(boolean newShooting){
+    readyShoot = newShooting;
+    System.out.println("BIG RACISM");
+  }
+  public boolean getShooting() {
+    return readyShoot;
+  }
+  // public String getBallColor(){
+  //   if(colorSensor.isConnected() && !breakbeamTop.get()){
+  //    return getColor(colorSensor.getBlue(), colorSensor.getRed());
+  //   }
+  //   return "No Ball";
+
+  //   }
+
+  //   public String getColor( double blue, double red){
+  //     if(colorSensor.getBlue() > colorSensor.getRed())
+  //       return "Blue";
+  //     else if(colorSensor.getRed() > colorSensor.getBlue())
+  //       return "Red";
+  //     return "No Ball";
+  //   }
+  }*/
 }
+  
