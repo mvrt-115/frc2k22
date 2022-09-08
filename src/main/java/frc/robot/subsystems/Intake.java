@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import com.ctre.phoenix.motorcontrol.StatusFrame; // to set the status frame period of diff motors
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.util.TalonFactory;
 
@@ -95,6 +96,8 @@ public class Intake extends SubsystemBase {
     if(pivotMotor.hasResetOccurred()){
       pivotMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 30);
     }
+    SmartDashboard.putNumber("ticks", pivotMotor.getSelectedSensorPosition());
+
     // log();
   }
 

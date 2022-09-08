@@ -39,11 +39,11 @@ public class Storage extends SubsystemBase  {
   private Storage() 
   {
     breakbeamTop = new DigitalInput(1);
-    breakbeamBott = new DigitalInput(0);
+    breakbeamBott = new DigitalInput(2);
     lowerBeamState = upperBeamState = true;
     lastLowerState = lastUpperState = true;
     balls = 1; //assumption that the storage is preloaded with one ball
-    bottomMotor = TalonFactory.createTalonFX(1, false);
+    bottomMotor = TalonFactory.createTalonFX(11, false);
     topMotor = TalonFactory.createTalonFX(0, false);
     overriden = false;
   }
