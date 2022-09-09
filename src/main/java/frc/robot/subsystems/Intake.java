@@ -131,12 +131,13 @@ public class Intake extends SubsystemBase {
   /**
    * stops the motor which pivots the intake.
    */
-  public void stopPivot()
-  {
+  public void stopPivot(){
     if(state == IntakeState.INTAKING)
       pivotMotor.set(ControlMode.PercentOutput, Constants.Intake.kPIVOT_STOP_SPEED_WHEN_DOWN);
+
     else if(state == IntakeState.UP)
       pivotMotor.set(ControlMode.PercentOutput, Constants.Intake.kPIVOT_STOP_SPEED_WHEN_UP);
+
     else 
       pivotMotor.set(ControlMode.PercentOutput, -0.2);
   }
@@ -151,25 +152,20 @@ public class Intake extends SubsystemBase {
    * if it is not at the bottom, then it runs the pivot motor at a constant 
    * speed.
    */
-  public void pivotDown()
-  {
-    if(isAtBottom())
-    {
+  public void pivotDown(){
+    if(isAtBottom()){
       state = IntakeState.INTAKING;
-    }
-    else
-    {
+    
+    } else {
       pivotMotor.set(ControlMode.Position, Constants.Intake.kTICKS_TO_BOTTOM, DemandType.ArbitraryFeedForward, 0);
     }
   }
 
-  public IntakeState getState()
-  {
+  public IntakeState getState(){
     return state;
   }
 
-  public void setState(IntakeState stateIn)
-  {
+  public void setState(IntakeState stateIn){
     state = stateIn;
   }
 
@@ -179,8 +175,7 @@ public class Intake extends SubsystemBase {
    * 
    * @return  true if the intake is at the bottom when pivoting
    */
-  public boolean isAtBottom()
-  {
+  public boolean isAtBottom(){
     return Math.abs(Constants.Intake.kTICKS_TO_BOTTOM - getCurrentPos()) <= Constants.Intake.kMARGIN_OF_ERROR_TICKS;
   }
 
@@ -190,8 +185,7 @@ public class Intake extends SubsystemBase {
    * 
    * @return  true if the intake is at the top when pivoting
    */
-  public boolean isAtTop()
-  {
+  public boolean isAtTop(){
     return Math.abs(getCurrentPos()) <= Constants.Intake.kMARGIN_OF_ERROR_TICKS;
     // Math.abs(getCurrentPos() - Constants.Intake.kTicksTOTop <= blah blah)
   }
@@ -199,8 +193,7 @@ public class Intake extends SubsystemBase {
   /**
    * @return the current position of the intake in ticks.
    */
-  public double getCurrentPos()
-  {
+  public double getCurrentPos(){
     return pivotMotor.getSelectedSensorPosition();
   }
 
@@ -211,14 +204,11 @@ public class Intake extends SubsystemBase {
    * if the intake is at the top, then it sets the pivot motor to a smaller
    * speed so that it allows the pivot to stay up, but not go any further
    */
-  public void pivotUp()
-  {
-    if(isAtTop())
-    {
+  public void pivotUp(){
+    if(isAtTop()){
       state = IntakeState.UP;
-    }
-    else
-    {
+    
+    } else {
       pivotMotor.set(ControlMode.Position, Constants.Intake.kTICKS_TO_TOP, DemandType.ArbitraryFeedForward, -0.1);
     }
   }
@@ -226,9 +216,8 @@ public class Intake extends SubsystemBase {
   /**
    * runs the intake so that the wheels move, intaking the ball in
    */
-  public void startIntake()
-  {
- //   pivotMotor.setNeutralMode(NeutralMode.Brake);
+  public void startIntake(){
+    //pivotMotor.setNeutralMode(NeutralMode.Brake);
     intakeMotor.set(ControlMode.PercentOutput, Constants.Intake.kWHEELS_SPEED);
     // intakeMotor.set(ControlMode.PercentOutput, 0);
     // uncomment when intake motor is added
