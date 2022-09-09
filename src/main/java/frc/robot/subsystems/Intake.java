@@ -21,8 +21,6 @@ public class Intake extends SubsystemBase {
   public static enum IntakeState {INTAKING, PIVOTING_DOWN, PIVOTING_UP, UP};
   private IntakeState state;
 
-  // motors for the intake --> currently BaseTalon, may change 
-  // (decide type of motor later)
   private BaseTalon intakeMotor; 
   private boolean pivotState;
   public BaseTalon pivotMotor; 
@@ -60,28 +58,30 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
     // feedForward = Constants.Intake.kFF * Math.cos(Math.toRadians(getAngle()));
+
     pivotMotor.set(ControlMode.PercentOutput, -0.5);
     pivotMotor.setNeutralMode(NeutralMode.Brake);
-    switch(state)
-    {
+
+    switch(state){
       case INTAKING: // intake is deployed and starts running
-        stopPivot()
-        ;
+        stopPivot();
         startIntake();
         // pivotMotor.setNeutralMode(NeutralMode.Coast);
         break;
+
       case PIVOTING_UP: // intake goes back up and stops intaking  
         pivotMotor.setNeutralMode(NeutralMode.Brake);
         stopIntake();
         pivotUp();
         break;
+
       case PIVOTING_DOWN:
         // pivotMotor.setNeutralMode(NeutralMode.Coast);
         pivotDown();
         //startIntake();
         break;
+
       case UP:
         // stopPivot(); // to keep the intake up
         pivotUp();

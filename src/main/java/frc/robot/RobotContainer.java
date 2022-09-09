@@ -27,9 +27,6 @@ import frc.robot.util.RollingAverage;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
- // private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
-
   private Joystick driverJoystick; //Joysticks
   private Joystick operatorJoystick;
   private Joystick systemsCheck;
