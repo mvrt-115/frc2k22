@@ -11,7 +11,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import com.ctre.phoenix.motorcontrol.StatusFrame; // to set the status frame period of diff motors
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.util.TalonFactory;
@@ -51,20 +50,50 @@ public class NewIntake extends SubsystemBase {
     pivotMotor.set(ControlMode.PercentOutput, -0.5);
     pivotMotor.setNeutralMode(NeutralMode.Brake);
 
+    switch(state){
+      case INTAKING: // intake is deployed and starts running
+        stopPivot();
+        startIntake();
+        break;
 
+      case PIVOTING_UP: // intake goes back up and stops intaking  
+        stopIntake();
+        pivotUp();
+        break;
 
+      case PIVOTING_DOWN:
+        pivotDown();
+        break;
+
+      case UP:
+        //stopPivot(); // to keep the intake up
+        pivotUp();
+        stopIntake();
+        break;
+    }
   }
 
+  //Log
+  public void log() {
+    SmartDashboard.putString("Intake State", state.toString());
+    SmartDashboard.putNumber("Pivot Motor Voltage", pivotMotor.getMotorOutputPercent());
+    SmartDashboard.putNumber("Ticks", getCurrentPos());
+    SmartDashboard.putBoolean("Is at top", Math.abs(getCurrentPos()) <= Constants.Intake.kMARGIN_OF_ERROR_TICKS);
+    SmartDashboard.putBoolean("Is at bottom", Math.abs(getCurrentPos() - Constants.Intake.kTICKS_TO_BOTTOM) <= Constants.Intake.kMARGIN_OF_ERROR_TICKS);
+  }
+
+  //Start intaking
   public void startIntake(){
     intakeMotor.set(ControlMode.PercentOutput, Constants.Intake.kWHEELS_SPEED);
   }
 
+  //Stop intaking
   public void stopIntake(){
     intakeMotor.set(ControlMode.PercentOutput, 0);
   }
 
-  public void stopPivot()
-  {
+  //Stop pivoting depending on state
+  public void stopPivot(){
     if(state == IntakeState.INTAKING){
       pivotMotor.set(ControlMode.PercentOutput, Constants.Intake.kPIVOT_STOP_SPEED_WHEN_DOWN);
 
@@ -76,6 +105,7 @@ public class NewIntake extends SubsystemBase {
     }
   }
 
+  //Pivot down
   public void pivotDown(){
     //Start intaking once pivoted down
     if(isAtBottom()){
@@ -87,14 +117,27 @@ public class NewIntake extends SubsystemBase {
     }
   }
 
-  public boolean isAtBottom()
-  {
+  //Pivot up
+  public void pivotUp(){
+    if(isAtTop()){
+      state = IntakeState.UP;
+    
+    } else {
+      pivotMotor.set(ControlMode.Position, Constants.Intake.kTICKS_TO_TOP, DemandType.ArbitraryFeedForward, -0.1);
+    }
+  }
+
+  public boolean isAtTop(){
+    return Math.abs(getCurrentPos()) <= Constants.Intake.kMARGIN_OF_ERROR_TICKS;
+  }
+
+  public boolean isAtBottom(){
     return Math.abs(Constants.Intake.kTICKS_TO_BOTTOM - getCurrentPos()) <= Constants.Intake.kMARGIN_OF_ERROR_TICKS;
+
   }
 
-  public double getCurrentPos()
-  {
+  public double getCurrentPos(){
     return pivotMotor.getSelectedSensorPosition();
-  }
 
+  }
 }

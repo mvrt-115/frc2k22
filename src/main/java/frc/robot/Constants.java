@@ -28,9 +28,7 @@ public final class Constants {
     public static final double kVoltageComp = 10.0;
     public static final SupplyCurrentLimitConfiguration kCurrentLimit = new SupplyCurrentLimitConfiguration(true, 40, 50, 3.8);
 
-    public static class Drivetrain {
-
-        
+    public static class Drivetrain { 
         // physical constants get from mech once drivetrain is done
         public static final double kTrackScrubFactor = 1.0469745223;
         public static final double kTrackWidthInches = 27.125; //24.85;
@@ -78,41 +76,29 @@ public final class Constants {
         public static final double AUTO_TURN_SPEED = 0.5;
     }
     
-    public static class Intake{
+    public static class Intake {
 
         public static final double kTICKS_TO_BOTTOM = 21000;
         // the # of ticks it takes to be at the bottom when pivoting
         public static final double kTICKS_TO_TOP = 800; // the # of ticks it takes to be at the top when pivoting
 
-
         public static final int kPIVOT_ID = 10; // change later
         public static final int kROLLER_ID = 21; // change later
 
-
-
-
         public static final double kWHEELS_SPEED = .5;
 
-
-
         //public static final double kPIVOT_SPEED = -0.4; // speed of intake when going up or down
-        public static final double kPIVOT_STOP_SPEED_WHEN_UP = 0; // speed of intake to keep it up
+        public static final double kPIVOT_STOP_SPEED_WHEN_UP = 0.0; // speed of intake to keep it up
 
         public static final double kPIVOT_STOP_SPEED_WHEN_DOWN = 0.0    ; // speed of intake to keep it down
  
-
-
-        //change later after testing
-
         public static final double kMARGIN_OF_ERROR_TICKS = 2000; // constant
-
 
         public static final double kP = 0.0175; //0.03
         public static final double kI = 0.0;
         public static final double kD = 0.0;//0.001;
 
         public static final double kFF = .01;
-        ;//-0.001;
     }
 
     public static class Limelight
