@@ -40,7 +40,7 @@ public class Intake extends SubsystemBase {
     intakeMotor = TalonFactory.createTalonFX(Constants.Intake.kROLLER_ID, false); // change motor IDs from Constants later
     intakeMotor.setStatusFramePeriod(StatusFrame.Status_1_General, 18, 0); // larger time period when sending info to roborio
 
-    pivotMotor = TalonFactory.createTalonFX(Constants.Intake.kPIVOT_ID, true); // change motor IDs from Constants later
+    pivotMotor = TalonFactory.createTalonFX(Constants.Intake.kPIVOT_ID, true);
     //pivotMotor.setInverted(true);
 
     pivotMotor.setSelectedSensorPosition(0);
