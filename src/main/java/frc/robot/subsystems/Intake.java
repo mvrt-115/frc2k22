@@ -17,7 +17,6 @@ import frc.robot.Constants;
 import frc.robot.util.TalonFactory;
 
 public class Intake extends SubsystemBase {
-  /** Creates a new Intake. */
   
   public static enum IntakeState {INTAKING, PIVOTING_DOWN, PIVOTING_UP, UP};
   private IntakeState state;
