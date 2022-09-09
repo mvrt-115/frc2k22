@@ -126,8 +126,8 @@ public final class Constants {
 
     public static class Hood
     {
-        public static final double MIN_ANG = 60;
-        public static final double MAX_ANG = 80;
+        public static final double MIN_ANG = 34.5;
+        public static final double MAX_ANG = 47.5;
         public static final double P = 0.21;
         public static final double I = 0;
         public static final double D = 6.9;
