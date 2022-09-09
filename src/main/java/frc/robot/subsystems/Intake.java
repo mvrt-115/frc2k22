@@ -25,7 +25,7 @@ public class Intake extends SubsystemBase {
   private boolean pivotState;
   public BaseTalon pivotMotor; 
 
-  // private double feedForward; // feed forward double needed to pivot for a certain number of ticks
+  private double feedForward; // feed forward double needed to pivot for a certain number of ticks
 
   private static Intake intake = new Intake();
 
@@ -36,6 +36,8 @@ public class Intake extends SubsystemBase {
   private Intake() {
     pivotState = true;
     state = IntakeState.UP;
+    feedForward = Constants.Intake.kFF * Math.cos(Math.toRadians(getAngle()));
+    
     
     intakeMotor = TalonFactory.createTalonFX(Constants.Intake.kROLLER_ID, false); // change motor IDs from Constants later
     intakeMotor.setStatusFramePeriod(StatusFrame.Status_1_General, 18, 0); // larger time period when sending info to roborio
@@ -58,8 +60,6 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // feedForward = Constants.Intake.kFF * Math.cos(Math.toRadians(getAngle()));
-
     pivotMotor.set(ControlMode.PercentOutput, -0.5);
     pivotMotor.setNeutralMode(NeutralMode.Brake);
 
@@ -90,7 +90,7 @@ public class Intake extends SubsystemBase {
     }
     if (DriverStation.isDisabled()) {
       // pivotMotor.setNeutralMode(NeutralMode.Coast);
-    pivotMotor.setNeutralMode(NeutralMode.Brake);
+      pivotMotor.setNeutralMode(NeutralMode.Brake);
   }
 
     if(intakeMotor.hasResetOccurred()){
