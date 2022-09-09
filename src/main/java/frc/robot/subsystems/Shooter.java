@@ -268,19 +268,28 @@ public class Shooter extends SubsystemBase {
     // distance from center of hub
     double dx = distance + Units.inchesToMeters(24);
 
+    if (distance/12 < 8.5)
+    {
+      return Constants.Hood.MIN_ANG;
+    }
+    else if (distance/12 > 18.5)
+    {
+      return Constants.Hood.MAX_ANG;
+    }
+
     // function to get theta value
-    double angle_proj = 0;
+    double angle_proj = 16.536 * Math.log(distance) - 0.9872;
 
     if(!limelight.targetsFound())
     {
       // Angle where the limelight can scan the field the best
-      return 80;
+      return Constants.Hood.MAX_ANG;
     }
 
     // Set the angle from 0 to 20 (60 to 80) based on the distance
 
     // Equation that returns the correct angle (need to run sim)
-    return 0;
+    return angle_proj;
   }
 
   /**
