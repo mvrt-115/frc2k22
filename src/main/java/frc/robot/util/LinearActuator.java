@@ -8,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.PWM.PeriodMultiplier;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.opencv.core.Point;
 
@@ -52,6 +53,7 @@ public class LinearActuator {
   {
     double theta = Math.toRadians(angle+degreesFromHorizontal);
     double pos = Math.sqrt(Math.pow(radius, 2) + Math.pow(distFromBase, 2) - 2 * radius * distFromBase * Math.cos(theta));
+    SmartDashboard.putNumber("requested pos", pos);
     if (maxHeight - pos >= 0 && pos - minHeight >= 0)
       setPosition(pos);
     else
@@ -85,6 +87,7 @@ public class LinearActuator {
     }
     else
     {
+      SmartDashboard.putNumber("position: " + this.toString(), ((position-minHeight)/getRange()));
       actuatorServo.setPosition((position-minHeight)/getRange());
     }
   }

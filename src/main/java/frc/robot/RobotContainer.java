@@ -37,11 +37,11 @@ public class RobotContainer {
   private JoystickButton  pivot; //buttons
 
   // public static final Drivetrain drivetrain = Drivetrain.getInstance();
-  // private final Intake intake = Intake.getInstance();
+  private final Intake intake = Intake.getInstance();
   private final Storage storage = Storage.getInstance();
   // private final Climber climber = Climber.getInstance();
   // public static final Turret turret = Turret.getInstance();
-  // private final Shooter shooter = Shooter.getInstance();
+  private final Shooter shooter = Shooter.getInstance();
   // // private final LEDs led = new LEDs();
 
   // climber operator manual buttons
@@ -160,7 +160,7 @@ public class RobotContainer {
     // shootLaunch.whenPressed(new SetRPMLaunchpad(shooter, storage, turret, shootLaunch));
     // // new SetRPM(shooter, storage, 1000).schedule();
     // // SmartDashboard.putData("Testing Shooter", new SetRPMDash(shooter, storage, turret, drivetrain));
-    // pivot.whenPressed(new Pivot(intake,storage)).whenReleased(new PivotUp(intake, storage));
+    pivot.whenPressed(new Pivot(intake,storage)).whenReleased(new PivotUp(intake, storage));
     // resetBalls.whenPressed(new ResetBalls(storage));
     // upManualStorage.whenPressed(new ManualStorage(storage, true, upManualStorage::get));  // true for up
     // downManualStorage.whenPressed(new ManualStorage(storage, false, downManualStorage::get)); // false for down
@@ -199,6 +199,8 @@ public class RobotContainer {
     autonSelector.setDefaultOption("2 Ball", twoBallAuto);
 
     SmartDashboard.putData("Auton Selector", autonSelector);
+    SmartDashboard.putData("Set Hood Angle Command", new SetHoodAngle(shooter));
+    SmartDashboard.putData("Set RPM", new SetRPMDash(shooter));
   }
   
   

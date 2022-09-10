@@ -19,22 +19,22 @@ import frc.robot.subsystems.Turret.TurretState;
 public class SetRPMDash extends CommandBase {
 
   private Shooter shooter;
-  private Storage storage;
-  private Drivetrain drivetrain;
+  // private Storage storage;
+  // private Drivetrain drivetrain;
   private double rpm;
   private double offset;
-  private Turret turret;
+  // private Turret turret;
 
   /** Creates a new SetRPMDash. */
-  public SetRPMDash(Shooter shooter, Storage storage, Turret turret, Drivetrain drivetain) {
+  public SetRPMDash(Shooter shooter) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.shooter = shooter;
-    this.storage = storage;
-    this.turret = turret;
-    this.drivetrain = drivetrain;
+    // this.storage = storage;
+    // this.turret = turret;
+    // this.drivetrain = drivetrain;
     rpm = 0;
     SmartDashboard.putNumber("new rpm", 0);
-    addRequirements(shooter, storage);
+    // addRequirements(shooter, storage);
   }
 
   // Called when the command is initially scheduled.
@@ -53,26 +53,26 @@ public class SetRPMDash extends CommandBase {
     rpm = SmartDashboard.getNumber("new rpm", 0);
     shooter.setTargetRPM(rpm);
 
-    if(turret.canShoot())
-    {
-      turret.setState(TurretState.DISABLED);
-    }
-    else
-    {
-      turret.setState(TurretState.TARGETING);
-    }
+    // if(turret.canShoot())
+    // {
+    //   turret.setState(TurretState.DISABLED);
+    // }
+    // else
+    // {
+    //   turret.setState(TurretState.TARGETING);
+    // }
 
     if(shooter.getState() == ShooterState.ATSPEED)
     {
-    System.out.println("racism1");
-    storage.setReadyShoot(true);
-      storage.runMotor(0.4); 
+    System.out.println("at speed");
+    // storage.setReadyShoot(true);
+      // storage.runMotor(0.4); 
 
-      turret.setState(TurretState.DISABLED);
+      // turret.setState(TurretState.DISABLED);
     }
-    else 
+    // else 
       // storage.runMotor(0);
-      storage.setReadyShoot(false);
+      // storage.setReadyShoot(false);
     
   }
 
@@ -81,10 +81,10 @@ public class SetRPMDash extends CommandBase {
   public void end(boolean interrupted)
   {
     shooter.setState(ShooterState.OFF);
-    storage.setReadyShoot(false);
-    storage.runMotor(0);
+    // storage.setReadyShoot(false);
+    // storage.runMotor(0);
     System.out.println("hi3");
-    turret.setState(TurretState.TARGETING);
+    // turret.setState(TurretState.TARGETING);
   }
 
   // Returns true when the command should end.

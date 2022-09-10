@@ -57,14 +57,16 @@ public class Storage extends SubsystemBase  {
     lowerBeamState = breakbeamBott.get();
     upperBeamState = breakbeamTop.get();
 
-    if(lastLowerState && !lowerBeamState) balls++;
-    if(!lastUpperState && upperBeamState) balls--;
+    // if(lastLowerState && !lowerBeamState) balls++;
+    // if(!lastUpperState && upperBeamState) balls--;
 
-    if(upperBeamState == false) topMotor.set(ControlMode.PercentOutput,0);
-    else  topMotor.set(ControlMode.PercentOutput,output );
+    // if(upperBeamState == false) topMotor.set(ControlMode.PercentOutput,0);
+    // else  topMotor.set(ControlMode.PercentOutput,output );
 
-    if(lowerBeamState == false && upperBeamState == false) bottomMotor.set(ControlMode.PercentOutput, 0);
-    else bottomMotor.set(ControlMode.PercentOutput, output);
+    // if(lowerBeamState == false && upperBeamState == false) bottomMotor.set(ControlMode.PercentOutput, 0);
+    // else bottomMotor.set(ControlMode.PercentOutput, output);
+    // topMotor.set(ControlMode.PercentOutput,output );
+    // bottomMotor.set(ControlMode.PercentOutput, output);
 
     log();
   }

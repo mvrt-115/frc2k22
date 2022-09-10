@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.BaseTalon;
+
 import org.photonvision.PhotonCamera;
 
 import edu.wpi.first.cameraserver.CameraServer;
@@ -12,6 +15,7 @@ import edu.wpi.first.util.net.PortForwarder;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.util.TalonFactory;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -21,6 +25,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  */
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
+
+  BaseTalon flywheelLeader = TalonFactory.createTalonFX(12, false);
 
   private RobotContainer m_robotContainer;
   PhotonCamera cam;
@@ -122,6 +128,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // SmartDashboard.putNumber("operator right axis angle", m_robotContainer.getOperatorRightAxisAngle());
+    flywheelLeader.set(ControlMode.PercentOutput, 0.4);
   }
 
   @Override
