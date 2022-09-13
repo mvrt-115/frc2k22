@@ -182,6 +182,10 @@ public class Shooter extends SubsystemBase {
 
     rpm.updateValue(MathUtils.ticksToRPM(flywheelLeader.getSelectedSensorVelocity(), Constants.Flywheel.TICKS_PER_REVOLUTION, Constants.Flywheel.GEAR_RATIO));
     log();
+    targetRPM = getRequiredRPM();
+    targetAngle = getRequiredAng();
+    SmartDashboard.putNumber("Calculated RPM", targetRPM);
+    SmartDashboard.putNumber("Calculated Angle", targetAngle);
     
     // Sets state periodically
      switch(state) {
@@ -231,7 +235,10 @@ public class Shooter extends SubsystemBase {
     // Use this if power equation is not working (old one)
     // double rpm = 2040.9 * Math.pow(Math.E, 0.0058 * x) + addTuneRPM;
 
-    double rpm = 312.18*Math.pow(x, 0.5343);
+    double rpm = getRPMFromVelocity(
+      Units.metersToInches(-0.091613 * Math.pow(x, 2) + 1.549955*x + 5.788708)
+    );
+    // old equation: 312.18*Math.pow(x, 0.5343);
 
 
     // THIS IS NOT FOR SHOOTING ON THE MOVE LOL, JUST FOR DEALING WITH LIMELIGHT ERROR
@@ -268,10 +275,11 @@ public class Shooter extends SubsystemBase {
     double distance = limelight.getHorizontalDistance();
 
     // distance from center of hub
-    double dx = distance + Units.inchesToMeters(24);
+    double dx = distance;
+    //+ Units.inchesToMeters(24);
 
     // function to get theta value
-    double angle_proj = 0;
+    double angle_proj = 10.0794 * Math.log(dx) + 31.73;
 
     if(!limelight.targetsFound())
     {
@@ -282,7 +290,7 @@ public class Shooter extends SubsystemBase {
     // Set the angle from 0 to 20 (60 to 80) based on the distance
 
     // Equation that returns the correct angle (need to run sim)
-    return 40;
+    return angle_proj;
   }
 
   /**
@@ -365,7 +373,7 @@ public class Shooter extends SubsystemBase {
    * @return linear velocity
    */
   public double getVelocityFromWheelRPM(double rpm) {
-    return MathUtils.inchesToMeters(rpm/Constants.Flywheel.RADIUS/60);
+    return MathUtils.inchesToMeters(rpm*Constants.Flywheel.RADIUS/60);
   }
 
   /**
@@ -373,7 +381,7 @@ public class Shooter extends SubsystemBase {
    * @return rpm
    */
   public double getRPMFromVelocity(double velocity) {
-    return velocity*Constants.Flywheel.RADIUS*Constants.Flywheel.GEAR_RATIO*60;
+    return (velocity/Constants.Flywheel.RADIUS)*Constants.Flywheel.GEAR_RATIO*60;
   }
 
   /**
