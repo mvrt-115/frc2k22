@@ -60,14 +60,9 @@ public class Shooter extends SubsystemBase {
   /** Creates a new Shooter. */
   private Shooter() {
 
-    leftHoodServo = new LinearActuator(new Servo(Constants.Actuator.LEFT_SERVO_ID), 
-                    Constants.Actuator.HOOD_RADIUS, Constants.Actuator.DIST_FROM_BASE,
-                    Constants.Actuator.ACT_HEIGHT, Constants.Actuator.MAX_HEIGHT,
-                    Constants.Actuator.DEGREES_FROM_HORIZONTAL);
-    rightHoodServo = new LinearActuator(new Servo(Constants.Actuator.RIGHT_SERVO_ID), 
-                    Constants.Actuator.HOOD_RADIUS, Constants.Actuator.DIST_FROM_BASE,
-                    Constants.Actuator.ACT_HEIGHT, Constants.Actuator.MAX_HEIGHT,
-                    Constants.Actuator.DEGREES_FROM_HORIZONTAL);
+    leftHoodServo = new LinearActuator(Constants.Actuator.LEFT_SERVO_ID, 50, getCurrentRPM()); 
+      
+    rightHoodServo = new LinearActuator(Constants.Actuator.RIGHT_SERVO_ID, 50, getCurrentRPM());
 
     limelight = Limelight.getInstance();
     turret = Turret.getInstance();
@@ -176,6 +171,9 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
+
+    // setHoodAngle(80);
+
     // This method will be called once per scheduler run
   
     // With servos all this is kinda unnecessary but idt it matters so we can keep it
@@ -186,6 +184,12 @@ public class Shooter extends SubsystemBase {
     targetAngle = getRequiredAng();
     SmartDashboard.putNumber("Calculated RPM", targetRPM);
     SmartDashboard.putNumber("Calculated Angle", targetAngle);
+    
+    // servo periodical stuff
+    leftHoodServo.setPosition(2); //arbirtary value
+    leftHoodServo.updateCurPos();
+    rightHoodServo.setPosition(2); //arbitrary value for now - change based on tested values
+    rightHoodServo.updateCurPos();
     
     // Sets state periodically
      switch(state) {
@@ -242,10 +246,10 @@ public class Shooter extends SubsystemBase {
 
 
     // THIS IS NOT FOR SHOOTING ON THE MOVE LOL, JUST FOR DEALING WITH LIMELIGHT ERROR
-    if(Math.abs(limelight.getHorizontalOffset())>Constants.Flywheel.ALIGN_ERROR)
-    {
-      rpm = rpm - Constants.Flywheel.ADJ_HORIZ_ERROR*limelight.getHorizontalOffset();
-    }
+    // if(Math.abs(limelight.getHorizontalOffset())>Constants.Flywheel.ALIGN_ERROR)
+    // {
+    //   rpm = rpm - Constants.Flywheel.ADJ_HORIZ_ERROR*limelight.getHorizontalOffset();
+    // }
 
     return rpm;
   }

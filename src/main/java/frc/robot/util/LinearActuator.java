@@ -7,6 +7,7 @@ package frc.robot.util;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.PWM.PeriodMultiplier;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -14,133 +15,74 @@ import org.opencv.core.Point;
 
 import frc.robot.Constants;
 
-public class LinearActuator {
-  Servo actuatorServo;
-  //BaseTalon actuatorMotor;
-  //double position; wouldn't need this with servos
-  double radius;
-  double distFromBase;
-  double minHeight;
-  double maxHeight;
-  double degreesFromHorizontal;
+public class LinearActuator extends Servo {
+  double m_speed;
+  double m_length;
 
-  /** Creates a new LinearActuator. */
-  public LinearActuator(Servo actuatorServo, double radius, double distFromBase, double baseHeight, double maxHeight, double degreesFromHorizontal) {
-    
-    // Servo stuff
-    this.actuatorServo = actuatorServo;
-    this.actuatorServo.setBounds(Constants.Actuator.kDefaultMaxServoPWM, 0, 0, 0, Constants.Actuator.kDefaultMinServoPWM);
-    this.actuatorServo.setPeriodMultiplier(PeriodMultiplier.k4X);
+  double setPos;
+  double curPos;
 
-    /*this.actuatorMotor = actuatorMotor;
-    position = 0;*/
-    this.radius = radius;
-    this.distFromBase = distFromBase;
-    this.minHeight = baseHeight;
-    this.maxHeight = maxHeight;
-    this.degreesFromHorizontal = degreesFromHorizontal;
+  double lastTime = 0;
+  double dist = Math.sqrt(Math.pow(241.3,2) + Math.pow(203.2,2) - 2*241.3*203.2*Math.cos(Math.toRadians(30)));
 
-    /*this.actuatorMotor.config_kP(Constants.kPIDIdx, Constants.Actuator.P);
-    this.actuatorMotor.config_kI(Constants.kPIDIdx, Constants.Actuator.I);
-    this.actuatorMotor.config_kD(Constants.kPIDIdx, Constants.Actuator.D);*/
+  public LinearActuator(int channel, int length, double d) {
+    super(channel);
+    setBounds(2, 1.8, 1.5, 1.2, 1);
+    m_length = length;
+    m_speed = d;
   }
 
-  /**
-   * Give an angle and radius and set actuator position to get that angle
-   * @param angle (in degrees)
-   */
-  public void setPositionFromAngle(double angle)
-  {
-    double theta = Math.toRadians(angle+degreesFromHorizontal);
-    double pos = Math.sqrt(Math.pow(radius, 2) + Math.pow(distFromBase, 2) - 2 * radius * distFromBase * Math.cos(theta));
-    SmartDashboard.putNumber("requested pos", pos);
-    if (maxHeight - pos >= 0 && pos - minHeight >= 0)
-      setPosition(pos);
-    else
-      setPosition(pos > maxHeight? maxHeight : minHeight);
-  }
+  public void setPositionFromAngle(double angle) {
+    double horiz_length = 241.3;
+    double vert_length = 203.2;
 
-  /**
-   * Sets the position given a parameter, if the given value is less than the height of the
-   * unextended linear actuator, then the position is set to the base height
-   * @param position
-   */
-  public void setPosition(double position)
-  {
-    /*if(position>=minHeight)
-    {
-      this.position = position;
-      actuatorMotor.set(ControlMode.Position, positionToTicks(position));
-    }
-    else
-    {
-      this.position = minHeight;
-    }*/
+    dist = Math.sqrt(Math.pow(horiz_length,2) + Math.pow(vert_length,2) - 2*horiz_length*vert_length*Math.cos(Math.toRadians(angle)));
 
-    if(position>maxHeight)
+    if(dist <= m_length && dist >= 0)
     {
-      actuatorServo.setPosition(1);
+      setPosition(dist);
     }
-    else if(position<minHeight)
-    {
-      actuatorServo.setPosition(0);
-    }
-    else
-    {
-      SmartDashboard.putNumber("position: " + this.toString(), ((position-minHeight)/getRange()));
-      actuatorServo.setPosition((position-minHeight)/getRange());
+
+    else{
+      setPosition(dist > m_length? m_length: 0);
     }
   }
 
-  /**
-   * Get motor controller ticks from linear actuator position
-   * @param position
-   * @return ticks
-   */
-  public double positionToTicks(double position)
-  {
-    return position / Constants.Actuator.THREAD_DISTANCE * Constants.Actuator.GEAR_RATIO * Constants.Actuator.TICKS_PER_ROTATION;
+  public void setPosition(double setPoint) {
+    if(setPoint < 0) {
+      setPoint = 0;
+    }
+    else if(setPoint > m_length) {
+      setPoint = m_length;
+    }
+    setSpeed((setPos/m_length*2)-1);
   }
 
-  /**
-   * Returns the angle (in degrees) of the hood from the position of the linear actuator
-   * @return angle (in degrees)
-   */
-  public double getHoodAngle()
-  {
-    double length = actuatorServo.getPosition()*getRange()+minHeight;
-    
-    //double length = minHeight+position;
+  public void updateCurPos() {
+    double dt = Timer.getFPGATimestamp() - lastTime;
+    if(curPos > setPos + m_speed*dt) {
+      curPos -= m_speed * dt;
+    }
+    else if(curPos < setPos-m_speed * dt){
+      curPos += m_speed * dt;
+    }
+    else {
+      curPos = setPos;
+    }
+  }
 
-    double angle = Math.acos(Math.pow(radius, 2)+Math.pow(distFromBase, 2)-Math.pow(length, 2)/(2*radius*distFromBase));
-  
+  public double getPosition() {
+    return curPos;
+  }
+
+  public boolean isFinished() {
+    return curPos == setPos;
+  }
+
+  public double getHoodAngle() {
+    double length = getPosition() * m_length;
+    double angle = Math.acos(Math.pow(dist, 2) + Math.pow(241.3, 2)-Math.pow(m_length, 2)/(2*dist*241.3));
+
     return Math.toDegrees(angle);
-  }
-
-  /**
-   * Returns the Talon object of the linear actuator
-   * @return Talon
-   */
-  /*public BaseTalon getTalon()
-  {
-    return actuatorMotor;
-  }*/
-
-  /**
-   * Returns the range of the linear actuator
-   * @return range
-   */
-  public double getRange()
-  {
-    return maxHeight-minHeight;
-  }
-
-  /**
-   * Returns the Servo object of the linear actuator
-   * @return Servo
-   */
-  public Servo getServo()
-  {
-    return actuatorServo;
   }
 }
