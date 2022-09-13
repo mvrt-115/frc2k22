@@ -186,9 +186,7 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Calculated Angle", targetAngle);
     
     // servo periodical stuff
-    leftHoodServo.setPosition(2); //arbirtary value
     leftHoodServo.updateCurPos();
-    rightHoodServo.setPosition(2); //arbitrary value for now - change based on tested values
     rightHoodServo.updateCurPos();
     
     // Sets state periodically
