@@ -36,12 +36,12 @@ public class RobotContainer {
   
   private JoystickButton  pivot; //buttons
 
-  // public static final Drivetrain drivetrain = Drivetrain.getInstance();
-  // private final Intake intake = Intake.getInstance();
+  public static final Drivetrain drivetrain = Drivetrain.getInstance();
+  private final Intake intake = Intake.getInstance();
   private final Storage storage = Storage.getInstance();
   // private final Climber climber = Climber.getInstance();
   // public static final Turret turret = Turret.getInstance();
-  // private final Shooter shooter = Shooter.getInstance();
+  private final Shooter shooter = Shooter.getInstance();
   // // private final LEDs led = new LEDs();
 
   // climber operator manual buttons
@@ -149,18 +149,17 @@ public class RobotContainer {
     // storage.setDefaultCommand(new TrackBalls(storage, shooter, alliance));
     // the :: syntax allows us to pass in methods of a class as variables so that the command can continuously access input values
     // alignDrivetrain.whenPressed(new AlignIntakeToBall(drivetrain, true)).whenReleased(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
-    // drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, intake, 
-    // this::getThrottle, this::getWheel, quickturn::get));
+    drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, intake, this::getThrottle, this::getWheel, quickturn::get));
     // // led.setDefaultCommand(new LEDCommand(led, turret, shooter, climber, storage, intake));
 
     // //storage.setDefaultCommand(new TrackBalls(storage, shooter));
     // turret.setDefaultCommand(new FindTarget(turret));
     
-    // shoot.whenPressed(new SetRPMRequired(shooter, storage, shoot));//.whenReleased(new StopShooter(shooter, storage));
+    shoot.whenPressed(new SetRPMRequired(shooter, storage, shoot)).whenReleased(new StopShooter(shooter, storage));
     // shootLaunch.whenPressed(new SetRPMLaunchpad(shooter, storage, turret, shootLaunch));
     // // new SetRPM(shooter, storage, 1000).schedule();
     // // SmartDashboard.putData("Testing Shooter", new SetRPMDash(shooter, storage, turret, drivetrain));
-    // pivot.whenPressed(new Pivot(intake,storage)).whenReleased(new PivotUp(intake, storage));
+    pivot.whenPressed(new Pivot(intake,storage)).whenReleased(new PivotUp(intake, storage));
     // resetBalls.whenPressed(new ResetBalls(storage));
     // upManualStorage.whenPressed(new ManualStorage(storage, true, upManualStorage::get));  // true for up
     // downManualStorage.whenPressed(new ManualStorage(storage, false, downManualStorage::get)); // false for down
