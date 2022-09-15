@@ -72,7 +72,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void runMotor(double out ){
-    flywheelLeader.set(ControlMode.PercentOutput, out);
+    flywheelLeader.set(ControlMode.PercentOutput, 1); //out
   } 
 
   /**

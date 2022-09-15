@@ -12,6 +12,7 @@ import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -26,6 +27,7 @@ public class Storage extends SubsystemBase  {
   private boolean overriden;
   private double output = -0.5;
   private static Storage storage = new Storage();
+  boolean readyShoot = false;
 
   public static Storage getInstance()
   {
@@ -40,6 +42,11 @@ public class Storage extends SubsystemBase  {
   {
     breakbeamTop = new DigitalInput(1);
     breakbeamBott = new DigitalInput(2);
+    Servo servo1 =  new Servo(2);
+    Servo servo2 =  new Servo(3);
+    
+    servo1.set(0);
+    servo2.set(0);
     lowerBeamState = upperBeamState = true;
     lastLowerState = lastUpperState = true;
     balls = 1; //assumption that the storage is preloaded with one ball
@@ -66,6 +73,12 @@ public class Storage extends SubsystemBase  {
     if(lowerBeamState == false && upperBeamState == false) bottomMotor.set(ControlMode.PercentOutput, 0);
     else bottomMotor.set(ControlMode.PercentOutput, output);
 
+    if(readyShoot) {
+      topMotor.set(ControlMode.PercentOutput, -0.5);
+      bottomMotor.set(ControlMode.PercentOutput, -0.5);
+    }
+      
+
     log();
   }
 
@@ -89,7 +102,9 @@ public class Storage extends SubsystemBase  {
   public void runMotor(double val){
 
   }
-  public void setReadyShoot(boolean val){}
+  public void setReadyShoot(boolean val){
+    readyShoot = val;
+  }
   public void setIntaking(boolean val){}
   /*private DigitalInput breakbeamTop, breakbeamBott;
   private boolean prevStateTop, prevStateBott;
