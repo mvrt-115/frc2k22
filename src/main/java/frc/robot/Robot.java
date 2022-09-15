@@ -128,7 +128,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // SmartDashboard.putNumber("operator right axis angle", m_robotContainer.getOperatorRightAxisAngle());
-    flywheelLeader.set(ControlMode.PercentOutput, 0.4);
+    // flywheelLeader.set(ControlMode.PercentOutput, 0.4);
   }
 
   @Override

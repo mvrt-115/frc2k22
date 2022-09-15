@@ -25,6 +25,7 @@ public class Storage extends SubsystemBase  {
   private BaseTalon bottomMotor, topMotor;
   private boolean overriden;
   private double output = -0.5;
+  boolean ready = false;
   private static Storage storage = new Storage();
 
   public static Storage getInstance()
@@ -60,13 +61,18 @@ public class Storage extends SubsystemBase  {
     // if(lastLowerState && !lowerBeamState) balls++;
     // if(!lastUpperState && upperBeamState) balls--;
 
-    // if(upperBeamState == false) topMotor.set(ControlMode.PercentOutput,0);
-    // else  topMotor.set(ControlMode.PercentOutput,output );
+    if(upperBeamState == false) topMotor.set(ControlMode.PercentOutput,0);
+    else  topMotor.set(ControlMode.PercentOutput,output );
 
-    // if(lowerBeamState == false && upperBeamState == false) bottomMotor.set(ControlMode.PercentOutput, 0);
-    // else bottomMotor.set(ControlMode.PercentOutput, output);
+    if(lowerBeamState == false && upperBeamState == false) bottomMotor.set(ControlMode.PercentOutput, 0);
+    else bottomMotor.set(ControlMode.PercentOutput, output);
     // topMotor.set(ControlMode.PercentOutput,output );
     // bottomMotor.set(ControlMode.PercentOutput, output);
+
+    if(ready) {
+      topMotor.set(ControlMode.PercentOutput, output);
+      bottomMotor.set(ControlMode.PercentOutput, output);
+    }
 
     log();
   }
@@ -91,7 +97,9 @@ public class Storage extends SubsystemBase  {
   public void runMotor(double val){
 
   }
-  public void setReadyShoot(boolean val){}
+  public void setReadyShoot(boolean val){
+    ready  = val;
+  }
   public void setIntaking(boolean val){}
   /*private DigitalInput breakbeamTop, breakbeamBott;
   private boolean prevStateTop, prevStateBott;

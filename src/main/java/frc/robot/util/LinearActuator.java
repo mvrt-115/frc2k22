@@ -36,7 +36,7 @@ public class LinearActuator extends Servo {
     double horiz_length = 241.3;
     double vert_length = 203.2;
 
-    dist = Math.sqrt(Math.pow(horiz_length,2) + Math.pow(vert_length,2) - 2*horiz_length*vert_length*Math.cos(Math.toRadians(angle)));
+    dist = Math.sqrt(Math.pow(horiz_length,2) + Math.pow(vert_length,2) - 2*horiz_length*vert_length*Math.cos(Math.toRadians(angle)))- 114.3; 
 
     if(dist <= m_length && dist >= 0)
     {
@@ -55,7 +55,9 @@ public class LinearActuator extends Servo {
     else if(setPoint > m_length) {
       setPoint = m_length;
     }
-    setSpeed((setPos/m_length*2)-1);
+
+    SmartDashboard.putNumber("ho", setPoint / m_length);
+    set(setPoint / m_length);
   }
 
   public void updateCurPos() {
@@ -69,6 +71,7 @@ public class LinearActuator extends Servo {
     else {
       curPos = setPos;
     }
+    
   }
 
   public double getPosition() {

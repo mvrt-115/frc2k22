@@ -25,7 +25,7 @@ public class Limelight extends SubsystemBase {
 
   public final double height = 104; // inches
   public final double limelightMountHeight = 37.5;  // inches
-  private double limelightMountAngle = 34.00001; // degrees
+  private double limelightMountAngle = 51.00001; // degrees
 
   public static enum LED_STATE {
     DEFAULT, ON, OFF, BLINKING;

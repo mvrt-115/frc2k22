@@ -18,7 +18,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
-
+//34.87
+//52.35
 public class Shooter extends SubsystemBase {
 
   public enum ShooterState
@@ -41,10 +42,10 @@ public class Shooter extends SubsystemBase {
 
   // Attributes of Hood
   private double targetAngle = 40;
-  private double error = 2;
+  private double error = 100;
 
-  private LinearActuator leftHoodServo;
-  private LinearActuator rightHoodServo;
+  private Servo leftHoodServo;
+  private Servo rightHoodServo;
 
   private RollingAverage rpm;
   private Limelight limelight;
@@ -60,9 +61,12 @@ public class Shooter extends SubsystemBase {
   /** Creates a new Shooter. */
   private Shooter() {
 
-    leftHoodServo = new LinearActuator(Constants.Actuator.LEFT_SERVO_ID, 50, getCurrentRPM()); 
+    leftHoodServo = new Servo(Constants.Actuator.LEFT_SERVO_ID);//, 50, 1); 
       
-    rightHoodServo = new LinearActuator(Constants.Actuator.RIGHT_SERVO_ID, 50, getCurrentRPM());
+    rightHoodServo = new Servo(Constants.Actuator.RIGHT_SERVO_ID);//, 50, 1);
+
+    leftHoodServo.setBounds(2, 1.8, 1.5, 1.2, 1);;
+    rightHoodServo.setBounds(2, 1.8, 1.5, 1.2, 1);
 
     limelight = Limelight.getInstance();
     turret = Turret.getInstance();
@@ -120,15 +124,24 @@ public class Shooter extends SubsystemBase {
 
   public void setHoodAngle(double angle)
   {
-    SmartDashboard.putNumber("request", angle);
-    leftHoodServo.setPositionFromAngle(angle);
-    rightHoodServo.setPositionFromAngle(angle);
+    double minLen = 120;
+    double maxLen = 170;
+    double x = 165.1;
+    double hyp = 209.55;
+
+    double out = (Math.sqrt(x*x + hyp * hyp - 2*x*hyp*Math.cos(Math.toRadians(angle))) - minLen);
+
+
+    SmartDashboard.putNumber("request", out);
+    leftHoodServo.set(out);
+    rightHoodServo.set(out);
     targetAngle = angle;
   }
 
   public double getHoodAngle()
   {
-    return leftHoodServo.getHoodAngle();
+    return 0;
+    //leftHoodServo.getHoodAngle();
   }
 
   /**
@@ -156,12 +169,12 @@ public class Shooter extends SubsystemBase {
    */
   public void log()
   {
-    SmartDashboard.putNumber("Flywheel Motor Output", flywheelLeader.getMotorOutputPercent());
+    SmartDashboard.putNumber("targetRO", targetRPM);
     SmartDashboard.putNumber("Flywheel RPM", getCurrentRPM());
     SmartDashboard.putNumber("Hood Angle", getHoodAngle());
     // SmartDashboard.putNumber("RPM Needed", getRequiredRPM());
     SmartDashboard.putString("Shooter State", state.toString());
-    // SmartDashboard.putNumber("Target RPM", targetRPM);
+    SmartDashboard.putNumber("Target Angle", targetAngle);
     SmartDashboard.putNumber("Limelight Horizontal Distance", limelight.getHorizontalDistance());
     SmartDashboard.putNumber("Real Offset", limelight.getHorizontalOffset());
     SmartDashboard.putNumber("Turret Offset", getCalculatedOffset());
@@ -186,8 +199,8 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Calculated Angle", targetAngle);
     
     // servo periodical stuff
-    leftHoodServo.updateCurPos();
-    rightHoodServo.updateCurPos();
+    // leftHoodServo.updateCurPos();
+    // rightHoodServo.updateCurPos();
     
     // Sets state periodically
      switch(state) {
@@ -195,7 +208,8 @@ public class Shooter extends SubsystemBase {
          stopFlywheel();
          break;
        case SPEEDING:
-         flywheelLeader.set(ControlMode.Velocity, MathUtils.rpmToTicks(targetRPM, Constants.Flywheel.TICKS_PER_REVOLUTION, Constants.Flywheel.GEAR_RATIO));
+         flywheelLeader.set(ControlMode.Velocity, MathUtils.rpmToTicks(targetRPM
+         , Constants.Flywheel.TICKS_PER_REVOLUTION, Constants.Flywheel.GEAR_RATIO));
          if(allWithinRPMError(targetRPM)) {
            setState(ShooterState.ATSPEED);
          }
@@ -209,6 +223,8 @@ public class Shooter extends SubsystemBase {
      }
 
     autoOffset();
+
+
 
     // double calcAngle = getRequiredAng();
     // if(Math.abs(calcAngle-targetAngle)<error || getHoodAngle()<=Constants.Hood.MIN_ANG)
@@ -249,7 +265,7 @@ public class Shooter extends SubsystemBase {
     //   rpm = rpm - Constants.Flywheel.ADJ_HORIZ_ERROR*limelight.getHorizontalOffset();
     // }
 
-    return rpm;
+    return 1000;
   }
 
   /**
@@ -265,7 +281,7 @@ public class Shooter extends SubsystemBase {
     //   rpm+=getCalculatedAddRPM();
     // }
 
-    return Math.min(rpm, Constants.Flywheel.MAX_RPM);
+    return 3000;//Math.min(rpm, Constants.Flywheel.MAX_RPM);
   }
 
   /**
@@ -279,20 +295,21 @@ public class Shooter extends SubsystemBase {
     // distance from center of hub
     double dx = distance;
     //+ Units.inchesToMeters(24);
-
+//34.87
+//52.35
     // function to get theta value
-    double angle_proj = 10.0794 * Math.log(dx) + 31.73;
+    double angle_proj = dx / 250 * (52.35 - 34.87) + 34.87;
 
-    if(!limelight.targetsFound())
-    {
-      // Angle where the limelight can scan the field the best
-      return 80;
-    }
+    // if(!limelight.targetsFound())
+    // {
+    //   // Angle where the limelight can scan the field the best
+    //   return 52.34;
+    // }
 
     // Set the angle from 0 to 20 (60 to 80) based on the distance
 
     // Equation that returns the correct angle (need to run sim)
-    return angle_proj;
+    return 34.87;
   }
 
   /**

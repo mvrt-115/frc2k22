@@ -156,7 +156,7 @@ public class RobotContainer {
     // //storage.setDefaultCommand(new TrackBalls(storage, shooter));
     // turret.setDefaultCommand(new FindTarget(turret));
     
-    // shoot.whenPressed(new SetRPMRequired(shooter, storage, shoot));//.whenReleased(new StopShooter(shooter, storage));
+    shoot.whenPressed(new SetRPMRequired(shooter, storage, shoot));//.whenReleased(new StopShooter(shooter, storage));
     // shootLaunch.whenPressed(new SetRPMLaunchpad(shooter, storage, turret, shootLaunch));
     // // new SetRPM(shooter, storage, 1000).schedule();
     // // SmartDashboard.putData("Testing Shooter", new SetRPMDash(shooter, storage, turret, drivetrain));
