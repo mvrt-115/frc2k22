@@ -18,17 +18,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
+
 //34.87
 //52.35
 public class Shooter extends SubsystemBase {
 
-  public enum ShooterState
-  {
+  public enum ShooterState {
     OFF, SPEEDING, ATSPEED;
   }
 
-  public enum HoodState
-  {
+  public enum HoodState {
     OFF, ADJUSTING, ATPOSITION;
   }
 
@@ -61,11 +60,12 @@ public class Shooter extends SubsystemBase {
   /** Creates a new Shooter. */
   private Shooter() {
 
-    leftHoodServo = new Servo(Constants.Actuator.LEFT_SERVO_ID);//, 50, 1); 
-      
-    rightHoodServo = new Servo(Constants.Actuator.RIGHT_SERVO_ID);//, 50, 1);
+    leftHoodServo = new Servo(Constants.Actuator.LEFT_SERVO_ID);// , 50, 1);
 
-    leftHoodServo.setBounds(2, 1.8, 1.5, 1.2, 1);;
+    rightHoodServo = new Servo(Constants.Actuator.RIGHT_SERVO_ID);// , 50, 1);
+
+    leftHoodServo.setBounds(2, 1.8, 1.5, 1.2, 1);
+    ;
     rightHoodServo.setBounds(2, 1.8, 1.5, 1.2, 1);
 
     limelight = Limelight.getInstance();
@@ -75,7 +75,6 @@ public class Shooter extends SubsystemBase {
     // Mind Bending Test aon the Reality of our Situation
     flywheelLeader = TalonFactory.createTalonFX(LEADER_ID, false);
     flywheelLeader.setNeutralMode(NeutralMode.Coast);
-
 
     // Sets up PIDF
     flywheelLeader.config_kP(Constants.kPIDIdx, Constants.Flywheel.P);
@@ -88,9 +87,9 @@ public class Shooter extends SubsystemBase {
     rpm = new RollingAverage(Constants.Flywheel.NUM_AVG);
   }
 
-  public void runMotor(double out ){
+  public void runMotor(double out) {
     flywheelLeader.set(ControlMode.PercentOutput, out);
-  } 
+  }
 
   /**
    * Stops Shooter
@@ -101,6 +100,7 @@ public class Shooter extends SubsystemBase {
 
   /**
    * Get the current flywheel rpm
+   * 
    * @return rpm
    */
   public double getCurrentRPM() {
@@ -109,28 +109,27 @@ public class Shooter extends SubsystemBase {
 
   /**
    * Sets the target rpm of the shooter
+   * 
    * @param exit_velocity (an rpm value)
    */
   public void setTargetRPM(double exit_velocity) {
     targetRPM = Math.min(Constants.Flywheel.MAX_RPM, exit_velocity);
-    
-    if(exit_velocity == 0)
+
+    if (exit_velocity == 0)
       setState(ShooterState.OFF);
-    else if(!allWithinRPMError(targetRPM))
+    else if (!allWithinRPMError(targetRPM))
       setState(ShooterState.SPEEDING);
     else
       setState(ShooterState.ATSPEED);
   }
 
-  public void setHoodAngle(double angle)
-  {
+  public void setHoodAngle(double angle) {
     double minLen = 120;
     double maxLen = 170;
     double x = 165.1;
     double hyp = 209.55;
 
-    double out = (Math.sqrt(x*x + hyp * hyp - 2*x*hyp*Math.cos(Math.toRadians(angle))) - minLen);
-
+    double out = (Math.sqrt(x * x + hyp * hyp - 2 * x * hyp * Math.cos(Math.toRadians(angle))) - minLen);
 
     SmartDashboard.putNumber("request", out);
     leftHoodServo.set(out);
@@ -138,37 +137,37 @@ public class Shooter extends SubsystemBase {
     targetAngle = angle;
   }
 
-  public double getHoodAngle()
-  {
+  public double getHoodAngle() {
     return 0;
-    //leftHoodServo.getHoodAngle();
+    // leftHoodServo.getHoodAngle();
   }
 
   /**
    * Sets the state of the Flywheel
    * Sets target rpm to 0 if state is OFF
+   * 
    * @param _state
    */
   public void setState(ShooterState _state) {
-      this.state = _state;
+    this.state = _state;
 
-      if(_state == ShooterState.OFF)
-        targetRPM = 0;
+    if (_state == ShooterState.OFF)
+      targetRPM = 0;
   }
 
   /**
    * Returns the state of the shooter
+   * 
    * @return the state of the shooter
    */
   public ShooterState getState() {
-      return state;
+    return state;
   }
 
   /**
    * Log Shooter values to SmartDashboard
    */
-  public void log()
-  {
+  public void log() {
     SmartDashboard.putNumber("targetRO", targetRPM);
     SmartDashboard.putNumber("Flywheel RPM", getCurrentRPM());
     SmartDashboard.putNumber("Hood Angle", getHoodAngle());
@@ -179,7 +178,8 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Real Offset", limelight.getHorizontalOffset());
     SmartDashboard.putNumber("Turret Offset", getCalculatedOffset());
     SmartDashboard.putNumber("Added RPM", getCalculatedAddRPM());
-    SmartDashboard.putNumber("Tuned RPM", Constants.Flywheel.REG_CONSTANT); // For testing to see how much rpm was added by Arnav
+    SmartDashboard.putNumber("Tuned RPM", Constants.Flywheel.REG_CONSTANT); // For testing to see how much rpm was added
+                                                                            // by Arnav
   }
 
   @Override
@@ -188,48 +188,50 @@ public class Shooter extends SubsystemBase {
     // setHoodAngle(80);
 
     // This method will be called once per scheduler run
-  
-    // With servos all this is kinda unnecessary but idt it matters so we can keep it
 
-    rpm.updateValue(MathUtils.ticksToRPM(flywheelLeader.getSelectedSensorVelocity(), Constants.Flywheel.TICKS_PER_REVOLUTION, Constants.Flywheel.GEAR_RATIO));
+    // With servos all this is kinda unnecessary but idt it matters so we can keep
+    // it
+
+    rpm.updateValue(MathUtils.ticksToRPM(flywheelLeader.getSelectedSensorVelocity(),
+        Constants.Flywheel.TICKS_PER_REVOLUTION, Constants.Flywheel.GEAR_RATIO));
     log();
     targetRPM = getRequiredRPM();
     targetAngle = getRequiredAng();
     SmartDashboard.putNumber("Calculated RPM", targetRPM);
     SmartDashboard.putNumber("Calculated Angle", targetAngle);
-    
+
     // servo periodical stuff
     // leftHoodServo.updateCurPos();
     // rightHoodServo.updateCurPos();
-    
+
     // Sets state periodically
-     switch(state) {
-       case OFF:
-         stopFlywheel();
-         break;
-       case SPEEDING:
-         flywheelLeader.set(ControlMode.Velocity, MathUtils.rpmToTicks(targetRPM
-         , Constants.Flywheel.TICKS_PER_REVOLUTION, Constants.Flywheel.GEAR_RATIO));
-         if(allWithinRPMError(targetRPM)) {
-           setState(ShooterState.ATSPEED);
-         }
-          
-         break;
-       case ATSPEED:
-         // flywheelLeader.set(ControlMode.Velocity, MathUtils.rpmToTicks(targetRPM, Constants.Flywheel.TICKS_PER_REVOLUTION, Constants.Flywheel.GEAR_RATIO));
-         if(!allWithinRPMError(targetRPM))
-           setState(ShooterState.SPEEDING);
-         break;
-     }
+    switch (state) {
+      case OFF:
+        stopFlywheel();
+        break;
+      case SPEEDING:
+        flywheelLeader.set(ControlMode.Velocity,
+            MathUtils.rpmToTicks(targetRPM, Constants.Flywheel.TICKS_PER_REVOLUTION, Constants.Flywheel.GEAR_RATIO));
+        if (allWithinRPMError(targetRPM)) {
+          setState(ShooterState.ATSPEED);
+        }
+
+        break;
+      case ATSPEED:
+        // flywheelLeader.set(ControlMode.Velocity, MathUtils.rpmToTicks(targetRPM,
+        // Constants.Flywheel.TICKS_PER_REVOLUTION, Constants.Flywheel.GEAR_RATIO));
+        if (!allWithinRPMError(targetRPM))
+          setState(ShooterState.SPEEDING);
+        break;
+    }
 
     autoOffset();
 
-
-
     // double calcAngle = getRequiredAng();
-    // if(Math.abs(calcAngle-targetAngle)<error || getHoodAngle()<=Constants.Hood.MIN_ANG)
+    // if(Math.abs(calcAngle-targetAngle)<error ||
+    // getHoodAngle()<=Constants.Hood.MIN_ANG)
     // {
-    //   targetAngle = calcAngle;
+    // targetAngle = calcAngle;
     // }
 
     setHoodAngle(targetAngle);
@@ -238,31 +240,35 @@ public class Shooter extends SubsystemBase {
     // limelight.setNewMountAngle(leftHoodServo.getHoodAngle()+Constants.Limelight.TILT_ANGLE);
   }
 
-  public double getStationaryRPM()
-  {
+  public double getStationaryRPM() {
     // power series regression from testing data
-    // linear constant to slightly tune the shot, -> Limelight distances range from 80 to 220
+    // linear constant to slightly tune the shot, -> Limelight distances range from
+    // 80 to 220
     // *currently set to 0, I suggest it should be 1*
     double x = limelight.getHorizontalDistance() * Constants.Flywheel.STRETCH_CONSTANT;
-    // double addTuneRPM = Constants.Flywheel.LIN_CONST*limelight.getHorizontalDistance()+Constants.Flywheel.REG_CONSTANT;
+    // double addTuneRPM =
+    // Constants.Flywheel.LIN_CONST*limelight.getHorizontalDistance()+Constants.Flywheel.REG_CONSTANT;
 
-    // double rpm = Math.min(333*Math.pow(limelight.getHorizontalDistance() * Constants.Flywheel.STRETCH_CONSTANT, 0.522) + Constants.Flywheel.LIN_CONST * limelight.getHorizontalDistance(), Constants.Flywheel.MAX_RPM);
-   
-    // double rpm = 479.18*Math.pow(x, 0.4418) + Constants.Flywheel.LIN_CONST * limelight.getHorizontalDistance();
-    
+    // double rpm = Math.min(333*Math.pow(limelight.getHorizontalDistance() *
+    // Constants.Flywheel.STRETCH_CONSTANT, 0.522) + Constants.Flywheel.LIN_CONST *
+    // limelight.getHorizontalDistance(), Constants.Flywheel.MAX_RPM);
+
+    // double rpm = 479.18*Math.pow(x, 0.4418) + Constants.Flywheel.LIN_CONST *
+    // limelight.getHorizontalDistance();
+
     // Use this if power equation is not working (old one)
     // double rpm = 2040.9 * Math.pow(Math.E, 0.0058 * x) + addTuneRPM;
 
     double rpm = getRPMFromVelocity(
-      Units.metersToInches(-0.091613 * Math.pow(x, 2) + 1.549955*x + 5.788708)
-    );
+        Units.metersToInches(-0.091613 * Math.pow(x, 2) + 1.549955 * x + 5.788708));
     // old equation: 312.18*Math.pow(x, 0.5343);
 
-
-    // THIS IS NOT FOR SHOOTING ON THE MOVE LOL, JUST FOR DEALING WITH LIMELIGHT ERROR
+    // THIS IS NOT FOR SHOOTING ON THE MOVE LOL, JUST FOR DEALING WITH LIMELIGHT
+    // ERROR
     // if(Math.abs(limelight.getHorizontalOffset())>Constants.Flywheel.ALIGN_ERROR)
     // {
-    //   rpm = rpm - Constants.Flywheel.ADJ_HORIZ_ERROR*limelight.getHorizontalOffset();
+    // rpm = rpm -
+    // Constants.Flywheel.ADJ_HORIZ_ERROR*limelight.getHorizontalOffset();
     // }
 
     return 1000;
@@ -270,6 +276,7 @@ public class Shooter extends SubsystemBase {
 
   /**
    * Get required RPM for shooter
+   * 
    * @return required rpm for shooter
    */
   public double getRequiredRPM() {
@@ -278,14 +285,15 @@ public class Shooter extends SubsystemBase {
 
     // if(Constants.Flywheel.ENMOVSHOT && limelight.targetsFound())
     // {
-    //   rpm+=getCalculatedAddRPM();
+    // rpm+=getCalculatedAddRPM();
     // }
 
-    return 3000;//Math.min(rpm, Constants.Flywheel.MAX_RPM);
+    return 3000;// Math.min(rpm, Constants.Flywheel.MAX_RPM);
   }
 
   /**
    * Get required hood angle from limelight distance
+   * 
    * @return Required Hood Angle
    */
   public double getRequiredAng() {
@@ -294,16 +302,16 @@ public class Shooter extends SubsystemBase {
 
     // distance from center of hub
     double dx = distance;
-    //+ Units.inchesToMeters(24);
-//34.87
-//52.35
+    // + Units.inchesToMeters(24);
+    // 34.87
+    // 52.35
     // function to get theta value
     double angle_proj = dx / 250 * (52.35 - 34.87) + 34.87;
 
     // if(!limelight.targetsFound())
     // {
-    //   // Angle where the limelight can scan the field the best
-    //   return 52.34;
+    // // Angle where the limelight can scan the field the best
+    // return 52.34;
     // }
 
     // Set the angle from 0 to 20 (60 to 80) based on the distance
@@ -313,7 +321,7 @@ public class Shooter extends SubsystemBase {
   }
 
   /**
-   * @param target -- the target RPM
+   * @param target          -- the target RPM
    * @param acceptableError -- the acceptable +- error range
    * @return boolean whether the RPM is within the acceptable error or not
    */
@@ -324,56 +332,57 @@ public class Shooter extends SubsystemBase {
   /**
    * Adjusts the turret to the correct offset
    */
-  public void autoOffset()
-  {
+  public void autoOffset() {
     turret.setOffset(getCalculatedOffset());
   }
 
-  public double getCalculatedOffset()
-  {
+  public double getCalculatedOffset() {
     double offset = getStationaryOffset();
-    
-    double driveSpeed = (drivetrain.getSpeeds().leftMetersPerSecond+drivetrain.getSpeeds().rightMetersPerSecond)/2;
-    double initSpeed = getBaseVelocityFromWheel();
-    double diff_const = initSpeed - driveSpeed*Math.cos(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()));
-    double vert_drive_comp = driveSpeed*Math.sin(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()));
-    double totSpeed = Math.sqrt(vert_drive_comp*vert_drive_comp + diff_const*diff_const)+initSpeed;
 
-    // double movOffset = Math.toDegrees(Math.asin(driveSpeed*Math.sin(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()))/(totSpeed)));
+    double driveSpeed = (drivetrain.getSpeeds().leftMetersPerSecond + drivetrain.getSpeeds().rightMetersPerSecond) / 2;
+    double initSpeed = getBaseVelocityFromWheel();
+    double diff_const = initSpeed
+        - driveSpeed * Math.cos(Math.toRadians(turret.getCurrentPositionDegrees() + limelight.getHorizontalOffset()));
+    double vert_drive_comp = driveSpeed
+        * Math.sin(Math.toRadians(turret.getCurrentPositionDegrees() + limelight.getHorizontalOffset()));
+    double totSpeed = Math.sqrt(vert_drive_comp * vert_drive_comp + diff_const * diff_const) + initSpeed;
+
+    // double movOffset =
+    // Math.toDegrees(Math.asin(driveSpeed*Math.sin(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()))/(totSpeed)));
 
     // Only does move shot when it's enabled.
     // if(Constants.Flywheel.ENMOVSHOT && limelight.targetsFound())
     // {
-    //   offset+=movOffset;
+    // offset+=movOffset;
     // }
 
-    if(Math.abs(offset)>Constants.Turret.kMaxOffset)
-    {
-      offset = offset/Math.abs(offset)*Constants.Turret.kMaxOffset;
+    if (Math.abs(offset) > Constants.Turret.kMaxOffset) {
+      offset = offset / Math.abs(offset) * Constants.Turret.kMaxOffset;
     }
 
     return offset;
   }
 
-  public double getCalculatedAddRPM()
-  {
+  public double getCalculatedAddRPM() {
     double driveSpeed = drivetrain.getLinSpeed();
     double initSpeed = getBaseVelocityFromWheel();
-    double diff_const = initSpeed - driveSpeed*Math.cos(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()));
-    double vert_drive_comp = driveSpeed*Math.sin(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()));
-    double addSpeed = Math.sqrt(vert_drive_comp*vert_drive_comp + diff_const*diff_const)-initSpeed;
+    double diff_const = initSpeed
+        - driveSpeed * Math.cos(Math.toRadians(turret.getCurrentPositionDegrees() + limelight.getHorizontalOffset()));
+    double vert_drive_comp = driveSpeed
+        * Math.sin(Math.toRadians(turret.getCurrentPositionDegrees() + limelight.getHorizontalOffset()));
+    double addSpeed = Math.sqrt(vert_drive_comp * vert_drive_comp + diff_const * diff_const) - initSpeed;
 
     return getRPMFromVelocity(addSpeed);
   }
 
-  public double getStationaryOffset()
-  {
+  public double getStationaryOffset() {
     // This is for the stationary offset
-    // Stationary offset is only set when the shooter is speeding or atspeed, if the robot is moving, it will be set to 0
+    // Stationary offset is only set when the shooter is speeding or atspeed, if the
+    // robot is moving, it will be set to 0
     // I suggest we only set it like this, but during testing this could change
-    if(getState()!=ShooterState.OFF && Math.abs(drivetrain.getLinSpeed())<Constants.Drivetrain.IS_MOVING)
-    {
-      return Constants.Turret.kPropOffset*(Math.toDegrees(Math.atan(Constants.Flywheel.OFF_TARGET/limelight.getHorizontalDistance()))+1);
+    if (getState() != ShooterState.OFF && Math.abs(drivetrain.getLinSpeed()) < Constants.Drivetrain.IS_MOVING) {
+      return Constants.Turret.kPropOffset
+          * (Math.toDegrees(Math.atan(Constants.Flywheel.OFF_TARGET / limelight.getHorizontalDistance())) + 1);
     }
 
     return 0;
@@ -381,33 +390,35 @@ public class Shooter extends SubsystemBase {
 
   /**
    * Converts the rpm of the flywheel to linear velocity
+   * 
    * @return linear velocity
    */
   public double getBaseVelocityFromWheel() {
-    return MathUtils.inchesToMeters(getStationaryRPM()/Constants.Flywheel.RADIUS/60);
+    return MathUtils.inchesToMeters(getStationaryRPM() / Constants.Flywheel.RADIUS / 60);
   }
 
   /**
    * Converts the rpm of the flywheel to linear velocity
+   * 
    * @return linear velocity
    */
   public double getVelocityFromWheelRPM(double rpm) {
-    return MathUtils.inchesToMeters(rpm*Constants.Flywheel.RADIUS/60);
+    return MathUtils.inchesToMeters(rpm * Constants.Flywheel.RADIUS / 60);
   }
 
   /**
    * Converts the linear velocity of the flywheel to rpm
+   * 
    * @return rpm
    */
   public double getRPMFromVelocity(double velocity) {
-    return (velocity/Constants.Flywheel.RADIUS)*Constants.Flywheel.GEAR_RATIO*60;
+    return (velocity / Constants.Flywheel.RADIUS) * Constants.Flywheel.GEAR_RATIO * 60;
   }
 
   /**
    * @return BaseTalon flywheel leader
    */
-  public BaseTalon getMotor()
-  {
+  public BaseTalon getMotor() {
     return flywheelLeader;
   }
 }

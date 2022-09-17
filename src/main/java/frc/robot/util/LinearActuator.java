@@ -16,62 +16,44 @@ import org.opencv.core.Point;
 import frc.robot.Constants;
 
 public class LinearActuator extends Servo {
-  double m_speed;
-  double m_length;
+  double max_length;
+  double min_servo_length = 114.3;
+  double horiz_length = 241.3;
+  double radial_length = 203.2;
 
-  double setPos;
+  double targetPos;
   double curPos;
 
   double lastTime = 0;
-  double dist = Math.sqrt(Math.pow(241.3,2) + Math.pow(203.2,2) - 2*241.3*203.2*Math.cos(Math.toRadians(30)));
+  double cosine_equation_constant = Math.pow(horiz_length, 2) + Math.pow(radial_length, 2);
 
-  public LinearActuator(int channel, int length, double d) {
+  public LinearActuator(int channel, double length) {
     super(channel);
     setBounds(2, 1.8, 1.5, 1.2, 1);
-    m_length = length;
-    m_speed = d;
+    max_length = length;
   }
 
+  /**
+   * @param angle the angle of the hood in degrees
+   */
   public void setPositionFromAngle(double angle) {
-    double horiz_length = 241.3;
-    double vert_length = 203.2;
 
-    dist = Math.sqrt(Math.pow(horiz_length,2) + Math.pow(vert_length,2) - 2*horiz_length*vert_length*Math.cos(Math.toRadians(angle)))- 114.3; 
+    double distance = Math
+        .sqrt(cosine_equation_constant - 2 * horiz_length * radial_length * Math.cos(Math.toRadians(angle)))
+        - min_servo_length;
 
-    if(dist <= m_length && dist >= 0)
-    {
-      setPosition(dist);
-    }
-
-    else{
-      setPosition(dist > m_length? m_length: 0);
-    }
+    setPosition(distance);
   }
 
-  public void setPosition(double setPoint) {
-    if(setPoint < 0) {
-      setPoint = 0;
-    }
-    else if(setPoint > m_length) {
-      setPoint = m_length;
+  public void setPosition(double servoPosition) {
+    if (servoPosition < 0) {
+      servoPosition = 0;
+    } else if (servoPosition > max_length) {
+      servoPosition = max_length;
     }
 
-    SmartDashboard.putNumber("ho", setPoint / m_length);
-    set(setPoint / m_length);
-  }
-
-  public void updateCurPos() {
-    double dt = Timer.getFPGATimestamp() - lastTime;
-    if(curPos > setPos + m_speed*dt) {
-      curPos -= m_speed * dt;
-    }
-    else if(curPos < setPos-m_speed * dt){
-      curPos += m_speed * dt;
-    }
-    else {
-      curPos = setPos;
-    }
-    
+    SmartDashboard.putNumber("Servo Percent Output: ", servoPosition / max_length);
+    set(servoPosition / max_length);
   }
 
   public double getPosition() {
@@ -79,12 +61,13 @@ public class LinearActuator extends Servo {
   }
 
   public boolean isFinished() {
-    return curPos == setPos;
+    return curPos == targetPos;
   }
 
   public double getHoodAngle() {
-    double length = getPosition() * m_length;
-    double angle = Math.acos(Math.pow(dist, 2) + Math.pow(241.3, 2)-Math.pow(m_length, 2)/(2*dist*241.3));
+    double length = getPosition() * max_length;
+    double angle = Math.acos(Math.pow(cosine_equation_constant, 2) + Math.pow(241.3, 2)
+        - Math.pow(max_length, 2) / (2 * cosine_equation_constant * 241.3));
 
     return Math.toDegrees(angle);
   }

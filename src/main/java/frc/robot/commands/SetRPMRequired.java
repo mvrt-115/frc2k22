@@ -30,6 +30,7 @@ public class SetRPMRequired extends CommandBase {
     // SmartDashboard.putNumber("new rpm", 0);
     addRequirements(shooter, storage);
   }
+
   public SetRPMRequired(Shooter shooter, Storage storage) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.shooter = shooter;
@@ -43,48 +44,41 @@ public class SetRPMRequired extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize()
-  {
-    // System.out.println("racism2");
+  public void initialize() {
     storage.setReadyShoot(true);
     rpm = shooter.getRequiredRPM();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute()
-  {
+  public void execute() {
     rpm = shooter.getRequiredRPM();
     shooter.setTargetRPM(rpm);
 
-    if(shooter.getState() == ShooterState.ATSPEED)
-    {
-      
+    if (shooter.getState() == ShooterState.ATSPEED) {
+
       storage.runMotor(0.4);
-    }
-    else {
+    } else {
       storage.runMotor(0);
       // System.out.println("hi4");
     }
-    
+
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted)
-  {
+  public void end(boolean interrupted) {
     shooter.setState(ShooterState.OFF);
     storage.setReadyShoot(false);
     storage.runMotor(0);
     // System.out.println("hi5");
 
-    
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(button != null)
+    if (button != null)
       return !button.get();
     return rpm == 0;
   }
