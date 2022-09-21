@@ -50,6 +50,7 @@ public class Shooter extends SubsystemBase {
   private Limelight limelight;
   private Turret turret;
   private Drivetrain drivetrain;
+  RollingAverage angle;
 
   private static Shooter shooter = new Shooter();
 
@@ -69,6 +70,7 @@ public class Shooter extends SubsystemBase {
     rightHoodServo.setBounds(2, 1.8, 1.5, 1.2, 1);
 
     limelight = Limelight.getInstance();
+    angle = new RollingAverage(200);
     turret = Turret.getInstance();
     drivetrain = Drivetrain.getInstance();
 
@@ -123,7 +125,7 @@ public class Shooter extends SubsystemBase {
       setState(ShooterState.ATSPEED);
   }
 
-  public void setHoodAngle(double angle) {
+public void setHoodAngle(double angle) {
     double minLen = 120;
     double maxLen = 170;
     double x = 165.1;
@@ -131,7 +133,7 @@ public class Shooter extends SubsystemBase {
 
     angle+=Constants.Actuator.DEGREES_FROM_HORIZONTAL;
 
-    double out = (Math.sqrt(x * x + hyp * hyp - 2 * x * hyp * Math.cos(Math.toRadians(angle))) - minLen);
+    double out = (Math.sqrt(x * x + hyp * hyp - 2 * x * hyp * Math.cos(Math.toRadians(angle))) - minLen)/50.0;
 
     SmartDashboard.putNumber("request", out);
     leftHoodServo.set(out);
@@ -197,7 +199,10 @@ public class Shooter extends SubsystemBase {
     rpm.updateValue(MathUtils.ticksToRPM(flywheelLeader.getSelectedSensorVelocity(),
         Constants.Flywheel.TICKS_PER_REVOLUTION, Constants.Flywheel.GEAR_RATIO));
     log();
-    targetRPM = getRequiredRPM();
+    // targetRPM = getRequiredRPM();
+
+    // if(Math.abs(targetAngle - getRequiredAng()) < 5)
+    angle.updateValue(getRequiredAng());
     targetAngle = getRequiredAng();
     SmartDashboard.putNumber("Calculated RPM", targetRPM);
     SmartDashboard.putNumber("Calculated Angle", targetAngle);
@@ -218,6 +223,7 @@ public class Shooter extends SubsystemBase {
           setState(ShooterState.ATSPEED);
         }
 
+         
         break;
       case ATSPEED:
         // flywheelLeader.set(ControlMode.Velocity, MathUtils.rpmToTicks(targetRPM,
@@ -308,27 +314,27 @@ public class Shooter extends SubsystemBase {
     // 34.87
     // 52.35
     // function to get theta value
-    double angle_proj = 13.342 * Math.log(dx) + 6.2571;
+    double angle_proj = 13.342 * Math.log((dx-30)/12.0) + 6.2571;
 
-    if(angle_proj<Constants.Hood.MIN_ANG)
-    {
-      return Constants.Hood.MIN_ANG;
-    }
-    else if(angle_proj<Constants.Hood.MAX_ANG)
-    {
-      return Constants.Hood.MAX_ANG;
-    }
+    // if(angle_proj<Constants.Hood.MIN_ANG)
+    // {
+    //   return Constants.Hood.MIN_ANG;
+    // }
+    // else if( <Constants.Hood.MAX_ANG)
+    // {
+    //   return Constants.Hood.MAX_ANG;
+    // }
 
-    if(!limelight.targetsFound())
-    {
-    // Angle where the limelight can scan the field the best
-      return Constants.Hood.MAX_ANG;
-    }
+    // if(!limelight.targetsFound())
+    // {
+    // // Angle where the limelight can scan the field the best
+    //   return Constants.Hood.MAX_ANG;
+    // }
 
     // Set the angle from 0 to 20 (60 to 80) based on the distance
 
     // Equation that returns the default angle (need to run sim)
-    return angle_proj+11;
+    return angle_proj;
   }
 
   /**

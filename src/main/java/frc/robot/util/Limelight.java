@@ -25,7 +25,7 @@ public class Limelight extends SubsystemBase {
 
   public final double height = 104; // inches
   public final double limelightMountHeight = 37.5;  // inches
-  private double limelightMountAngle = 51.00001; // degrees
+  private double limelightMountAngle = 39.00001; // degrees
 
   public static enum LED_STATE {
     DEFAULT, ON, OFF, BLINKING;
@@ -155,7 +155,7 @@ public class Limelight extends SubsystemBase {
     double angleToGoalDegrees = (90 - Constants.Limelight.MOUNT_ANGLE) + ty.getAverage();
     double angleToGoalRadians = angleToGoalDegrees * (Math.PI / 180);
 
-    return (Constants.Limelight.TARGET_HEIGHT_IN - Constants.Limelight.HEIGHT_IN) / Math.tan(Math.toRadians(angleToGoalDegrees));
+    return ((Constants.Limelight.TARGET_HEIGHT_IN - Constants.Limelight.HEIGHT_IN) / Math.tan(Math.toRadians(angleToGoalDegrees)));
   }
 
   /**

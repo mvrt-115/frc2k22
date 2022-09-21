@@ -64,15 +64,15 @@ public class SetRPMDash extends CommandBase {
 
     if(shooter.getState() == ShooterState.ATSPEED)
     {
-    System.out.println("at speed");
-    // storage.setReadyShoot(true);
+      if(rpm != 0)
+        Storage.getInstance().setReadyShoot(true);
       // storage.runMotor(0.4); 
 
       // turret.setState(TurretState.DISABLED);
     }
-    // else 
+    else 
       // storage.runMotor(0);
-      // storage.setReadyShoot(false);
+      Storage.getInstance().setReadyShoot(false);
     
   }
 
@@ -81,7 +81,7 @@ public class SetRPMDash extends CommandBase {
   public void end(boolean interrupted)
   {
     shooter.setState(ShooterState.OFF);
-    // storage.setReadyShoot(false);
+    Storage.getInstance().setReadyShoot(false);
     // storage.runMotor(0);
     System.out.println("hi3");
     // turret.setState(TurretState.TARGETING);
@@ -90,6 +90,6 @@ public class SetRPMDash extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return DriverStation.isDisabled();
   }
 }
