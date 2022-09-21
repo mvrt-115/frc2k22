@@ -125,8 +125,8 @@ public final class Constants {
 
     public static class Hood
     {
-        public static final double MIN_ANG = 60;
-        public static final double MAX_ANG = 80;
+        public static final double MIN_ANG = 24;
+        public static final double MAX_ANG = 40;
         public static final double P = 0.21;
         public static final double I = 0;
         public static final double D = 6.9;
@@ -182,7 +182,7 @@ public final class Constants {
         public static final double D = 0.19;
         public static final double kDefaultMaxServoPWM = 2.4;
         public static final double kDefaultMinServoPWM = 0.6;
-        public static final double DEGREES_FROM_HORIZONTAL = 0; // How many degrees below the flywheel that the actuator is
+        public static final double DEGREES_FROM_HORIZONTAL = 11; // How many degrees below the flywheel that the actuator is
         public static final int LEFT_SERVO_ID = 2;
         public static final int RIGHT_SERVO_ID = 3;
     }

@@ -129,6 +129,8 @@ public class Shooter extends SubsystemBase {
     double x = 165.1;
     double hyp = 209.55;
 
+    angle+=Constants.Actuator.DEGREES_FROM_HORIZONTAL;
+
     double out = (Math.sqrt(x * x + hyp * hyp - 2 * x * hyp * Math.cos(Math.toRadians(angle))) - minLen);
 
     SmartDashboard.putNumber("request", out);
@@ -306,18 +308,27 @@ public class Shooter extends SubsystemBase {
     // 34.87
     // 52.35
     // function to get theta value
-    double angle_proj = dx / 250 * (52.35 - 34.87) + 34.87;
+    double angle_proj = 13.342 * Math.log(dx) + 6.2571;
 
-    // if(!limelight.targetsFound())
-    // {
-    // // Angle where the limelight can scan the field the best
-    // return 52.34;
-    // }
+    if(angle_proj<Constants.Hood.MIN_ANG)
+    {
+      return Constants.Hood.MIN_ANG;
+    }
+    else if(angle_proj<Constants.Hood.MAX_ANG)
+    {
+      return Constants.Hood.MAX_ANG;
+    }
+
+    if(!limelight.targetsFound())
+    {
+    // Angle where the limelight can scan the field the best
+      return Constants.Hood.MAX_ANG;
+    }
 
     // Set the angle from 0 to 20 (60 to 80) based on the distance
 
-    // Equation that returns the correct angle (need to run sim)
-    return 34.87;
+    // Equation that returns the default angle (need to run sim)
+    return angle_proj+11;
   }
 
   /**
