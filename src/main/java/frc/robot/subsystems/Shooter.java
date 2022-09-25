@@ -136,7 +136,8 @@ public void setHoodAngle(double angle) {
     double out = (Math.sqrt(x * x + hyp * hyp - 2 * x * hyp * Math.cos(Math.toRadians(angle))) - minLen)/50.0;
 
     SmartDashboard.putNumber("request", out);
-    leftHoodServo.set(out);
+    leftHoodServo.set(out-.3);// leftHoodServo.set(out); WARN: currently the left servo is set higher than 
+                              // the right one, idk why but this is a quick fix to make them the same
     rightHoodServo.set(out);
     targetAngle = angle;
   }
