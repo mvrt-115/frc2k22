@@ -139,16 +139,16 @@ public final class Constants {
 
     public static class Flywheel
     {
-        public static final double P = 0.21;
+        public static final double P = 0.2;
         public static final double I = 0;
-        public static final double D = 7.5; // 6.9
-        public static final double F = 0.06;
+        public static final double D = 0; // 6.9
+        public static final double F = 0.058;
         public static final double PHood = 0.21;
         public static final double IHood = 0;
         public static final double DHood = 6.9;
         public static final double FHood = 0.058;
         public static final double RADIUS = 2;
-        public static final double ACCEPTABLE_ERROR = 35; //100;
+        public static final double ACCEPTABLE_ERROR = 10; //100;
         public static final double MAX_VOLTAGE_COMPENSATION = 10;
         public static final double TICKS_PER_REVOLUTION = 2048;
         public static final int NUM_AVG = 5;

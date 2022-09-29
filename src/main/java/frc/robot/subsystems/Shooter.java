@@ -136,8 +136,8 @@ public void setHoodAngle(double angle) {
     double out = (Math.sqrt(x * x + hyp * hyp - 2 * x * hyp * Math.cos(Math.toRadians(angle))) - minLen)/50.0;
 
     SmartDashboard.putNumber("request", out);
-    leftHoodServo.set(out);
-    rightHoodServo.set(out);
+    leftHoodServo.set(0);
+    rightHoodServo.set(0);
     targetAngle = angle;
   }
 
@@ -145,6 +145,7 @@ public void setHoodAngle(double angle) {
     return 0;
     // leftHoodServo.getHoodAngle();
   }
+
 
   /**
    * Sets the state of the Flywheel
@@ -242,7 +243,7 @@ public void setHoodAngle(double angle) {
     // targetAngle = calcAngle;
     // }
 
-    setHoodAngle(targetAngle);
+    // setHoodAngle(targetAngle);
 
     // Only if the limelight is mounted on the hood
     // limelight.setNewMountAngle(leftHoodServo.getHoodAngle()+Constants.Limelight.TILT_ANGLE);
@@ -289,14 +290,16 @@ public void setHoodAngle(double angle) {
    */
   public double getRequiredRPM() {
 
-    double rpm = getStationaryRPM();
 
+    //double rpm = getStationaryRPM();
+    double x = limelight.getHorizontalDistance() * Constants.Flywheel.STRETCH_CONSTANT-12;//*0.8;
+       double rpm = 0.149 * Math.pow(x, 2) - 29.9*x + 4428;
     // if(Constants.Flywheel.ENMOVSHOT && limelight.targetsFound())
     // {
-    // rpm+=getCalculatedAddRPM();
+    // rpm+=getCalculatedAddRPM();[]\
     // }
 
-    return 3000;// Math.min(rpm, Constants.Flywheel.MAX_RPM);
+    return rpm;// Math.min(rpm, Constants.Flywheel.MAX_RPM);
   }
 
   /**
@@ -364,14 +367,13 @@ public void setHoodAngle(double angle) {
         * Math.sin(Math.toRadians(turret.getCurrentPositionDegrees() + limelight.getHorizontalOffset()));
     double totSpeed = Math.sqrt(vert_drive_comp * vert_drive_comp + diff_const * diff_const) + initSpeed;
 
-    // double movOffset =
-    // Math.toDegrees(Math.asin(driveSpeed*Math.sin(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()))/(totSpeed)));
+    // double movOffset = Math.toDegrees(Math.asin(driveSpeed*Math.sin(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()))/(totSpeed)));
 
     // Only does move shot when it's enabled.
-    // if(Constants.Flywheel.ENMOVSHOT && limelight.targetsFound())
-    // {
-    // offset+=movOffset;
-    // }
+    /*if(Constants.Flywheel.ENMOVSHOT && limelight.targetsFound())
+    {
+    offset+=movOffset;
+    }*/
 
     if (Math.abs(offset) > Constants.Turret.kMaxOffset) {
       offset = offset / Math.abs(offset) * Constants.Turret.kMaxOffset;

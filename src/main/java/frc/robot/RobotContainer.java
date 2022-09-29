@@ -40,7 +40,7 @@ public class RobotContainer {
   private final Intake intake = Intake.getInstance();
   private final Storage storage = Storage.getInstance();
   // private final Climber climber = Climber.getInstance();
-  // public static final Turret turret = Turret.getInstance();
+  public static final Turret turret = Turret.getInstance();
   private final Shooter shooter = Shooter.getInstance();
   // // private final LEDs led = new LEDs();
 
@@ -154,7 +154,7 @@ public class RobotContainer {
     // // led.setDefaultCommand(new LEDCommand(led, turret, shooter, climber, storage, intake));
 
     // //storage.setDefaultCommand(new TrackBalls(storage, shooter));
-    // turret.setDefaultCommand(new FindTarget(turret));
+    turret.setDefaultCommand(new FindTarget(turret));
     
     shoot.whenPressed(new SetRPMRequired(shooter, storage, shoot));//.whenReleased(new StopShooter(shooter, storage));
     // shootLaunch.whenPressed(new SetRPMLaunchpad(shooter, storage, turret, shootLaunch));

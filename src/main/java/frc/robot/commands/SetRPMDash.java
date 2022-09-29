@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -24,6 +25,8 @@ public class SetRPMDash extends CommandBase {
   private double rpm;
   private double offset;
   // private Turret turret;
+
+  private double firstAtSpeed = -1;
 
   /** Creates a new SetRPMDash. */
   public SetRPMDash(Shooter shooter) {
@@ -64,16 +67,24 @@ public class SetRPMDash extends CommandBase {
 
     if(shooter.getState() == ShooterState.ATSPEED)
     {
-      if(rpm != 0)
+      if(rpm != 0 && firstAtSpeed != -1) {
+        // Storage.getInstance().setReadyShoot(true);
+        firstAtSpeed = Timer.getFPGATimestamp();
+      }
+
+      if(Math.abs(firstAtSpeed - Timer.getFPGATimestamp()) > 0.5) {
         Storage.getInstance().setReadyShoot(true);
+      }
+        
       // storage.runMotor(0.4); 
 
       // turret.setState(TurretState.DISABLED);
     }
-    else 
+    else{ 
       // storage.runMotor(0);
       Storage.getInstance().setReadyShoot(false);
-    
+      firstAtSpeed = -1;
+    }
   }
 
   // Called once the command ends or is interrupted.

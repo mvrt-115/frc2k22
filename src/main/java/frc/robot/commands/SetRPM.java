@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -15,6 +16,7 @@ import frc.robot.subsystems.Shooter.ShooterState;
 
 public class SetRPM extends CommandBase {
   /** Creates a new SetRPM. */
+  private double firstAtSpeed = -1;
   private Shooter shooter;
   private double rpm;
   private Storage storage;
@@ -52,10 +54,17 @@ public class SetRPM extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(shooter.getState() == ShooterState.ATSPEED)
-      shoot = true;
-    else 
-      shoot = false;
+    if(shooter.getState() == ShooterState.ATSPEED) {
+      if(rpm != 0 && firstAtSpeed != -1) {
+        // Storage.getInstance().setReadyShoot(true);
+        firstAtSpeed = Timer.getFPGATimestamp();
+      }
+
+      if(Math.abs(firstAtSpeed - Timer.getFPGATimestamp()) > 0.5) {
+        Storage.getInstance().setReadyShoot(true);
+      }
+    }
+    else {}
     
     if(shoot)
       storage.runMotor(1);

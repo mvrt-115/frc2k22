@@ -64,7 +64,7 @@ public class Limelight extends SubsystemBase {
 
     if(getHorizontalOffset() < 3 && targetsFound()) {
       Drivetrain.getInstance().setOdometry(estimatePose());
-      System.out.println("hi");
+      // System.out.println("hi");
     }
   }
 
