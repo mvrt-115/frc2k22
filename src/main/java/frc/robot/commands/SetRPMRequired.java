@@ -48,7 +48,7 @@ public class SetRPMRequired extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    storage.setReadyShoot(true);
+    // storage.setReadyShoot(true); //WARN: setting true here makes storage run w/o getting up to speed
     rpm = shooter.getRequiredRPM();
   }
 
