@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import java.util.function.Supplier;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Storage;
 
@@ -37,12 +38,14 @@ public class ManualStorage extends CommandBase {
     else {
       storage.runMotor(-0.7);
     }
+    SmartDashboard.putNumber("hjisafdj", 9);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     storage.setOverriden(false);
+    storage.setBalls(0);
   }
 
   // Returns true when the command should end.

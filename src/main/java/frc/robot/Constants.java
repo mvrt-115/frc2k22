@@ -80,7 +80,7 @@ public final class Constants {
     
     public static class Intake{
 
-        public static final double kTICKS_TO_BOTTOM = 21000;
+        public static final double kTICKS_TO_BOTTOM = 21500;
         // the # of ticks it takes to be at the bottom when pivoting
         public static final double kTICKS_TO_TOP = 800; // the # of ticks it takes to be at the top when pivoting
 
@@ -139,16 +139,16 @@ public final class Constants {
 
     public static class Flywheel
     {
-        public static final double P = 0.2;
+        public static final double P = 0.21;
         public static final double I = 0;
         public static final double D = 0; // 6.9
-        public static final double F = 0.058;
+        public static final double F = 0.06;
         public static final double PHood = 0.21;
         public static final double IHood = 0;
         public static final double DHood = 6.9;
         public static final double FHood = 0.058;
         public static final double RADIUS = 2;
-        public static final double ACCEPTABLE_ERROR = 10; //100;
+        public static final double ACCEPTABLE_ERROR = 30; //100;
         public static final double MAX_VOLTAGE_COMPENSATION = 10;
         public static final double TICKS_PER_REVOLUTION = 2048;
         public static final int NUM_AVG = 5;
@@ -197,8 +197,8 @@ public final class Constants {
     public static class Turret {
         public static final double kGearRatio = 47.142857;
         public static final double kTicksPerRevolution = 2048;
-        public static final double kMinAngle = -155; // -170 degrees
-        public static final double kMaxAngle = 155; // 170 degrees
+        public static final double kMinAngle = -100; // -170 degrees
+        public static final double kMaxAngle = 100; // 170 degrees
         public static final double kLimelightOffset = 40; // degrees
         public static final double kMaxOffset = 22;
         public static final double kEThreshold = 60;
@@ -231,8 +231,8 @@ public final class Constants {
         public static final int kLeftTelescopicID = 7; // 7
 
         // Servo Contants
-        public static final int kRightServoID = 8; //Check (analog input) 9
-        public static final int kLeftServoID = 4; // Check (analog input) 8 
+        public static final int kRightServoID = 4; //Check (analog input) 9
+        public static final int kLeftServoID = 6; // Check (analog input) 8 
 
         //inductive proximity sensors
         public static final int kPivotProximityChannel = 0;
@@ -276,8 +276,8 @@ public final class Constants {
 
         // servo ratchet and unratchet values
         public static final double kServoRatchet = 0; // check
-        public static final double kServoUnRatchet = 0.1; // check
-        public static final double kServoUnRatchet1 = 0.1; // check
+        public static final double kServoUnRatchet = 0.2; // check
+        public static final double kServoUnRatchet1 = 0.3; // check
         public static final double kOffsetError = 0.4; // check
         public static final double kServoError = 0.0; // check
         public static final double kMotorInitialUnratchetSpeed = 0.03; //test

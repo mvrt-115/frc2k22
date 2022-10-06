@@ -11,6 +11,7 @@ import frc.robot.util.MathUtils;
 import frc.robot.util.RollingAverage;
 import frc.robot.util.TalonFactory;
 import frc.robot.Constants;
+import frc.robot.commands.SetRPM;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -43,9 +44,6 @@ public class Shooter extends SubsystemBase {
   private double targetAngle = 40;
   private double error = 100;
 
-  private Servo leftHoodServo;
-  private Servo rightHoodServo;
-
   private RollingAverage rpm;
   private Limelight limelight;
   private Turret turret;
@@ -60,14 +58,6 @@ public class Shooter extends SubsystemBase {
 
   /** Creates a new Shooter. */
   private Shooter() {
-
-    leftHoodServo = new Servo(Constants.Actuator.LEFT_SERVO_ID);// , 50, 1);
-
-    rightHoodServo = new Servo(Constants.Actuator.RIGHT_SERVO_ID);// , 50, 1);
-
-    leftHoodServo.setBounds(2, 1.8, 1.5, 1.2, 1);
-    ;
-    rightHoodServo.setBounds(2, 1.8, 1.5, 1.2, 1);
 
     limelight = Limelight.getInstance();
     angle = new RollingAverage(200);
@@ -126,19 +116,6 @@ public class Shooter extends SubsystemBase {
   }
 
 public void setHoodAngle(double angle) {
-    double minLen = 120;
-    double maxLen = 170;
-    double x = 165.1;
-    double hyp = 209.55;
-
-    angle+=Constants.Actuator.DEGREES_FROM_HORIZONTAL;
-
-    double out = (Math.sqrt(x * x + hyp * hyp - 2 * x * hyp * Math.cos(Math.toRadians(angle))) - minLen)/50.0;
-
-    SmartDashboard.putNumber("request", out);
-    leftHoodServo.set(0);
-    rightHoodServo.set(0);
-    targetAngle = angle;
   }
 
   public double getHoodAngle() {
@@ -298,7 +275,9 @@ public void setHoodAngle(double angle) {
     // {
     // rpm+=getCalculatedAddRPM();[]\
     // }
-
+    if(!limelight.targetsFound()){
+      rpm = 1500;
+    }
     return rpm;// Math.min(rpm, Constants.Flywheel.MAX_RPM);
   }
 
@@ -359,14 +338,14 @@ public void setHoodAngle(double angle) {
   public double getCalculatedOffset() {
     double offset = getStationaryOffset();
 
-    double driveSpeed = (drivetrain.getSpeeds().leftMetersPerSecond + drivetrain.getSpeeds().rightMetersPerSecond) / 2;
+    /*double driveSpeed = (drivetrain.getSpeeds().leftMetersPerSecond + drivetrain.getSpeeds().rightMetersPerSecond) / 2;
     double initSpeed = getBaseVelocityFromWheel();
     double diff_const = initSpeed
         - driveSpeed * Math.cos(Math.toRadians(turret.getCurrentPositionDegrees() + limelight.getHorizontalOffset()));
     double vert_drive_comp = driveSpeed
         * Math.sin(Math.toRadians(turret.getCurrentPositionDegrees() + limelight.getHorizontalOffset()));
     double totSpeed = Math.sqrt(vert_drive_comp * vert_drive_comp + diff_const * diff_const) + initSpeed;
-
+    */
     // double movOffset = Math.toDegrees(Math.asin(driveSpeed*Math.sin(Math.toRadians(turret.getCurrentPositionDegrees()+limelight.getHorizontalOffset()))/(totSpeed)));
 
     // Only does move shot when it's enabled.

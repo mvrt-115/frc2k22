@@ -67,7 +67,6 @@ public class SetRPMRequired extends CommandBase {
 
       if(Math.abs(firstAtSpeed - Timer.getFPGATimestamp()) > 0.5) {
         Storage.getInstance().setReadyShoot(true);
-        shoot = true;
       }
         
       // storage.runMotor(0.4); 
@@ -78,14 +77,7 @@ public class SetRPMRequired extends CommandBase {
       // storage.runMotor(0);
       Storage.getInstance().setReadyShoot(false);
       firstAtSpeed = -1;
-      shoot = false;
     }
-    
-    if(shoot)
-      storage.runMotor(1);
-    else
-    {storage.runMotor(0);}
-
   }
 
   // Called once the command ends or is interrupted.

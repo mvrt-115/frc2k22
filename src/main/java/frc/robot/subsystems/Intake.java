@@ -71,7 +71,7 @@ public class Intake extends SubsystemBase {
         stopPivot()
         ;
         startIntake();
-        // pivotMotor.setNeutralMode(NeutralMode.Coast);
+        pivotMotor.setNeutralMode(NeutralMode.Coast);
         break;
       case PIVOTING_UP: // intake goes back up and stops intaking  
         pivotMotor.setNeutralMode(NeutralMode.Brake);
@@ -79,7 +79,7 @@ public class Intake extends SubsystemBase {
         pivotUp();
         break;
       case PIVOTING_DOWN:
-        // pivotMotor.setNeutralMode(NeutralMode.Coast);
+        pivotMotor.setNeutralMode(NeutralMode.Coast);
         pivotDown();
         //startIntake();
         break;

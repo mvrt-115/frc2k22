@@ -247,8 +247,8 @@ public class Climber extends SubsystemBase {
             rightServo.set(turn);
             return;
         }
-        leftServo.set(turn+0.4);
-        rightServo.set(turn);
+        leftServo.setSpeed(0.8);
+        rightServo.setSpeed(0.8);
     }
 
     public double getServoAngle() {

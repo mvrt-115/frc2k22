@@ -36,10 +36,10 @@ public class RobotContainer {
   
   private JoystickButton  pivot; //buttons
 
-  // public static final Drivetrain drivetrain = Drivetrain.getInstance();
+  public static final Drivetrain drivetrain = Drivetrain.getInstance();
   private final Intake intake = Intake.getInstance();
   private final Storage storage = Storage.getInstance();
-  // private final Climber climber = Climber.getInstance();
+  private final Climber climber = Climber.getInstance();
   public static final Turret turret = Turret.getInstance();
   private final Shooter shooter = Shooter.getInstance();
   // // private final LEDs led = new LEDs();
@@ -149,8 +149,8 @@ public class RobotContainer {
     // storage.setDefaultCommand(new TrackBalls(storage, shooter, alliance));
     // the :: syntax allows us to pass in methods of a class as variables so that the command can continuously access input values
     // alignDrivetrain.whenPressed(new AlignIntakeToBall(drivetrain, true)).whenReleased(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
-    // drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, intake, 
-    // this::getThrottle, this::getWheel, quickturn::get));
+    drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, intake, 
+    this::getThrottle, this::getWheel, quickturn::get));
     // // led.setDefaultCommand(new LEDCommand(led, turret, shooter, climber, storage, intake));
 
     // //storage.setDefaultCommand(new TrackBalls(storage, shooter));
@@ -162,8 +162,8 @@ public class RobotContainer {
     // // SmartDashboard.putData("Testing Shooter", new SetRPMDash(shooter, storage, turret, drivetrain));
     pivot.whenPressed(new Pivot(intake,storage)).whenReleased(new PivotUp(intake, storage));
     // resetBalls.whenPressed(new ResetBalls(storage));
-    // upManualStorage.whenPressed(new ManualStorage(storage, true, upManualStorage::get));  // true for up
-    // downManualStorage.whenPressed(new ManualStorage(storage, false, downManualStorage::get)); // false for down
+    upManualStorage.whenPressed(new ManualStorage(storage, true, upManualStorage::get));  // true for up
+    downManualStorage.whenPressed(new ManualStorage(storage, false, downManualStorage::get)); // false for down
     
     // // alignDrivetrain.whenPressed(new AlignIntakeToBall(drivetrain, true)).whenReleased(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, quickturn::get));
     // /* when the retract and extend buttons are pressed then the telescopic manual command is called accordingly with 
@@ -173,18 +173,18 @@ public class RobotContainer {
     // .whenReleased(new TelescopicManual(climber, () -> !isLowPressed(), 0, true).alongWith(new TelescopicRatchet(climber, Constants.Climber.kServoRatchet)));
 
     // // retract.whenPressed(new TelescopicManual(climber, this::isRetractPressed, Constants.Climber.kTelescopicRetractManualSpeed))
-    // retract.whenPressed(new RatchetRetract(climber, this::isRetractPressed, Constants.Climber.kTelescopicRetractManualSpeed))
-    //   .whenReleased(new TelescopicManual(climber, () -> !isRetractPressed(), 0, false));
+    retract.whenPressed(new RatchetRetract(climber, this::isRetractPressed, Constants.Climber.kTelescopicRetractManualSpeed))
+      .whenReleased(new TelescopicManual(climber, () -> !isRetractPressed(), 0, false));
 
     // //extend.whenPressed(new TelescopicManual(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed))
-    // extend.whenPressed(new UnratchetExtend(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed, false))
-    // .whenReleased(new TelescopicManual(climber, () -> !isExtendPressed(), 0, false).alongWith(new TelescopicRatchet(climber, Constants.Climber.kServoRatchet))); 
+    extend.whenPressed(new UnratchetExtend(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed, false))
+     .whenReleased(new TelescopicManual(climber, () -> !isExtendPressed(), 0, false).alongWith(new TelescopicRatchet(climber, Constants.Climber.kServoRatchet))); 
 
     // // lowClimb.whenPressed(new UnratchetExtend(climber, this::isExtendPressed, Constants.Climber.kTelescopicExtendManualSpeed, true))
     // // .whenReleased(new TelescopicManual(climber, () -> !isExtendPressed(), 0, true).alongWith(new TelescopicRatchet(climber, Constants.Climber.kServoRatchet))); 
 
     // disableTurret.whenPressed(new DisableTurret(turret));//.whenReleased(new FindTarget(turret));
-    // zeroTurret.whenPressed(new ZeroTurret(turret)).whenReleased(new FindTarget(turret));
+    zeroTurret.whenPressed(new ZeroTurret(turret)).whenReleased(new FindTarget(turret));
     // // estimateTurret.whenPressed(new EstimateTurret(turret, drivetrain)).whenReleased(new FindTarget(turret));
 
     // adjustConstantIncrement.whenPressed(new AdjustShooterConstant(Constants.Flywheel.INCREMENT));
@@ -194,8 +194,8 @@ public class RobotContainer {
     // lowShot.whenPressed(new SetRPMValue(shooter, storage, Constants.Flywheel.LOW_SHOT_RPM));//.whenReleased(new StopShooter(shooter, storage));
     
     autonSelector.addOption("2 Ball", twoBallAuto);
-    // autonSelector.addOption("Rude Two Ball (the two ball that shoots another teams balls away in case you are confused Arnav Dalal). ", new TwoBallAndHit(drivetrain, intake, shooter, storage, turret));
-    // autonSelector.addOption("5 Ball", new FiveBallAuton(drivetrain, intake, shooter, storage, turret));
+    autonSelector.addOption("Rude Two Ball (the two ball that shoots another teams balls away in case you are confused Arnav Dalal). ", new TwoBallAndHit(drivetrain, intake, shooter, storage, turret));
+    autonSelector.addOption("5 Ball", new FiveBallAuton(drivetrain, intake, shooter, storage, turret));
     autonSelector.setDefaultOption("2 Ball", twoBallAuto);
 
     SmartDashboard.putData("Auton Selector", autonSelector);
@@ -214,11 +214,13 @@ public class RobotContainer {
    */
   public double getThrottle() {
     if(fast.get()){
-      throttle.updateValue(-driverJoystick.getRawAxis(3));
+      //throttle.updateValue(-driverJoystick.getRawAxis(3));
+      throttle.updateValue(-driverJoystick.getRawAxis(1));
       return throttle.getAverage();
     }
     else{
-      throttle.updateValue(-driverJoystick.getRawAxis(3) * 0.8);
+      //throttle.updateValue(-driverJoystick.getRawAxis(3) * 0.8);
+      throttle.updateValue(-driverJoystick.getRawAxis(1) * 0.8);
       return throttle.getAverage();
     }
   }
@@ -240,7 +242,8 @@ public class RobotContainer {
    * @return value from [-1, 1] that is used for input for the robots turning movement
    */
   public double getWheel() {
-    wheel.updateValue(driverJoystick.getRawAxis(0) * .8);
+   // wheel.updateValue(driverJoystick.getRawAxis(0) * .8);
+    wheel.updateValue(driverJoystick.getRawAxis(2) * .8);
     return wheel.getAverage();
 
   }
@@ -251,9 +254,11 @@ public class RobotContainer {
   public boolean isExtendPressed() {
     return extend.get();
   }
+  
 
   public boolean isLowPressed(){
     return lowClimb.get();
+
   }
 
   public boolean isRetractPressed() {

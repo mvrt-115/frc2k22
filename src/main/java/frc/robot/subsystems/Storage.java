@@ -51,7 +51,7 @@ public class Storage extends SubsystemBase  {
 
   @Override
   public void periodic()  
-  {
+  {log();
     lastLowerState = lowerBeamState;
     lastUpperState = upperBeamState;
 
@@ -60,21 +60,26 @@ public class Storage extends SubsystemBase  {
 
     // if(lastLowerState && !lowerBeamState) balls++;
     // if(!lastUpperState && upperBeamState) balls--;
-
-    if(upperBeamState == false) topMotor.set(ControlMode.PercentOutput,0);
-    else  topMotor.set(ControlMode.PercentOutput,output );
-
-    if(lowerBeamState == false && upperBeamState == false) bottomMotor.set(ControlMode.PercentOutput, 0);
-    else bottomMotor.set(ControlMode.PercentOutput, output);
-    // topMotor.set(ControlMode.PercentOutput,output );
-    // bottomMotor.set(ControlMode.PercentOutput, output);
-
     if(ready) {
-      topMotor.set(ControlMode.PercentOutput, output);
-      bottomMotor.set(ControlMode.PercentOutput, output);
-    }
+        topMotor.set(ControlMode.PercentOutput, -1);
+        bottomMotor.set(ControlMode.PercentOutput, -1);
 
-    log();
+        return;
+      }
+    if(!overriden){
+      
+      
+      if(upperBeamState == false) topMotor.set(ControlMode.PercentOutput,0);
+      else  topMotor.set(ControlMode.PercentOutput,output );
+
+      if(lowerBeamState == false && upperBeamState == false) bottomMotor.set(ControlMode.PercentOutput, 0);
+      else bottomMotor.set(ControlMode.PercentOutput, output);
+      // topMotor.set(ControlMode.PercentOutput,output );
+      // bottomMotor.set(ControlMode.PercentOutput, output);
+
+      
+    }
+    
   }
 
 
@@ -93,9 +98,12 @@ public class Storage extends SubsystemBase  {
     SmartDashboard.putNumber("balls", balls);
     SmartDashboard.putBoolean("top breakbeam broken", upperBeamState);
     SmartDashboard.putBoolean("bottom breakbeam broken", lowerBeamState);
+    SmartDashboard.putNumber("topout", topMotor.getMotorOutputPercent());
+    SmartDashboard.putNumber("bottomout", bottomMotor.getMotorOutputPercent());
   }
   public void runMotor(double val){
-
+    topMotor.set(ControlMode.PercentOutput, val);
+    bottomMotor.set(ControlMode.PercentOutput, val);
   }
   public void setReadyShoot(boolean val){
     ready  = val;

@@ -66,9 +66,9 @@ public class Turret extends SubsystemBase {
 
     offset = 0;
 
-    turret.config_kP(0, 0.0);//Constants.Turret.kPLarge);
-    turret.config_kI(0, 0);//Constants.Turret.kI);
-    turret.config_kD(0, 0);//Constants.Turret.kD);
+    turret.config_kP(0,0.1);
+    turret.config_kI(0,Constants.Turret.kI);
+    turret.config_kD(0,0);
 
     resetEncoder();
 
@@ -89,7 +89,7 @@ public class Turret extends SubsystemBase {
     //   targetDegrees = Constants.Turret.kMaxAngle - 20;
     //   setState(TurretState.FLIPPING);
     // }
-
+    if(state==TurretState.DISABLED) return;
     visionControl();
     
     //  switch(state) {
@@ -128,6 +128,12 @@ public class Turret extends SubsystemBase {
 
     SmartDashboard.putNumber("turret output", output);
     SmartDashboard.putNumber("turret error", error);
+
+      if(getCurrentPositionDegrees() < -30 && output < 0)
+        output = 0;
+      else if(getCurrentPositionDegrees() > 100 && output > 0)
+        output = 0;
+      
 
     turret.set(ControlMode.PercentOutput, output);
 
