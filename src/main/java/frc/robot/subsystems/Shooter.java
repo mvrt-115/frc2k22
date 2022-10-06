@@ -42,6 +42,7 @@ public class Shooter extends SubsystemBase {
   // Attributes of Hood
   private double targetAngle = 40;
   private double error = 100;
+  private double addRPM = 0;
 
   private Servo leftHoodServo;
   private Servo rightHoodServo;
@@ -293,7 +294,7 @@ public void setHoodAngle(double angle) {
 
     //double rpm = getStationaryRPM();
     double x = limelight.getHorizontalDistance() * Constants.Flywheel.STRETCH_CONSTANT-12;//*0.8;
-       double rpm = 0.149 * Math.pow(x, 2) - 29.9*x + 4428;
+       double rpm = 0.149 * Math.pow(x, 2) - 29.9*x + 4428 + addRPM;
     // if(Constants.Flywheel.ENMOVSHOT && limelight.targetsFound())
     // {
     // rpm+=getCalculatedAddRPM();[]\
@@ -405,6 +406,11 @@ public void setHoodAngle(double angle) {
     }
 
     return 0;
+  }
+
+  public void updateAddRPM(double aRPM)
+  {
+    addRPM = aRPM;
   }
 
   /**

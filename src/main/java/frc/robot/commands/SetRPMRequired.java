@@ -50,6 +50,7 @@ public class SetRPMRequired extends CommandBase {
   public void initialize() {
     // storage.setReadyShoot(true); //WARN: setting true here makes storage run w/o getting up to speed
     rpm = shooter.getRequiredRPM();
+    firstAtSpeed = -1;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -60,7 +61,13 @@ public class SetRPMRequired extends CommandBase {
 
     if(shooter.getState() == ShooterState.ATSPEED)
     {
-      if(rpm != 0 && firstAtSpeed != -1) {
+      if(rpm != 0 && firstAtSpeed == -1)
+      {
+        Storage.getInstance().setReadyShoot(true);
+        shoot = true;
+      }
+      
+      if(rpm != 0 && firstAtSpeed == 0) {
         // Storage.getInstance().setReadyShoot(true);
         firstAtSpeed = Timer.getFPGATimestamp();
       }
@@ -74,10 +81,10 @@ public class SetRPMRequired extends CommandBase {
 
       // turret.setState(TurretState.DISABLED);
     }
-    else{ 
+    else if (firstAtSpeed!=-1){ 
       // storage.runMotor(0);
       Storage.getInstance().setReadyShoot(false);
-      firstAtSpeed = -1;
+      firstAtSpeed = 0;
       shoot = false;
     }
     

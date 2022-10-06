@@ -148,7 +148,7 @@ public final class Constants {
         public static final double DHood = 6.9;
         public static final double FHood = 0.058;
         public static final double RADIUS = 2;
-        public static final double ACCEPTABLE_ERROR = 10; //100;
+        public static final double ACCEPTABLE_ERROR = 40; //100;
         public static final double MAX_VOLTAGE_COMPENSATION = 10;
         public static final double TICKS_PER_REVOLUTION = 2048;
         public static final int NUM_AVG = 5;
