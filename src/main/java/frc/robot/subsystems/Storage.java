@@ -24,7 +24,8 @@ public class Storage extends SubsystemBase  {
   private int balls;
   private BaseTalon bottomMotor, topMotor;
   private boolean overriden;
-  private double output = -0.5;
+  private double topOutput = -0.3;
+  private double botOutput = -0.5;
   boolean ready = false;
   private static Storage storage = new Storage();
 
@@ -70,12 +71,10 @@ public class Storage extends SubsystemBase  {
       
       
       if(upperBeamState == false) topMotor.set(ControlMode.PercentOutput,0);
-      else  topMotor.set(ControlMode.PercentOutput,output );
+      else  topMotor.set(ControlMode.PercentOutput, topOutput);
 
       if(lowerBeamState == false && upperBeamState == false) bottomMotor.set(ControlMode.PercentOutput, 0);
-      else bottomMotor.set(ControlMode.PercentOutput, output);
-      // topMotor.set(ControlMode.PercentOutput,output );
-      // bottomMotor.set(ControlMode.PercentOutput, output);
+      else bottomMotor.set(ControlMode.PercentOutput, botOutput);
 
       
     }
