@@ -276,8 +276,8 @@ public final class Constants {
 
         // servo ratchet and unratchet values
         public static final double kServoRatchet = 0; // check
-        public static final double kServoUnRatchet = 0.2; // check
-        public static final double kServoUnRatchet1 = 0.3; // check
+        public static final double kServoUnRatchet = 0.4; // check
+        public static final double kServoUnRatchet1 = 0.4; // check
         public static final double kOffsetError = 0.4; // check
         public static final double kServoError = 0.0; // check
         public static final double kMotorInitialUnratchetSpeed = 0.03; //test
