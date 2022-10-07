@@ -115,20 +115,19 @@ public class RobotContainer {
 
     lowShot = new JoystickButton(operatorJoystick, 5); // THIS BUTTON ID IS NOT FINAL, PLS CHANGE IT
                                                        // to wtvr POTUS wants!!!
-    //Yash was here
-    // twoBallAuto = new SequentialCommandGroup(
-    //   new ParallelCommandGroup(
-    //       new SequentialCommandGroup(
-    //         new RunDrive(drivetrain, 2.25, 0.2).withTimeout(2.25),
-    //         new WaitCommand(1)
-    //       ),
-    //     new Pivot(intake, storage).withTimeout(3.25)
-    //   ),
-    //   new PivotUp(intake, storage),
-    //   new RunDrive(drivetrain, 1, -0.2).withTimeout(1),
-    //   new WaitCommand(2), 
-    //   new SetRPMRequired(shooter, storage)
-    // );
+    twoBallAuto = new SequentialCommandGroup(
+      new ParallelCommandGroup(
+          new SequentialCommandGroup(
+            new RunDrive(drivetrain, 2.25, 0.2).withTimeout(2.25),
+            new WaitCommand(1)
+          ),
+        new Pivot(intake, storage).withTimeout(3.25)
+      ),
+      new PivotUp(intake, storage),
+      new RunDrive(drivetrain, 1, -0.2).withTimeout(1),
+      new WaitCommand(2), 
+      new SetRPMRequired(shooter, storage)
+    );
 
     // oneBallAuto = new SequentialCommandGroup(
     //   new SetRPMRequired(shooter, storage).withTimeout(3),
